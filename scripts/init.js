@@ -1,0 +1,1 @@
+﻿"use strict";async function loadDesktop(){CSystem.onResourceLoad.push(function(){let e=new CCover(document.body);e.resource="cover.control",CSystem.browserCovers.set("cover2",e)})}
