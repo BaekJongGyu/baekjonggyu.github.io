@@ -1,1 +1,1502 @@
-﻿"use strict";class CSceneAnimation extends CResourceClass{constructor(){super(...arguments),this.__startTime=0,this._timeSections=new CList,this.time=new CTime,this.duration=1e3,this.startTimeSpeed=1,this.stopTimeSpeed=1}get timeSections(){return this._timeSections}doRemove(){this._timeSections.clear(),this.time.remove(),super.doRemove()}doTick(t,e,o,a,i){null!=this.onTick&&this.onTick(this,t,e,o,a,i)}doBeforeStart(){null!=this.onBeforeStart&&this.onBeforeStart(this)}doFinish(){null!=this.onFinish&&this.onFinish(this)}doStart(){let t=this,e=CTime.now;this.time.time=e,this.time.clearTimeSection();for(let o=0;o<this._timeSections.length;o++){let a=new CTimeSection(this.time),i=this._timeSections.get(o).graphNameOrData;if("string"==typeof i){let t=CSystem.resources.get(i);a.values=t}else a.values=i;a.startTime=e+this._timeSections.get(o).startTime,a.stopTime=e+this._timeSections.get(o).startTime+this._timeSections.get(o).duration,a.isLoop=this._timeSections.get(o).isLoop;let n=this._timeSections.get(o).sectionName;a.onTick=function(e,o,i,s){if(null!=i){let e=a.values[Math.round(CCalc.cr(a.values.length-1,0,1,s,2))];t.doTick(n,o,i,s,e)}}}let o=!1;this.time.onChangeTime=function(){if(this.time>t.__startTime+t.duration&&(o?(CTime.times.delete(t.time),t.doFinish()):o=!0),null!=t.timeSpeedGraphData){let e=CCalc.crRange2Value(t.__startTime,t.__startTime+t.duration,t.time.time,0,t.timeSpeedGraphData.length-1),o=Math.round(e);e=o>t.timeSpeedGraphData.length-1?t.timeSpeedGraphData.length-1:o,t.time.speed=t.startTimeSpeed+(t.stopTimeSpeed-t.startTimeSpeed)*t.timeSpeedGraphData[e]}},this.__startTime=e,CTime.times.add(CSequence.getSequence("tempAnimation"),this.time)}start(){this.doBeforeStart(),this.doStart()}addSection(t,e,o,a,i=!1){this._timeSections.add({sectionName:t,graphNameOrData:e,startTime:o,duration:a,isLoop:i})}moveTime(t){let e=this,o=CTime.now;this.time.time=o,this.time.clearTimeSection();for(let t=0;t<this._timeSections.length;t++){let a=new CTimeSection(this.time),i=this._timeSections.get(t).graphNameOrData;if("string"==typeof i){let t=CSystem.resources.get(i);a.values=t}else a.values=i;a.startTime=o+this._timeSections.get(t).startTime,a.stopTime=o+this._timeSections.get(t).startTime+this._timeSections.get(t).duration;let n=this._timeSections.get(t).sectionName;a.onTick=function(t,o,i,s){null!=i&&e.doTick(n,o,i,s,a.values[Math.round(CCalc.cr(a.values.length-1,0,1,s,2))])}}for(let e=0;e<this.time.timeSections.length;e++){let a=this.time.timeSections[e],i=o+t;a.startTime<=i&&a.stopTime>i?a.doTick(i-1,i,CCalc.crRange2Value(a.startTime,a.stopTime,i,0,1)):a.startTime>i?a.doTick(i-1,i,0):a.doTick(i-1,i,1)}}}class CSceneAnimator extends CSceneAnimation{constructor(){super(...arguments),this.__sections=new Map}doRemove(){this.__sections.clear(),this.animationControl=void 0,super.doRemove()}doBeforeStart(){if(null!=this.animationControl){this.timeSections.clear(),this.__sections.clear();let t=this.animationControl.sceneData;for(let e=0;e<t.sections.length;e++)t.sections.get(e).control=this.animationControl.getObject(t.sections.get(e).controlName),delete t.sections.get(e).__lastSet,this.addSection(t.sections.get(e).controlName+"."+t.sections.get(e).property+e,t.sections.get(e).graphData,t.sections.get(e).startTime,t.sections.get(e).duration,t.sections.get(e).isLoop),this.__sections.set(t.sections.get(e).controlName+"."+t.sections.get(e).property+e,t.sections.get(e))}super.doBeforeStart()}doTick(t,e,o,a,i){if(null!=this.animationControl){let e=this.__sections.get(t);null!=e&&this.setObjects(t,o-this.__startTime,i,e)}super.doTick(t,e,o,a,i)}setObjects(t,e,o,a){if(null!=a.control)if(a.property.indexOf("script")>=0){new Function("sectionName","workingTime","graphValue","info","control",a.script)(t,e,o,a,a.control)}else{if("number"==typeof a.startValue&&"number"==typeof a.stopValue)new Function("c","c."+a.property+" = "+CCalc.crRange2Value(0,1,o,a.startValue,a.stopValue))(a.control);else if(a.startValue instanceof CPoint&&a.stopValue instanceof CPoint)new Function("c","c."+a.property+".x = "+CCalc.crRange2Value(0,1,o,a.startValue.x,a.stopValue.x)+";c."+a.property+".y = "+CCalc.crRange2Value(0,1,o,a.startValue.y,a.stopValue.y)+";")(a.control);else if(a.startValue instanceof CRect&&a.stopValue instanceof CRect)new Function("c","c."+a.property+".left = "+CCalc.crRange2Value(0,1,o,a.startValue.left,a.stopValue.left)+";c."+a.property+".top = "+CCalc.crRange2Value(0,1,o,a.startValue.top,a.stopValue.top)+";c."+a.property+".right = "+CCalc.crRange2Value(0,1,o,a.startValue.right,a.stopValue.right)+";c."+a.property+".bottom = "+CCalc.crRange2Value(0,1,o,a.startValue.bottom,a.stopValue.bottom)+";")(a.control);else if(a.startValue instanceof CNotifyPoint&&a.stopValue instanceof CNotifyPoint)new Function("c","c."+a.property+".x = "+CCalc.crRange2Value(0,1,o,a.startValue.x,a.stopValue.x)+";c."+a.property+".y = "+CCalc.crRange2Value(0,1,o,a.startValue.y,a.stopValue.y)+";")(a.control);else if(a.startValue instanceof CNotifyRect&&a.stopValue instanceof CNotifyRect)new Function("c","c."+a.property+".left = "+CCalc.crRange2Value(0,1,o,a.startValue.left,a.stopValue.left)+";c."+a.property+".top = "+CCalc.crRange2Value(0,1,o,a.startValue.top,a.stopValue.top)+";c."+a.property+".right = "+CCalc.crRange2Value(0,1,o,a.startValue.right,a.stopValue.right)+";c."+a.property+".bottom = "+CCalc.crRange2Value(0,1,o,a.startValue.bottom,a.stopValue.bottom)+";")(a.control);else if(a.startValue instanceof CColorInfo&&a.stopValue instanceof CColorInfo){let t="rgba("+CCalc.crRange2Value(0,1,o,a.startValue.r,a.stopValue.r)+","+CCalc.crRange2Value(0,1,o,a.startValue.g,a.stopValue.g)+","+CCalc.crRange2Value(0,1,o,a.startValue.b,a.stopValue.b)+","+CCalc.crRange2Value(0,1,o,a.startValue.a,a.stopValue.a)+")";new Function("c","c."+a.property+' = "'+t+'";')(a.control)}if(a.objectData.length>0)if(a.objectData.get(a.objectData.length-1).sectionT<o&&null==a.__lastSet)console.log("last set"),a.control.opacity=a.objectData.get(a.objectData.length-1).info.opacity,0==a.positionPoints.length&&(a.control.position.left=a.objectData.get(a.objectData.length-1).info.position.left,a.control.position.top=a.objectData.get(a.objectData.length-1).info.position.top),a.control.position.width=a.objectData.get(a.objectData.length-1).info.position.width,a.control.position.height=a.objectData.get(a.objectData.length-1).info.position.height,a.control.transform.rotateX=a.objectData.get(a.objectData.length-1).info.transform.rotateX,a.control.transform.rotateY=a.objectData.get(a.objectData.length-1).info.transform.rotateY,a.control.transform.rotateZ=a.objectData.get(a.objectData.length-1).info.transform.rotateZ,a.control.transform.translateX=a.objectData.get(a.objectData.length-1).info.transform.translateX,a.control.transform.translateY=a.objectData.get(a.objectData.length-1).info.transform.translateY,a.control.transform.translateZ=a.objectData.get(a.objectData.length-1).info.transform.translateZ,a.control.transform.scaleX=a.objectData.get(a.objectData.length-1).info.transform.scaleX,a.control.transform.scaleY=a.objectData.get(a.objectData.length-1).info.transform.scaleY,a.control.transform.scaleZ=a.objectData.get(a.objectData.length-1).info.transform.scaleZ,a.control.transform.rotationPointX=a.objectData.get(a.objectData.length-1).info.transform.rotationPointX,a.control.transform.rotationPointY=a.objectData.get(a.objectData.length-1).info.transform.rotationPointY,a.control.transform.rotationPointZ=a.objectData.get(a.objectData.length-1).info.transform.rotationPointZ,a.control.filter.blurValue=a.objectData.get(a.objectData.length-1).info.filter.blurValue,a.control.filter.brightnessValue=a.objectData.get(a.objectData.length-1).info.filter.brightnessValue,a.control.filter.constrastValue=a.objectData.get(a.objectData.length-1).info.filter.constrastValue,a.control.filter.grayscaleValue=a.objectData.get(a.objectData.length-1).info.filter.grayscaleValue,a.control.filter.hueRotateValue=a.objectData.get(a.objectData.length-1).info.filter.hueRotateValue,a.control.filter.invertValue=a.objectData.get(a.objectData.length-1).info.filter.invertValue,a.control.filter.opacityValue=a.objectData.get(a.objectData.length-1).info.filter.opacityValue,a.control.filter.shadowBlur=a.objectData.get(a.objectData.length-1).info.filter.shadowBlur,a.control.filter.filterSet.shadow&&(a.control.filter.shadowColor=a.objectData.get(a.objectData.length-1).info.filter.shadowColor),a.control.filter.shadowX=a.objectData.get(a.objectData.length-1).info.filter.shadowX,a.control.filter.shadowY=a.objectData.get(a.objectData.length-1).info.filter.shadowY,CCanvasLayers.setLayersMiddlePathData(a.objectData.get(a.objectData.length-1).info.layers,a.objectData.get(a.objectData.length-1).info.layers,a.control.layers,1),a.__lastSet=!0;else{let t,e,i=0,n=-1;if(o>0)for(let t=0;t<a.objectData.length;t++){if(i<o&&o<=a.objectData.get(t).sectionT){n=t;break}i=a.objectData.get(t).sectionT}if(-1!=n&&(e=a.objectData.get(n),n>0&&(t=a.objectData.get(n-1))),null==t&&((t=a.objectData.get(0)).sectionT=0),null!=e){if(a.control.opacity=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.opacity,e.info.opacity),0==a.positionPoints.length&&(a.control.position.left=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.position.left,e.info.position.left),a.control.position.top=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.position.top,e.info.position.top)),a.control.position.width=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.position.width,e.info.position.width),a.control.position.height=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.position.height,e.info.position.height),a.control.transform.rotateX=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.transform.rotateX,e.info.transform.rotateX),a.control.transform.rotateY=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.transform.rotateY,e.info.transform.rotateY),a.control.transform.rotateZ=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.transform.rotateZ,e.info.transform.rotateZ),a.control.transform.translateX=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.transform.translateX,e.info.transform.translateX),a.control.transform.translateY=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.transform.translateY,e.info.transform.translateY),a.control.transform.translateZ=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.transform.translateZ,e.info.transform.translateZ),a.control.transform.scaleX=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.transform.scaleX,e.info.transform.scaleX),a.control.transform.scaleY=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.transform.scaleY,e.info.transform.scaleY),a.control.transform.scaleZ=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.transform.scaleZ,e.info.transform.scaleZ),a.control.transform.rotationPointX=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.transform.rotationPointX,e.info.transform.rotationPointX),a.control.transform.rotationPointY=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.transform.rotationPointY,e.info.transform.rotationPointY),a.control.transform.rotationPointZ=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.transform.rotationPointZ,e.info.transform.rotationPointZ),a.control.filter.blurValue=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.filter.blurValue,e.info.filter.blurValue),a.control.filter.brightnessValue=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.filter.brightnessValue,e.info.filter.brightnessValue),a.control.filter.constrastValue=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.filter.constrastValue,e.info.filter.constrastValue),a.control.filter.grayscaleValue=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.filter.grayscaleValue,e.info.filter.grayscaleValue),a.control.filter.hueRotateValue=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.filter.hueRotateValue,e.info.filter.hueRotateValue),a.control.filter.invertValue=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.filter.invertValue,e.info.filter.invertValue),a.control.filter.opacityValue=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.filter.opacityValue,e.info.filter.opacityValue),a.control.filter.shadowBlur=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.filter.shadowBlur,e.info.filter.shadowBlur),a.control.filter.filterSet.shadow){let i=new CColor(t.info.filter.shadowColor),n=new CColor(e.info.filter.shadowColor),s=CCalc.crRange2Value(t.sectionT,e.sectionT,o,i.r,n.r),r=CCalc.crRange2Value(t.sectionT,e.sectionT,o,i.g,n.g),l=CCalc.crRange2Value(t.sectionT,e.sectionT,o,i.b,n.b),c=CCalc.crRange2Value(t.sectionT,e.sectionT,o,i.a,n.a);a.control.filter.shadowColor="rgba("+s+","+r+","+l+","+c+")"}a.control.filter.shadowX=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.filter.shadowX,e.info.filter.shadowX),a.control.filter.shadowY=CCalc.crRange2Value(t.sectionT,e.sectionT,o,t.info.filter.shadowY,e.info.filter.shadowY),CCanvasLayers.setLayersMiddlePathData(t.info.layers,e.info.layers,a.control.layers,CCalc.crRange2Value(t.sectionT,e.sectionT,o,0,1))}}if(a.positionPoints.length>0){let t=Math.round(CCalc.crRange2Value(0,1,o,0,a.positionPoints.length-1)),e=a.positionPoints[t];a.control.position.left=e.x-a.control.transform.rotationPointX*a.control.position.width,a.control.position.top=e.y-a.control.transform.rotationPointY*a.control.position.height}}}}class CTimeSpeedGraphEditorFrameModel extends CGraphEditorModel{constructor(){super(...arguments),this.lRBottom=new CPanel(this.lRight),this.lblStartSpeed=new CPanel(this.lRBottom),this.edtStartSpeed=new CTextBox(this.lRBottom),this.lblStopSpeed=new CPanel(this.lRBottom),this.edtStopSpeed=new CTextBox(this.lRBottom)}doToData(t){super.doToData(t),CDataClass.putData(t,"lRBottom",this.lRBottom.toData(),{},!0),CDataClass.putData(t,"lblStartSpeed",this.lblStartSpeed.toData(),{},!0),CDataClass.putData(t,"edtStartSpeed",this.edtStartSpeed.toData(),{},!0),CDataClass.putData(t,"lblStopSpeed",this.lblStopSpeed.toData(),{},!0),CDataClass.putData(t,"edtStopSpeed",this.edtStopSpeed.toData(),{},!0)}doFromData(t){super.doFromData(t),this.lRBottom.fromData(CDataClass.getData(t,"lRBottom",{},!0)),this.lblStartSpeed.fromData(CDataClass.getData(t,"lblStartSpeed",{},!0)),this.edtStartSpeed.fromData(CDataClass.getData(t,"edtStartSpeed",{},!0)),this.lblStopSpeed.fromData(CDataClass.getData(t,"lblStopSpeed",{},!0)),this.edtStopSpeed.fromData(CDataClass.getData(t,"edtStopSpeed",{},!0))}}class CTimeSpeedGraphEditor extends CWindowTool{constructor(t,e){super(t,e),this.editor=new CTimeSpeedGraphEditorFrameModel(this.body),this.editor.resource="timeSpeedGraphEditor.frame",this.editor.position.align=EPositionAlign.CLIENT}}class CObjectPanel extends CPanel{constructor(t,e){super(t,e),this.btnClose=new CButton(this);let o=this;this.btnClose.resource="button_gray_gra.control",this.btnClose.position.align=EPositionAlign.BOTTOM,this.btnClose.position.height=30,this.btnClose.text="Close",this.btnClose.onClick=function(){o.remove(),null!=o.editor&&(o.editor.objectPanel=void 0,o.editor=void 0,o.section=void 0)},this.position.align=EPositionAlign.CLIENT,this.onDoubleClick=function(){let t=CSystem.getChildControls(this);for(let e=0;e<t.length;e++)t[e]instanceof CAnimationControl&&t[e].remove();o.setSection()},this.onClick=function(){o.setSection()}}setObjects(t){if(null!=t.control&&null!=this.editor){this.section=t;for(let e=0;e<t.objectData.length;e++){let o=t.control.copyTo();o.parent=this,CGraphicInfo.setControlGraphicInfo(t.objectData.get(e).info,o),o.sectionT=t.objectData.get(e).sectionT,o.centerX=t.objectData.get(e).centerX,o.centerY=t.objectData.get(e).centerY,0==t.positionPoints.length&&(o.position.left+=this.editor.controlResizer.position.left+10,o.position.top+=this.editor.controlResizer.position.top+20);let a=this.editor;o.onClick=function(){a.properties.clear(),a.properties.addInstance(o);let t=o.centerX+a.controlResizer.position.left+10,e=o.centerY+a.controlResizer.position.top+20;o.position.left=t-o.transform.rotationPointX*o.position.width,o.position.top=e-o.transform.rotationPointY*o.position.height};let i=this;o.onDoubleClick=function(){i.setSection()}}}}setSection(){if(null!=this.editor){let t=new Array,e=CSystem.getChildControls(this);for(let o=0;o<e.length;o++)e[o]instanceof CAnimationControl&&t.push(e[o]);t.sort(function(t,e){let o=0;return t.sectionT<e.sectionT&&(o=-1),t.sectionT>e.sectionT&&(o=1),o});let o=this.editor.getSelectedSection();if(null!=o){o.objectData.clear();for(let e=0;e<t.length;e++){let a=t[e].position.toData();a.left-=this.editor.controlResizer.position.left+10,a.top-=this.editor.controlResizer.position.top+20,o.objectData.add({sectionT:t[e].sectionT,centerX:t[e].centerX,centerY:t[e].centerY,info:CGraphicInfo.controlGraphicInfo(t[e],a)})}}this.editor.refreshGrid()}}}class CAnimationControlSceneEditorModel extends CPanel{constructor(t,e){super(t,e),this.toolbar=new CPanel(this),this.btnShowPositionEditor=new CSelectBox(this.toolbar),this.btnShowObjectEditor=new CSelectBox(this.toolbar),this.btnSave=new CButton(this.toolbar),this.btnOpen=new CButton(this.toolbar),this.lblWidth=new CPanel(this.toolbar),this.edtWidth=new CTextBox(this.toolbar),this.lblHeight=new CPanel(this.toolbar),this.edtHeight=new CTextBox(this.toolbar),this.btnSize=new CButton(this.toolbar),this.lClient=new CPanel(this),this.lCBottom=new CPanel(this.lClient),this.objectsTool=new CWindowChildTool(this),this.lLTop=new CPanel(this.objectsTool.body),this.btnAddProperty=new CButton(this.lLTop),this.list=new CObjectTreeListBox(this.objectsTool.body),this.controlResizer=new CPanel(this.lClient),this.con=new CAnimationControl(this.controlResizer),this.transformer=new CCanvasControlTransfomer(this.controlResizer),this.pathEditor=new CPathEditorControl(this.lClient),this.pathEditorToolbar=new CPanel(this.pathEditor),this.btnNone=new CButton(this.pathEditorToolbar),this.btnMoveTo=new CButton(this.pathEditorToolbar),this.btnLineTo=new CButton(this.pathEditorToolbar),this.btnCurveTo=new CButton(this.pathEditorToolbar),this.btnApplyPosition=new CButton(this.pathEditorToolbar),this.btnToolbarClose=new CButton(this.pathEditorToolbar),this.timeAnimationTool=new CWindowChildTool(this),this.lBTopTime=new CPanel(this.timeAnimationTool.body),this.edtTimeFrom=new CTextBox(this.lBTopTime),this.edtTimeTo=new CTextBox(this.lBTopTime),this.edtTime=new CTextBox(this.lBTopTime),this.btnTimeApply=new CButton(this.lBTopTime),this.btnTimeLeft=new CButton(this.lBTopTime),this.btnTimeRight=new CButton(this.lBTopTime),this.scrollTime=new CScrollbar(this.lBTopTime),this.lBTop=new CPanel(this.timeAnimationTool.body),this.btnPropertyUp=new CButton(this.lBTop),this.btnPropertyDown=new CButton(this.lBTop),this.btnDeleteProperty=new CButton(this.lBTop),this.btnGraphEdit=new CButton(this.lBTop),this.btnPositionEdit=new CButton(this.lBTop),this.btnApply=new CButton(this.lBTop),this.btnAnimationSpeedGraph=new CButton(this.lBTop),this.btnStart=new CButton(this.lBTop),this.edtDuration=new CTextBox(this.lBTop),this.lblDuration=new CPanel(this.lBTop),this.lBTop2=new CPanel(this.timeAnimationTool.body),this.lblTag=new CPanel(this.lBTop2),this.btnTagAdd=new CButton(this.lBTop2),this.btnTagDelete=new CButton(this.lBTop2),this.lblObject=new CPanel(this.lBTop2),this.btnObjectDataAdd=new CButton(this.lBTop2),this.btnObjectDataDelete=new CButton(this.lBTop2),this.btnObjectCopy=new CButton(this.lBTop2),this.btnObjectPaste=new CButton(this.lBTop2),this.btnObjectTransformer=new CButton(this.lBTop2),this.timeline=new CDataGrid(this.timeAnimationTool.body),this.timelineScriptTool=new CWindowChildTool(this),this.lTimelineScriptTop=new CPanel(this.timelineScriptTool.body),this.btnTimelineScriptApply=new CButton(this.lTimelineScriptTop),this.txtTimelineScript=new CTextArea(this.timelineScriptTool.body),this.propertyTool=new CWindowChildTool(this),this.properties=new CTabPropertyEditor(this.propertyTool.body),this.frmGraph=new CWindowTool(CSystem.desktopList.get(0).applicationLayer),this.fraGraph=new CGraphEditorFrame(this.frmGraph.body),this.timeSpeedStart=1,this.timeSpeedStop=1,this.startData=new CAnimationControl;let o=this;this.frmGraph.close(),this.con.position.align=EPositionAlign.CLIENT,this.resource="sceneEditor.frame",this.pathEditor.position.align=EPositionAlign.CLIENT,this.pathEditor.pathPointList=this.pathEditor.layers.get(0).items.get(1).pathData,this.fraGraph.resource="graphEditor.frame",this.fraGraph.position.align=EPositionAlign.CLIENT,this.fraGraph.btnApply.onClick=async function(){let t=await o.fraGraph.getGraphData();if("string"==typeof t)CSystem.showMessage("에러",t);else{let e=o.getSelectedSection();null!=e&&(e.graphData=t)}},this.properties.onlyShowProperty.push("overflow"),this.properties.onlyShowProperty.push("filter"),this.properties.onlyShowProperty.push("position"),this.properties.onlyShowProperty.push("transform"),this.properties.onlyShowProperty.push("layers"),this.properties.onlyShowProperty.push("opacity"),this.properties.onlyShowProperty.push("useMove"),this.properties.onlyShowProperty.push("visible"),this.properties.onlyShowProperty.push("propertyName"),this.btnShowPositionEditor.onChangeSelected=function(){},this.btnShowObjectEditor.onChangeSelected=function(){o.btnShowObjectEditor.selected?o.showObjectPanel():null!=o.objectPanel&&(o.objectPanel.remove(),o.objectPanel=void 0)},this.btnOpen.onClick=function(){},this.btnSave.onClick=function(){},this.btnSize.onClick=function(){let t=parseInt(o.edtWidth.text)+20,e=parseInt(o.edtHeight.text)+30;o.controlResizer.position.width=t,o.controlResizer.position.height=e},this.controlResizer.onChangeSize=function(){o.edtWidth.text=o.controlResizer.position.width-20+"",o.edtHeight.text=o.controlResizer.position.height-30+"",o.startData.position.width=o.controlResizer.position.width-20,o.startData.position.height=o.controlResizer.position.height-30},this.btnAddProperty.onClick=function(){o.doAddSection()},this.btnPropertyUp.onClick=function(){o.doPropertyUp()},this.btnPropertyDown.onClick=function(){o.doPropertyDown()},this.btnDeleteProperty.onClick=function(){o.doDeleteSection()};let a="";this.timeline.onShowEditor=function(t,e,i,n){a=o.timeline.cell(1,i)},this.timeline.onEditorApply=function(t,e,i,n){o.doTimeLineEdit(e,i,a,n)},this.timeline.onSelectItem=function(t,e,a){o.doChangeTimeLineItem(e,a)},this.timeline.onKeyDown=function(t,e){o.doTimeLineKeyDown(e)},this.btnGraphEdit.onClick=function(){o.doGraphEditorShow(!0)},this.btnPositionEdit.onClick=function(){o.doPositionEdit()},this.btnTagAdd.onClick=function(){o.doAddTag()},this.btnTagDelete.onClick=function(){o.doTagDelete()},this.btnObjectDataAdd.onClick=function(){o.doObjectAdd()},this.btnObjectDataDelete.onClick=function(){o.doObjectDelete()},this.btnObjectTransformer.onClick=function(){o.doShowTransformer()},this.btnObjectCopy.onClick=function(){o.doObjectCopy()},this.btnObjectPaste.onClick=function(){o.doObjectPaste()},this.btnTimeApply.onClick=function(){o.scrollTime.min=parseInt(o.edtTimeFrom.text),o.scrollTime.max=parseInt(o.edtTimeTo.text),o.scrollTime.value=parseInt(o.edtTimeFrom.text),o.edtTime.text=o.edtTimeFrom.text},this.scrollTime.onChangeValue=function(){o.edtTime.text=Math.round(o.scrollTime.value)+"",o.doSetTime(Math.round(o.scrollTime.value))},this.edtTime.onKeyDown=function(t,e){"Enter"==e.key&&(o.scrollTime.value=parseInt(o.edtTime.text))},this.btnTimeLeft.onClick=function(){o.scrollTime.value--},this.btnTimeRight.onClick=function(){o.scrollTime.value++},this.list.onSelectItem=function(){o.doSelectItem()},this.btnApply.onClick=function(){null!=o.objectPanel&&o.objectPanel.remove(),o.pathEditor.visible=!1,o.doScene()},this.btnStart.onClick=function(){o.doSetStart()},this.btnAnimationSpeedGraph.onClick=function(){o.doAnimationSpeedGraphEdit()},this.transformer.resource="path_controller.control",this.transformer.position.align=EPositionAlign.CLIENT,this.transformer.visible=!1,this.transformer.onFreeTransformHandleTrack=function(){o.doTransform()},this.objectsTool.showCenter(200,400,"오브젝트 정보","hide"),this.propertyTool.showCenter(300,300,"속성 정보","hide"),this.timeAnimationTool.showCenter(850,300,"구간 애니메이션 정보","hide"),this.timelineScriptTool.showCenter(850,300,"구간 애니메이션 스크립트","hide"),this.properties.tabButtons.visible=!1,this.btnNone.onClick=function(){o.pathEditor.mode="None"},this.btnMoveTo.onClick=function(){o.pathEditor.mode="MoveTo"},this.btnLineTo.onClick=function(){o.pathEditor.mode="LineTo"},this.btnCurveTo.onClick=function(){o.pathEditor.mode="CurveTo"},this.btnApplyPosition.onClick=function(){o.doSetSectionPosition()},this.btnToolbarClose.onClick=function(){o.pathEditor.visible=!1},this.btnTimelineScriptApply.onClick=function(){let t=o.getSelectedSection();null!=t&&(t.script=o.txtTimelineScript.text)},this.properties.editorCover=CSystem.browserCovers.get("cover")}doToData(t){super.doToData(t),CDataClass.putData(t,"toolbar",this.toolbar.toData(),{},!0),CDataClass.putData(t,"btnSave",this.btnSave.toData(),{},!0),CDataClass.putData(t,"btnOpen",this.btnOpen.toData(),{},!0),CDataClass.putData(t,"lblWidth",this.lblWidth.toData(),{},!0),CDataClass.putData(t,"edtWidth",this.edtWidth.toData(),{},!0),CDataClass.putData(t,"lblHeight",this.lblHeight.toData(),{},!0),CDataClass.putData(t,"edtHeight",this.edtHeight.toData(),{},!0),CDataClass.putData(t,"btnSize",this.btnSize.toData(),{},!0),CDataClass.putData(t,"lLTop",this.lLTop.toData(),{},!0),CDataClass.putData(t,"lClient",this.lClient.toData(),{},!0),CDataClass.putData(t,"lBTop",this.lBTop.toData(),{},!0),CDataClass.putData(t,"btnAddProperty",this.btnAddProperty.toData(),{},!0),CDataClass.putData(t,"list",this.list.toData(),{},!0),CDataClass.putData(t,"controlResizer",this.controlResizer.toData(),{},!0),CDataClass.putData(t,"lBTopTime",this.lBTopTime.toData(),{},!0),CDataClass.putData(t,"edtTimeFrom",this.edtTimeFrom.toData(),{},!0),CDataClass.putData(t,"edtTimeTo",this.edtTimeTo.toData(),{},!0),CDataClass.putData(t,"edtTime",this.edtTime.toData(),{},!0),CDataClass.putData(t,"btnTimeApply",this.btnTimeApply.toData(),{},!0),CDataClass.putData(t,"btnTimeLeft",this.btnTimeLeft.toData(),{},!0),CDataClass.putData(t,"btnTimeRight",this.btnTimeRight.toData(),{},!0),CDataClass.putData(t,"scrollTime",this.scrollTime.toData(),{},!0),CDataClass.putData(t,"timeline",this.timeline.toData(),{},!0),CDataClass.putData(t,"btnPropertyUp",this.btnPropertyUp.toData(),{},!0),CDataClass.putData(t,"btnPropertyDown",this.btnPropertyDown.toData(),{},!0),CDataClass.putData(t,"btnDeleteProperty",this.btnDeleteProperty.toData(),{},!0),CDataClass.putData(t,"btnApply",this.btnApply.toData(),{},!0),CDataClass.putData(t,"btnAnimationSpeedGraph",this.btnAnimationSpeedGraph.toData(),{},!0),CDataClass.putData(t,"btnStart",this.btnStart.toData(),{},!0),CDataClass.putData(t,"edtDuration",this.edtDuration.toData(),{},!0),CDataClass.putData(t,"lblDuration",this.lblDuration.toData(),{},!0),CDataClass.putData(t,"lCBottom",this.lCBottom.toData(),{},!0),CDataClass.putData(t,"btnGraphEdit",this.btnGraphEdit.toData(),{},!0),CDataClass.putData(t,"btnPositionEdit",this.btnPositionEdit.toData(),{},!0),CDataClass.putData(t,"lBTop2",this.lBTop2.toData(),{},!0),CDataClass.putData(t,"lblTag",this.lblTag.toData(),{},!0),CDataClass.putData(t,"btnTagAdd",this.btnTagAdd.toData(),{},!0),CDataClass.putData(t,"btnTagDelete",this.btnTagDelete.toData(),{},!0),CDataClass.putData(t,"lblObject",this.lblObject.toData(),{},!0),CDataClass.putData(t,"btnObjectDataAdd",this.btnObjectDataAdd.toData(),{},!0),CDataClass.putData(t,"btnObjectDataDelete",this.btnObjectDataDelete.toData(),{},!0),CDataClass.putData(t,"btnObjectCopy",this.btnObjectCopy.toData(),{},!0),CDataClass.putData(t,"btnObjectPaste",this.btnObjectPaste.toData(),{},!0),CDataClass.putData(t,"btnObjectTransformer",this.btnObjectTransformer.toData(),{},!0),CDataClass.putData(t,"pathEditor",this.pathEditor.toData(),{},!0),CDataClass.putData(t,"pathEditorToolbar",this.pathEditorToolbar.toData(),{},!0),CDataClass.putData(t,"btnNone",this.btnNone.toData(),{},!0),CDataClass.putData(t,"btnMoveTo",this.btnMoveTo.toData(),{},!0),CDataClass.putData(t,"btnLineTo",this.btnLineTo.toData(),{},!0),CDataClass.putData(t,"btnCurveTo",this.btnCurveTo.toData(),{},!0),CDataClass.putData(t,"btnApplyPosition",this.btnApplyPosition.toData(),{},!0),CDataClass.putData(t,"btnToolbarClose",this.btnToolbarClose.toData(),{},!0),CDataClass.putData(t,"properties",this.properties.toData(),{},!0),CDataClass.putData(t,"lTimelineScriptTop",this.lTimelineScriptTop.toData(),{},!0),CDataClass.putData(t,"btnTimelineScriptApply",this.btnTimelineScriptApply.toData(),{},!0),CDataClass.putData(t,"txtTimelineScript",this.txtTimelineScript.toData(),{},!0),CDataClass.putData(t,"objectsToolPosition",this.objectsTool.position.toData(),{},!0),CDataClass.putData(t,"propertyToolPosition",this.propertyTool.position.toData(),{},!0),CDataClass.putData(t,"timeAnimationToolPosition",this.timeAnimationTool.position.toData(),{},!0),CDataClass.putData(t,"timelineScriptToolPosition",this.timelineScriptTool.position.toData(),{},!0)}doFromData(t){super.doFromData(t),this.toolbar.fromData(CDataClass.getData(t,"toolbar",{},!0)),this.btnSave.fromData(CDataClass.getData(t,"btnSave",{},!0)),this.btnOpen.fromData(CDataClass.getData(t,"btnOpen",{},!0)),this.lblWidth.fromData(CDataClass.getData(t,"lblWidth",{},!0)),this.edtWidth.fromData(CDataClass.getData(t,"edtWidth",{},!0)),this.lblHeight.fromData(CDataClass.getData(t,"lblHeight",{},!0)),this.edtHeight.fromData(CDataClass.getData(t,"edtHeight",{},!0)),this.btnSize.fromData(CDataClass.getData(t,"btnSize",{},!0)),this.lLTop.fromData(CDataClass.getData(t,"lLTop",{},!0)),this.lClient.fromData(CDataClass.getData(t,"lClient",{},!0)),this.lBTop.fromData(CDataClass.getData(t,"lBTop",{},!0)),this.list.fromData(CDataClass.getData(t,"list",{},!0)),this.btnAddProperty.fromData(CDataClass.getData(t,"btnAddProperty",{},!0)),this.controlResizer.fromData(CDataClass.getData(t,"controlResizer",{},!0)),this.lBTopTime.fromData(CDataClass.getData(t,"lBTopTime",{},!0)),this.edtTimeFrom.fromData(CDataClass.getData(t,"edtTimeFrom",{},!0)),this.edtTimeTo.fromData(CDataClass.getData(t,"edtTimeTo",{},!0)),this.btnTimeApply.fromData(CDataClass.getData(t,"btnTimeApply",{},!0)),this.btnTimeLeft.fromData(CDataClass.getData(t,"btnTimeLeft",{},!0)),this.btnTimeRight.fromData(CDataClass.getData(t,"btnTimeRight",{},!0)),this.edtTime.fromData(CDataClass.getData(t,"edtTime",{},!0)),this.scrollTime.fromData(CDataClass.getData(t,"scrollTime",{},!0)),this.timeline.fromData(CDataClass.getData(t,"timeline",{},!0)),this.btnPropertyUp.fromData(CDataClass.getData(t,"btnPropertyUp",{},!0)),this.btnPropertyDown.fromData(CDataClass.getData(t,"btnPropertyDown",{},!0)),this.btnDeleteProperty.fromData(CDataClass.getData(t,"btnDeleteProperty",{},!0)),this.btnApply.fromData(CDataClass.getData(t,"btnApply",{},!0)),this.btnStart.fromData(CDataClass.getData(t,"btnStart",{},!0)),this.btnAnimationSpeedGraph.fromData(CDataClass.getData(t,"btnAnimationSpeedGraph",{},!0)),this.edtDuration.fromData(CDataClass.getData(t,"edtDuration",{},!0)),this.lblDuration.fromData(CDataClass.getData(t,"lblDuration",{},!0)),this.lCBottom.fromData(CDataClass.getData(t,"lCBottom",{},!0)),this.btnGraphEdit.fromData(CDataClass.getData(t,"btnGraphEdit",{},!0)),this.btnPositionEdit.fromData(CDataClass.getData(t,"btnPositionEdit",{},!0)),this.lBTop2.fromData(CDataClass.getData(t,"lBTop2",{},!0)),this.lblTag.fromData(CDataClass.getData(t,"lblTag",{},!0)),this.btnTagAdd.fromData(CDataClass.getData(t,"btnTagAdd",{},!0)),this.btnTagDelete.fromData(CDataClass.getData(t,"btnTagDelete",{},!0)),this.lblObject.fromData(CDataClass.getData(t,"lblObject",{},!0)),this.btnObjectDataAdd.fromData(CDataClass.getData(t,"btnObjectDataAdd",{},!0)),this.btnObjectDataDelete.fromData(CDataClass.getData(t,"btnObjectDataDelete",{},!0)),this.btnObjectCopy.fromData(CDataClass.getData(t,"btnObjectCopy",{},!0)),this.btnObjectPaste.fromData(CDataClass.getData(t,"btnObjectPaste",{},!0)),this.btnObjectTransformer.fromData(CDataClass.getData(t,"btnObjectTransformer",{},!0)),this.pathEditor.fromData(CDataClass.getData(t,"pathEditor",{},!0)),this.pathEditorToolbar.fromData(CDataClass.getData(t,"pathEditorToolbar",{},!0)),this.btnNone.fromData(CDataClass.getData(t,"btnNone",{},!0)),this.btnMoveTo.fromData(CDataClass.getData(t,"btnMoveTo",{},!0)),this.btnLineTo.fromData(CDataClass.getData(t,"btnLineTo",{},!0)),this.btnCurveTo.fromData(CDataClass.getData(t,"btnCurveTo",{},!0)),this.btnApplyPosition.fromData(CDataClass.getData(t,"btnApplyPosition",{},!0)),this.btnToolbarClose.fromData(CDataClass.getData(t,"btnToolbarClose",{},!0)),this.properties.fromData(CDataClass.getData(t,"properties",{},!0)),this.lTimelineScriptTop.fromData(CDataClass.getData(t,"lTimelineScriptTop",{},!0)),this.btnTimelineScriptApply.fromData(CDataClass.getData(t,"btnTimelineScriptApply",{},!0)),this.txtTimelineScript.fromData(CDataClass.getData(t,"txtTimelineScript",{},!0)),this.objectsTool.position.fromData(CDataClass.getData(t,"objectsToolPosition",{},!0)),this.propertyTool.position.fromData(CDataClass.getData(t,"propertyToolPosition",{},!0)),this.timeAnimationTool.position.fromData(CDataClass.getData(t,"timeAnimationToolPosition",{},!0)),this.timelineScriptTool.position.fromData(CDataClass.getData(t,"timelineScriptToolPosition",{},!0)),this.properties.tabButtons.visible=!1}doRemove(){this.frmGraph.remove(),this.objectsTool.remove(),this.propertyTool.remove(),this.timeAnimationTool.remove(),this.timelineScriptTool.remove(),this.startData.remove(),super.doRemove()}doSetAnimation(){}doAnimationSpeedGraphEdit(){let t=this,e=new CTimeSpeedGraphEditor(CSystem.desktopList.get(0).applicationLayer);e.showCenter(860,550,"시간 속도 편집기","remove"),e.editor.btnApply.onClick=async function(){let o=await e.editor.getGraphData();"string"==typeof o?CSystem.showMessage("에러",o):(t.con.sceneData.speedGraphData=o,t.con.sceneData.speedStartValue=parseFloat(e.editor.edtStartSpeed.text),t.con.sceneData.speedStopValue=parseFloat(e.editor.edtStopSpeed.text))}}doSetStart(){this.doSetTime(0)}doSetTime(t){let e=this.getSceneAnimation();e.doBeforeStart(),e.moveTime(t),e.remove()}async doSetSectionPosition(){let t=await this.getPathData();if("string"==typeof t)CSystem.showMessage("에러",t);else{let e=this.getSelectedSection();if(null==e)CSystem.showMessage("경고","구간 애니메이션을 선택하세요.");else{e.positionPath.fromData(this.pathEditor.pathPointList.toData()),e.positionPath.movePoint(-(this.controlResizer.position.left+10),-(this.controlResizer.position.top+20));for(let e=0;e<t.points.length;e++)t.points[e].x-=this.controlResizer.position.left+10,t.points[e].y-=this.controlResizer.position.top+20;e.positionPoints=t.points,this.refreshGrid()}}}doAddSection(){if(this.list.selectItems.length>0){let t=this;CSystem.prompt("애니메이션 구간 설정",["프로퍼티명","시작타임(ms)","애니메이션 시간","그래프명","시작값","종료값","반복여부"],CSystem.browserCovers.get("cover"),function(e){let o=new CAnimationControlSceneSection;o.control=t.list.selectItems[0].value.asObject.control,o.controlName=t.list.selectItems[0].value.asObject.text,""==e[0]?o.property="없음":o.property=e[0],o.startTime=parseInt(e[1]),o.duration=parseInt(e[2]),o.graphData=e[3],o.startValue=parseFloat(e[4]),o.stopValue=parseFloat(e[5]),o.isLoop="Y"==e[6].toUpperCase(),t.con.sceneData.sections.add(o),t.refreshGrid()},["","0","200","line_10000.graph","0","0","N"],400)}}doDeleteSection(){if(-1!=this.timeline.row){for(let t=0;t<this.con.sceneData.sections.length;t++)if(this.con.sceneData.sections.get(t).control==this.timeline.cell(9,this.timeline.row)&&this.con.sceneData.sections.get(t).property==this.timeline.cell(1,this.timeline.row)){this.con.sceneData.sections.delete(t);break}this.refreshGrid()}}doTimeLineKeyDown(t){if(t.ctrlKey&&"C"==t.key.toUpperCase()&&5==this.timeline.column){let t={positionPoints:JSON.stringify(this.con.sceneData.sections.get(this.timeline.row).positionPoints),positionPath:this.con.sceneData.sections.get(this.timeline.row).positionPath.toData(),graphData:this.con.sceneData.sections.get(this.timeline.row).graphDataCopy(),graphPath:this.con.sceneData.sections.get(this.timeline.row).graphPath.toData(),tags:this.con.sceneData.sections.get(this.timeline.row).timeTagCopy()};CSystem.copyData=t}t.ctrlKey&&"V"==t.key.toUpperCase()&&5==this.timeline.column&&(this.con.sceneData.sections.get(this.timeline.row).positionPoints=JSON.parse(CSystem.copyData.positionPoints),this.con.sceneData.sections.get(this.timeline.row).positionPath.fromData(CSystem.copyData.positionPath),this.con.sceneData.sections.get(this.timeline.row).graphDataFromData(CSystem.copyData.graphData),this.con.sceneData.sections.get(this.timeline.row).graphPath.fromData(CSystem.copyData.graphPath),this.con.sceneData.sections.get(this.timeline.row).timeTagFromData(CSystem.copyData.tags),this.refreshGrid())}async doGraphEditorShow(t=!1){this.frmGraph.showCenter(860,550,"그래프 편집기","hide"),this.fraGraph.tagItem.pathData.clear();let e=this.getSelectedSection();if(null!=e&&(null!=this.fraGraph.pathData&&this.fraGraph.pathData.fromData(e.graphPath.toData()),t)){for(let t=0;t<e.timeTag.length;t++){let o=CCalc.crRange2Value(e.startTime,e.startTime+e.duration,e.timeTag[t].duration,0,this.fraGraph.pathGraphic.position.width),a=CCalc.crRange2Value(e.startTime,e.startTime+e.duration,e.timeTag[t].duration,0,this.fraGraph.pathGraphic.position.height);this.fraGraph.tagItem.pathData.addPointMoveTo(new CPoint(o,0)),this.fraGraph.tagItem.pathData.addPointLineTo(new CPoint(o,this.fraGraph.pathGraphic.position.height)),this.fraGraph.tagItem.pathData.addPointMoveTo(new CPoint(0,this.fraGraph.pathGraphic.position.height-a)),this.fraGraph.tagItem.pathData.addPointLineTo(new CPoint(this.fraGraph.pathGraphic.position.width,this.fraGraph.pathGraphic.position.height-a))}this.fraGraph.pathGraphic.draw()}}doPositionEdit(){if(this.pathEditor.visible)this.pathEditor.visible=!1;else{this.pathEditor.visible=!0,this.pathEditor.bringToFront(),this.pathEditor.pathPointList=this.pathEditor.layers.get(0).items.get(1).pathData,this.pathEditor.pathPointList.clear();let t=this.getSelectedSection();null!=t&&t.positionPoints.length>0&&null!=this.pathEditor.pathPointList&&(this.pathEditor.pathPointList.fromData(t.positionPath.toData()),this.pathEditor.pathPointList.movePoint(this.controlResizer.position.left+10,this.controlResizer.position.top+20)),this.pathEditor.refresh()}}doChangeTimeLineItem(t,e){let o=this.getSelectedSection();null!=o&&(this.pathEditor.visible=!0,this.pathEditor.bringToFront(),this.pathEditor.pathPointList=this.pathEditor.layers.get(0).items.get(1).pathData,this.pathEditor.pathPointList.clear(),this.pathEditor.pathPointList.fromData(o.positionPath.toData()),this.pathEditor.pathPointList.movePoint(this.controlResizer.position.left+10,this.controlResizer.position.top+20),this.pathEditor.refresh(),this.showObjectPanel(),this.txtTimelineScript.text=o.script)}doSelectItem(){this.list.selectItems.length>0&&(this.properties.clear(),this.properties.addInstance(this.list.selectItems[0].value.asObject.control))}doShowTransformer(){if(null!=this.objectPanel){let t=this.properties.propertyEditors.get(0).classInstance;this.transformer.parent=this.lClient,this.transformer.visible=!0,this.transformer.toolbar.position.align=EPositionAlign.BOTTOM,this.transformer.toolbar.position.margins.all=0,this.transformer.bringToFront(),this.transformer.setControl(t)}}doTransform(){if(this.list.selectItems.length>0){let t=this.list.selectItems[0].value.asObject.control;t.orgPathdataSet(),t.orgPosition.fromData(t.position.toData())}}doTimeLineEdit(t,e,o,a){for(let e=0;e<this.con.sceneData.sections.length;e++)if(this.con.sceneData.sections.get(e).control==this.timeline.cell(9,this.timeline.row)&&this.con.sceneData.sections.get(e).property==o){1==t&&(this.con.sceneData.sections.get(e).property=a),2==t&&(this.con.sceneData.sections.get(e).startTime=parseInt(a)),3==t&&(this.con.sceneData.sections.get(e).duration=parseInt(a)),4==t&&(this.con.sceneData.sections.get(e).graphData=a),6==t&&(this.con.sceneData.sections.get(e).startValue=parseFloat(a)),7==t&&(this.con.sceneData.sections.get(e).stopValue=parseFloat(a)),8==t&&(this.con.sceneData.sections.get(e).isLoop="Y"==a.toUpperCase());break}this.refreshGrid()}doScene(){this.doSetStart();let t=this.getSceneAnimation();t.onFinish=function(){t.remove()},t.start()}doAddTag(){let t=this.getSelectedSection();if(null!=t){let e=t,o=this;CSystem.prompt("타임태그 추가",["태그명","색상","시간"],CSystem.browserCovers.get("cover"),function(t){e.timeTag.push({tagName:t[0],tagColor:t[1],duration:parseInt(t[2])})},["tag","rgba(255,255,0,1)",o.edtTime.text])}}doTagDelete(){let t=this.getSelectedSection();null!=t&&(t.timeTag=[])}doObjectAdd(){let t=parseInt(this.edtTime.text),e=this.getSelectedSection();if(null!=e&&t>=e.startTime&&t<=e.startTime+e.duration&&null!=e.control){null==this.objectPanel&&this.showObjectPanel();let o=CCalc.crRange2Value(e.startTime,e.startTime+e.duration,t,0,1),a=this.startData.getObject(e.control.propertyName).copyTo();if(null!=a){a.parent=this.objectPanel,a.position.left+=this.controlResizer.position.left+10,a.position.top+=this.controlResizer.position.top+20,a.sectionT=o,a.centerX=e.control.position.left+e.control.transform.rotationPointX*e.control.position.width,a.centerY=e.control.position.top+e.control.transform.rotationPointY*e.control.position.height;let t=this;t.properties.clear(),t.properties.addInstance(a),a.onClick=function(){if(t.properties.clear(),t.properties.addInstance(a),null!=a){let e=a.centerX+t.controlResizer.position.left+10,o=a.centerY+t.controlResizer.position.top+20;a.position.left=e-a.transform.rotationPointX*a.position.width,a.position.top=o-a.transform.rotationPointY*a.position.height}},a.onDoubleClick=function(){null!=t.objectPanel&&t.objectPanel.setSection()}}}else alert("에러")}doObjectCopy(){if(this.properties.propertyEditors.get(0).classInstance instanceof CAnimationControl){let t=this.properties.propertyEditors.get(0).classInstance;null!=this.copyObject&&this.copyObject.remove(),this.copyObject=t.copyTo()}}doObjectPaste(){if(null!=this.copyObject){let t=parseInt(this.edtTime.text),e=this.getSelectedSection();if(null!=e&&t>=e.startTime&&t<=e.startTime+e.duration&&null!=e.control){null==this.objectPanel&&this.showObjectPanel();let o=CCalc.crRange2Value(e.startTime,e.startTime+e.duration,t,0,1),a=this.copyObject.copyTo();if(null!=a){a.parent=this.objectPanel,a.position.left+=this.controlResizer.position.left+10,a.position.top+=this.controlResizer.position.top+20,a.sectionT=o,a.centerX=e.control.position.left+e.control.transform.rotationPointX*e.control.position.width,a.centerY=e.control.position.top+e.control.transform.rotationPointY*e.control.position.height;let t=this;t.properties.clear(),t.properties.addInstance(a),a.onClick=function(){if(t.properties.clear(),t.properties.addInstance(a),null!=a){let e=a.centerX+t.controlResizer.position.left+10,o=a.centerY+t.controlResizer.position.top+20;a.position.left=e-a.transform.rotationPointX*a.position.width,a.position.top=o-a.transform.rotationPointY*a.position.height}},a.onDoubleClick=function(){null!=t.objectPanel&&t.objectPanel.setSection()}}}else alert("에러")}}doObjectDelete(){let t=this.properties.propertyEditors.get(0).classInstance;if(null!=t&&null!=this.objectPanel){let e=CSystem.getChildControls(this.objectPanel);for(let o=0;o<e.length;o++)e[o]instanceof CAnimationControl&&e[o]==t&&(e[o].remove(),this.properties.clear())}}doPropertyUp(){if(this.timeline.row>0){let t=this.timeline.row;this.con.sceneData.sections.swap(this.timeline.row,this.timeline.row-1),this.refreshGrid(),this.timeline.row=t-1}}doPropertyDown(){if(-1!=this.timeline.row&&this.timeline.row<this.timeline.length-1){let t=this.timeline.row;this.con.sceneData.sections.swap(this.timeline.row,this.timeline.row+1),this.refreshGrid(),this.timeline.row=t+1}}refresh(){this.list.clear(),function t(e,o){let a=o.addItem({text:e.propertyName,control:e});for(let o=0;o<e.objects.length;o++)t(e.objects.get(o),a.items)}(this.con,this.list.items),this.list.items.expandAll()}refreshGrid(){this.timeline.clear();for(let t=0;t<this.con.sceneData.sections.length;t++){let e=this.con.sceneData.sections.get(t),o="없음",a=this.con.sceneData.sections.get(t).graphData,i="";i="string"==typeof a?a:a.length+"";let n="N";this.con.sceneData.sections.get(t).isLoop&&(n="Y"),e.positionPoints.length>0&&(o="있음("+e.positionPoints.length+")"),this.timeline.add([this.con.sceneData.sections.get(t).controlName+"("+this.con.sceneData.sections.get(t).objectData.length+")",this.con.sceneData.sections.get(t).property,this.con.sceneData.sections.get(t).startTime,this.con.sceneData.sections.get(t).duration,i,o,this.con.sceneData.sections.get(t).startValue,this.con.sceneData.sections.get(t).stopValue,n,this.con.sceneData.sections.get(t).control])}}getSceneAnimation(){let t=new CSceneAnimator;return t.duration=parseInt(this.edtDuration.text),t.animationControl=this.con,t.timeSpeedGraphData=this.con.sceneData.speedGraphData,t.startTimeSpeed=this.con.sceneData.speedStartValue,t.stopTimeSpeed=this.con.sceneData.speedStopValue,t}scene(){this.doScene()}getSelectedSection(){for(let t=0;t<this.con.sceneData.sections.length;t++)if(this.con.sceneData.sections.get(t).control==this.timeline.cell(9,this.timeline.row)&&this.con.sceneData.sections.get(t).property==this.timeline.cell(1,this.timeline.row))return this.con.sceneData.sections.get(t)}loopObjects(t){if(this.list.selectItems.length>0){!function e(o){t(o);for(let t=0;t<o.objects.length;t++)e(o.objects.get(t))}(this.list.selectItems[0].value.asObject.control)}}getPathData(){return new Promise(function(t){})}getNearData(t){return new Promise(function(t){})}showObjectPanel(){let t=this.getSelectedSection();if(null!=t){null!=this.objectPanel&&this.objectPanel.remove();let e=new CObjectPanel(this.lClient);e.editor=this,e.setObjects(t),e.bringToFront(),this.objectPanel=e}}}class CAnimationControlSceneEditor extends CAnimationControlSceneEditorModel{constructor(t,e){super(t,e),this.resource="sceneEditor.frame"}}class CAppLayersSceneEditor extends CWindowApplication{constructor(){super(),this.defaultWidth=616,this.defaultHeight=539,this.appName="애니메이션 컨트롤 씬 편집기",this.editor=new CAnimationControlSceneEditor(this.mainWindow.body),this.editor.position.align=EPositionAlign.CLIENT}}class CSceneExampleFrame extends CPanel{constructor(t,e){super(t,e),this.lTop=new CPanel(this),this.btnPlay=new CButton(this.lTop),this.lClient=new CPanel(this),this.con=new CAnimationControl(this.lClient);let o=this;this.btnPlay.onClick=function(){o.doPlay()};let a=CSystem.resources.get("합친.scene");this.con.fromData(a.control),this.con.position.align=EPositionAlign.CLIENT,this.startPosition()}doToData(t){super.doToData(t),CDataClass.putData(t,"lTop",this.lTop.toData(),{},!0),CDataClass.putData(t,"btnPlay",this.btnPlay.toData(),{},!0),CDataClass.putData(t,"lClient",this.lClient.toData(),{},!0)}doFromData(t){super.doFromData(t),this.lTop.fromData(CDataClass.getData(t,"lTop",{},!0)),this.btnPlay.fromData(CDataClass.getData(t,"btnPlay",{},!0)),this.lClient.fromData(CDataClass.getData(t,"lClient",{},!0))}doPlay(){this.btnPlay.enabled=!1,this.startPosition();let t=this.con.getSceneAnimation(),e=this;t.onFinish=function(){e.btnPlay.enabled=!0,t.remove()},t.start()}startPosition(){let t=this.con.getSceneAnimation();t.doBeforeStart(),t.moveTime(0),t.remove()}}class CSceneExample extends CWindowApplication{constructor(){super(),this.defaultWidth=516,this.defaultHeight=566,this.appName="애니메이션 컨트롤 예제",this.editor=new CSceneExampleFrame(this.mainWindow.body),this.editor.resource="sceneExample.frame",this.editor.position.align=EPositionAlign.CLIENT}}
+"use strict";
+class CSceneAnimation extends CResourceClass {
+    constructor() {
+        super(...arguments);
+        this.__startTime = 0;
+        this._timeSections = new CList();
+        this.time = new CTime();
+        this.duration = 1000;
+        this.startTimeSpeed = 1;
+        this.stopTimeSpeed = 1;
+    }
+    get timeSections() {
+        return this._timeSections;
+    }
+    doRemove() {
+        this._timeSections.clear();
+        this.time.remove();
+        super.doRemove();
+    }
+    doTick(sectionName, preTime, time, value, graphValue) {
+        if (this.onTick != undefined) {
+            this.onTick(this, sectionName, preTime, time, value, graphValue);
+        }
+    }
+    doBeforeStart() {
+        if (this.onBeforeStart != undefined) {
+            this.onBeforeStart(this);
+        }
+    }
+    doFinish() {
+        if (this.onFinish != undefined) {
+            this.onFinish(this);
+        }
+    }
+    doStart() {
+        let self = this;
+        let nw = CTime.now;
+        this.time.time = nw;
+        this.time.clearTimeSection();
+        for (let n = 0; n < this._timeSections.length; n++) {
+            let ts = new CTimeSection(this.time);
+            let v = this._timeSections.get(n).graphNameOrData;
+            if (typeof v == "string") {
+                let arr = CSystem.resources.get(v);
+                ts["values"] = arr;
+            }
+            else {
+                ts["values"] = v;
+            }
+            ts.startTime = nw + this._timeSections.get(n).startTime;
+            ts.stopTime = nw + this._timeSections.get(n).startTime + this._timeSections.get(n).duration;
+            ts.isLoop = this._timeSections.get(n).isLoop;
+            let name = this._timeSections.get(n).sectionName;
+            ts.onTick = function (s, pre, t, v) {
+                if (t != undefined) {
+                    let gv = ts["values"][Math.round(CCalc.cr(ts["values"].length - 1, 0, 1, v, 2))];
+                    self.doTick(name, pre, t, v, gv);
+                }
+            };
+        }
+        let isFinish = false;
+        this.time.onChangeTime = function () {
+            if (this.time > self.__startTime + self.duration) {
+                if (isFinish) {
+                    CTime.times.delete(self.time);
+                    self.doFinish();
+                }
+                else {
+                    isFinish = true;
+                }
+            }
+            if (self.timeSpeedGraphData != undefined) {
+                let t = CCalc.crRange2Value(self.__startTime, self.__startTime + self.duration, self.time.time, 0, self.timeSpeedGraphData.length - 1);
+                let rt = Math.round(t);
+                if (rt > self.timeSpeedGraphData.length - 1) {
+                    t = self.timeSpeedGraphData.length - 1;
+                }
+                else {
+                    t = rt;
+                }
+                self.time.speed = self.startTimeSpeed + ((self.stopTimeSpeed - self.startTimeSpeed) * self.timeSpeedGraphData[t]);
+            }
+        };
+        this.__startTime = nw;
+        CTime.times.add(CSequence.getSequence("tempAnimation"), this.time);
+    }
+    start() {
+        this.doBeforeStart();
+        this.doStart();
+    }
+    addSection(sectionName, graphNameOrData, startTime, duration, isLoop = false) {
+        this._timeSections.add({ sectionName: sectionName, graphNameOrData: graphNameOrData, startTime: startTime, duration: duration, isLoop: isLoop });
+    }
+    moveTime(duration) {
+        let self = this;
+        let nw = CTime.now;
+        this.time.time = nw;
+        this.time.clearTimeSection();
+        for (let n = 0; n < this._timeSections.length; n++) {
+            let ts = new CTimeSection(this.time);
+            let v = this._timeSections.get(n).graphNameOrData;
+            if (typeof v == "string") {
+                let arr = CSystem.resources.get(v);
+                ts["values"] = arr;
+            }
+            else {
+                ts["values"] = v;
+            }
+            ts.startTime = nw + this._timeSections.get(n).startTime;
+            ts.stopTime = nw + this._timeSections.get(n).startTime + this._timeSections.get(n).duration;
+            let name = this._timeSections.get(n).sectionName;
+            ts.onTick = function (s, pre, t, v) {
+                if (t != undefined) {
+                    self.doTick(name, pre, t, v, ts["values"][Math.round(CCalc.cr(ts["values"].length - 1, 0, 1, v, 2))]);
+                }
+            };
+        }
+        for (let n = 0; n < this.time.timeSections.length; n++) {
+            let ts = this.time.timeSections[n];
+            let now = nw + duration;
+            if (ts.startTime <= now && ts.stopTime > now) {
+                ts.doTick(now - 1, now, CCalc.crRange2Value(ts.startTime, ts.stopTime, now, 0, 1));
+            }
+            else if (ts.startTime > now) {
+                ts.doTick(now - 1, now, 0);
+            }
+            else {
+                ts.doTick(now - 1, now, 1);
+            }
+        }
+    }
+}
+class CSceneAnimator extends CSceneAnimation {
+    constructor() {
+        super(...arguments);
+        this.__sections = new Map();
+    }
+    doRemove() {
+        this.__sections.clear();
+        this.animationControl = undefined;
+        super.doRemove();
+    }
+    doBeforeStart() {
+        if (this.animationControl != undefined) {
+            this.timeSections.clear();
+            this.__sections.clear();
+            let sd = this.animationControl.sceneData;
+            for (let n = 0; n < sd.sections.length; n++) {
+                sd.sections.get(n).control = this.animationControl.getObject(sd.sections.get(n).controlName);
+                delete sd.sections.get(n)["__lastSet"];
+                this.addSection(sd.sections.get(n).controlName + "." + sd.sections.get(n).property + n, sd.sections.get(n).graphData, sd.sections.get(n).startTime, sd.sections.get(n).duration, sd.sections.get(n).isLoop);
+                this.__sections.set(sd.sections.get(n).controlName + "." + sd.sections.get(n).property + n, sd.sections.get(n));
+            }
+        }
+        super.doBeforeStart();
+    }
+    doTick(sectionName, preTime, time, value, graphValue) {
+        if (this.animationControl != undefined) {
+            let info = this.__sections.get(sectionName);
+            if (info != undefined) {
+                this.setObjects(sectionName, time - this.__startTime, graphValue, info);
+            }
+        }
+        super.doTick(sectionName, preTime, time, value, graphValue);
+    }
+    setObjects(sectionName, wt, graphValue, info) {
+        if (info.control != undefined) {
+            if (info.property.indexOf("script") >= 0) {
+                let fn = new Function("sectionName", "workingTime", "graphValue", "info", "control", info.script);
+                fn(sectionName, wt, graphValue, info, info.control);
+            }
+            else {
+                if (typeof info.startValue == "number" && typeof info.stopValue == "number") {
+                    (new Function("c", "c." + info.property + " = " + CCalc.crRange2Value(0, 1, graphValue, info.startValue, info.stopValue)))(info.control);
+                }
+                else if (info.startValue instanceof CPoint && info.stopValue instanceof CPoint) {
+                    (new Function("c", `c.` + info.property + `.x = ` + CCalc.crRange2Value(0, 1, graphValue, info.startValue.x, info.stopValue.x) + `;` +
+                        `c.` + info.property + `.y = ` + CCalc.crRange2Value(0, 1, graphValue, info.startValue.y, info.stopValue.y) + `;`))(info.control);
+                }
+                else if (info.startValue instanceof CRect && info.stopValue instanceof CRect) {
+                    (new Function("c", `c.` + info.property + `.left = ` + CCalc.crRange2Value(0, 1, graphValue, info.startValue.left, info.stopValue.left) + `;` +
+                        `c.` + info.property + `.top = ` + CCalc.crRange2Value(0, 1, graphValue, info.startValue.top, info.stopValue.top) + `;` +
+                        `c.` + info.property + `.right = ` + CCalc.crRange2Value(0, 1, graphValue, info.startValue.right, info.stopValue.right) + `;` +
+                        `c.` + info.property + `.bottom = ` + CCalc.crRange2Value(0, 1, graphValue, info.startValue.bottom, info.stopValue.bottom) + `;`))(info.control);
+                }
+                else if (info.startValue instanceof CNotifyPoint && info.stopValue instanceof CNotifyPoint) {
+                    (new Function("c", `c.` + info.property + `.x = ` + CCalc.crRange2Value(0, 1, graphValue, info.startValue.x, info.stopValue.x) + `;` +
+                        `c.` + info.property + `.y = ` + CCalc.crRange2Value(0, 1, graphValue, info.startValue.y, info.stopValue.y) + `;`))(info.control);
+                }
+                else if (info.startValue instanceof CNotifyRect && info.stopValue instanceof CNotifyRect) {
+                    (new Function("c", `c.` + info.property + `.left = ` + CCalc.crRange2Value(0, 1, graphValue, info.startValue.left, info.stopValue.left) + `;` +
+                        `c.` + info.property + `.top = ` + CCalc.crRange2Value(0, 1, graphValue, info.startValue.top, info.stopValue.top) + `;` +
+                        `c.` + info.property + `.right = ` + CCalc.crRange2Value(0, 1, graphValue, info.startValue.right, info.stopValue.right) + `;` +
+                        `c.` + info.property + `.bottom = ` + CCalc.crRange2Value(0, 1, graphValue, info.startValue.bottom, info.stopValue.bottom) + `;`))(info.control);
+                }
+                else if (info.startValue instanceof CColorInfo && info.stopValue instanceof CColorInfo) {
+                    let col = "rgba(" + CCalc.crRange2Value(0, 1, graphValue, info.startValue.r, info.stopValue.r) + "," +
+                        CCalc.crRange2Value(0, 1, graphValue, info.startValue.g, info.stopValue.g) + "," +
+                        CCalc.crRange2Value(0, 1, graphValue, info.startValue.b, info.stopValue.b) + "," +
+                        CCalc.crRange2Value(0, 1, graphValue, info.startValue.a, info.stopValue.a) + ")";
+                    (new Function("c", `c.` + info.property + ` = "` + col + `";`))(info.control);
+                }
+                if (info.objectData.length > 0) {
+                    if (info.objectData.get(info.objectData.length - 1).sectionT < graphValue && info["__lastSet"] == undefined) {
+                        console.log("last set");
+                        info.control.opacity = info.objectData.get(info.objectData.length - 1).info.opacity;
+                        if (info.positionPoints.length == 0) {
+                            info.control.position.left = info.objectData.get(info.objectData.length - 1).info.position.left;
+                            info.control.position.top = info.objectData.get(info.objectData.length - 1).info.position.top;
+                        }
+                        info.control.position.width = info.objectData.get(info.objectData.length - 1).info.position.width;
+                        info.control.position.height = info.objectData.get(info.objectData.length - 1).info.position.height;
+                        info.control.transform.rotateX = info.objectData.get(info.objectData.length - 1).info.transform.rotateX;
+                        info.control.transform.rotateY = info.objectData.get(info.objectData.length - 1).info.transform.rotateY;
+                        info.control.transform.rotateZ = info.objectData.get(info.objectData.length - 1).info.transform.rotateZ;
+                        info.control.transform.translateX = info.objectData.get(info.objectData.length - 1).info.transform.translateX;
+                        info.control.transform.translateY = info.objectData.get(info.objectData.length - 1).info.transform.translateY;
+                        info.control.transform.translateZ = info.objectData.get(info.objectData.length - 1).info.transform.translateZ;
+                        info.control.transform.scaleX = info.objectData.get(info.objectData.length - 1).info.transform.scaleX;
+                        info.control.transform.scaleY = info.objectData.get(info.objectData.length - 1).info.transform.scaleY;
+                        info.control.transform.scaleZ = info.objectData.get(info.objectData.length - 1).info.transform.scaleZ;
+                        info.control.transform.rotationPointX = info.objectData.get(info.objectData.length - 1).info.transform.rotationPointX;
+                        info.control.transform.rotationPointY = info.objectData.get(info.objectData.length - 1).info.transform.rotationPointY;
+                        info.control.transform.rotationPointZ = info.objectData.get(info.objectData.length - 1).info.transform.rotationPointZ;
+                        info.control.filter.blurValue = info.objectData.get(info.objectData.length - 1).info.filter.blurValue;
+                        info.control.filter.brightnessValue = info.objectData.get(info.objectData.length - 1).info.filter.brightnessValue;
+                        info.control.filter.constrastValue = info.objectData.get(info.objectData.length - 1).info.filter.constrastValue;
+                        info.control.filter.grayscaleValue = info.objectData.get(info.objectData.length - 1).info.filter.grayscaleValue;
+                        info.control.filter.hueRotateValue = info.objectData.get(info.objectData.length - 1).info.filter.hueRotateValue;
+                        info.control.filter.invertValue = info.objectData.get(info.objectData.length - 1).info.filter.invertValue;
+                        info.control.filter.opacityValue = info.objectData.get(info.objectData.length - 1).info.filter.opacityValue;
+                        info.control.filter.shadowBlur = info.objectData.get(info.objectData.length - 1).info.filter.shadowBlur;
+                        if (info.control.filter.filterSet.shadow) {
+                            info.control.filter.shadowColor = info.objectData.get(info.objectData.length - 1).info.filter.shadowColor;
+                        }
+                        info.control.filter.shadowX = info.objectData.get(info.objectData.length - 1).info.filter.shadowX;
+                        info.control.filter.shadowY = info.objectData.get(info.objectData.length - 1).info.filter.shadowY;
+                        CCanvasLayers.setLayersMiddlePathData(info.objectData.get(info.objectData.length - 1).info.layers, info.objectData.get(info.objectData.length - 1).info.layers, info.control.layers, 1);
+                        info["__lastSet"] = true;
+                    }
+                    else {
+                        let s = 0;
+                        let objectIdx = -1;
+                        if (graphValue > 0) {
+                            for (let n = 0; n < info.objectData.length; n++) {
+                                if (s < graphValue && graphValue <= info.objectData.get(n).sectionT) {
+                                    objectIdx = n;
+                                    break;
+                                }
+                                s = info.objectData.get(n).sectionT;
+                            }
+                        }
+                        let objst;
+                        let objed;
+                        if (objectIdx != -1) {
+                            objed = info.objectData.get(objectIdx);
+                            if (objectIdx > 0) {
+                                objst = info.objectData.get(objectIdx - 1);
+                            }
+                        }
+                        if (objst == undefined) {
+                            objst = info.objectData.get(0);
+                            objst.sectionT = 0;
+                        }
+                        if (objed != undefined) {
+                            info.control.opacity = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.opacity, objed.info.opacity);
+                            if (info.positionPoints.length == 0) {
+                                info.control.position.left = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.position.left, objed.info.position.left);
+                                info.control.position.top = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.position.top, objed.info.position.top);
+                            }
+                            info.control.position.width = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.position.width, objed.info.position.width);
+                            info.control.position.height = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.position.height, objed.info.position.height);
+                            info.control.transform.rotateX = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.rotateX, objed.info.transform.rotateX);
+                            info.control.transform.rotateY = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.rotateY, objed.info.transform.rotateY);
+                            info.control.transform.rotateZ = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.rotateZ, objed.info.transform.rotateZ);
+                            info.control.transform.translateX = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.translateX, objed.info.transform.translateX);
+                            info.control.transform.translateY = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.translateY, objed.info.transform.translateY);
+                            info.control.transform.translateZ = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.translateZ, objed.info.transform.translateZ);
+                            info.control.transform.scaleX = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.scaleX, objed.info.transform.scaleX);
+                            info.control.transform.scaleY = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.scaleY, objed.info.transform.scaleY);
+                            info.control.transform.scaleZ = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.scaleZ, objed.info.transform.scaleZ);
+                            info.control.transform.rotationPointX = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.rotationPointX, objed.info.transform.rotationPointX);
+                            info.control.transform.rotationPointY = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.rotationPointY, objed.info.transform.rotationPointY);
+                            info.control.transform.rotationPointZ = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.rotationPointZ, objed.info.transform.rotationPointZ);
+                            info.control.filter.blurValue = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.filter.blurValue, objed.info.filter.blurValue);
+                            info.control.filter.brightnessValue = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.filter.brightnessValue, objed.info.filter.brightnessValue);
+                            info.control.filter.constrastValue = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.filter.constrastValue, objed.info.filter.constrastValue);
+                            info.control.filter.grayscaleValue = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.filter.grayscaleValue, objed.info.filter.grayscaleValue);
+                            info.control.filter.hueRotateValue = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.filter.hueRotateValue, objed.info.filter.hueRotateValue);
+                            info.control.filter.invertValue = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.filter.invertValue, objed.info.filter.invertValue);
+                            info.control.filter.opacityValue = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.filter.opacityValue, objed.info.filter.opacityValue);
+                            info.control.filter.shadowBlur = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.filter.shadowBlur, objed.info.filter.shadowBlur);
+                            if (info.control.filter.filterSet.shadow) {
+                                let col1 = new CColor(objst.info.filter.shadowColor);
+                                let col2 = new CColor(objed.info.filter.shadowColor);
+                                let r = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, col1.r, col2.r);
+                                let g = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, col1.g, col2.g);
+                                let b = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, col1.b, col2.b);
+                                let a = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, col1.a, col2.a);
+                                info.control.filter.shadowColor = "rgba(" + r + "," + g + "," + b + "," + a + ")";
+                            }
+                            info.control.filter.shadowX = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.filter.shadowX, objed.info.filter.shadowX);
+                            info.control.filter.shadowY = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.filter.shadowY, objed.info.filter.shadowY);
+                            CCanvasLayers.setLayersMiddlePathData(objst.info.layers, objed.info.layers, info.control.layers, CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, 0, 1));
+                        }
+                    }
+                }
+                if (info.positionPoints.length > 0) {
+                    let idx = Math.round(CCalc.crRange2Value(0, 1, graphValue, 0, info.positionPoints.length - 1));
+                    let pt = info.positionPoints[idx];
+                    info.control.position.left = pt.x - (info.control.transform.rotationPointX * info.control.position.width);
+                    info.control.position.top = pt.y - (info.control.transform.rotationPointY * info.control.position.height);
+                }
+            }
+        }
+    }
+}
+class CTimeSpeedGraphEditorFrameModel extends CGraphEditorModel {
+    constructor() {
+        super(...arguments);
+        this.lRBottom = new CPanel(this.lRight);
+        this.lblStartSpeed = new CPanel(this.lRBottom);
+        this.edtStartSpeed = new CTextBox(this.lRBottom);
+        this.lblStopSpeed = new CPanel(this.lRBottom);
+        this.edtStopSpeed = new CTextBox(this.lRBottom);
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "lRBottom", this.lRBottom.toData(), {}, true);
+        CDataClass.putData(data, "lblStartSpeed", this.lblStartSpeed.toData(), {}, true);
+        CDataClass.putData(data, "edtStartSpeed", this.edtStartSpeed.toData(), {}, true);
+        CDataClass.putData(data, "lblStopSpeed", this.lblStopSpeed.toData(), {}, true);
+        CDataClass.putData(data, "edtStopSpeed", this.edtStopSpeed.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.lRBottom.fromData(CDataClass.getData(data, "lRBottom", {}, true));
+        this.lblStartSpeed.fromData(CDataClass.getData(data, "lblStartSpeed", {}, true));
+        this.edtStartSpeed.fromData(CDataClass.getData(data, "edtStartSpeed", {}, true));
+        this.lblStopSpeed.fromData(CDataClass.getData(data, "lblStopSpeed", {}, true));
+        this.edtStopSpeed.fromData(CDataClass.getData(data, "edtStopSpeed", {}, true));
+    }
+}
+class CTimeSpeedGraphEditor extends CWindowTool {
+    constructor(parent, name) {
+        super(parent, name);
+        this.editor = new CTimeSpeedGraphEditorFrameModel(this.body);
+        this.editor.resource = "timeSpeedGraphEditor.frame";
+        this.editor.position.align = EPositionAlign.CLIENT;
+    }
+}
+class CObjectPanel extends CPanel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.btnClose = new CButton(this);
+        let self = this;
+        this.btnClose.resource = "button_gray_gra.control";
+        this.btnClose.position.align = EPositionAlign.BOTTOM;
+        this.btnClose.position.height = 30;
+        this.btnClose.text = "Close";
+        this.btnClose.onClick = function () {
+            self.remove();
+            if (self.editor != undefined) {
+                self.editor.objectPanel = undefined;
+                self.editor = undefined;
+                self.section = undefined;
+            }
+        };
+        this.position.align = EPositionAlign.CLIENT;
+        this.onDoubleClick = function () {
+            let ar = CSystem.getChildControls(this);
+            for (let n = 0; n < ar.length; n++) {
+                if (ar[n] instanceof CAnimationControl) {
+                    ar[n].remove();
+                }
+            }
+            self.setSection();
+        };
+        this.onClick = function () {
+            self.setSection();
+        };
+    }
+    setObjects(section) {
+        if (section.control != undefined && this.editor != undefined) {
+            this.section = section;
+            for (let n = 0; n < section.objectData.length; n++) {
+                let con = section.control.copyTo();
+                con.parent = this;
+                CGraphicInfo.setControlGraphicInfo(section.objectData.get(n).info, con);
+                con["sectionT"] = section.objectData.get(n).sectionT;
+                con["centerX"] = section.objectData.get(n).centerX;
+                con["centerY"] = section.objectData.get(n).centerY;
+                if (section.positionPoints.length == 0) {
+                    con.position.left += (this.editor.controlResizer.position.left + 10);
+                    con.position.top += (this.editor.controlResizer.position.top + 20);
+                }
+                let ed = this.editor;
+                con.onClick = function () {
+                    ed.properties.clear();
+                    ed.properties.addInstance(con);
+                    let cx = con["centerX"] + ed.controlResizer.position.left + 10;
+                    let cy = con["centerY"] + ed.controlResizer.position.top + 20;
+                    con.position.left = cx - (con.transform.rotationPointX * con.position.width);
+                    con.position.top = cy - (con.transform.rotationPointY * con.position.height);
+                };
+                let self = this;
+                con.onDoubleClick = function () {
+                    self.setSection();
+                };
+            }
+        }
+    }
+    setSection() {
+        if (this.editor != undefined) {
+            let arr = new Array();
+            let ar = CSystem.getChildControls(this);
+            for (let n = 0; n < ar.length; n++) {
+                if (ar[n] instanceof CAnimationControl) {
+                    arr.push(ar[n]);
+                }
+            }
+            arr.sort(function (a, b) {
+                let rt = 0;
+                if (a["sectionT"] < b["sectionT"])
+                    rt = -1;
+                if (a["sectionT"] > b["sectionT"])
+                    rt = 1;
+                return rt;
+            });
+            let sec = this.editor.getSelectedSection();
+            if (sec != undefined) {
+                sec.objectData.clear();
+                for (let n = 0; n < arr.length; n++) {
+                    let dt = arr[n].position.toData();
+                    dt.left -= (this.editor.controlResizer.position.left + 10);
+                    dt.top -= (this.editor.controlResizer.position.top + 20);
+                    sec.objectData.add({ sectionT: arr[n]["sectionT"], centerX: arr[n]["centerX"], centerY: arr[n]["centerY"], info: CGraphicInfo.controlGraphicInfo(arr[n], dt) });
+                }
+            }
+            this.editor.refreshGrid();
+        }
+    }
+}
+class CAnimationControlSceneEditorModel extends CPanel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.toolbar = new CPanel(this);
+        this.btnShowPositionEditor = new CSelectBox(this.toolbar);
+        this.btnShowObjectEditor = new CSelectBox(this.toolbar);
+        this.btnSave = new CButton(this.toolbar);
+        this.btnOpen = new CButton(this.toolbar);
+        this.lblWidth = new CPanel(this.toolbar);
+        this.edtWidth = new CTextBox(this.toolbar);
+        this.lblHeight = new CPanel(this.toolbar);
+        this.edtHeight = new CTextBox(this.toolbar);
+        this.btnSize = new CButton(this.toolbar);
+        this.lClient = new CPanel(this);
+        this.lCBottom = new CPanel(this.lClient);
+        this.objectsTool = new CWindowChildTool(this);
+        this.lLTop = new CPanel(this.objectsTool.body);
+        this.btnAddProperty = new CButton(this.lLTop);
+        this.list = new CObjectTreeListBox(this.objectsTool.body);
+        this.controlResizer = new CPanel(this.lClient);
+        this.con = new CAnimationControl(this.controlResizer);
+        this.transformer = new CCanvasControlTransfomer(this.controlResizer);
+        this.pathEditor = new CPathEditorControl(this.lClient);
+        this.pathEditorToolbar = new CPanel(this.pathEditor);
+        this.btnNone = new CButton(this.pathEditorToolbar);
+        this.btnMoveTo = new CButton(this.pathEditorToolbar);
+        this.btnLineTo = new CButton(this.pathEditorToolbar);
+        this.btnCurveTo = new CButton(this.pathEditorToolbar);
+        this.btnApplyPosition = new CButton(this.pathEditorToolbar);
+        this.btnToolbarClose = new CButton(this.pathEditorToolbar);
+        this.timeAnimationTool = new CWindowChildTool(this);
+        this.lBTopTime = new CPanel(this.timeAnimationTool.body);
+        this.edtTimeFrom = new CTextBox(this.lBTopTime);
+        this.edtTimeTo = new CTextBox(this.lBTopTime);
+        this.edtTime = new CTextBox(this.lBTopTime);
+        this.btnTimeApply = new CButton(this.lBTopTime);
+        this.btnTimeLeft = new CButton(this.lBTopTime);
+        this.btnTimeRight = new CButton(this.lBTopTime);
+        this.scrollTime = new CScrollbar(this.lBTopTime);
+        this.lBTop = new CPanel(this.timeAnimationTool.body);
+        this.btnPropertyUp = new CButton(this.lBTop);
+        this.btnPropertyDown = new CButton(this.lBTop);
+        this.btnDeleteProperty = new CButton(this.lBTop);
+        this.btnGraphEdit = new CButton(this.lBTop);
+        this.btnPositionEdit = new CButton(this.lBTop);
+        this.btnApply = new CButton(this.lBTop);
+        this.btnAnimationSpeedGraph = new CButton(this.lBTop);
+        this.btnStart = new CButton(this.lBTop);
+        this.edtDuration = new CTextBox(this.lBTop);
+        this.lblDuration = new CPanel(this.lBTop);
+        this.lBTop2 = new CPanel(this.timeAnimationTool.body);
+        this.lblTag = new CPanel(this.lBTop2);
+        this.btnTagAdd = new CButton(this.lBTop2);
+        this.btnTagDelete = new CButton(this.lBTop2);
+        this.lblObject = new CPanel(this.lBTop2);
+        this.btnObjectDataAdd = new CButton(this.lBTop2);
+        this.btnObjectDataDelete = new CButton(this.lBTop2);
+        this.btnObjectCopy = new CButton(this.lBTop2);
+        this.btnObjectPaste = new CButton(this.lBTop2);
+        this.btnObjectTransformer = new CButton(this.lBTop2);
+        this.timeline = new CDataGrid(this.timeAnimationTool.body);
+        this.timelineScriptTool = new CWindowChildTool(this);
+        this.lTimelineScriptTop = new CPanel(this.timelineScriptTool.body);
+        this.btnTimelineScriptApply = new CButton(this.lTimelineScriptTop);
+        this.txtTimelineScript = new CTextArea(this.timelineScriptTool.body);
+        this.propertyTool = new CWindowChildTool(this);
+        this.properties = new CTabPropertyEditor(this.propertyTool.body);
+        //public sectionTagsTool = new CWindowChildTool(this)
+        //사용폼
+        this.frmGraph = new CWindowTool(CSystem.desktopList.get(0).applicationLayer);
+        this.fraGraph = new CGraphEditorFrame(this.frmGraph.body);
+        //Data
+        //public graphData
+        this.timeSpeedStart = 1;
+        this.timeSpeedStop = 1;
+        //public animations = new CList<CControlSceneSection>()
+        //public tags = new CList<CPanel>()
+        this.startData = new CAnimationControl();
+        let self = this;
+        this.frmGraph.close();
+        this.con.position.align = EPositionAlign.CLIENT;
+        this.resource = "sceneEditor.frame";
+        this.pathEditor.position.align = EPositionAlign.CLIENT;
+        this.pathEditor.pathPointList = this.pathEditor.layers.get(0).items.get(1).pathData;
+        this.fraGraph.resource = "graphEditor.frame";
+        this.fraGraph.position.align = EPositionAlign.CLIENT;
+        this.fraGraph.btnApply.onClick = async function () {
+            let data = await self.fraGraph.getGraphData();
+            if (typeof data == "string") {
+                CSystem.showMessage("에러", data);
+            }
+            else {
+                let sec = self.getSelectedSection();
+                if (sec != undefined) {
+                    sec.graphData = data;
+                }
+            }
+        };
+        this.properties.onlyShowProperty.push("overflow");
+        this.properties.onlyShowProperty.push("filter");
+        this.properties.onlyShowProperty.push("position");
+        this.properties.onlyShowProperty.push("transform");
+        //this.properties.onlyShowProperty.push("layers")
+        this.properties.onlyShowProperty.push("opacity");
+        this.properties.onlyShowProperty.push("useMove");
+        this.properties.onlyShowProperty.push("visible");
+        this.properties.onlyShowProperty.push("propertyName");
+        this.btnShowPositionEditor.onChangeSelected = function () {
+        };
+        this.btnShowObjectEditor.onChangeSelected = function () {
+            if (self.btnShowObjectEditor.selected) {
+                self.showObjectPanel();
+            }
+            else {
+                if (self.objectPanel != undefined) {
+                    self.objectPanel.remove();
+                    self.objectPanel = undefined;
+                }
+            }
+        };
+        this.btnOpen.onClick = function () {
+            CSystem.loadFromFile(function (f) {
+                f.text().then(function (fs) {
+                    let o = JSON.parse(fs);
+                    if (o.className == "CAnimationControl") {
+                        self.con.fromData(o);
+                    }
+                    else if (o.control != undefined) {
+                        self.con.fromData(o.control);
+                        if (o.position1 != undefined) {
+                            self.objectsTool.position.fromData(o.position1);
+                        }
+                        if (o.position2 != undefined) {
+                            self.propertyTool.position.fromData(o.position2);
+                        }
+                        if (o.position3 != undefined) {
+                            self.timeAnimationTool.position.fromData(o.position3);
+                        }
+                        if (o.position4 != undefined) {
+                            self.controlResizer.position.fromData(o.position4);
+                        }
+                        if (o.position5 != undefined) {
+                            if (self.parent != undefined && self.parent.parent != undefined) {
+                                self.parent.parent.position.width = o.position5.width;
+                                self.parent.parent.position.height = o.position5.height;
+                            }
+                        }
+                        if (o.position6 != undefined) {
+                            self.timelineScriptTool.position.fromData(o.position6);
+                        }
+                        if (o.duration != undefined) {
+                            self.edtDuration.text = o.duration;
+                            self.edtTimeFrom.text = "0";
+                            self.edtTimeTo.text = o.duration;
+                            self.btnTimeApply.click();
+                        }
+                    }
+                    self.con.position.align = EPositionAlign.CLIENT;
+                    self.startData.fromData(self.con.toData());
+                    self.refresh();
+                    self.refreshGrid();
+                });
+            });
+        };
+        this.btnSave.onClick = function () {
+            CSystem.prompt("Data save", ["File name"], CSystem.browserCovers.get("cover"), function (arr) {
+                let wp;
+                if (self.parent != undefined && self.parent.parent != undefined) {
+                    wp = self.parent.parent.position.toData();
+                }
+                let o = {
+                    control: self.con.toData(),
+                    position1: self.objectsTool.position.toData(),
+                    position2: self.propertyTool.position.toData(),
+                    position3: self.timeAnimationTool.position.toData(),
+                    position4: self.controlResizer.position.toData(),
+                    position5: wp,
+                    position6: self.timelineScriptTool.position.toData(),
+                    duration: self.edtDuration.text
+                };
+                CSystem.saveAsFile(JSON.stringify(o), arr[0] + ".scene");
+            });
+        };
+        this.btnSize.onClick = function () {
+            let w = parseInt(self.edtWidth.text) + 20;
+            let h = parseInt(self.edtHeight.text) + 30;
+            self.controlResizer.position.width = w;
+            self.controlResizer.position.height = h;
+        };
+        this.controlResizer.onChangeSize = function () {
+            self.edtWidth.text = self.controlResizer.position.width - 20 + "";
+            self.edtHeight.text = self.controlResizer.position.height - 30 + "";
+            self.startData.position.width = self.controlResizer.position.width - 20;
+            self.startData.position.height = self.controlResizer.position.height - 30;
+        };
+        this.btnAddProperty.onClick = function () {
+            self.doAddSection();
+        };
+        this.btnPropertyUp.onClick = function () {
+            self.doPropertyUp();
+        };
+        this.btnPropertyDown.onClick = function () {
+            self.doPropertyDown();
+        };
+        this.btnDeleteProperty.onClick = function () {
+            self.doDeleteSection();
+        };
+        let preProperty = "";
+        this.timeline.onShowEditor = function (s, c, r, editor) {
+            preProperty = self.timeline.cell(1, r);
+        };
+        this.timeline.onEditorApply = function (s, col, row, text) {
+            self.doTimeLineEdit(col, row, preProperty, text);
+        };
+        this.timeline.onSelectItem = function (s, c, r) {
+            self.doChangeTimeLineItem(c, r);
+        };
+        this.timeline.onKeyDown = function (s, e) {
+            self.doTimeLineKeyDown(e);
+        };
+        this.btnGraphEdit.onClick = function () {
+            self.doGraphEditorShow(true);
+        };
+        this.btnPositionEdit.onClick = function () {
+            self.doPositionEdit();
+        };
+        this.btnTagAdd.onClick = function () {
+            self.doAddTag();
+        };
+        this.btnTagDelete.onClick = function () {
+            self.doTagDelete();
+        };
+        this.btnObjectDataAdd.onClick = function () {
+            self.doObjectAdd();
+        };
+        this.btnObjectDataDelete.onClick = function () {
+            self.doObjectDelete();
+        };
+        this.btnObjectTransformer.onClick = function () {
+            self.doShowTransformer();
+        };
+        this.btnObjectCopy.onClick = function () {
+            self.doObjectCopy();
+        };
+        this.btnObjectPaste.onClick = function () {
+            self.doObjectPaste();
+        };
+        this.btnTimeApply.onClick = function () {
+            self.scrollTime.min = parseInt(self.edtTimeFrom.text);
+            self.scrollTime.max = parseInt(self.edtTimeTo.text);
+            self.scrollTime.value = parseInt(self.edtTimeFrom.text);
+            self.edtTime.text = self.edtTimeFrom.text;
+        };
+        this.scrollTime.onChangeValue = function () {
+            self.edtTime.text = Math.round(self.scrollTime.value) + "";
+            self.doSetTime(Math.round(self.scrollTime.value));
+        };
+        this.edtTime.onKeyDown = function (s, e) {
+            if (e.key == "Enter") {
+                self.scrollTime.value = parseInt(self.edtTime.text);
+            }
+        };
+        this.btnTimeLeft.onClick = function () {
+            self.scrollTime.value--;
+        };
+        this.btnTimeRight.onClick = function () {
+            self.scrollTime.value++;
+        };
+        this.list.onSelectItem = function () {
+            self.doSelectItem();
+        };
+        this.btnApply.onClick = function () {
+            if (self.objectPanel != undefined)
+                self.objectPanel.remove();
+            self.pathEditor.visible = false;
+            self.doScene();
+        };
+        this.btnStart.onClick = function () {
+            self.doSetStart();
+        };
+        this.btnAnimationSpeedGraph.onClick = function () {
+            self.doAnimationSpeedGraphEdit();
+        };
+        this.transformer.resource = "path_controller.control";
+        this.transformer.position.align = EPositionAlign.CLIENT;
+        this.transformer.visible = false;
+        this.transformer.onFreeTransformHandleTrack = function () {
+            self.doTransform();
+        };
+        this.objectsTool.showCenter(200, 400, "오브젝트 정보", "hide");
+        //this.positionTool.showCenter(400, 300, "위치 애니메이션 정보", "hide")
+        //this.positionTool.editor.animationControlSceneEditorModel = this
+        this.propertyTool.showCenter(300, 300, "속성 정보", "hide");
+        this.timeAnimationTool.showCenter(850, 300, "구간 애니메이션 정보", "hide");
+        this.timelineScriptTool.showCenter(850, 300, "구간 애니메이션 스크립트", "hide");
+        this.properties.tabButtons.visible = false;
+        this.btnNone.onClick = function () {
+            self.pathEditor.mode = "None";
+        };
+        this.btnMoveTo.onClick = function () {
+            self.pathEditor.mode = "MoveTo";
+        };
+        this.btnLineTo.onClick = function () {
+            self.pathEditor.mode = "LineTo";
+        };
+        this.btnCurveTo.onClick = function () {
+            self.pathEditor.mode = "CurveTo";
+        };
+        this.btnApplyPosition.onClick = function () {
+            self.doSetSectionPosition();
+        };
+        this.btnToolbarClose.onClick = function () {
+            self.pathEditor.visible = false;
+        };
+        this.btnTimelineScriptApply.onClick = function () {
+            let sec = self.getSelectedSection();
+            if (sec != undefined) {
+                sec.script = self.txtTimelineScript.text;
+            }
+        };
+        this.properties.editorCover = CSystem.browserCovers.get("cover");
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "toolbar", this.toolbar.toData(), {}, true);
+        CDataClass.putData(data, "btnSave", this.btnSave.toData(), {}, true);
+        CDataClass.putData(data, "btnOpen", this.btnOpen.toData(), {}, true);
+        CDataClass.putData(data, "lblWidth", this.lblWidth.toData(), {}, true);
+        CDataClass.putData(data, "edtWidth", this.edtWidth.toData(), {}, true);
+        CDataClass.putData(data, "lblHeight", this.lblHeight.toData(), {}, true);
+        CDataClass.putData(data, "edtHeight", this.edtHeight.toData(), {}, true);
+        CDataClass.putData(data, "btnSize", this.btnSize.toData(), {}, true);
+        CDataClass.putData(data, "lLTop", this.lLTop.toData(), {}, true);
+        CDataClass.putData(data, "lClient", this.lClient.toData(), {}, true);
+        CDataClass.putData(data, "lBTop", this.lBTop.toData(), {}, true);
+        CDataClass.putData(data, "btnAddProperty", this.btnAddProperty.toData(), {}, true);
+        CDataClass.putData(data, "list", this.list.toData(), {}, true);
+        CDataClass.putData(data, "controlResizer", this.controlResizer.toData(), {}, true);
+        CDataClass.putData(data, "lBTopTime", this.lBTopTime.toData(), {}, true);
+        CDataClass.putData(data, "edtTimeFrom", this.edtTimeFrom.toData(), {}, true);
+        CDataClass.putData(data, "edtTimeTo", this.edtTimeTo.toData(), {}, true);
+        CDataClass.putData(data, "edtTime", this.edtTime.toData(), {}, true);
+        CDataClass.putData(data, "btnTimeApply", this.btnTimeApply.toData(), {}, true);
+        CDataClass.putData(data, "btnTimeLeft", this.btnTimeLeft.toData(), {}, true);
+        CDataClass.putData(data, "btnTimeRight", this.btnTimeRight.toData(), {}, true);
+        CDataClass.putData(data, "scrollTime", this.scrollTime.toData(), {}, true);
+        CDataClass.putData(data, "timeline", this.timeline.toData(), {}, true);
+        CDataClass.putData(data, "btnPropertyUp", this.btnPropertyUp.toData(), {}, true);
+        CDataClass.putData(data, "btnPropertyDown", this.btnPropertyDown.toData(), {}, true);
+        CDataClass.putData(data, "btnDeleteProperty", this.btnDeleteProperty.toData(), {}, true);
+        CDataClass.putData(data, "btnApply", this.btnApply.toData(), {}, true);
+        CDataClass.putData(data, "btnAnimationSpeedGraph", this.btnAnimationSpeedGraph.toData(), {}, true);
+        CDataClass.putData(data, "btnStart", this.btnStart.toData(), {}, true);
+        CDataClass.putData(data, "edtDuration", this.edtDuration.toData(), {}, true);
+        CDataClass.putData(data, "lblDuration", this.lblDuration.toData(), {}, true);
+        CDataClass.putData(data, "lCBottom", this.lCBottom.toData(), {}, true);
+        CDataClass.putData(data, "btnGraphEdit", this.btnGraphEdit.toData(), {}, true);
+        CDataClass.putData(data, "btnPositionEdit", this.btnPositionEdit.toData(), {}, true);
+        CDataClass.putData(data, "lBTop2", this.lBTop2.toData(), {}, true);
+        CDataClass.putData(data, "lblTag", this.lblTag.toData(), {}, true);
+        CDataClass.putData(data, "btnTagAdd", this.btnTagAdd.toData(), {}, true);
+        CDataClass.putData(data, "btnTagDelete", this.btnTagDelete.toData(), {}, true);
+        CDataClass.putData(data, "lblObject", this.lblObject.toData(), {}, true);
+        CDataClass.putData(data, "btnObjectDataAdd", this.btnObjectDataAdd.toData(), {}, true);
+        CDataClass.putData(data, "btnObjectDataDelete", this.btnObjectDataDelete.toData(), {}, true);
+        CDataClass.putData(data, "btnObjectCopy", this.btnObjectCopy.toData(), {}, true);
+        CDataClass.putData(data, "btnObjectPaste", this.btnObjectPaste.toData(), {}, true);
+        CDataClass.putData(data, "btnObjectTransformer", this.btnObjectTransformer.toData(), {}, true);
+        CDataClass.putData(data, "pathEditor", this.pathEditor.toData(), {}, true);
+        CDataClass.putData(data, "pathEditorToolbar", this.pathEditorToolbar.toData(), {}, true);
+        CDataClass.putData(data, "btnNone", this.btnNone.toData(), {}, true);
+        CDataClass.putData(data, "btnMoveTo", this.btnMoveTo.toData(), {}, true);
+        CDataClass.putData(data, "btnLineTo", this.btnLineTo.toData(), {}, true);
+        CDataClass.putData(data, "btnCurveTo", this.btnCurveTo.toData(), {}, true);
+        CDataClass.putData(data, "btnApplyPosition", this.btnApplyPosition.toData(), {}, true);
+        CDataClass.putData(data, "btnToolbarClose", this.btnToolbarClose.toData(), {}, true);
+        CDataClass.putData(data, "properties", this.properties.toData(), {}, true);
+        CDataClass.putData(data, "lTimelineScriptTop", this.lTimelineScriptTop.toData(), {}, true);
+        CDataClass.putData(data, "btnTimelineScriptApply", this.btnTimelineScriptApply.toData(), {}, true);
+        CDataClass.putData(data, "txtTimelineScript", this.txtTimelineScript.toData(), {}, true);
+        CDataClass.putData(data, "objectsToolPosition", this.objectsTool.position.toData(), {}, true);
+        CDataClass.putData(data, "propertyToolPosition", this.propertyTool.position.toData(), {}, true);
+        CDataClass.putData(data, "timeAnimationToolPosition", this.timeAnimationTool.position.toData(), {}, true);
+        CDataClass.putData(data, "timelineScriptToolPosition", this.timelineScriptTool.position.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.toolbar.fromData(CDataClass.getData(data, "toolbar", {}, true));
+        this.btnSave.fromData(CDataClass.getData(data, "btnSave", {}, true));
+        this.btnOpen.fromData(CDataClass.getData(data, "btnOpen", {}, true));
+        this.lblWidth.fromData(CDataClass.getData(data, "lblWidth", {}, true));
+        this.edtWidth.fromData(CDataClass.getData(data, "edtWidth", {}, true));
+        this.lblHeight.fromData(CDataClass.getData(data, "lblHeight", {}, true));
+        this.edtHeight.fromData(CDataClass.getData(data, "edtHeight", {}, true));
+        this.btnSize.fromData(CDataClass.getData(data, "btnSize", {}, true));
+        this.lLTop.fromData(CDataClass.getData(data, "lLTop", {}, true));
+        this.lClient.fromData(CDataClass.getData(data, "lClient", {}, true));
+        this.lBTop.fromData(CDataClass.getData(data, "lBTop", {}, true));
+        this.list.fromData(CDataClass.getData(data, "list", {}, true));
+        this.btnAddProperty.fromData(CDataClass.getData(data, "btnAddProperty", {}, true));
+        this.controlResizer.fromData(CDataClass.getData(data, "controlResizer", {}, true));
+        this.lBTopTime.fromData(CDataClass.getData(data, "lBTopTime", {}, true));
+        this.edtTimeFrom.fromData(CDataClass.getData(data, "edtTimeFrom", {}, true));
+        this.edtTimeTo.fromData(CDataClass.getData(data, "edtTimeTo", {}, true));
+        this.btnTimeApply.fromData(CDataClass.getData(data, "btnTimeApply", {}, true));
+        this.btnTimeLeft.fromData(CDataClass.getData(data, "btnTimeLeft", {}, true));
+        this.btnTimeRight.fromData(CDataClass.getData(data, "btnTimeRight", {}, true));
+        this.edtTime.fromData(CDataClass.getData(data, "edtTime", {}, true));
+        this.scrollTime.fromData(CDataClass.getData(data, "scrollTime", {}, true));
+        this.timeline.fromData(CDataClass.getData(data, "timeline", {}, true));
+        this.btnPropertyUp.fromData(CDataClass.getData(data, "btnPropertyUp", {}, true));
+        this.btnPropertyDown.fromData(CDataClass.getData(data, "btnPropertyDown", {}, true));
+        this.btnDeleteProperty.fromData(CDataClass.getData(data, "btnDeleteProperty", {}, true));
+        this.btnApply.fromData(CDataClass.getData(data, "btnApply", {}, true));
+        this.btnStart.fromData(CDataClass.getData(data, "btnStart", {}, true));
+        this.btnAnimationSpeedGraph.fromData(CDataClass.getData(data, "btnAnimationSpeedGraph", {}, true));
+        this.edtDuration.fromData(CDataClass.getData(data, "edtDuration", {}, true));
+        this.lblDuration.fromData(CDataClass.getData(data, "lblDuration", {}, true));
+        this.lCBottom.fromData(CDataClass.getData(data, "lCBottom", {}, true));
+        this.btnGraphEdit.fromData(CDataClass.getData(data, "btnGraphEdit", {}, true));
+        this.btnPositionEdit.fromData(CDataClass.getData(data, "btnPositionEdit", {}, true));
+        this.lBTop2.fromData(CDataClass.getData(data, "lBTop2", {}, true));
+        this.lblTag.fromData(CDataClass.getData(data, "lblTag", {}, true));
+        this.btnTagAdd.fromData(CDataClass.getData(data, "btnTagAdd", {}, true));
+        this.btnTagDelete.fromData(CDataClass.getData(data, "btnTagDelete", {}, true));
+        this.lblObject.fromData(CDataClass.getData(data, "lblObject", {}, true));
+        this.btnObjectDataAdd.fromData(CDataClass.getData(data, "btnObjectDataAdd", {}, true));
+        this.btnObjectDataDelete.fromData(CDataClass.getData(data, "btnObjectDataDelete", {}, true));
+        this.btnObjectCopy.fromData(CDataClass.getData(data, "btnObjectCopy", {}, true));
+        this.btnObjectPaste.fromData(CDataClass.getData(data, "btnObjectPaste", {}, true));
+        this.btnObjectTransformer.fromData(CDataClass.getData(data, "btnObjectTransformer", {}, true));
+        this.pathEditor.fromData(CDataClass.getData(data, "pathEditor", {}, true));
+        this.pathEditorToolbar.fromData(CDataClass.getData(data, "pathEditorToolbar", {}, true));
+        this.btnNone.fromData(CDataClass.getData(data, "btnNone", {}, true));
+        this.btnMoveTo.fromData(CDataClass.getData(data, "btnMoveTo", {}, true));
+        this.btnLineTo.fromData(CDataClass.getData(data, "btnLineTo", {}, true));
+        this.btnCurveTo.fromData(CDataClass.getData(data, "btnCurveTo", {}, true));
+        this.btnApplyPosition.fromData(CDataClass.getData(data, "btnApplyPosition", {}, true));
+        this.btnToolbarClose.fromData(CDataClass.getData(data, "btnToolbarClose", {}, true));
+        this.properties.fromData(CDataClass.getData(data, "properties", {}, true));
+        this.lTimelineScriptTop.fromData(CDataClass.getData(data, "lTimelineScriptTop", {}, true));
+        this.btnTimelineScriptApply.fromData(CDataClass.getData(data, "btnTimelineScriptApply", {}, true));
+        this.txtTimelineScript.fromData(CDataClass.getData(data, "txtTimelineScript", {}, true));
+        this.objectsTool.position.fromData(CDataClass.getData(data, "objectsToolPosition", {}, true));
+        this.propertyTool.position.fromData(CDataClass.getData(data, "propertyToolPosition", {}, true));
+        this.timeAnimationTool.position.fromData(CDataClass.getData(data, "timeAnimationToolPosition", {}, true));
+        this.timelineScriptTool.position.fromData(CDataClass.getData(data, "timelineScriptToolPosition", {}, true));
+        this.properties.tabButtons.visible = false;
+    }
+    doRemove() {
+        this.frmGraph.remove();
+        this.objectsTool.remove();
+        this.propertyTool.remove();
+        this.timeAnimationTool.remove();
+        this.timelineScriptTool.remove();
+        this.startData.remove();
+        super.doRemove();
+    }
+    doSetAnimation() {
+    }
+    doAnimationSpeedGraphEdit() {
+        let self = this;
+        let frm = new CTimeSpeedGraphEditor(CSystem.desktopList.get(0).applicationLayer);
+        frm.showCenter(860, 550, "시간 속도 편집기", "remove");
+        frm.editor.btnApply.onClick = async function () {
+            let data = await frm.editor.getGraphData();
+            if (typeof data == "string") {
+                CSystem.showMessage("에러", data);
+            }
+            else {
+                self.con.sceneData.speedGraphData = data;
+                self.con.sceneData.speedStartValue = parseFloat(frm.editor.edtStartSpeed.text);
+                self.con.sceneData.speedStopValue = parseFloat(frm.editor.edtStopSpeed.text);
+            }
+        };
+    }
+    doSetStart() {
+        this.doSetTime(0);
+    }
+    doSetTime(duration) {
+        let ani = this.getSceneAnimation();
+        ani.doBeforeStart();
+        ani.moveTime(duration);
+        ani.remove();
+    }
+    async doSetSectionPosition() {
+        let rt = await this.getPathData();
+        if (typeof rt == "string") {
+            CSystem.showMessage("에러", rt);
+        }
+        else {
+            let sec = this.getSelectedSection();
+            if (sec == undefined) {
+                CSystem.showMessage("경고", "구간 애니메이션을 선택하세요.");
+            }
+            else {
+                sec.positionPath.fromData(this.pathEditor.pathPointList?.toData());
+                sec.positionPath.movePoint(-(this.controlResizer.position.left + 10), -(this.controlResizer.position.top + 20));
+                for (let n = 0; n < rt.points.length; n++) {
+                    rt.points[n].x -= this.controlResizer.position.left + 10;
+                    rt.points[n].y -= this.controlResizer.position.top + 20;
+                }
+                sec.positionPoints = rt.points;
+                this.refreshGrid();
+            }
+        }
+    }
+    doAddSection() {
+        if (this.list.selectItems.length > 0) {
+            let self = this;
+            CSystem.prompt("애니메이션 구간 설정", ["프로퍼티명", "시작타임(ms)", "애니메이션 시간", "그래프명", "시작값", "종료값", "반복여부"], CSystem.browserCovers.get("cover"), function (arr) {
+                let as = new CAnimationControlSceneSection();
+                as.control = self.list.selectItems[0].value.asObject["control"];
+                as.controlName = self.list.selectItems[0].value.asObject["text"];
+                if (arr[0] == "") {
+                    as.property = "없음";
+                }
+                else {
+                    as.property = arr[0];
+                }
+                as.startTime = parseInt(arr[1]);
+                as.duration = parseInt(arr[2]);
+                as.graphData = arr[3];
+                as.startValue = parseFloat(arr[4]);
+                as.stopValue = parseFloat(arr[5]);
+                as.isLoop = arr[6].toUpperCase() == "Y";
+                self.con.sceneData.sections.add(as);
+                self.refreshGrid();
+            }, ["", "0", "200", "line_10000.graph", "0", "0", "N"], 400);
+        }
+    }
+    doDeleteSection() {
+        if (this.timeline.row != -1) {
+            for (let n = 0; n < this.con.sceneData.sections.length; n++) {
+                if (this.con.sceneData.sections.get(n).control == this.timeline.cell(9, this.timeline.row) &&
+                    this.con.sceneData.sections.get(n).property == this.timeline.cell(1, this.timeline.row)) {
+                    this.con.sceneData.sections.delete(n);
+                    break;
+                }
+            }
+            this.refreshGrid();
+        }
+    }
+    doTimeLineKeyDown(e) {
+        if (e.ctrlKey && e.key.toUpperCase() == "C") {
+            if (this.timeline.column == 5) {
+                let o = {
+                    positionPoints: JSON.stringify(this.con.sceneData.sections.get(this.timeline.row).positionPoints),
+                    positionPath: this.con.sceneData.sections.get(this.timeline.row).positionPath.toData(),
+                    graphData: this.con.sceneData.sections.get(this.timeline.row).graphDataCopy(),
+                    graphPath: this.con.sceneData.sections.get(this.timeline.row).graphPath.toData(),
+                    tags: this.con.sceneData.sections.get(this.timeline.row).timeTagCopy()
+                };
+                CSystem.copyData = o;
+            }
+        }
+        if (e.ctrlKey && e.key.toUpperCase() == "V") {
+            if (this.timeline.column == 5) {
+                this.con.sceneData.sections.get(this.timeline.row).positionPoints = JSON.parse(CSystem.copyData.positionPoints);
+                this.con.sceneData.sections.get(this.timeline.row).positionPath.fromData(CSystem.copyData.positionPath);
+                this.con.sceneData.sections.get(this.timeline.row).graphDataFromData(CSystem.copyData.graphData);
+                this.con.sceneData.sections.get(this.timeline.row).graphPath.fromData(CSystem.copyData.graphPath);
+                this.con.sceneData.sections.get(this.timeline.row).timeTagFromData(CSystem.copyData.tags);
+                this.refreshGrid();
+            }
+        }
+    }
+    async doGraphEditorShow(isTag = false) {
+        this.frmGraph.showCenter(860, 550, "그래프 편집기", "hide");
+        this.fraGraph.tagItem.pathData.clear();
+        let sec = this.getSelectedSection();
+        if (sec != undefined) {
+            if (this.fraGraph.pathData != undefined) {
+                this.fraGraph.pathData.fromData(sec.graphPath.toData());
+            }
+            if (isTag) {
+                for (let n = 0; n < sec.timeTag.length; n++) {
+                    let x = CCalc.crRange2Value(sec.startTime, sec.startTime + sec.duration, sec.timeTag[n].duration, 0, this.fraGraph.pathGraphic.position.width);
+                    let y = CCalc.crRange2Value(sec.startTime, sec.startTime + sec.duration, sec.timeTag[n].duration, 0, this.fraGraph.pathGraphic.position.height);
+                    this.fraGraph.tagItem.pathData.addPointMoveTo(new CPoint(x, 0));
+                    this.fraGraph.tagItem.pathData.addPointLineTo(new CPoint(x, this.fraGraph.pathGraphic.position.height));
+                    this.fraGraph.tagItem.pathData.addPointMoveTo(new CPoint(0, this.fraGraph.pathGraphic.position.height - y));
+                    this.fraGraph.tagItem.pathData.addPointLineTo(new CPoint(this.fraGraph.pathGraphic.position.width, this.fraGraph.pathGraphic.position.height - y));
+                }
+                this.fraGraph.pathGraphic.draw();
+            }
+        }
+    }
+    doPositionEdit() {
+        if (this.pathEditor.visible) {
+            this.pathEditor.visible = false;
+        }
+        else {
+            this.pathEditor.visible = true;
+            this.pathEditor.bringToFront();
+            this.pathEditor.pathPointList = this.pathEditor.layers.get(0).items.get(1).pathData;
+            this.pathEditor.pathPointList.clear();
+            let sec = this.getSelectedSection();
+            if (sec != undefined) {
+                if (sec.positionPoints.length > 0 && this.pathEditor.pathPointList != undefined) {
+                    this.pathEditor.pathPointList.fromData(sec.positionPath.toData());
+                    this.pathEditor.pathPointList.movePoint(this.controlResizer.position.left + 10, this.controlResizer.position.top + 20);
+                }
+            }
+            this.pathEditor.refresh();
+        }
+    }
+    doChangeTimeLineItem(col, row) {
+        let sec = this.getSelectedSection();
+        if (sec != undefined) {
+            this.pathEditor.visible = true;
+            this.pathEditor.bringToFront();
+            this.pathEditor.pathPointList = this.pathEditor.layers.get(0).items.get(1).pathData;
+            this.pathEditor.pathPointList.clear();
+            this.pathEditor.pathPointList.fromData(sec.positionPath.toData());
+            this.pathEditor.pathPointList.movePoint(this.controlResizer.position.left + 10, this.controlResizer.position.top + 20);
+            this.pathEditor.refresh();
+            this.showObjectPanel();
+            this.txtTimelineScript.text = sec.script;
+        }
+    }
+    doSelectItem() {
+        if (this.list.selectItems.length > 0) {
+            this.properties.clear();
+            this.properties.addInstance(this.list.selectItems[0].value.asObject["control"]);
+        }
+    }
+    doShowTransformer() {
+        if (this.objectPanel != undefined) {
+            let con = this.properties.propertyEditors.get(0).classInstance;
+            this.transformer.parent = this.lClient;
+            this.transformer.visible = true;
+            this.transformer.toolbar.position.align = EPositionAlign.BOTTOM;
+            this.transformer.toolbar.position.margins.all = 0;
+            this.transformer.bringToFront();
+            this.transformer.setControl(con);
+        }
+    }
+    doTransform() {
+        if (this.list.selectItems.length > 0) {
+            let con = this.list.selectItems[0].value.asObject["control"];
+            con.orgPathdataSet();
+            con.orgPosition.fromData(con.position.toData());
+        }
+    }
+    doTimeLineEdit(col, row, property, text) {
+        for (let n = 0; n < this.con.sceneData.sections.length; n++) {
+            if (this.con.sceneData.sections.get(n).control == this.timeline.cell(9, this.timeline.row) && this.con.sceneData.sections.get(n).property == property) {
+                if (col == 1) {
+                    this.con.sceneData.sections.get(n).property = text;
+                }
+                if (col == 2) {
+                    this.con.sceneData.sections.get(n).startTime = parseInt(text);
+                }
+                if (col == 3) {
+                    this.con.sceneData.sections.get(n).duration = parseInt(text);
+                }
+                if (col == 4) {
+                    this.con.sceneData.sections.get(n).graphData = text;
+                }
+                if (col == 6) {
+                    this.con.sceneData.sections.get(n).startValue = parseFloat(text);
+                }
+                if (col == 7) {
+                    this.con.sceneData.sections.get(n).stopValue = parseFloat(text);
+                }
+                if (col == 8) {
+                    this.con.sceneData.sections.get(n).isLoop = text.toUpperCase() == "Y";
+                }
+                break;
+            }
+        }
+        this.refreshGrid();
+    }
+    doScene() {
+        this.doSetStart();
+        let ani = this.getSceneAnimation();
+        ani.onFinish = function () {
+            ani.remove();
+        };
+        ani.start();
+    }
+    doAddTag() {
+        let sec = this.getSelectedSection();
+        if (sec != undefined) {
+            let s = sec;
+            let self = this;
+            CSystem.prompt("타임태그 추가", ["태그명", "색상", "시간"], CSystem.browserCovers.get("cover"), function (arr) {
+                s.timeTag.push({ tagName: arr[0], tagColor: arr[1], duration: parseInt(arr[2]) });
+            }, ["tag", "rgba(255,255,0,1)", self.edtTime.text]);
+        }
+    }
+    doTagDelete() {
+        let sec = this.getSelectedSection();
+        if (sec != undefined) {
+            sec.timeTag = [];
+        }
+    }
+    doObjectAdd() {
+        let d = parseInt(this.edtTime.text);
+        let sec = this.getSelectedSection();
+        if (sec != undefined && d >= sec.startTime && d <= sec.startTime + sec.duration && sec.control != undefined) {
+            if (this.objectPanel == undefined)
+                this.showObjectPanel();
+            let rt = CCalc.crRange2Value(sec.startTime, sec.startTime + sec.duration, d, 0, 1);
+            let con = this.startData.getObject(sec.control.propertyName)?.copyTo();
+            if (con != undefined) {
+                con.parent = this.objectPanel;
+                con.position.left += this.controlResizer.position.left + 10;
+                con.position.top += this.controlResizer.position.top + 20;
+                con["sectionT"] = rt;
+                con["centerX"] = sec.control.position.left + (sec.control.transform.rotationPointX * sec.control.position.width);
+                con["centerY"] = sec.control.position.top + (sec.control.transform.rotationPointY * sec.control.position.height);
+                let self = this;
+                self.properties.clear();
+                self.properties.addInstance(con);
+                con.onClick = function () {
+                    self.properties.clear();
+                    self.properties.addInstance(con);
+                    if (con != undefined) {
+                        let cx = con["centerX"] + self.controlResizer.position.left + 10;
+                        let cy = con["centerY"] + self.controlResizer.position.top + 20;
+                        con.position.left = cx - (con.transform.rotationPointX * con.position.width);
+                        con.position.top = cy - (con.transform.rotationPointY * con.position.height);
+                    }
+                };
+                con.onDoubleClick = function () {
+                    if (self.objectPanel != undefined) {
+                        self.objectPanel.setSection();
+                    }
+                };
+            }
+        }
+        else {
+            alert("에러");
+        }
+    }
+    doObjectCopy() {
+        if (this.properties.propertyEditors.get(0).classInstance instanceof CAnimationControl) {
+            let sel = this.properties.propertyEditors.get(0).classInstance;
+            if (this.copyObject != undefined)
+                this.copyObject.remove();
+            this.copyObject = sel.copyTo();
+        }
+    }
+    doObjectPaste() {
+        if (this.copyObject != undefined) {
+            let d = parseInt(this.edtTime.text);
+            let sec = this.getSelectedSection();
+            if (sec != undefined && d >= sec.startTime && d <= sec.startTime + sec.duration && sec.control != undefined) {
+                if (this.objectPanel == undefined)
+                    this.showObjectPanel();
+                let rt = CCalc.crRange2Value(sec.startTime, sec.startTime + sec.duration, d, 0, 1);
+                let con = this.copyObject.copyTo();
+                if (con != undefined) {
+                    con.parent = this.objectPanel;
+                    con.position.left += this.controlResizer.position.left + 10;
+                    con.position.top += this.controlResizer.position.top + 20;
+                    con["sectionT"] = rt;
+                    con["centerX"] = sec.control.position.left + (sec.control.transform.rotationPointX * sec.control.position.width);
+                    con["centerY"] = sec.control.position.top + (sec.control.transform.rotationPointY * sec.control.position.height);
+                    let self = this;
+                    self.properties.clear();
+                    self.properties.addInstance(con);
+                    con.onClick = function () {
+                        self.properties.clear();
+                        self.properties.addInstance(con);
+                        if (con != undefined) {
+                            let cx = con["centerX"] + self.controlResizer.position.left + 10;
+                            let cy = con["centerY"] + self.controlResizer.position.top + 20;
+                            con.position.left = cx - (con.transform.rotationPointX * con.position.width);
+                            con.position.top = cy - (con.transform.rotationPointY * con.position.height);
+                        }
+                    };
+                    con.onDoubleClick = function () {
+                        if (self.objectPanel != undefined) {
+                            self.objectPanel.setSection();
+                        }
+                    };
+                }
+            }
+            else {
+                alert("에러");
+            }
+        }
+    }
+    doObjectDelete() {
+        let sel = this.properties.propertyEditors.get(0).classInstance;
+        if (sel != undefined && this.objectPanel != undefined) {
+            let cons = CSystem.getChildControls(this.objectPanel);
+            for (let n = 0; n < cons.length; n++) {
+                if (cons[n] instanceof CAnimationControl) {
+                    if (cons[n] == sel) {
+                        cons[n].remove();
+                        this.properties.clear();
+                    }
+                }
+            }
+        }
+    }
+    doPropertyUp() {
+        if (this.timeline.row > 0) {
+            let r = this.timeline.row;
+            this.con.sceneData.sections.swap(this.timeline.row, this.timeline.row - 1);
+            this.refreshGrid();
+            this.timeline.row = r - 1;
+        }
+    }
+    doPropertyDown() {
+        if (this.timeline.row != -1 && this.timeline.row < this.timeline.length - 1) {
+            let r = this.timeline.row;
+            this.con.sceneData.sections.swap(this.timeline.row, this.timeline.row + 1);
+            this.refreshGrid();
+            this.timeline.row = r + 1;
+        }
+    }
+    refresh() {
+        this.list.clear();
+        function a(c, items) {
+            let itl = items.addItem({ text: c.propertyName, control: c });
+            for (let n = 0; n < c.objects.length; n++) {
+                a(c.objects.get(n), itl.items);
+            }
+        }
+        a(this.con, this.list.items);
+        this.list.items.expandAll();
+    }
+    refreshGrid() {
+        this.timeline.clear();
+        for (let n = 0; n < this.con.sceneData.sections.length; n++) {
+            let sd = this.con.sceneData.sections.get(n);
+            let sda = "없음";
+            let gd = this.con.sceneData.sections.get(n).graphData;
+            let gt = "";
+            if (typeof gd == "string") {
+                gt = gd;
+            }
+            else {
+                gt = gd.length + "";
+            }
+            let lp = "N";
+            if (this.con.sceneData.sections.get(n).isLoop)
+                lp = "Y";
+            if (sd.positionPoints.length > 0)
+                sda = "있음(" + sd.positionPoints.length + ")";
+            this.timeline.add([
+                this.con.sceneData.sections.get(n).controlName + "(" + this.con.sceneData.sections.get(n).objectData.length + ")",
+                this.con.sceneData.sections.get(n).property,
+                this.con.sceneData.sections.get(n).startTime,
+                this.con.sceneData.sections.get(n).duration,
+                gt,
+                sda,
+                this.con.sceneData.sections.get(n).startValue,
+                this.con.sceneData.sections.get(n).stopValue,
+                lp,
+                this.con.sceneData.sections.get(n).control
+            ]);
+        }
+    }
+    getSceneAnimation() {
+        let ani = new CSceneAnimator();
+        ani.duration = parseInt(this.edtDuration.text);
+        ani.animationControl = this.con;
+        ani.timeSpeedGraphData = this.con.sceneData.speedGraphData;
+        ani.startTimeSpeed = this.con.sceneData.speedStartValue;
+        ani.stopTimeSpeed = this.con.sceneData.speedStopValue;
+        return ani;
+    }
+    scene() {
+        this.doScene();
+    }
+    getSelectedSection() {
+        for (let n = 0; n < this.con.sceneData.sections.length; n++) {
+            if (this.con.sceneData.sections.get(n).control == this.timeline.cell(9, this.timeline.row) && this.con.sceneData.sections.get(n).property == this.timeline.cell(1, this.timeline.row)) {
+                return this.con.sceneData.sections.get(n);
+            }
+        }
+    }
+    loopObjects(proc) {
+        if (this.list.selectItems.length > 0) {
+            let con = this.list.selectItems[0].value.asObject["control"];
+            function l(obj) {
+                proc(obj);
+                for (let n = 0; n < obj.objects.length; n++) {
+                    l(obj.objects.get(n));
+                }
+            }
+            l(con);
+        }
+    }
+    getPathData() {
+        let self = this;
+        return new Promise(function (rs) {
+            /*if(self.pathEditor.pathPointList != undefined) {
+                let arrpd = new Array<{pointKind: number, point:{x:number, y:number}, cPoint1:{x:number, y:number}, cPoint2:{x:number, y:number}}>()
+                for(let n = 0; n < self.pathEditor.pathPointList.length; n++) {
+                    let pt = self.pathEditor.pathPointList.get(n)
+                    arrpd.push({
+                        pointKind: pt.pointKind,
+                        point:{x:pt.point.x, y:pt.point.y},
+                        cPoint1:{x:pt.cPoint1.x, y:pt.cPoint1.y},
+                        cPoint2:{x:pt.cPoint2.x, y:pt.cPoint2.y}
+                    })
+                }
+
+                if(CGlobal.userInfo != undefined) {
+                    let strm = new CStream()
+                    strm.putString("10")
+                    strm.putString(CStringUtil.strToUriBase64(JSON.stringify(arrpd)))
+                    let arr = new Array<{x: number, y: number}>()
+                    strm.putString(JSON.stringify(arr))
+                    CGlobal.userInfo.sendSocketData("getPathData", strm, function(data) {
+                        data.getString()
+                        data.getString()
+                        let result = data.getString()
+                        if(result == "success") {
+                            data.getString()
+                            rs({points:JSON.parse(data.getString()), tagPoints:JSON.parse(data.getString())})
+                        } else {
+                            rs(data.getString())
+                        }
+                    })
+                }
+            }           */
+        });
+    }
+    getNearData(points) {
+        let self = this;
+        return new Promise(function (rs) {
+            /*if(self.pathEditor.pathPointList != undefined) {
+                let arrpd = new Array<{pointKind: number, point:{x:number, y:number}, cPoint1:{x:number, y:number}, cPoint2:{x:number, y:number}}>()
+                for(let n = 0; n < self.pathEditor.pathPointList.length; n++) {
+                    let pt = self.pathEditor.pathPointList.get(n)
+                    arrpd.push({
+                        pointKind: pt.pointKind,
+                        point:{x:pt.point.x, y:pt.point.y},
+                        cPoint1:{x:pt.cPoint1.x, y:pt.cPoint1.y},
+                        cPoint2:{x:pt.cPoint2.x, y:pt.cPoint2.y}
+                    })
+                }
+
+                if(CGlobal.userInfo != undefined) {
+                    let strm = new CStream()
+                    strm.putString("10")
+                    strm.putString(CStringUtil.strToUriBase64(JSON.stringify(arrpd)))
+                    strm.putString(JSON.stringify(points))
+                    CGlobal.userInfo.sendSocketData("getNearPoint", strm, function(data) {
+                        data.getString()
+                        data.getString()
+                        let result = data.getString()
+                        if(result == "success") {
+                            data.getString()
+                            rs({points:JSON.parse(data.getString())})
+                        } else {
+                            rs(data.getString())
+                        }
+                    })
+                }
+            }            */
+        });
+    }
+    showObjectPanel() {
+        let sec = this.getSelectedSection();
+        if (sec != undefined) {
+            if (this.objectPanel != undefined) {
+                this.objectPanel.remove();
+            }
+            let pan = new CObjectPanel(this.lClient);
+            pan.editor = this;
+            pan.setObjects(sec);
+            pan.bringToFront();
+            this.objectPanel = pan;
+        }
+    }
+}
+class CAnimationControlSceneEditor extends CAnimationControlSceneEditorModel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.resource = "sceneEditor.frame";
+    }
+}
+class CAppLayersSceneEditor extends CWindowApplication {
+    constructor() {
+        super();
+        this.defaultWidth = 616;
+        this.defaultHeight = 539;
+        this.appName = "Animation control scene editor";
+        this.editor = new CAnimationControlSceneEditor(this.mainWindow.body);
+        this.editor.position.align = EPositionAlign.CLIENT;
+    }
+}
+class CSceneExampleFrame extends CPanel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.lTop = new CPanel(this);
+        this.btnPlay = new CButton(this.lTop);
+        this.lClient = new CPanel(this);
+        this.con = new CAnimationControl(this.lClient);
+        let self = this;
+        this.btnPlay.onClick = function () {
+            self.doPlay();
+        };
+        let rc = CSystem.resources.get("ex.scene");
+        this.con.fromData(rc.control);
+        this.con.position.align = EPositionAlign.CLIENT;
+        this.startPosition();
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "lTop", this.lTop.toData(), {}, true);
+        CDataClass.putData(data, "btnPlay", this.btnPlay.toData(), {}, true);
+        CDataClass.putData(data, "lClient", this.lClient.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.lTop.fromData(CDataClass.getData(data, "lTop", {}, true));
+        this.btnPlay.fromData(CDataClass.getData(data, "btnPlay", {}, true));
+        this.lClient.fromData(CDataClass.getData(data, "lClient", {}, true));
+    }
+    doPlay() {
+        this.btnPlay.enabled = false;
+        this.startPosition();
+        let ani = this.con.getSceneAnimation();
+        let self = this;
+        ani.onFinish = function () {
+            self.btnPlay.enabled = true;
+            ani.remove();
+        };
+        ani.start();
+    }
+    startPosition() {
+        let an = this.con.getSceneAnimation();
+        an.doBeforeStart();
+        an.moveTime(0);
+        an.remove();
+    }
+}
+class CSceneExample extends CWindowApplication {
+    constructor() {
+        super();
+        this.defaultWidth = 516;
+        this.defaultHeight = 566;
+        this.appName = "Animation control example";
+        this.editor = new CSceneExampleFrame(this.mainWindow.body);
+        this.editor.resource = "sceneExample.frame";
+        this.editor.position.align = EPositionAlign.CLIENT;
+    }
+}
+CSystem.onResourceLoad.push(function () {
+    fetchBody("https://baekjonggyu.github.io/resource/ex.scene")
+        .then(function (json) {
+        CSystem.resources.set("ex.scene", JSON.parse(json));
+        let ex = new CSceneExample();
+        ex.desktop = CSystem.desktopList.get(0);
+        ex.execute();
+        ex.mainWindow.position.left = 50;
+        ex.mainWindow.position.top = 50;
+    });
+});

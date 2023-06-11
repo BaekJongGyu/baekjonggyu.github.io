@@ -1,1 +1,4023 @@
-﻿"use strict";class CPathEditorModel extends CPanel{constructor(t,e){super(t,e),this.__points=new CList,this._pointResource="",this._cpoint1Resource="",this._cpoint2Resource="",this.toolbar=new CPanel(this),this.lblKind=new CPanel(this.toolbar),this.btnNone=new CButton(this.toolbar),this.btnMoveTo=new CButton(this.toolbar),this.btnLineTo=new CButton(this.toolbar),this.btnCurveTo=new CButton(this.toolbar),this.btnClose=new CButton(this.toolbar),this.btnSave=new CButton(this.toolbar),this.btnOpen=new CButton(this.toolbar),this.btnGetTextData=new CButton(this.toolbar),this.toolbarBottom=new CPanel(this),this.lblWidth=new CLabelTextBox(this.toolbarBottom),this.lblheight=new CLabelTextBox(this.toolbarBottom),this.btnSize=new CButton(this.toolbarBottom),this.chkAlignPixel=new CCheckBox(this.toolbarBottom),this.edtAlignPixel=new CTextBox(this.toolbarBottom),this.btnApply=new CButton(this.toolbarBottom),this.lRight=new CPanel(this),this.spr=new CSplitter(this),this.lRTop=new CPanel(this.lRight),this.btnDelete=new CButton(this.lRTop),this.btnClear=new CButton(this.lRTop),this.grid=new CDataGrid(this.lRight),this.lClient=new CPanel(this),this.lCTop=new CPanel(this.lClient),this.lCClient=new CPanel(this.lClient),this.path=new CPanel(this.lCClient),this.pathGraphic=new CSelectArea(this.path);let a=this;this.pathGraphic.position.align=EPositionAlign.CLIENT;let o,i=this.pathGraphic.layers.addLayer();this.__backItem=i.addItem(),this.__backItem.kind=ECanvasItemKind.PATH,this.__backItem.stroke.styleKind=EStyleKind.SOLID,this.__backItem.stroke.solidColor="#404040",this.__backItem.stroke.lineWidth=1,this.__backItem.pathFitMode=EFitMode.ORIGINAL,this.__item=i.addItem(),this.__item.kind=ECanvasItemKind.PATH,this.__item.fill.styleKind=EStyleKind.SOLID,this.__item.fill.solidColor="rgba(255,255,255,0.05)",this.__item.stroke.styleKind=EStyleKind.SOLID,this.__item.stroke.solidColor="#ffffff",this.__item.stroke.lineWidth=1,this.__item.pathFitMode=EFitMode.ORIGINAL,this.btnSave.onClick=function(){},this.btnOpen.onClick=function(){},this.btnSize.onClick=function(){a.path.position.width=parseInt(a.lblWidth.value),a.path.position.height=parseInt(a.lblheight.value),a.__item.pathData.width=parseInt(a.lblWidth.value),a.__item.pathData.height=parseInt(a.lblheight.value)},this.btnNone.onClick=function(){a.lblKind.text="None"},this.btnMoveTo.onClick=function(){a.lblKind.text="MoveTo"},this.btnLineTo.onClick=function(){a.lblKind.text="LineTo"},this.btnCurveTo.onClick=function(){a.lblKind.text="CurveTo"},this.btnClose.onClick=function(){a.lblKind.text="Close";let t=a.__item.pathData.addPointClose();a.grid.add(["CL",CPoint.create(0,0).toString(),CPoint.create(0,0).toString(),CPoint.create(0,0).toString(),t])},this.lblWidth.textBox.onKeyDown=function(t,e){"Enter"==e.key&&a.btnSize.click()},this.lblheight.textBox.onKeyDown=function(t,e){"Enter"==e.key&&a.btnSize.click()},this.pathGraphic.selectAreaResource="selectAreaCursor.control",this.pathGraphic.usePointerCapture=!0,this.pathGraphic.onThisPointerDown=function(t,e,i){if("MoveTo"==a.lblKind.text){let t=CPoint.create(e.offsetX,e.offsetY),i=a.__item.pathData.addPointMoveTo(t);o=t;let s=a.grid.add(["M",t.toString(),CPoint.create(0,0).toString(),CPoint.create(0,0).toString(),i]);i.onChange=function(){null!=s&&(s.get(1).asString=i.point.toString())};let n=new CPathPointSelectorModel(a.pointResource,a.cpoint1Resource,a.cpoint2Resource);n.parent=a.pathGraphic,n.pathPoint=i,a.__points.add(n)}if("LineTo"==a.lblKind.text){let t=CPoint.create(e.offsetX,e.offsetY),i=a.__item.pathData.addPointLineTo(CPoint.create(e.offsetX,e.offsetY));o=t;let s=a.grid.add(["L",t.toString(),CPoint.create(0,0).toString(),CPoint.create(0,0).toString(),i]);i.onChange=function(){null!=s&&(s.get(1).asString=i.point.toString())};let n=new CPathPointSelectorModel(a.pointResource,a.cpoint1Resource,a.cpoint2Resource);n.parent=a.pathGraphic,n.pathPoint=i,a.__points.add(n)}if("CurveTo"==a.lblKind.text){let t=CPoint.create(e.offsetX,e.offsetY);if(null!=o){let e=CPoint.getDistancePoints(t,o),i=CPoint.getLineMiddlePoint(o,t,CCalc.crRange2Value(0,e,e/3,0,1)),s=CPoint.getLineMiddlePoint(o,t,CCalc.crRange2Value(0,e,e/3*2,0,1)),n=a.__item.pathData.addPointCurveTo3(t,i,s),r=a.grid.add(["C",t.toString(),i.toString(),s.toString(),n]);o=t;let l=new CPathPointSelectorModel(a.pointResource,a.cpoint1Resource,a.cpoint2Resource);l.parent=a.pathGraphic,l.pathPoint=n,a.__points.add(l),n.onChange=function(){null!=r&&(r.get(1).asString=n.point.toString(),r.get(2).asString=n.cPoint1.toString(),r.get(3).asString=n.cPoint2.toString())}}}},this.grid.onEditorApply=function(t,e,o,i){let s=a.grid.cell(4,o);if(null!=s){let t=i.split(",");1==e&&(s.point.x=parseFloat(t[0]),s.point.y=parseFloat(t[1]),a.pathGraphic.draw()),2==e&&(s.cPoint1.x=parseFloat(t[0]),s.cPoint1.y=parseFloat(t[1]),a.pathGraphic.draw()),3==e&&(s.cPoint2.x=parseFloat(t[0]),s.cPoint2.y=parseFloat(t[1]),a.pathGraphic.draw())}a.refreshPoints()},this.btnClear.onClick=function(){a.clear()},this.btnDelete.onClick=function(){-1!=a.grid.row&&a.deletePoint(a.grid.cell(4,a.grid.row))},this.chkAlignPixel.onChangeChecked=function(){a.setAlignPixel()},this.edtAlignPixel.onKeyDown=function(t,e){"Enter"==e.key&&a.setAlignPixel()},this.btnApply.onClick=function(){null!=a.pathData&&a.pathData.copyFrom(a.__item.pathData)},this.btnGetTextData.onClick=async function(){let t=await fetchBody("http://localhost/resource/api/v1/textpath?text=BJK&size=50&bold=y");a.item.pathData.fromFontPathData(t),a.item.pathData.fit(new CRect(0,0,400,400)),a.refresh()}}get item(){return this.__item}get pointResource(){return this._pointResource}set pointResource(t){if(this._pointResource!=t){this._pointResource=t;for(let e=0;e<this.__points.length;e++)this.__points.get(e).point.resource=t}}get cpoint1Resource(){return this._cpoint1Resource}set cpoint1Resource(t){if(this._cpoint1Resource!=t){this._cpoint1Resource=t;for(let e=0;e<this.__points.length;e++){let a=this.__points.get(e).cpoint1;null!=a&&(a.resource=t)}}}get cpoint2Resource(){return this._cpoint2Resource}set cpoint2Resource(t){if(this._cpoint2Resource!=t){this._cpoint2Resource=t;for(let e=0;e<this.__points.length;e++){let a=this.__points.get(e).cpoint2;null!=a&&(a.resource=t)}}}doToData(t){super.doToData(t),CDataClass.putData(t,"toolbar",this.toolbar.toData(),{},!0),CDataClass.putData(t,"lblKind",this.lblKind.toData(),{},!0),CDataClass.putData(t,"btnNone",this.btnNone.toData(),{},!0),CDataClass.putData(t,"btnMoveTo",this.btnMoveTo.toData(),{},!0),CDataClass.putData(t,"btnLineTo",this.btnLineTo.toData(),{},!0),CDataClass.putData(t,"btnCurveTo",this.btnCurveTo.toData(),{},!0),CDataClass.putData(t,"btnClose",this.btnClose.toData(),{},!0),CDataClass.putData(t,"btnSave",this.btnSave.toData(),{},!0),CDataClass.putData(t,"btnOpen",this.btnOpen.toData(),{},!0),CDataClass.putData(t,"btnGetTextData",this.btnGetTextData.toData(),{},!0),CDataClass.putData(t,"toolbarBottom",this.toolbarBottom.toData(),{},!0),CDataClass.putData(t,"lblWidth",this.lblWidth.toData(),{},!0),CDataClass.putData(t,"lblheight",this.lblheight.toData(),{},!0),CDataClass.putData(t,"btnSize",this.btnSize.toData(),{},!0),CDataClass.putData(t,"chkAlignPixel",this.chkAlignPixel.toData(),{},!0),CDataClass.putData(t,"edtAlignPixel",this.edtAlignPixel.toData(),{},!0),CDataClass.putData(t,"btnApply",this.btnApply.toData(),{},!0),CDataClass.putData(t,"lRight",this.lRight.toData(),{},!0),CDataClass.putData(t,"spr",this.spr.toData(),{},!0),CDataClass.putData(t,"lRTop",this.lRTop.toData(),{},!0),CDataClass.putData(t,"btnDelete",this.btnDelete.toData(),{},!0),CDataClass.putData(t,"btnClear",this.btnClear.toData(),{},!0),CDataClass.putData(t,"grid",this.grid.toData(),{},!0),CDataClass.putData(t,"lClient",this.lClient.toData(),{},!0),CDataClass.putData(t,"lCTop",this.lCTop.toData(),{},!0),CDataClass.putData(t,"lCClient",this.lCClient.toData(),{},!0),CDataClass.putData(t,"path",this.path.toData(),{},!0),CDataClass.putData(t,"pointResource",this.pointResource,""),CDataClass.putData(t,"cpoint1Resource",this.cpoint1Resource,""),CDataClass.putData(t,"cpoint2Resource",this.cpoint2Resource,"")}doFromData(t){super.doFromData(t),this.toolbar.fromData(CDataClass.getData(t,"toolbar",{},!0)),this.lblKind.fromData(CDataClass.getData(t,"lblKind",{},!0)),this.btnNone.fromData(CDataClass.getData(t,"btnNone",{},!0)),this.btnMoveTo.fromData(CDataClass.getData(t,"btnMoveTo",{},!0)),this.btnLineTo.fromData(CDataClass.getData(t,"btnLineTo",{},!0)),this.btnCurveTo.fromData(CDataClass.getData(t,"btnCurveTo",{},!0)),this.btnClose.fromData(CDataClass.getData(t,"btnClose",{},!0)),this.btnSave.fromData(CDataClass.getData(t,"btnSave",{},!0)),this.btnOpen.fromData(CDataClass.getData(t,"btnOpen",{},!0)),this.btnGetTextData.fromData(CDataClass.getData(t,"btnGetTextData",{},!0)),this.toolbarBottom.fromData(CDataClass.getData(t,"toolbarBottom",{},!0)),this.lblWidth.fromData(CDataClass.getData(t,"lblWidth",{},!0)),this.lblheight.fromData(CDataClass.getData(t,"lblheight",{},!0)),this.btnSize.fromData(CDataClass.getData(t,"btnSize",{},!0)),this.chkAlignPixel.fromData(CDataClass.getData(t,"chkAlignPixel",{},!0)),this.edtAlignPixel.fromData(CDataClass.getData(t,"edtAlignPixel",{},!0)),this.btnApply.fromData(CDataClass.getData(t,"btnApply",{},!0)),this.lRight.fromData(CDataClass.getData(t,"lRight",{},!0)),this.spr.fromData(CDataClass.getData(t,"spr",{},!0)),this.lRTop.fromData(CDataClass.getData(t,"lRTop",{},!0)),this.btnDelete.fromData(CDataClass.getData(t,"btnDelete",{},!0)),this.btnClear.fromData(CDataClass.getData(t,"btnClear",{},!0)),this.grid.fromData(CDataClass.getData(t,"grid",{},!0)),this.lClient.fromData(CDataClass.getData(t,"lClient",{},!0)),this.lCTop.fromData(CDataClass.getData(t,"lCTop",{},!0)),this.lCClient.fromData(CDataClass.getData(t,"lCClient",{},!0)),this.path.fromData(CDataClass.getData(t,"path",{},!0)),this.pointResource=CDataClass.getData(t,"pointResource",""),this.cpoint1Resource=CDataClass.getData(t,"cpoint1Resource",""),this.cpoint2Resource=CDataClass.getData(t,"cpoint2Resource","")}deletePoint(t){for(let e=0;e<this.__points.length;e++)if(this.__points.get(e).pathPoint==t){this.__points.get(e).point.remove();let t=this.__points.get(e).cpoint1;null!=t&&t.remove();let a=this.__points.get(e).cpoint2;null!=a&&a.remove(),this.__points.delete(e);break}for(let e=0;e<this.grid.length;e++)if(this.grid.cell(4,e)==t){this.grid.delete(e);break}for(let e=0;e<this.__item.pathData.length;e++)if(this.__item.pathData.get(e)==t){this.__item.pathData.delete(e);break}}clearPoints(){for(let t=0;t<this.__points.length;t++){this.__points.get(t).point.remove();let e=this.__points.get(t).cpoint1;null!=e&&e.remove();let a=this.__points.get(t).cpoint2;null!=a&&a.remove()}this.__points.clear()}reCreatePoints(){this.clearPoints();for(let t=0;t<this.item.pathData.length;t++){if(this.item.pathData.get(t).pointKind==EPathPointKind.MOVETO){let e=new CPathPointSelectorModel(this.pointResource,this.cpoint1Resource,this.cpoint2Resource);e.parent=this.pathGraphic,e.pathPoint=this.item.pathData.get(t),this.__points.add(e)}if(this.item.pathData.get(t).pointKind==EPathPointKind.LINETO){let e=new CPathPointSelectorModel(this.pointResource,this.cpoint1Resource,this.cpoint2Resource);e.parent=this.pathGraphic,e.pathPoint=this.item.pathData.get(t),this.__points.add(e)}if(this.item.pathData.get(t).pointKind==EPathPointKind.CURVETO3){let e=new CPathPointSelectorModel(this.pointResource,this.cpoint1Resource,this.cpoint2Resource);e.parent=this.pathGraphic,e.pathPoint=this.item.pathData.get(t),this.__points.add(e)}}}refreshPoints(){for(let t=0;t<this.__points.length;t++){let e=this.__points.get(t).pathPoint;if(null!=e){this.__points.get(t).isUpdate=!1,this.__points.get(t).point.position.left=e.point.x-5,this.__points.get(t).point.position.top=e.point.y-5;let a=this.__points.get(t).cpoint1;null!=a&&(a.position.left=e.cPoint1.x-3,a.position.top=e.cPoint1.y-3);let o=this.__points.get(t).cpoint2;null!=o&&(o.position.left=e.cPoint2.x-3,o.position.top=e.cPoint2.y-3),this.__points.get(t).isUpdate=!0}}}setAlignPixel(){for(let t=0;t<this.__points.length;t++)this.chkAlignPixel.checked?this.__points.get(t).alignPixel=parseInt(this.edtAlignPixel.text):this.__points.get(t).alignPixel=0}clear(){this.__item.pathData.clear(),this.clearPoints(),this.grid.clear()}refresh(){this.grid.clear(),this.reCreatePoints();for(let t=0;t<this.__item.pathData.length;t++){let e="";this.__item.pathData.get(t).pointKind==EPathPointKind.BEGIN?e="B":this.__item.pathData.get(t).pointKind==EPathPointKind.MOVETO?e="M":this.__item.pathData.get(t).pointKind==EPathPointKind.LINETO?e="L":this.__item.pathData.get(t).pointKind==EPathPointKind.CURVETO3?e="C":this.__item.pathData.get(t).pointKind==EPathPointKind.CLOSE&&(e="CL");let a=this.grid.add([e,this.__item.pathData.get(t).point.toString(),this.__item.pathData.get(t).cPoint1.toString(),this.__item.pathData.get(t).cPoint2.toString(),this.__item.pathData.get(t)]),o=this;this.item.pathData.get(t).onChange=function(){null!=a&&(a.get(1).asString=o.item.pathData.get(t).point.toString(),a.get(2).asString=o.item.pathData.get(t).cPoint1.toString(),a.get(3).asString=o.item.pathData.get(t).cPoint2.toString())}}}async loadFile(t){}async saveFile(t){}}class CGraphEditorModel extends CPathEditorModel{constructor(t,e){super(t,e),this.cover=new CCover(this),this.startValueHandle=new CPanel(this.pathGraphic),this.stopValueHandle=new CPanel(this.pathGraphic),this.lblScaleY=new CPanel(this.lCTop),this.edtScaleY=new CTextBox(this.lCTop),this.lblPrecision=new CPanel(this.lCTop),this.edtPrecision=new CTextBox(this.lCTop),this.lblDuration=new CPanel(this.lCTop),this.edtDuration=new CTextBox(this.lCTop),this.lblFrame=new CPanel(this.lCTop),this.edtFrame=new CTextBox(this.lCTop),this.btnReg=new CButton(this.lCTop),this.lblStart=new CPanel(this.toolbarBottom),this.edtStart=new CTextBox(this.toolbarBottom),this.lblStop=new CPanel(this.toolbarBottom),this.edtStop=new CTextBox(this.toolbarBottom);let a=this;this.item.fill.styleKind=EStyleKind.EMPTY,this.tagItem=this.pathGraphic.layers.get(0).items.addItem(),this.tagItem.stroke.lineWidth=1,this.tagItem.stroke.styleKind=EStyleKind.SOLID,this.tagItem.kind=ECanvasItemKind.PATH,this.tagItem.pathFitMode=EFitMode.ORIGINAL,this.tagItem.stroke.solidColor="#808080",this.tagItem.pathData.clear(),this.onChangeSize=function(){a.cover.position.width=a.position.width,a.cover.position.height=a.position.height},this.startValueHandle.onChangeOffset=function(){a.edtStart.text=a.pathGraphic.position.height-(a.startValueHandle.position.top+15)+"",a.setStartStopValue()},this.stopValueHandle.onChangeOffset=function(){a.edtStop.text=a.pathGraphic.position.height-(a.stopValueHandle.position.top+15)+"",a.setStartStopValue()},this.edtStart.onKeyDown=function(t,e){"Enter"==e.key&&(a.startValueHandle.position.top=a.pathGraphic.position.height-(parseInt(a.edtStart.text)+15),a.setStartStopValue())},this.edtStop.onKeyDown=function(t,e){"Enter"==e.key&&(a.stopValueHandle.position.top=a.pathGraphic.position.height-(parseInt(a.edtStop.text)+15),a.setStartStopValue())},this.btnReg.onClick=function(){}}doToData(t){super.doToData(t),CDataClass.putData(t,"startValueHandle",this.startValueHandle.toData(),{},!0),CDataClass.putData(t,"stopValueHandle",this.stopValueHandle.toData(),{},!0),CDataClass.putData(t,"lblScaleY",this.lblScaleY.toData(),{},!0),CDataClass.putData(t,"edtScaleY",this.edtScaleY.toData(),{},!0),CDataClass.putData(t,"lblPrecision",this.lblPrecision.toData(),{},!0),CDataClass.putData(t,"edtPrecision",this.edtPrecision.toData(),{},!0),CDataClass.putData(t,"lblDuration",this.lblDuration.toData(),{},!0),CDataClass.putData(t,"edtDuration",this.edtDuration.toData(),{},!0),CDataClass.putData(t,"lblFrame",this.lblFrame.toData(),{},!0),CDataClass.putData(t,"edtFrame",this.edtFrame.toData(),{},!0),CDataClass.putData(t,"btnReg",this.btnReg.toData(),{},!0),CDataClass.putData(t,"lblStart",this.lblStart.toData(),{},!0),CDataClass.putData(t,"edtStart",this.edtStart.toData(),{},!0),CDataClass.putData(t,"lblStop",this.lblStop.toData(),{},!0),CDataClass.putData(t,"edtStop",this.edtStop.toData(),{},!0),CDataClass.putData(t,"cover",this.cover.toData(),{},!0)}doFromData(t){super.doFromData(t),this.startValueHandle.fromData(CDataClass.getData(t,"startValueHandle",{},!0)),this.stopValueHandle.fromData(CDataClass.getData(t,"stopValueHandle",{},!0)),this.lblScaleY.fromData(CDataClass.getData(t,"lblScaleY",{},!0)),this.edtScaleY.fromData(CDataClass.getData(t,"edtScaleY",{},!0)),this.lblPrecision.fromData(CDataClass.getData(t,"lblPrecision",{},!0)),this.edtPrecision.fromData(CDataClass.getData(t,"edtPrecision",{},!0)),this.lblDuration.fromData(CDataClass.getData(t,"lblDuration",{},!0)),this.edtDuration.fromData(CDataClass.getData(t,"edtDuration",{},!0)),this.lblFrame.fromData(CDataClass.getData(t,"lblFrame",{},!0)),this.edtFrame.fromData(CDataClass.getData(t,"edtFrame",{},!0)),this.btnReg.fromData(CDataClass.getData(t,"btnReg",{},!0)),this.lblStart.fromData(CDataClass.getData(t,"lblStart",{},!0)),this.edtStart.fromData(CDataClass.getData(t,"edtStart",{},!0)),this.lblStop.fromData(CDataClass.getData(t,"lblStop",{},!0)),this.edtStop.fromData(CDataClass.getData(t,"edtStop",{},!0)),this.cover.fromData(CDataClass.getData(t,"cover",{},!0))}setStartStopValue(){let t=this.startValueHandle.position.top+15,e=this.stopValueHandle.position.top+15;this.__backItem.pathData.clear(),this.__backItem.pathData.addPointMoveTo(new CPoint(0,t)),this.__backItem.pathData.addPointLineTo(new CPoint(this.pathGraphic.position.width,t)),this.__backItem.pathData.addPointMoveTo(new CPoint(0,e)),this.__backItem.pathData.addPointLineTo(new CPoint(this.pathGraphic.position.width,e)),this.pathGraphic.draw()}setHandle(){this.startValueHandle.position.top=this.pathGraphic.position.height-(parseInt(this.edtStart.text)+15),this.stopValueHandle.position.top=this.pathGraphic.position.height-(parseInt(this.edtStop.text)+15),this.setStartStopValue()}async loadFile(t){}async saveFile(t){}getGraphData(){return new Promise(function(t){})}}class CPathEditorFrame extends CPathEditorModel{constructor(t,e){super(t,e),this.resource="pathEditor.frame"}}class CGraphEditorFrame extends CGraphEditorModel{constructor(t,e){super(t,e),this.resource="graphEditor.frame"}}class CPathEditor extends CWindowBlue{constructor(t,e){super(t,e),this.editor=new CPathEditorFrame(this.body),this.editor.position.align=EPositionAlign.CLIENT}}class CGraphEditor extends CWindowBlue{constructor(t,e){super(t,e),this.editor=new CGraphEditorFrame(this.body),this.editor.position.align=EPositionAlign.CLIENT}}class CAppGraphEditor extends CWindowApplication{constructor(){super(),this.defaultWidth=1200,this.defaultHeight=600,this.appName="Graph Editor",this.editor=new CGraphEditorFrame(this.mainWindow.body),this.editor.position.align=EPositionAlign.CLIENT}}class CPathController extends CPanel{constructor(t,e){super(t,e),this.__isTransForm=!0,this.__isTransForm2=!0,this.xLineCount=9,this.yLineCount=9,this.toolbar=new CPanel(this),this.lblXline=new CPanel(this.toolbar),this.edtXLine=new CTextBox(this.toolbar),this.lblYline=new CPanel(this.toolbar),this.edtYLine=new CTextBox(this.toolbar),this.btnLine=new CButton(this.toolbar),this.btnGridPathSet=new CButton(this.toolbar),this.lblSplite=new CPanel(this.toolbar),this.edtSplite=new CTextBox(this.toolbar),this.btnSplit=new CButton(this.toolbar),this.btnSplitAll=new CButton(this.toolbar),this.btnClose=new CButton(this.toolbar),this.freeTransformHandleLT=new CPanel(this),this.freeTransformHandleRT=new CPanel(this),this.freeTransformHandleLB=new CPanel(this),this.freeTransformHandleRB=new CPanel(this),this.freeTransformHandleLeftC1=new CPanel(this),this.freeTransformHandleLeftC2=new CPanel(this),this.freeTransformHandleTopC1=new CPanel(this),this.freeTransformHandleTopC2=new CPanel(this),this.freeTransformHandleRightC1=new CPanel(this),this.freeTransformHandleRightC2=new CPanel(this),this.freeTransformHandleBottomC1=new CPanel(this),this.freeTransformHandleBottomC2=new CPanel(this);let a=this;this.freeTransformHandleLT.onChangeOffset=function(){a.__isTransForm=!1,a.setLTCurve(),a.__isTransForm=!0,a.__isTransForm&&a.doFreeTransformHandleTrack()},this.freeTransformHandleRT.onChangeOffset=function(){a.__isTransForm=!1,a.setRTCurve(),a.__isTransForm=!0,a.__isTransForm&&a.doFreeTransformHandleTrack()},this.freeTransformHandleLB.onChangeOffset=function(){a.__isTransForm=!1,a.setLBCurve(),a.__isTransForm=!0,a.__isTransForm&&a.doFreeTransformHandleTrack()},this.freeTransformHandleRB.onChangeOffset=function(){a.__isTransForm=!1,a.setRBCurve(),a.__isTransForm=!0,a.__isTransForm&&a.doFreeTransformHandleTrack()},this.freeTransformHandleLeftC1.onChangeOffset=function(){a.__isTransForm&&a.doFreeTransformHandleTrack()},this.freeTransformHandleLeftC2.onChangeOffset=function(){a.__isTransForm&&a.doFreeTransformHandleTrack()},this.freeTransformHandleTopC1.onChangeOffset=function(){a.__isTransForm&&a.doFreeTransformHandleTrack()},this.freeTransformHandleTopC2.onChangeOffset=function(){a.__isTransForm&&a.doFreeTransformHandleTrack()},this.freeTransformHandleRightC1.onChangeOffset=function(){a.__isTransForm&&a.doFreeTransformHandleTrack()},this.freeTransformHandleRightC2.onChangeOffset=function(){a.__isTransForm&&a.doFreeTransformHandleTrack()},this.freeTransformHandleBottomC1.onChangeOffset=function(){a.__isTransForm&&a.doFreeTransformHandleTrack()},this.freeTransformHandleBottomC2.onChangeOffset=function(){a.__isTransForm&&a.doFreeTransformHandleTrack()},this.btnClose.onClick=function(){a.visible=!1},this.btnLine.onClick=function(){a.xLineCount=parseInt(a.edtXLine.text),a.yLineCount=parseInt(a.edtYLine.text)}}doToData(t){super.doToData(t),CDataClass.putData(t,"toolbar",this.toolbar.toData(),{},!0),CDataClass.putData(t,"lblXline",this.lblXline.toData(),{},!0),CDataClass.putData(t,"edtXLine",this.edtXLine.toData(),{},!0),CDataClass.putData(t,"lblYline",this.lblYline.toData(),{},!0),CDataClass.putData(t,"edtYLine",this.edtYLine.toData(),{},!0),CDataClass.putData(t,"btnLine",this.btnLine.toData(),{},!0),CDataClass.putData(t,"btnGridPathSet",this.btnGridPathSet.toData(),{},!0),CDataClass.putData(t,"lblSplite",this.lblSplite.toData(),{},!0),CDataClass.putData(t,"edtSplite",this.edtSplite.toData(),{},!0),CDataClass.putData(t,"btnSplit",this.btnSplit.toData(),{},!0),CDataClass.putData(t,"btnSplitAll",this.btnSplitAll.toData(),{},!0),CDataClass.putData(t,"btnClose",this.btnClose.toData(),{},!0),CDataClass.putData(t,"freeTransformHandleLT",this.freeTransformHandleLT.toData(),{},!0),CDataClass.putData(t,"freeTransformHandleRT",this.freeTransformHandleRT.toData(),{},!0),CDataClass.putData(t,"freeTransformHandleLB",this.freeTransformHandleLB.toData(),{},!0),CDataClass.putData(t,"freeTransformHandleRB",this.freeTransformHandleRB.toData(),{},!0),CDataClass.putData(t,"freeTransformHandleLeftC1",this.freeTransformHandleLeftC1.toData(),{},!0),CDataClass.putData(t,"freeTransformHandleLeftC2",this.freeTransformHandleLeftC2.toData(),{},!0),CDataClass.putData(t,"freeTransformHandleTopC1",this.freeTransformHandleTopC1.toData(),{},!0),CDataClass.putData(t,"freeTransformHandleTopC2",this.freeTransformHandleTopC2.toData(),{},!0),CDataClass.putData(t,"freeTransformHandleRightC1",this.freeTransformHandleRightC1.toData(),{},!0),CDataClass.putData(t,"freeTransformHandleRightC2",this.freeTransformHandleRightC2.toData(),{},!0),CDataClass.putData(t,"freeTransformHandleBottomC1",this.freeTransformHandleBottomC1.toData(),{},!0),CDataClass.putData(t,"freeTransformHandleBottomC2",this.freeTransformHandleBottomC2.toData(),{},!0)}doFromData(t){super.doFromData(t),this.toolbar.fromData(CDataClass.getData(t,"toolbar",{},!0)),this.lblXline.fromData(CDataClass.getData(t,"lblXline",{},!0)),this.edtXLine.fromData(CDataClass.getData(t,"edtXLine",{},!0)),this.lblYline.fromData(CDataClass.getData(t,"lblYline",{},!0)),this.edtYLine.fromData(CDataClass.getData(t,"edtYLine",{},!0)),this.btnLine.fromData(CDataClass.getData(t,"btnLine",{},!0)),this.btnGridPathSet.fromData(CDataClass.getData(t,"btnGridPathSet",{},!0)),this.lblSplite.fromData(CDataClass.getData(t,"lblSplite",{},!0)),this.edtSplite.fromData(CDataClass.getData(t,"edtSplite",{},!0)),this.btnSplit.fromData(CDataClass.getData(t,"btnSplit",{},!0)),this.btnSplitAll.fromData(CDataClass.getData(t,"btnSplitAll",{},!0)),this.btnClose.fromData(CDataClass.getData(t,"btnClose",{},!0)),this.freeTransformHandleLT.fromData(CDataClass.getData(t,"freeTransformHandleLT",{},!0)),this.freeTransformHandleRT.fromData(CDataClass.getData(t,"freeTransformHandleRT",{},!0)),this.freeTransformHandleLB.fromData(CDataClass.getData(t,"freeTransformHandleLB",{},!0)),this.freeTransformHandleRB.fromData(CDataClass.getData(t,"freeTransformHandleRB",{},!0)),this.freeTransformHandleLeftC1.fromData(CDataClass.getData(t,"freeTransformHandleLeftC1",{},!0)),this.freeTransformHandleLeftC2.fromData(CDataClass.getData(t,"freeTransformHandleLeftC2",{},!0)),this.freeTransformHandleTopC1.fromData(CDataClass.getData(t,"freeTransformHandleTopC1",{},!0)),this.freeTransformHandleTopC2.fromData(CDataClass.getData(t,"freeTransformHandleTopC2",{},!0)),this.freeTransformHandleRightC1.fromData(CDataClass.getData(t,"freeTransformHandleRightC1",{},!0)),this.freeTransformHandleRightC2.fromData(CDataClass.getData(t,"freeTransformHandleRightC2",{},!0)),this.freeTransformHandleBottomC1.fromData(CDataClass.getData(t,"freeTransformHandleBottomC1",{},!0)),this.freeTransformHandleBottomC2.fromData(CDataClass.getData(t,"freeTransformHandleBottomC2",{},!0))}doFreeTransformHandleTrack(){this.__isTransForm&&this.__isTransForm2&&(this.doPathDataTransform(),null!=this.onFreeTransformHandleTrack&&this.onFreeTransformHandleTrack(this))}doPathDataTransform(){let t=this.layers.getCanvasItems("line"),e=this.getLTPoint(),a=this.getRTPoint(),o=this.getLBPoint(),i=this.getRBPoint(),s=new CPoint(this.freeTransformHandleLeftC1.position.left,this.freeTransformHandleLeftC1.position.top),n=new CPoint(this.freeTransformHandleLeftC2.position.left,this.freeTransformHandleLeftC2.position.top),r=new CPoint(this.freeTransformHandleTopC1.position.left,this.freeTransformHandleTopC1.position.top),l=new CPoint(this.freeTransformHandleTopC2.position.left,this.freeTransformHandleTopC2.position.top),h=new CPoint(this.freeTransformHandleRightC1.position.left,this.freeTransformHandleRightC1.position.top),p=new CPoint(this.freeTransformHandleRightC2.position.left,this.freeTransformHandleRightC2.position.top),C=new CPoint(this.freeTransformHandleBottomC1.position.left,this.freeTransformHandleBottomC1.position.top),d=new CPoint(this.freeTransformHandleBottomC2.position.left,this.freeTransformHandleBottomC2.position.top);for(let D=0;D<t.length;D++){t[D].pathData.clear(),t[D].pathData.addPointMoveTo(e),t[D].pathData.addPointCurveTo3(a,r,l),t[D].pathData.addPointCurveTo3(i,h,p),t[D].pathData.addPointMoveTo(o),t[D].pathData.addPointCurveTo3(i,C,d),t[D].pathData.addPointMoveTo(e),t[D].pathData.addPointCurveTo3(o,s,n);for(let m=0;m<this.yLineCount;m++){let f=1/(this.yLineCount+1)*(m+1),g=CPoint.yTransformLine(e,a,o,i,s,n,r,l,h,p,C,d,f);t[D].pathData.addPointMoveTo(g.startPoint),t[D].pathData.addPointCurveTo3(g.stopPoint,g.curve1,g.curve2)}for(let m=0;m<this.xLineCount;m++){let f=1/(this.xLineCount+1)*(m+1),g=CPoint.xTransformLine(e,a,o,i,s,n,r,l,h,p,C,d,f);t[D].pathData.addPointMoveTo(g.startPoint),t[D].pathData.addPointCurveTo3(g.stopPoint,g.curve1,g.curve2)}}null!=this.onPathDataTransform&&this.onPathDataTransform(this)}getLTPoint(){return new CPoint(this.freeTransformHandleLT.position.left+this.freeTransformHandleLT.position.width,this.freeTransformHandleLT.position.top+this.freeTransformHandleLT.position.height)}getRTPoint(){return new CPoint(this.freeTransformHandleRT.position.left,this.freeTransformHandleRT.position.top+this.freeTransformHandleRT.position.height)}getLBPoint(){return new CPoint(this.freeTransformHandleLB.position.left+this.freeTransformHandleLB.position.width,this.freeTransformHandleLB.position.top)}getRBPoint(){return new CPoint(this.freeTransformHandleRB.position.left,this.freeTransformHandleRB.position.top)}getC1(t,e){return CPoint.getLineMiddlePoint(t,e,1/3)}getC2(t,e){return CPoint.getLineMiddlePoint(t,e,1/3*2)}setLTCurve(){let t=this.getLTPoint(),e=this.getRTPoint(),a=this.getLBPoint(),o=this.getC1(t,e);this.freeTransformHandleTopC1.position.left=o.x,this.freeTransformHandleTopC1.position.top=o.y,o=this.getC2(t,e),this.freeTransformHandleTopC2.position.left=o.x,this.freeTransformHandleTopC2.position.top=o.y,o=this.getC1(t,a),this.freeTransformHandleLeftC1.position.left=o.x,this.freeTransformHandleLeftC1.position.top=o.y,o=this.getC2(t,a),this.freeTransformHandleLeftC2.position.left=o.x,this.freeTransformHandleLeftC2.position.top=o.y}setRTCurve(){let t=this.getLTPoint(),e=this.getRTPoint(),a=this.getRBPoint(),o=this.getC1(t,e);this.freeTransformHandleTopC1.position.left=o.x,this.freeTransformHandleTopC1.position.top=o.y,o=this.getC2(t,e),this.freeTransformHandleTopC2.position.left=o.x,this.freeTransformHandleTopC2.position.top=o.y,o=this.getC1(e,a),this.freeTransformHandleRightC1.position.left=o.x,this.freeTransformHandleRightC1.position.top=o.y,o=this.getC2(e,a),this.freeTransformHandleRightC2.position.left=o.x,this.freeTransformHandleRightC2.position.top=o.y}setLBCurve(){let t=this.getLTPoint(),e=this.getLBPoint(),a=this.getRBPoint(),o=this.getC1(e,a);this.freeTransformHandleBottomC1.position.left=o.x,this.freeTransformHandleBottomC1.position.top=o.y,o=this.getC2(e,a),this.freeTransformHandleBottomC2.position.left=o.x,this.freeTransformHandleBottomC2.position.top=o.y,o=this.getC1(t,e),this.freeTransformHandleLeftC1.position.left=o.x,this.freeTransformHandleLeftC1.position.top=o.y,o=this.getC2(t,e),this.freeTransformHandleLeftC2.position.left=o.x,this.freeTransformHandleLeftC2.position.top=o.y}setRBCurve(){let t=this.getRTPoint(),e=this.getRBPoint(),a=this.getLBPoint(),o=this.getC1(t,e);this.freeTransformHandleRightC1.position.left=o.x,this.freeTransformHandleRightC1.position.top=o.y,o=this.getC2(t,e),this.freeTransformHandleRightC2.position.left=o.x,this.freeTransformHandleRightC2.position.top=o.y,o=this.getC1(a,e),this.freeTransformHandleBottomC1.position.left=o.x,this.freeTransformHandleBottomC1.position.top=o.y,o=this.getC2(a,e),this.freeTransformHandleBottomC2.position.left=o.x,this.freeTransformHandleBottomC2.position.top=o.y}gridToPathData(){let t=this.getLTPoint(),e=this.getRTPoint(),a=this.getLBPoint(),o=this.getRBPoint(),i=new CPoint(this.freeTransformHandleLeftC1.position.left,this.freeTransformHandleLeftC1.position.top),s=new CPoint(this.freeTransformHandleLeftC2.position.left,this.freeTransformHandleLeftC2.position.top),n=new CPoint(this.freeTransformHandleTopC1.position.left,this.freeTransformHandleTopC1.position.top),r=new CPoint(this.freeTransformHandleTopC2.position.left,this.freeTransformHandleTopC2.position.top),l=new CPoint(this.freeTransformHandleRightC1.position.left,this.freeTransformHandleRightC1.position.top),h=new CPoint(this.freeTransformHandleRightC2.position.left,this.freeTransformHandleRightC2.position.top),p=new CPoint(this.freeTransformHandleBottomC1.position.left,this.freeTransformHandleBottomC1.position.top),C=new CPoint(this.freeTransformHandleBottomC2.position.left,this.freeTransformHandleBottomC2.position.top),d=new CPathPointList;d.clear(),d.addPointMoveTo(t),d.addPointCurveTo3(e,n,r),d.addPointCurveTo3(o,l,h),d.addPointCurveTo3(a,C,p),d.addPointCurveTo3(t,s,i),d.addPointClose();let D=new CPathPointList;for(let d=0;d<this.yLineCount;d++){let m=1/(this.yLineCount+1)*(d+1),f=CPoint.yTransformLine(t,e,a,o,i,s,n,r,l,h,p,C,m);D.addPointMoveTo(f.startPoint),D.addPointCurveTo3(f.stopPoint,f.curve1,f.curve2)}for(let d=0;d<this.xLineCount;d++){let m=1/(this.xLineCount+1)*(d+1),f=CPoint.xTransformLine(t,e,a,o,i,s,n,r,l,h,p,C,m);D.addPointMoveTo(f.startPoint),D.addPointCurveTo3(f.stopPoint,f.curve1,f.curve2)}return{background:d,grid:D}}getTransformBounds(){let t=this.getLTPoint(),e=this.getRTPoint(),a=this.getLBPoint(),o=this.getRBPoint(),i=new CPoint(this.freeTransformHandleLeftC1.position.left,this.freeTransformHandleLeftC1.position.top),s=new CPoint(this.freeTransformHandleLeftC2.position.left,this.freeTransformHandleLeftC2.position.top),n=new CPoint(this.freeTransformHandleTopC1.position.left,this.freeTransformHandleTopC1.position.top),r=new CPoint(this.freeTransformHandleTopC2.position.left,this.freeTransformHandleTopC2.position.top),l=new CPoint(this.freeTransformHandleRightC1.position.left,this.freeTransformHandleRightC1.position.top),h=new CPoint(this.freeTransformHandleRightC2.position.left,this.freeTransformHandleRightC2.position.top),p=new CPoint(this.freeTransformHandleBottomC1.position.left,this.freeTransformHandleBottomC1.position.top),C=new CPoint(this.freeTransformHandleBottomC2.position.left,this.freeTransformHandleBottomC2.position.top),d=Math.min(t.x,e.x,a.x,o.x,i.x,s.x,n.x,r.x,l.x,h.x,p.x,C.x),D=Math.min(t.y,e.y,a.y,o.y,i.y,s.y,n.y,r.y,l.y,h.y,p.y,C.y),m=Math.max(t.x,e.x,a.x,o.x,i.x,s.x,n.x,r.x,l.x,h.x,p.x,C.x),f=Math.max(t.y,e.y,a.y,o.y,i.y,s.y,n.y,r.y,l.y,h.y,p.y,C.y);return new CRect(d,D,m,f)}offTransform(){this.__isTransForm2=!1}onTransform(){this.__isTransForm2=!0,this.doFreeTransformHandleTrack()}}class CPathItemTransformer extends CPathController{constructor(t,e){super(t,e),this.__orgPathData=new Map,this.__orgBounds=new CRect;let a=this;this.btnSplit.onClick=function(){null!=a.pathItem&&a.pathItem.pathData.splitLine(parseInt(a.edtSplite.text))},this.btnSplitAll.onClick=function(){null!=a.pathItem&&a.pathItem.loopPathItem(function(t){t.pathData.splitLine(parseInt(a.edtSplite.text))})},this.btnClose.onClick=function(){a.visible=!1,a.pathItem=void 0}}get pathItem(){return this._pathItem}set pathItem(t){this._pathItem!=t&&(this._pathItem=t,null!=t&&this.doSetPathData(t))}doSetPathData(t){let e=t.pathData.getBounds();0==t.pathData.length&&(e=new CRect(0,0,0,0));let a=this;this.__orgPathData.clear(),this.__orgBounds=t.pathData.getBounds(),function t(e){let o=e.pathData.copyTo();e.pathData.lineToCurve(),o.lineToCurve(),a.__orgPathData.set(e,o);for(let a=0;a<e.childs.length;a++)t(e.childs.get(a))}(t),this.freeTransformHandleLT.position.left=e.left-this.freeTransformHandleLT.position.width,this.freeTransformHandleLT.position.top=e.top-this.freeTransformHandleLT.position.height,this.freeTransformHandleRT.position.left=e.right,this.freeTransformHandleRT.position.top=e.top-this.freeTransformHandleLT.position.height,this.freeTransformHandleLB.position.left=e.left-this.freeTransformHandleLT.position.width,this.freeTransformHandleLB.position.top=e.bottom,this.freeTransformHandleRB.position.left=e.right,this.freeTransformHandleRB.position.top=e.bottom}doGridToItem(){if(null!=this.pathItem){let t=this.gridToPathData();this.pathItem.pathData.copyFrom(t.background),this.pathItem.childs.addItem().pathData.copyFrom(t.grid)}}doPathDataTransform(){if(null!=this.pathItem){let t=this,e=(this.layers.getCanvasItems("line"),this.getLTPoint()),a=this.getRTPoint(),o=this.getLBPoint(),i=this.getRBPoint(),s=new CPoint(this.freeTransformHandleLeftC1.position.left,this.freeTransformHandleLeftC1.position.top),n=new CPoint(this.freeTransformHandleLeftC2.position.left,this.freeTransformHandleLeftC2.position.top),r=new CPoint(this.freeTransformHandleTopC1.position.left,this.freeTransformHandleTopC1.position.top),l=new CPoint(this.freeTransformHandleTopC2.position.left,this.freeTransformHandleTopC2.position.top),h=new CPoint(this.freeTransformHandleRightC1.position.left,this.freeTransformHandleRightC1.position.top),p=new CPoint(this.freeTransformHandleRightC2.position.left,this.freeTransformHandleRightC2.position.top),C=new CPoint(this.freeTransformHandleBottomC1.position.left,this.freeTransformHandleBottomC1.position.top),d=new CPoint(this.freeTransformHandleBottomC2.position.left,this.freeTransformHandleBottomC2.position.top);!function D(m){let f=t.__orgPathData.get(m);if(null!=f&&null!=t.__orgBounds)for(let D=0;D<f.length;D++)if(f.get(D).pointKind==EPathPointKind.MOVETO||f.get(D).pointKind==EPathPointKind.LINETO||f.get(D).pointKind==EPathPointKind.CURVETO2||f.get(D).pointKind==EPathPointKind.CURVETO3){let g=f.get(D).point,c=CPoint.getTransformCurvePoint(t.__orgBounds,g.toPoint(),e,a,o,i,s,n,r,l,h,p,C,d);m.pathData.get(D).point.x=c.x,m.pathData.get(D).point.y=c.y,g=f.get(D).cPoint1,c=CPoint.getTransformCurvePoint(t.__orgBounds,g.toPoint(),e,a,o,i,s,n,r,l,h,p,C,d),m.pathData.get(D).cPoint1.x=c.x,m.pathData.get(D).cPoint1.y=c.y,g=f.get(D).cPoint2,c=CPoint.getTransformCurvePoint(t.__orgBounds,g.toPoint(),e,a,o,i,s,n,r,l,h,p,C,d),m.pathData.get(D).cPoint2.x=c.x,m.pathData.get(D).cPoint2.y=c.y}for(let t=0;t<m.childs.length;t++)D(m.childs.get(t))}(this.pathItem)}super.doPathDataTransform()}}class CCanvasControlTransfomer extends CPathController{constructor(t,e){super(t,e),this.__orgHasPoint=!1,this.__orgPathData=new Map,this.__orgBounds=new CRect;let a=this;this.btnSplit.onClick=function(){if(null!=a.control)for(let t=0;t<a.control.layers.length;t++)for(let e=0;e<a.control.layers.get(t).items.length;e++)a.control.layers.get(t).items.get(e).pathData.splitLine(parseInt(a.edtSplite.text))},this.btnSplitAll.visible=!1,this.btnClose.onClick=function(){a.visible=!1,null!=a.control&&(a.control.hasPointerEvent=a.__orgHasPoint),a.control=void 0}}doPathDataTransform(){if(null!=this.control){let t=this.getLTPoint(),e=this.getRTPoint(),a=this.getLBPoint(),o=this.getRBPoint(),i=new CPoint(this.freeTransformHandleLeftC1.position.left,this.freeTransformHandleLeftC1.position.top),s=new CPoint(this.freeTransformHandleLeftC2.position.left,this.freeTransformHandleLeftC2.position.top),n=new CPoint(this.freeTransformHandleTopC1.position.left,this.freeTransformHandleTopC1.position.top),r=new CPoint(this.freeTransformHandleTopC2.position.left,this.freeTransformHandleTopC2.position.top),l=new CPoint(this.freeTransformHandleRightC1.position.left,this.freeTransformHandleRightC1.position.top),h=new CPoint(this.freeTransformHandleRightC2.position.left,this.freeTransformHandleRightC2.position.top),p=new CPoint(this.freeTransformHandleBottomC1.position.left,this.freeTransformHandleBottomC1.position.top),C=new CPoint(this.freeTransformHandleBottomC2.position.left,this.freeTransformHandleBottomC2.position.top),d=this.getTransformBounds();this.control.position.left=d.left,this.control.position.top=d.top,this.control.position.width=d.width,this.control.position.height=d.height;for(let d=0;d<this.control.layers.length;d++)for(let D=0;D<this.control.layers.get(d).items.length;D++){let m=this.__orgPathData.get(this.control.layers.get(d).items.get(D));if(null!=m&&null!=this.__orgBounds)for(let f=0;f<m.length;f++)if(m.get(f).pointKind==EPathPointKind.MOVETO||m.get(f).pointKind==EPathPointKind.LINETO||m.get(f).pointKind==EPathPointKind.CURVETO2||m.get(f).pointKind==EPathPointKind.CURVETO3){let g=m.get(f).point,c=CPoint.getTransformCurvePoint(this.__orgBounds,g.toPoint(),t,e,a,o,i,s,n,r,l,h,p,C);c.x-=this.control.position.left,c.y-=this.control.position.top,this.control.layers.get(d).items.get(D).pathData.get(f).point.x=c.x,this.control.layers.get(d).items.get(D).pathData.get(f).point.y=c.y,g=m.get(f).cPoint1,(c=CPoint.getTransformCurvePoint(this.__orgBounds,g.toPoint(),t,e,a,o,i,s,n,r,l,h,p,C)).x-=this.control.position.left,c.y-=this.control.position.top,this.control.layers.get(d).items.get(D).pathData.get(f).cPoint1.x=c.x,this.control.layers.get(d).items.get(D).pathData.get(f).cPoint1.y=c.y,g=m.get(f).cPoint2,(c=CPoint.getTransformCurvePoint(this.__orgBounds,g.toPoint(),t,e,a,o,i,s,n,r,l,h,p,C)).x-=this.control.position.left,c.y-=this.control.position.top,this.control.layers.get(d).items.get(D).pathData.get(f).cPoint2.x=c.x,this.control.layers.get(d).items.get(D).pathData.get(f).cPoint2.y=c.y}this.control.layers.get(d).items.get(D).pathData.width=this.control.position.width,this.control.layers.get(d).items.get(D).pathData.height=this.control.position.height}}super.doPathDataTransform()}setControl(t){if(t.layers.length>0&&t.layers.get(0).items.length>0){let e=t.layers.get(0).items.get(0);e.pathData.width,e.pathData.height;this.control=t,this.__orgBounds=e.pathData.getBounds(),this.offTransform(),this.freeTransformHandleLT.position.left=this.control.position.left,this.freeTransformHandleLT.position.top=this.control.position.top,this.freeTransformHandleRT.position.left=this.control.position.left+this.control.position.width,this.freeTransformHandleRT.position.top=this.control.position.top,this.freeTransformHandleLB.position.left=this.control.position.left,this.freeTransformHandleLB.position.top=this.control.position.top+this.control.position.height,this.freeTransformHandleRB.position.left=this.control.position.left+this.control.position.width,this.freeTransformHandleRB.position.top=this.control.position.top+this.control.position.height,this.onTransform(),this.control.layers.fromData(t.layers.toData()),this.__orgPathData.clear();for(let t=0;t<this.control.layers.length;t++)for(let e=0;e<this.control.layers.get(t).items.length;e++){let a=this.control.layers.get(t).items.get(e);a.pathData.width=this.control.position.width,a.pathData.height=this.control.position.height,a.pathData.stretch(new CRect(0,0,this.control.position.width,this.control.position.height));let o=new CPathPointList;o.fromData(a.pathData.toData()),this.__orgPathData.set(a,o)}this.draw(),this.__orgHasPoint=t.hasPointerEvent,t.hasPointerEvent=!1}}}class CAnimationTransfomer extends CPathController{constructor(t,e){super(t,e),this.__orgPathData=new Map,this.__orgBounds=new CRect;let a=this;this.btnSplit.onClick=function(){if(null!=a.control)for(let t=0;t<a.control.layers.length;t++)for(let e=0;e<a.control.layers.get(t).items.length;e++)a.control.layers.get(t).items.get(e).pathData.splitLine(parseInt(a.edtSplite.text))},this.btnSplitAll.visible=!1,this.btnClose.onClick=function(){a.visible=!1,a.control=void 0}}doPathDataTransform(){if(null!=this.control){let t=this.getLTPoint(),e=this.getRTPoint(),a=this.getLBPoint(),o=this.getRBPoint(),i=new CPoint(this.freeTransformHandleLeftC1.position.left,this.freeTransformHandleLeftC1.position.top),s=new CPoint(this.freeTransformHandleLeftC2.position.left,this.freeTransformHandleLeftC2.position.top),n=new CPoint(this.freeTransformHandleTopC1.position.left,this.freeTransformHandleTopC1.position.top),r=new CPoint(this.freeTransformHandleTopC2.position.left,this.freeTransformHandleTopC2.position.top),l=new CPoint(this.freeTransformHandleRightC1.position.left,this.freeTransformHandleRightC1.position.top),h=new CPoint(this.freeTransformHandleRightC2.position.left,this.freeTransformHandleRightC2.position.top),p=new CPoint(this.freeTransformHandleBottomC1.position.left,this.freeTransformHandleBottomC1.position.top),C=new CPoint(this.freeTransformHandleBottomC2.position.left,this.freeTransformHandleBottomC2.position.top);this.getTransformBounds();this.control.transformerPoints.leftTop.x=t.x,this.control.transformerPoints.leftTop.y=t.y,this.control.transformerPoints.leftBottom.x=a.x,this.control.transformerPoints.leftBottom.y=a.y,this.control.transformerPoints.rightTop.x=e.x,this.control.transformerPoints.rightTop.y=e.y,this.control.transformerPoints.rightBottom.x=o.x,this.control.transformerPoints.rightBottom.y=o.y,this.control.transformerPoints.leftC1.x=i.x,this.control.transformerPoints.leftC1.y=i.y,this.control.transformerPoints.leftC2.x=s.x,this.control.transformerPoints.leftC2.y=s.y,this.control.transformerPoints.topC1.x=n.x,this.control.transformerPoints.topC1.y=n.y,this.control.transformerPoints.topC2.x=r.x,this.control.transformerPoints.topC2.y=r.y,this.control.transformerPoints.rightC1.x=l.x,this.control.transformerPoints.rightC1.y=l.y,this.control.transformerPoints.rightC2.x=h.x,this.control.transformerPoints.rightC2.y=h.y,this.control.transformerPoints.bottomC1.x=p.x,this.control.transformerPoints.bottomC1.y=p.y,this.control.transformerPoints.bottomC2.x=C.x,this.control.transformerPoints.bottomC2.y=C.y}super.doPathDataTransform()}setControl(t){if(t.layers.length>0&&t.layers.get(0).items.length>0){let e=t.layers.get(0).items.get(0);e.pathData.width,e.pathData.height;this.control=t,this.__orgBounds=e.pathData.getBounds(),this.offTransform(),this.freeTransformHandleLT.position.left=this.control.position.left-20,this.freeTransformHandleLT.position.top=this.control.position.top-20,this.freeTransformHandleRT.position.left=this.control.position.left+this.control.position.width,this.freeTransformHandleRT.position.top=this.control.position.top-20,this.freeTransformHandleLB.position.left=this.control.position.left-20,this.freeTransformHandleLB.position.top=this.control.position.top+this.control.position.height,this.freeTransformHandleRB.position.left=this.control.position.left+this.control.position.width,this.freeTransformHandleRB.position.top=this.control.position.top+this.control.position.height,this.onTransform(),this.draw(),this.control.layers.fromData(t.layers.toData()),this.__orgPathData.clear();for(let t=0;t<this.control.layers.length;t++)for(let e=0;e<this.control.layers.get(t).items.length;e++){let a=this.control.layers.get(t).items.get(e);a.pathFitMode=EFitMode.ORIGINAL;let o=new CPathPointList;o.fromData(a.pathData.toData()),this.__orgPathData.set(a,o)}}}}class CTransformerFrame extends CPanel{constructor(t,e){super(t,e),this.__orgPathData=new Map,this.__orgBounds=new CRect,this.control=new CCanvasLayerControl(this),this.transformer=new CPathController(this);let a=this;this.transformer.resource="path_controller.control",this.transformer.position.align=EPositionAlign.CLIENT,this.transformer.onFreeTransformHandleTrack=function(){a.doTransform()},this.transformer.btnSplit.onClick=function(){},this.transformer.btnSplitAll.onClick=function(){},this.transformer.btnClose.onClick=function(){}}doTransform(){let t=this.transformer.getLTPoint(),e=this.transformer.getRTPoint(),a=this.transformer.getLBPoint(),o=this.transformer.getRBPoint(),i=new CPoint(this.transformer.freeTransformHandleLeftC1.position.left,this.transformer.freeTransformHandleLeftC1.position.top),s=new CPoint(this.transformer.freeTransformHandleLeftC2.position.left,this.transformer.freeTransformHandleLeftC2.position.top),n=new CPoint(this.transformer.freeTransformHandleTopC1.position.left,this.transformer.freeTransformHandleTopC1.position.top),r=new CPoint(this.transformer.freeTransformHandleTopC2.position.left,this.transformer.freeTransformHandleTopC2.position.top),l=new CPoint(this.transformer.freeTransformHandleRightC1.position.left,this.transformer.freeTransformHandleRightC1.position.top),h=new CPoint(this.transformer.freeTransformHandleRightC2.position.left,this.transformer.freeTransformHandleRightC2.position.top),p=new CPoint(this.transformer.freeTransformHandleBottomC1.position.left,this.transformer.freeTransformHandleBottomC1.position.top),C=new CPoint(this.transformer.freeTransformHandleBottomC2.position.left,this.transformer.freeTransformHandleBottomC2.position.top),d=this.transformer.getTransformBounds();for(let d=0;d<this.control.layers.length;d++)for(let D=0;D<this.control.layers.get(d).items.length;D++){let m=this.__orgPathData.get(this.control.layers.get(d).items.get(D));if(null!=m&&null!=this.__orgBounds)for(let f=0;f<m.length;f++)if(m.get(f).pointKind==EPathPointKind.MOVETO||m.get(f).pointKind==EPathPointKind.LINETO||m.get(f).pointKind==EPathPointKind.CURVETO2||m.get(f).pointKind==EPathPointKind.CURVETO3){let g=m.get(f).point,c=CPoint.getTransformCurvePoint(this.__orgBounds,g.toPoint(),t,e,a,o,i,s,n,r,l,h,p,C);c.x-=this.control.position.left,c.y-=this.control.position.top,this.control.layers.get(d).items.get(D).pathData.get(f).point.x=c.x,this.control.layers.get(d).items.get(D).pathData.get(f).point.y=c.y,g=m.get(f).cPoint1,(c=CPoint.getTransformCurvePoint(this.__orgBounds,g.toPoint(),t,e,a,o,i,s,n,r,l,h,p,C)).x-=this.control.position.left,c.y-=this.control.position.top,this.control.layers.get(d).items.get(D).pathData.get(f).cPoint1.x=c.x,this.control.layers.get(d).items.get(D).pathData.get(f).cPoint1.y=c.y,g=m.get(f).cPoint2,(c=CPoint.getTransformCurvePoint(this.__orgBounds,g.toPoint(),t,e,a,o,i,s,n,r,l,h,p,C)).x-=this.control.position.left,c.y-=this.control.position.top,this.control.layers.get(d).items.get(D).pathData.get(f).cPoint2.x=c.x,this.control.layers.get(d).items.get(D).pathData.get(f).cPoint2.y=c.y}}this.control.position.left=d.left,this.control.position.top=d.top,this.control.position.width=d.width,this.control.position.height=d.height}setControl(t){if(t.layers.length>0&&t.layers.get(0).items.length>0){let e=t.layers.get(0).items.get(0),a=e.pathData.width,o=e.pathData.height;this.control.position.width=a,this.control.position.height=o,this.control.position.left=(this.position.width-this.control.position.width)/2,this.control.position.top=(this.position.height-this.control.position.height)/2,this.control=t,this.__orgBounds=e.pathData.getBounds(),this.transformer.offTransform(),this.transformer.freeTransformHandleLT.position.left=this.control.position.left-20,this.transformer.freeTransformHandleLT.position.top=this.control.position.top-20,this.transformer.freeTransformHandleRT.position.left=this.control.position.left+this.control.position.width,this.transformer.freeTransformHandleRT.position.top=this.control.position.top-20,this.transformer.freeTransformHandleLB.position.left=this.control.position.left-20,this.transformer.freeTransformHandleLB.position.top=this.control.position.top+this.control.position.height,this.transformer.freeTransformHandleRB.position.left=this.control.position.left+this.control.position.width,this.transformer.freeTransformHandleRB.position.top=this.control.position.top+this.control.position.height,this.transformer.onTransform(),this.transformer.draw(),this.control.layers.fromData(t.layers.toData()),this.__orgPathData.clear();for(let t=0;t<this.control.layers.length;t++)for(let e=0;e<this.control.layers.get(t).items.length;e++){let a=this.control.layers.get(t).items.get(e);a.pathFitMode=EFitMode.ORIGINAL;let o=new CPathPointList;o.fromData(a.pathData.toData()),this.__orgPathData.set(a,o)}}}}var EPathItemAddKind,EPathItemItemKind;!function(t){t[t.NORMAL=0]="NORMAL",t[t.PATTERN=1]="PATTERN",t[t.ROTATION=2]="ROTATION",t[t.RANDOM=3]="RANDOM"}(EPathItemAddKind||(EPathItemAddKind={})),function(t){t[t.EMPTY=0]="EMPTY",t[t.ELLIPSE=1]="ELLIPSE",t[t.RECTANGLE=2]="RECTANGLE",t[t.POLIGON=3]="POLIGON",t[t.HORN=4]="HORN",t[t.TEXT=5]="TEXT",t[t.ETC=6]="ETC"}(EPathItemItemKind||(EPathItemItemKind={}));class CPathItem extends CNotifyChangeNotifyObject{constructor(){super(),this._name=CSequence.getSequence("item"),this._kind="",this._visible=!0,this._group=!1,this.pathData=new CPathPointList,this.childs=new CPathItems,this.fill=new CFillSet,this.stroke=new CStrokeSet,this.opacity=1,this.shadowBlur=0,this.shadowColor="",this.shadowOffsetX=0,this.shadowOffsetY=0,this.composite="source-over",this.text="",this.textSet=new CTextSet;let t=this;this.childs.parent=this,this.childs.onChange=function(){t.doChange()}}get name(){return this._name}set name(t){this._name!=t&&(this._name=t,this.doChange())}get kind(){return this._kind}set kind(t){this._kind!=t&&(this._kind=t,this.doChange())}get visible(){return this._visible}set visible(t){this._visible!=t&&(this._visible=t,this.doChange())}get group(){return this._group}set group(t){this._group!=t&&(this._group=t,this.doChange())}doToData(t){super.doToData(t),CDataClass.putData(t,"name",this.name,""),CDataClass.putData(t,"kind",this.kind,""),CDataClass.putData(t,"pathData",this.pathData.toData(),{},!0),CDataClass.putData(t,"childs",this.childs.toData(),{},!0),CDataClass.putData(t,"fill",this.fill.toData(),{},!0),CDataClass.putData(t,"stroke",this.stroke.toData(),{},!0),CDataClass.putData(t,"opacity",this.opacity,1),CDataClass.putData(t,"shadowBlur",this.shadowBlur,0),CDataClass.putData(t,"shadowColor",this.shadowColor,""),CDataClass.putData(t,"shadowOffsetX",this.shadowOffsetX,0),CDataClass.putData(t,"shadowOffsetY",this.shadowOffsetY,0),CDataClass.putData(t,"composite",this.composite,"source-over"),CDataClass.putData(t,"visible",this.visible,!0),CDataClass.putData(t,"group",this.group,!1)}doFromData(t){super.doFromData(t),this.name=CDataClass.getData(t,"name",""),this.kind=CDataClass.getData(t,"kind",""),this.pathData.fromData(CDataClass.getData(t,"pathData",{},!0)),this.childs.fromData(CDataClass.getData(t,"childs",{},!0)),this.fill.fromData(CDataClass.getData(t,"fill",{},!0)),this.stroke.fromData(CDataClass.getData(t,"stroke",{},!0)),this.opacity=CDataClass.getData(t,"opacity",1),this.shadowBlur=CDataClass.getData(t,"shadowBlur",0),this.shadowColor=CDataClass.getData(t,"shadowColor",""),this.shadowOffsetX=CDataClass.getData(t,"shadowOffsetX",0),this.shadowOffsetY=CDataClass.getData(t,"shadowOffsetY",0),this.composite=CDataClass.getData(t,"composite","source-over"),this.visible=CDataClass.getData(t,"visible",!0),this.group=CDataClass.getData(t,"group",!1)}getData(){let t=new CPathPointList;return function e(a){t.addPointList(a.pathData);for(let t=0;t<a.childs.length;t++)e(a.childs.get(t))}(this),t}rotate(t,e,a=!1){!function t(e,o,i){if(e.pathData.rotate(o,i),a){let t=e.pathData.getBounds();e.pathData.rotate(new CPoint(t.left+t.width/2,t.top+t.height/2),-i)}for(let a=0;a<e.childs.length;a++)t(e.childs.get(a),o,i)}(this,t,e)}loopPathItem(t){!function e(a){t(a);for(let t=0;t<a.childs.length;t++)e(a.childs.get(t))}(this)}toCanvasItems(t,e){let a=new CCanvasItems;return this.loopPathItem(function(o){if(o.visible){let n=function(){let t=a.addItem();return t.kind=ECanvasItemKind.PATH,t.pathFitMode=EFitMode.STRETCH,t}();s=o,(i=n).pathData.addPointList(s.pathData),i.fill.fromData(s.fill.toData()),i.stroke.fromData(s.stroke.toData()),i.opacity=s.opacity,i.shadowBlur=s.shadowBlur,i.shadowColor=s.shadowColor,i.shadowOffsetX=s.shadowOffsetX,i.shadowOffsetY=s.shadowOffsetY,new Function("ci","pi","ci.composite = pi.composite")(i,s),i.text=s.text,i.name=s.name,i.textSet.fromData(s.textSet.toData()),n.pathData.width=t,n.pathData.height=e}var i,s}),a}scale(t,e){this.loopPathItem(function(a){a.pathData.scale(t,e)})}stretch(t){let e=this.pathData.getBounds();this.pathData.stretchIgnoreSize(t);let a=this.pathData.getBounds(),o=a.width/e.width,i=a.height/e.height;for(let s=0;s<this.childs.length;s++){let n=this.childs.get(s).pathData.getBounds();if(n.isEmpty())this.childs.get(s).stretch(t);else if(e.isEmpty()){let r=(n.left-t.left)*o+a.left,l=(n.top-e.top)*i+a.top,h=new CRect(r,l,r+n.width*o,l+n.height*i);this.childs.get(s).stretch(h)}else{let t=(n.left-e.left)*o+a.left,r=(n.top-e.top)*i+a.top,l=new CRect(t,r,t+n.width*o,r+n.height*i);this.childs.get(s).stretch(l)}}}movePoint(t,e){this.loopPathItem(function(a){a.pathData.movePoint(t,e)})}getBounds(){let t=Number.MAX_VALUE,e=Number.MAX_VALUE,a=Number.MIN_VALUE,o=Number.MIN_VALUE;return this.loopPathItem(function(i){let s=i.pathData.getBounds();s.isEmpty()||(s.left<t&&(t=s.left),s.top<e&&(e=s.top),s.right>a&&(a=s.right),s.bottom>o&&(o=s.bottom))}),Number.MAX_VALUE,Number.MAX_VALUE,Number.MIN_VALUE,o==Number.MIN_VALUE?new CRect:new CRect(t,e,a,o)}}class CPathItems extends CList{doToData(t){super.doToData(t);let e=[];for(let t=0;t<this.length;t++)e.push(this.get(t).toData());CDataClass.putData(t,"items",e,[],!0)}doFromData(t){super.doFromData(t),this.clear();let e=CDataClass.getData(t,"items",[],!0);for(let t=0;t<e.length;t++){this.addItem().fromData(e[t])}}toData(){let t={};return this.doToData(t),t}addItem(){let t=new CPathItem;return this.add(t),t.parent=this.parent,t}}class CCustomPathItemProperties extends CFold{get item(){return this._item}set item(t){this._item!=t&&(this._item=t,this.doSetPathItem())}doSetPathItem(){}}class CBasePathItemProperties extends CCustomPathItemProperties{constructor(t,e){super(t,e),this.lblName=new CPanel(this.body),this.edtName=new CTextBox(this.lblName),this.l=new CPanel(this.body),this.btnFill=new CButton(this.l),this.btnStroke=new CButton(this.l),this.lblOpacity=new CPanel(this.body),this.edtOpacity=new CTextBox(this.lblOpacity),this.lblShadowBlur=new CPanel(this.body),this.edtShadowBlur=new CTextBox(this.lblShadowBlur),this.lblShadowColor=new CPanel(this.body),this.edtShadowColor=new CTextBox(this.lblShadowColor),this.lblShadowOffsetX=new CPanel(this.body),this.edtShadowOffsetX=new CTextBox(this.lblShadowOffsetX),this.lblShadowOffsetY=new CPanel(this.body),this.edtShadowOffsetY=new CTextBox(this.lblShadowOffsetY),this.comboComposite=new CComboBox(this.body),this.lblText=new CPanel(this.body),this.edtText=new CTextBox(this.lblText),this.btnTextSet=new CButton(this.body),this.btnGroup=new CSelectBox(this.body),this.btnVisible=new CSelectBox(this.body),this.btnApply=new CButton(this.body);let a=this;this.lblName.propertyName="lblName",this.edtName.propertyName="edtName",this.btnFill.propertyName="btnFill",this.btnStroke.propertyName="btnStroke",this.lblOpacity.propertyName="lblOpacity",this.edtOpacity.propertyName="edtOpacity",this.lblShadowBlur.propertyName="lblShadowBlur",this.edtShadowBlur.propertyName="edtShadowBlur",this.lblShadowColor.propertyName="lblShadowColor",this.edtShadowColor.propertyName="edtShadowColor",this.lblShadowOffsetX.propertyName="lblShadowOffsetX",this.edtShadowOffsetX.propertyName="edtShadowOffsetX",this.lblShadowOffsetY.propertyName="lblShadowOffsetY",this.edtShadowOffsetY.propertyName="edtShadowOffsetY",this.lblText.propertyName="lblText",this.edtText.propertyName="edtText",this.btnTextSet.propertyName="btnTextSet",this.btnApply.propertyName="btnApply",this.comboComposite.items.add("source-over"),this.comboComposite.items.add("source-in"),this.comboComposite.items.add("source-out"),this.comboComposite.items.add("source-atop"),this.comboComposite.items.add("destination-over"),this.comboComposite.items.add("destination-in"),this.comboComposite.items.add("destination-out"),this.comboComposite.items.add("destination-atop"),this.comboComposite.items.add("lighter"),this.comboComposite.items.add("darker"),this.comboComposite.items.add("xor"),this.comboComposite.items.add("copy"),this.comboComposite.onChangeItem=function(){null!=a.item&&(a.item.composite=a.comboComposite.text,a.applyEditor())};let o=CSystem.browserCovers.get("cover");function i(t,e){"Enter"==e.key&&a.btnApply.click()}this.btnFill.onClick=function(){if(null==a.item)CSystem.showMessage("Warning","Select item");else{let t=new CFillEditorFrame(o);t.position.align=EPositionAlign.CENTER,t.fill=a.item.fill,null!=o&&(o.isHideClear=!0,o.onHide=function(){a.applyEditor()},o.showCover())}},this.btnStroke.onClick=function(){if(null==a.item)CSystem.showMessage("Warning","Select item");else{let t=new CStrokeEditorFrame(o);t.position.align=EPositionAlign.CENTER,t.stroke=a.item.stroke,null!=o&&(o.isHideClear=!0,o.onHide=function(){a.applyEditor()},o.showCover())}},this.edtName.onKeyDown=i,this.edtOpacity.onKeyDown=i,this.edtShadowBlur.onKeyDown=i,this.edtShadowColor.onKeyDown=i,this.edtShadowOffsetX.onKeyDown=i,this.edtShadowOffsetY.onKeyDown=i,this.edtText.onKeyDown=i,this.btnTextSet.onClick=function(){let t=new CBasePropertyEditor(CSystem.desktopList.get(0).applicationLayer);t.instance=a.item.textSet,t.showCenter(300,400,"Text Setting","remove")},this.btnApply.onClick=function(){let t=!1;null!=a.item&&(a.item.name!=a.edtName.text&&(t=!0),a.item.name=a.edtName.text,a.item.opacity=parseFloat(a.edtOpacity.text),a.item.shadowBlur=parseFloat(a.edtShadowBlur.text),a.item.shadowColor=a.edtShadowColor.text,a.item.shadowOffsetX=parseFloat(a.edtShadowOffsetX.text),a.item.shadowOffsetY=parseFloat(a.edtShadowOffsetY.text),a.item.text=a.edtText.text,a.item.group!=a.btnGroup.selected&&(t=!0),a.item.group=a.btnGroup.selected,a.item.visible=a.btnVisible.selected),a.applyEditor(t)}}doToData(t){super.doToData(t),CDataClass.putData(t,"lblName",this.lblName.toData(),{},!0),CDataClass.putData(t,"edtName",this.edtName.toData(),{},!0),CDataClass.putData(t,"l",this.l.toData(),{},!0),CDataClass.putData(t,"btnFill",this.btnFill.toData(),{},!0),CDataClass.putData(t,"btnStroke",this.btnStroke.toData(),{},!0),CDataClass.putData(t,"lblOpacity",this.lblOpacity.toData(),{},!0),CDataClass.putData(t,"edtOpacity",this.edtOpacity.toData(),{},!0),CDataClass.putData(t,"lblShadowBlur",this.lblShadowBlur.toData(),{},!0),CDataClass.putData(t,"edtShadowBlur",this.edtShadowBlur.toData(),{},!0),CDataClass.putData(t,"lblShadowColor",this.lblShadowColor.toData(),{},!0),CDataClass.putData(t,"edtShadowColor",this.edtShadowColor.toData(),{},!0),CDataClass.putData(t,"lblShadowOffsetX",this.lblShadowOffsetX.toData(),{},!0),CDataClass.putData(t,"edtShadowOffsetX",this.edtShadowOffsetX.toData(),{},!0),CDataClass.putData(t,"lblShadowOffsetY",this.lblShadowOffsetY.toData(),{},!0),CDataClass.putData(t,"edtShadowOffsetY",this.edtShadowOffsetY.toData(),{},!0),CDataClass.putData(t,"comboComposite",this.comboComposite.toData(),{},!0),CDataClass.putData(t,"lblText",this.lblText.toData(),{},!0),CDataClass.putData(t,"edtText",this.edtText.toData(),{},!0),CDataClass.putData(t,"btnTextSet",this.btnTextSet.toData(),{},!0),CDataClass.putData(t,"btnGroup",this.btnGroup.toData(),{},!0),CDataClass.putData(t,"btnVisible",this.btnVisible.toData(),{},!0),CDataClass.putData(t,"btnApply",this.btnApply.toData(),{},!0)}doFromData(t){super.doFromData(t),this.lblName.fromData(CDataClass.getData(t,"lblName",{},!0)),this.edtName.fromData(CDataClass.getData(t,"edtName",{},!0)),this.l.fromData(CDataClass.getData(t,"l",{},!0)),this.btnFill.fromData(CDataClass.getData(t,"btnFill",{},!0)),this.btnStroke.fromData(CDataClass.getData(t,"btnStroke",{},!0)),this.lblOpacity.fromData(CDataClass.getData(t,"lblOpacity",{},!0)),this.edtOpacity.fromData(CDataClass.getData(t,"edtOpacity",{},!0)),this.lblShadowBlur.fromData(CDataClass.getData(t,"lblShadowBlur",{},!0)),this.edtShadowBlur.fromData(CDataClass.getData(t,"edtShadowBlur",{},!0)),this.lblShadowColor.fromData(CDataClass.getData(t,"lblShadowColor",{},!0)),this.edtShadowColor.fromData(CDataClass.getData(t,"edtShadowColor",{},!0)),this.lblShadowOffsetX.fromData(CDataClass.getData(t,"lblShadowOffsetX",{},!0)),this.edtShadowOffsetX.fromData(CDataClass.getData(t,"edtShadowOffsetX",{},!0)),this.lblShadowOffsetY.fromData(CDataClass.getData(t,"lblShadowOffsetY",{},!0)),this.edtShadowOffsetY.fromData(CDataClass.getData(t,"edtShadowOffsetY",{},!0)),this.comboComposite.fromData(CDataClass.getData(t,"comboComposite",{},!0)),this.lblText.fromData(CDataClass.getData(t,"lblText",{},!0)),this.edtText.fromData(CDataClass.getData(t,"edtText",{},!0)),this.btnTextSet.fromData(CDataClass.getData(t,"btnTextSet",{},!0)),this.btnGroup.fromData(CDataClass.getData(t,"btnGroup",{},!0)),this.btnVisible.fromData(CDataClass.getData(t,"btnVisible",{},!0)),this.btnApply.fromData(CDataClass.getData(t,"btnApply",{},!0))}doSetPathItem(){super.doSetPathItem(),null!=this._item&&(this.edtName.text=this._item.name,this.edtOpacity.text=this._item.opacity+"",this.edtShadowBlur.text=this._item.shadowBlur+"",this.edtShadowColor.text=this._item.shadowColor,this.edtShadowOffsetX.text=this._item.shadowOffsetX+"",this.edtShadowOffsetY.text=this._item.shadowOffsetY+"",this.edtText.text=this._item.text,"source-over"==this._item.composite&&(this.comboComposite.itemIndex=0),"source-in"==this._item.composite&&(this.comboComposite.itemIndex=1),"source-out"==this._item.composite&&(this.comboComposite.itemIndex=2),"source-atop"==this._item.composite&&(this.comboComposite.itemIndex=3),"destination-over"==this._item.composite&&(this.comboComposite.itemIndex=4),"destination-in"==this._item.composite&&(this.comboComposite.itemIndex=5),"destination-out"==this._item.composite&&(this.comboComposite.itemIndex=6),"destination-atop"==this._item.composite&&(this.comboComposite.itemIndex=7),"lighter"==this._item.composite&&(this.comboComposite.itemIndex=8),"darker"==this._item.composite&&(this.comboComposite.itemIndex=9),"xor"==this._item.composite&&(this.comboComposite.itemIndex=10),"copy"==this._item.composite&&(this.comboComposite.itemIndex=11),this.btnGroup.selected=this._item.group,this.btnVisible.selected=this._item.visible)}applyEditor(t=!1){null!=this.editor&&(t&&this.editor.refresh(!0),this.editor.doPaint())}}class CRectanglePathItemProperties extends CCustomPathItemProperties{constructor(t,e){super(t,e),this.lblRadiusX=new CPanel(this.body),this.edtRadiusX=new CTextBox(this.lblRadiusX),this.lblRadiusY=new CPanel(this.body),this.edtRadiusY=new CTextBox(this.lblRadiusY),this.lblDisableLine=new CPanel(this.body),this.l1=new CPanel(this.body),this.btnLeft=new CSelectBox(this.l1),this.btnTop=new CSelectBox(this.l1),this.btnRight=new CSelectBox(this.l1),this.btnBottom=new CSelectBox(this.l1),this.lblDisableRound=new CPanel(this.body),this.l2=new CPanel(this.body),this.btnLeftTop=new CSelectBox(this.l2),this.btnRightTop=new CSelectBox(this.l2),this.btnLeftBottom=new CSelectBox(this.l2),this.btnRightBottom=new CSelectBox(this.l2),this.btnApply=new CButton(this.body);let a=this;this.lblRadiusX.propertyName="lblRadiusX",this.edtRadiusX.propertyName="edtRadiusX",this.lblRadiusY.propertyName="lblRadiusY",this.edtRadiusY.propertyName="edtRadiusY",this.lblDisableLine.propertyName="lblDisableLine",this.l1.propertyName="l1",this.btnLeft.propertyName="btnLeft",this.btnTop.propertyName="btnTop",this.btnRight.propertyName="btnRight",this.btnBottom.propertyName="btnBottom",this.lblDisableRound.propertyName="lblDisableRound",this.l2.propertyName="l2",this.btnLeftTop.propertyName="btnLeftTop",this.btnRightTop.propertyName="btnRightTop",this.btnLeftBottom.propertyName="btnLeftBottom",this.btnRightBottom.propertyName="btnRightBottom",this.btnApply.propertyName="btnApply",this.btnApply.onClick=function(){if(null!=a.item){let t=new CStringSet;a.btnLeft.selected&&t.add("left"),a.btnTop.selected&&t.add("top"),a.btnRight.selected&&t.add("right"),a.btnBottom.selected&&t.add("bottom");let e=new CStringSet;a.btnLeftTop.selected&&e.add("leftTop"),a.btnLeftBottom.selected&&e.add("leftBottom"),a.btnRightTop.selected&&e.add("rightTop"),a.btnRightBottom.selected&&e.add("rightBottom"),null!=a.editor&&(a.item.pathData.clear(),a.item.pathData.makeRoundRectData(a.editor.selector.position.left+10,a.editor.selector.position.top+10,a.editor.selector.position.width-20,a.editor.selector.position.height-20,parseInt(a.edtRadiusX.text),parseInt(a.edtRadiusY.text),e,t,!1),a.editor.doPaint())}else CSystem.showMessage("Warning","Select item")}}doToData(t){super.doToData(t),CDataClass.putData(t,"lblRadiusX",this.lblRadiusX.toData(),{},!0),CDataClass.putData(t,"edtRadiusX",this.edtRadiusX.toData(),{},!0),CDataClass.putData(t,"lblRadiusY",this.lblRadiusY.toData(),{},!0),CDataClass.putData(t,"edtRadiusY",this.edtRadiusY.toData(),{},!0),CDataClass.putData(t,"lblDisableLine",this.lblDisableLine.toData(),{},!0),CDataClass.putData(t,"l1",this.l1.toData(),{},!0),CDataClass.putData(t,"btnLeft",this.btnLeft.toData(),{},!0),CDataClass.putData(t,"btnTop",this.btnTop.toData(),{},!0),CDataClass.putData(t,"btnRight",this.btnRight.toData(),{},!0),CDataClass.putData(t,"btnBottom",this.btnBottom.toData(),{},!0),CDataClass.putData(t,"lblDisableRound",this.lblDisableRound.toData(),{},!0),CDataClass.putData(t,"l2",this.l2.toData(),{},!0),CDataClass.putData(t,"btnLeftTop",this.btnLeftTop.toData(),{},!0),CDataClass.putData(t,"btnRightTop",this.btnRightTop.toData(),{},!0),CDataClass.putData(t,"btnLeftBottom",this.btnLeftBottom.toData(),{},!0),CDataClass.putData(t,"btnRightBottom",this.btnRightBottom.toData(),{},!0),CDataClass.putData(t,"btnApply",this.btnApply.toData(),{},!0)}doFromData(t){super.doFromData(t),this.lblRadiusX.fromData(CDataClass.getData(t,"lblRadiusX",{},!0)),this.edtRadiusX.fromData(CDataClass.getData(t,"edtRadiusX",{},!0)),this.lblRadiusY.fromData(CDataClass.getData(t,"lblRadiusY",{},!0)),this.edtRadiusY.fromData(CDataClass.getData(t,"edtRadiusY",{},!0)),this.lblDisableLine.fromData(CDataClass.getData(t,"lblDisableLine",{},!0)),this.l1.fromData(CDataClass.getData(t,"l1",{},!0)),this.btnLeft.fromData(CDataClass.getData(t,"btnLeft",{},!0)),this.btnTop.fromData(CDataClass.getData(t,"btnTop",{},!0)),this.btnRight.fromData(CDataClass.getData(t,"btnRight",{},!0)),this.btnBottom.fromData(CDataClass.getData(t,"btnBottom",{},!0)),this.lblDisableRound.fromData(CDataClass.getData(t,"lblDisableRound",{},!0)),this.l2.fromData(CDataClass.getData(t,"l2",{},!0)),this.btnLeftTop.fromData(CDataClass.getData(t,"btnLeftTop",{},!0)),this.btnRightTop.fromData(CDataClass.getData(t,"btnRightTop",{},!0)),this.btnLeftBottom.fromData(CDataClass.getData(t,"btnLeftBottom",{},!0)),this.btnRightBottom.fromData(CDataClass.getData(t,"btnRightBottom",{},!0)),this.btnApply.fromData(CDataClass.getData(t,"btnApply",{},!0))}}class CPoligonPathItemProperties extends CCustomPathItemProperties{constructor(t,e){super(t,e),this.lblCount=new CPanel(this.body),this.edtCount=new CTextBox(this.lblCount),this.lblStartAngle=new CPanel(this.body),this.edtStartAngle=new CTextBox(this.lblStartAngle),this.btnApply=new CButton(this.body);let a=this;this.btnApply.onClick=function(){if(null!=a.item){if(null!=a.editor){a.item.pathData.clear(),a.item.pathData.makePoligonData(parseInt(a.edtCount.text),!0,parseInt(a.edtStartAngle.text));let t=a.editor.selector.getBounds();t.left+=10,t.top+=10,t.right-=10,t.bottom-=10,a.item.pathData.stretchIgnoreSize(t),a.editor.doPaint()}}else CSystem.showMessage("Warning","Select item")}}doToData(t){super.doToData(t),CDataClass.putData(t,"lblCount",this.lblCount.toData(),{},!0),CDataClass.putData(t,"edtCount",this.edtCount.toData(),{},!0),CDataClass.putData(t,"lblStartAngle",this.lblStartAngle.toData(),{},!0),CDataClass.putData(t,"edtStartAngle",this.edtStartAngle.toData(),{},!0),CDataClass.putData(t,"btnApply",this.btnApply.toData(),{},!0)}doFromData(t){super.doFromData(t),this.lblCount.fromData(CDataClass.getData(t,"lblCount",{},!0)),this.edtCount.fromData(CDataClass.getData(t,"edtCount",{},!0)),this.lblStartAngle.fromData(CDataClass.getData(t,"lblStartAngle",{},!0)),this.edtStartAngle.fromData(CDataClass.getData(t,"edtStartAngle",{},!0)),this.btnApply.fromData(CDataClass.getData(t,"btnApply",{},!0))}}class CHornPathItemProperties extends CCustomPathItemProperties{constructor(t,e){super(t,e),this.lblCount=new CPanel(this.body),this.edtCount=new CTextBox(this.lblCount),this.lblInnerLength=new CPanel(this.body),this.edtInnerLength=new CTextBox(this.lblInnerLength),this.lblStartAngle=new CPanel(this.body),this.edtStartAngle=new CTextBox(this.lblStartAngle),this.btnApply=new CButton(this.body);let a=this;this.btnApply.onClick=function(){if(null!=a.item){if(null!=a.editor){a.item.pathData.clear(),a.item.pathData.makeHornData(parseInt(a.edtCount.text),parseFloat(a.edtInnerLength.text),!0,parseInt(a.edtStartAngle.text));let t=a.editor.selector.getBounds();t.left+=10,t.top+=10,t.right-=10,t.bottom-=10,a.item.pathData.stretchIgnoreSize(t),a.editor.doPaint()}}else CSystem.showMessage("Warning","Select item")}}doToData(t){super.doToData(t),CDataClass.putData(t,"lblCount",this.lblCount.toData(),{},!0),CDataClass.putData(t,"edtCount",this.edtCount.toData(),{},!0),CDataClass.putData(t,"lblInnerLength",this.lblInnerLength.toData(),{},!0),CDataClass.putData(t,"edtInnerLength",this.edtInnerLength.toData(),{},!0),CDataClass.putData(t,"lblStartAngle",this.lblStartAngle.toData(),{},!0),CDataClass.putData(t,"edtStartAngle",this.edtStartAngle.toData(),{},!0),CDataClass.putData(t,"btnApply",this.btnApply.toData(),{},!0)}doFromData(t){super.doFromData(t),this.lblCount.fromData(CDataClass.getData(t,"lblCount",{},!0)),this.edtCount.fromData(CDataClass.getData(t,"edtCount",{},!0)),this.lblInnerLength.fromData(CDataClass.getData(t,"lblInnerLength",{},!0)),this.edtInnerLength.fromData(CDataClass.getData(t,"edtInnerLength",{},!0)),this.lblStartAngle.fromData(CDataClass.getData(t,"lblStartAngle",{},!0)),this.edtStartAngle.fromData(CDataClass.getData(t,"edtStartAngle",{},!0)),this.btnApply.fromData(CDataClass.getData(t,"btnApply",{},!0))}}class CTextPathItemProperties extends CCustomPathItemProperties{constructor(t,e){super(t,e),this.txt=new CTextArea(this.body),this.comboFont=new CComboBox(this.body),this.btnEachLetter=new CSelectBox(this.body),this.btnApply=new CButton(this.body);let a=this;CSystem.systemFont.forEach(function(t){a.comboFont.items.add(t)}),this.btnApply.onClick=async function(){if(null!=a.item&&null!=a.editor)if(a.btnEachLetter.selected){let t=await CStringUtil.getTextPathDataEach(a.txt.text,a.comboFont.text),e=0,o=0;for(let i=0;i<t.data.length;i++){let s=a.item.childs.addItem();s.fill.styleKind=EStyleKind.SOLID,s.fill.solidColor="#ffffff",s.stroke.styleKind=EStyleKind.SOLID,s.stroke.lineWidth=1,s.stroke.solidColor="#000000",s.pathData.width=a.editor.pathArea.position.width,s.pathData.height=a.editor.pathArea.position.height,"\n"==t.data[i].letter?(s.name="Enter",e=0,o+=50):s.name=t.data[i].letter,s.kind="Text","blank"!=t.data[i].letter&&"\n"!=t.data[i].letter&&(s.pathData.fromFontPathData(t.data[i].data),s.pathData.fitIgnoreSize(new CRect(e,o,e+50,o+50))),"\n"!=t.data[i].letter&&(e+=50)}a.editor.refresh(),a.editor.doPaint()}else{a.item.pathData.clear();let t=await CStringUtil.getTextPathData(a.txt.text,a.comboFont.text);a.item.pathData.fromFontPathData(t);let e=a.editor.selector.getBounds();e.left+=10,e.top+=10,e.right-=10,e.bottom-=10,a.item.pathData.fitIgnoreSize(e),a.editor.doPaint()}else CSystem.showMessage("Warning","Select item")}}doToData(t){super.doToData(t),CDataClass.putData(t,"txt",this.txt.toData(),{},!0),CDataClass.putData(t,"comboFont",this.comboFont.toData(),{},!0),CDataClass.putData(t,"btnEachLetter",this.btnEachLetter.toData(),{},!0),CDataClass.putData(t,"btnApply",this.btnApply.toData(),{},!0)}doFromData(t){super.doFromData(t),this.txt.fromData(CDataClass.getData(t,"txt",{},!0)),this.comboFont.fromData(CDataClass.getData(t,"comboFont",{},!0)),this.btnEachLetter.fromData(CDataClass.getData(t,"btnEachLetter",{},!0)),this.btnApply.fromData(CDataClass.getData(t,"btnApply",{},!0))}}class CAxisCopyTool extends CCustomPathItemProperties{constructor(t,e){super(t,e),this.lblAxis=new CPanel(this.body),this.edtAxis=new CTextBox(this.lblAxis),this.btnGuide=new CSelectBox(this.edtAxis),this.lblKind=new CPanel(this.body),this.btnHorz=new CSelectGroupBox(this.lblKind),this.btnVert=new CSelectGroupBox(this.lblKind),this.btnUseReverse=new CSelectBox(this.body),this.btnUseLastPointLink=new CSelectBox(this.body),this.btnUsePathClose=new CSelectBox(this.body),this.btnNewItem=new CSelectBox(this.body),this.btnApply=new CButton(this.body);let a=this;this.btnHorz.groupName=this.name+".kind",this.btnVert.groupName=this.name+".kind",this.btnApply.onClick=function(){null!=a.item?a.doAxisCopy(a.item):CSystem.showMessage("Warning","Select item")}}doToData(t){super.doToData(t),CDataClass.putData(t,"lblAxis",this.lblAxis.toData(),{},!0),CDataClass.putData(t,"edtAxis",this.edtAxis.toData(),{},!0),CDataClass.putData(t,"btnGuide",this.btnGuide.toData(),{},!0),CDataClass.putData(t,"lblKind",this.lblKind.toData(),{},!0),CDataClass.putData(t,"btnHorz",this.btnHorz.toData(),{},!0),CDataClass.putData(t,"btnVert",this.btnVert.toData(),{},!0),CDataClass.putData(t,"btnUseReverse",this.btnUseReverse.toData(),{},!0),CDataClass.putData(t,"btnUseLastPointLink",this.btnUseLastPointLink.toData(),{},!0),CDataClass.putData(t,"btnUsePathClose",this.btnUsePathClose.toData(),{},!0),CDataClass.putData(t,"btnNewItem",this.btnNewItem.toData(),{},!0),CDataClass.putData(t,"btnApply",this.btnApply.toData(),{},!0)}doFromData(t){super.doFromData(t),this.lblAxis.fromData(CDataClass.getData(t,"lblAxis",{},!0)),this.edtAxis.fromData(CDataClass.getData(t,"edtAxis",{},!0)),this.btnGuide.fromData(CDataClass.getData(t,"btnGuide",{},!0)),this.lblKind.fromData(CDataClass.getData(t,"lblKind",{},!0)),this.btnHorz.fromData(CDataClass.getData(t,"btnHorz",{},!0)),this.btnVert.fromData(CDataClass.getData(t,"btnVert",{},!0)),this.btnUseReverse.fromData(CDataClass.getData(t,"btnUseReverse",{},!0)),this.btnUseLastPointLink.fromData(CDataClass.getData(t,"btnUseLastPointLink",{},!0)),this.btnUsePathClose.fromData(CDataClass.getData(t,"btnUsePathClose",{},!0)),this.btnNewItem.fromData(CDataClass.getData(t,"btnNewItem",{},!0)),this.btnApply.fromData(CDataClass.getData(t,"btnApply",{},!0))}doAxisCopy(t){let e=this;if(this.btnNewItem.selected){if(e.btnUseReverse.selected)CSystem.showMessage("Warning","Reverse is selected");else if(null!=e.editor){let o=e.editor.pathItems.addItem();function a(t,o){for(let a=0;a<t.pathData.length;a++)o?(t.pathData.get(a).point.x+=2*(parseFloat(e.edtAxis.text)-t.pathData.get(a).point.x),t.pathData.get(a).cPoint1.x+=2*(parseFloat(e.edtAxis.text)-t.pathData.get(a).cPoint1.x),t.pathData.get(a).cPoint2.x+=2*(parseFloat(e.edtAxis.text)-t.pathData.get(a).cPoint2.x)):(t.pathData.get(a).point.y+=2*(parseFloat(e.edtAxis.text)-t.pathData.get(a).point.y),t.pathData.get(a).cPoint1.y+=2*(parseFloat(e.edtAxis.text)-t.pathData.get(a).cPoint1.y),t.pathData.get(a).cPoint2.y+=2*(parseFloat(e.edtAxis.text)-t.pathData.get(a).cPoint2.y));for(let o=0;o<t.childs.length;o++)a(t.childs.get(o),e.btnHorz.selected)}o.fromData(t.toData()),a(o,e.btnHorz.selected),e.editor.refresh()}}else{function a(t){e.btnHorz.selected?e.btnUseReverse.selected?t.pathData.addDecalcomanieXReverse(parseFloat(e.edtAxis.text),e.btnUseLastPointLink.selected,e.btnUsePathClose.selected):t.pathData.addDecalcomanieX(parseFloat(e.edtAxis.text)):e.btnUseReverse.selected?t.pathData.addDecalcomanieYReverse(parseFloat(e.edtAxis.text),e.btnUseLastPointLink.selected,e.btnUsePathClose.selected):t.pathData.addDecalcomanieY(parseFloat(e.edtAxis.text));for(let e=0;e<t.childs.length;e++)a(t.childs.get(e))}a(t)}null!=this.editor&&this.editor.doPaint()}}class CRotationCopyTool extends CCustomPathItemProperties{constructor(t,e){super(t,e),this.btnGuide=new CSelectBox(this.body),this.lblStartAngle=new CPanel(this.body),this.edtStartAngle=new CTextBox(this.lblStartAngle),this.lblStopAngle=new CPanel(this.body),this.edtStopAngle=new CTextBox(this.lblStopAngle),this.btnStopAngle=new CButton(this.edtStopAngle),this.lblCenterX=new CPanel(this.body),this.edtCenterX=new CTextBox(this.lblCenterX),this.lblCenterY=new CPanel(this.body),this.edtCenterY=new CTextBox(this.lblCenterY),this.lblCount=new CPanel(this.body),this.edtCount=new CTextBox(this.lblCount),this.btnFillStopAngle=new CSelectBox(this.body),this.btnKeepItemAngle=new CSelectBox(this.body),this.btnNewItem=new CSelectBox(this.body),this.btnApply=new CButton(this.body);let a=this;this.btnApply.onClick=function(){null!=a.item?a.doRotationCopy(a.item):CSystem.showMessage("Warning","Select item")}}doToData(t){super.doToData(t),CDataClass.putData(t,"btnGuide",this.btnGuide.toData(),{},!0),CDataClass.putData(t,"lblStartAngle",this.lblStartAngle.toData(),{},!0),CDataClass.putData(t,"edtStartAngle",this.edtStartAngle.toData(),{},!0),CDataClass.putData(t,"lblStopAngle",this.lblStopAngle.toData(),{},!0),CDataClass.putData(t,"edtStopAngle",this.edtStopAngle.toData(),{},!0),CDataClass.putData(t,"btnStopAngle",this.btnStopAngle.toData(),{},!0),CDataClass.putData(t,"lblCenterX",this.lblCenterX.toData(),{},!0),CDataClass.putData(t,"edtCenterX",this.edtCenterX.toData(),{},!0),CDataClass.putData(t,"lblCenterY",this.lblCenterY.toData(),{},!0),CDataClass.putData(t,"edtCenterY",this.edtCenterY.toData(),{},!0),CDataClass.putData(t,"lblCount",this.lblCount.toData(),{},!0),CDataClass.putData(t,"edtCount",this.edtCount.toData(),{},!0),CDataClass.putData(t,"btnFillStopAngle",this.btnFillStopAngle.toData(),{},!0),CDataClass.putData(t,"btnKeepItemAngle",this.btnKeepItemAngle.toData(),{},!0),CDataClass.putData(t,"btnNewItem",this.btnNewItem.toData(),{},!0),CDataClass.putData(t,"btnApply",this.btnApply.toData(),{},!0)}doFromData(t){super.doFromData(t),this.btnGuide.fromData(CDataClass.getData(t,"btnGuide",{},!0)),this.lblStartAngle.fromData(CDataClass.getData(t,"lblStartAngle",{},!0)),this.edtStartAngle.fromData(CDataClass.getData(t,"edtStartAngle",{},!0)),this.lblStopAngle.fromData(CDataClass.getData(t,"lblStopAngle",{},!0)),this.edtStopAngle.fromData(CDataClass.getData(t,"edtStopAngle",{},!0)),this.btnStopAngle.fromData(CDataClass.getData(t,"btnStopAngle",{},!0)),this.lblCenterX.fromData(CDataClass.getData(t,"lblCenterX",{},!0)),this.edtCenterX.fromData(CDataClass.getData(t,"edtCenterX",{},!0)),this.lblCenterY.fromData(CDataClass.getData(t,"lblCenterY",{},!0)),this.edtCenterY.fromData(CDataClass.getData(t,"edtCenterY",{},!0)),this.lblCount.fromData(CDataClass.getData(t,"lblCount",{},!0)),this.edtCount.fromData(CDataClass.getData(t,"edtCount",{},!0)),this.btnFillStopAngle.fromData(CDataClass.getData(t,"btnFillStopAngle",{},!0)),this.btnKeepItemAngle.fromData(CDataClass.getData(t,"btnKeepItemAngle",{},!0)),this.btnNewItem.fromData(CDataClass.getData(t,"btnNewItem",{},!0)),this.btnApply.fromData(CDataClass.getData(t,"btnApply",{},!0))}doRotationCopy(t){let e=this;if(this.btnNewItem.selected){let a=new CPoint(parseFloat(this.edtCenterX.text),parseFloat(this.edtCenterY.text)),o=parseInt(this.edtCount.text),i=o;this.btnFillStopAngle.selected&&i--;let s=(parseFloat(this.edtStopAngle.text)-parseFloat(this.edtStartAngle.text))/i,n=new CPathItems;for(let i=0;i<o;i++){let o=n.addItem();o.fromData(t.toData()),o.name=t.name+"_copy"+(i+1),o.rotate(a,s*i,e.btnKeepItemAngle.selected)}for(let a=0;a<n.length;a++)null!=t.parent?(t.parent.childs.add(n.get(a)),n.get(a).parent=t.parent):null!=e.editor&&e.editor.pathItems.add(n.get(a));null!=e.editor&&e.editor.refresh()}else{let a=new CPoint(parseFloat(this.edtCenterX.text),parseFloat(this.edtCenterY.text)),o=parseInt(this.edtCount.text),i=o;this.btnFillStopAngle.selected&&i--;let s=(parseFloat(this.edtStopAngle.text)-parseFloat(this.edtStartAngle.text))/i,n=t.pathData.copyTo();!function t(i){for(let t=1;t<o;t++){let o=n.copyTo();if(o.rotate(a,s*t),e.btnKeepItemAngle.selected){let e=o.getBounds();o.rotate(new CPoint(e.left+e.width/2,e.top+e.height/2),-s*t)}i.pathData.addPointList(o)}for(let e=0;e<i.childs.length;e++)t(i.childs.get(e))}(t)}null!=this.editor&&this.editor.doPaint()}}class CRandomCopyTool extends CCustomPathItemProperties{constructor(t,e){super(t,e),this.lblCount=new CPanel(this.body),this.edtCount=new CTextBox(this.lblCount),this.lblMinSize=new CPanel(this.body),this.edtMinSize=new CTextBox(this.lblMinSize),this.lblMaxSize=new CPanel(this.body),this.edtMaxSize=new CTextBox(this.lblMaxSize),this.lblMinAngle=new CPanel(this.body),this.edtMinAngle=new CTextBox(this.lblMinAngle),this.lblMaxAngle=new CPanel(this.body),this.edtMaxAngle=new CTextBox(this.lblMaxAngle),this.lblLeft=new CPanel(this.body),this.edtLeft=new CTextBox(this.lblLeft),this.lblTop=new CPanel(this.body),this.edtTop=new CTextBox(this.lblTop),this.lblRight=new CPanel(this.body),this.edtRight=new CTextBox(this.lblRight),this.lblBottom=new CPanel(this.body),this.edtBottom=new CTextBox(this.lblBottom),this.btnApply=new CButton(this.body);let a=this;this.btnApply.onClick=function(){null!=a.item?a.doRandom(a.item):CSystem.showMessage("Warning","Select item")}}doToData(t){super.doToData(t),CDataClass.putData(t,"lblCount",this.lblCount.toData(),{},!0),CDataClass.putData(t,"edtCount",this.edtCount.toData(),{},!0),CDataClass.putData(t,"lblMinSize",this.lblMinSize.toData(),{},!0),CDataClass.putData(t,"edtMinSize",this.edtMinSize.toData(),{},!0),CDataClass.putData(t,"lblMaxSize",this.lblMaxSize.toData(),{},!0),CDataClass.putData(t,"edtMaxSize",this.edtMaxSize.toData(),{},!0),CDataClass.putData(t,"lblMinAngle",this.lblMinAngle.toData(),{},!0),CDataClass.putData(t,"edtMinAngle",this.edtMinAngle.toData(),{},!0),CDataClass.putData(t,"lblMaxAngle",this.lblMaxAngle.toData(),{},!0),CDataClass.putData(t,"edtMaxAngle",this.edtMaxAngle.toData(),{},!0),CDataClass.putData(t,"lblLeft",this.lblLeft.toData(),{},!0),CDataClass.putData(t,"edtLeft",this.edtLeft.toData(),{},!0),CDataClass.putData(t,"lblTop",this.lblTop.toData(),{},!0),CDataClass.putData(t,"edtTop",this.edtTop.toData(),{},!0),CDataClass.putData(t,"lblRight",this.lblRight.toData(),{},!0),CDataClass.putData(t,"edtRight",this.edtRight.toData(),{},!0),CDataClass.putData(t,"lblBottom",this.lblBottom.toData(),{},!0),CDataClass.putData(t,"edtBottom",this.edtBottom.toData(),{},!0),CDataClass.putData(t,"btnApply",this.btnApply.toData(),{},!0)}doFromData(t){super.doFromData(t),this.lblCount.fromData(CDataClass.getData(t,"lblCount",{},!0)),this.edtCount.fromData(CDataClass.getData(t,"edtCount",{},!0)),this.lblMinSize.fromData(CDataClass.getData(t,"lblMinSize",{},!0)),this.edtMinSize.fromData(CDataClass.getData(t,"edtMinSize",{},!0)),this.lblMaxSize.fromData(CDataClass.getData(t,"lblMaxSize",{},!0)),this.edtMaxSize.fromData(CDataClass.getData(t,"edtMaxSize",{},!0)),this.lblMinAngle.fromData(CDataClass.getData(t,"lblMinAngle",{},!0)),this.edtMinAngle.fromData(CDataClass.getData(t,"edtMinAngle",{},!0)),this.lblMaxAngle.fromData(CDataClass.getData(t,"lblMaxAngle",{},!0)),this.edtMaxAngle.fromData(CDataClass.getData(t,"edtMaxAngle",{},!0)),this.lblLeft.fromData(CDataClass.getData(t,"lblLeft",{},!0)),this.edtLeft.fromData(CDataClass.getData(t,"edtLeft",{},!0)),this.lblTop.fromData(CDataClass.getData(t,"lblTop",{},!0)),this.edtTop.fromData(CDataClass.getData(t,"edtTop",{},!0)),this.lblRight.fromData(CDataClass.getData(t,"lblRight",{},!0)),this.edtRight.fromData(CDataClass.getData(t,"edtRight",{},!0)),this.lblBottom.fromData(CDataClass.getData(t,"lblBottom",{},!0)),this.edtBottom.fromData(CDataClass.getData(t,"edtBottom",{},!0)),this.btnApply.fromData(CDataClass.getData(t,"btnApply",{},!0))}doRandom(t){let e=this,a=t.pathData.copyTo();t.pathData.clear();let o=parseInt(this.edtCount.text);!function t(i){for(let t=0;t<o;t++){let t=a.copyTo(),o=Math.random()*(parseFloat(e.edtMaxSize.text)-parseFloat(e.edtMinSize.text))+parseFloat(e.edtMinSize.text),s=Math.random()*(parseFloat(e.edtRight.text)-parseFloat(e.edtLeft.text)-o)+parseFloat(e.edtLeft.text),n=Math.random()*(parseFloat(e.edtBottom.text)-parseFloat(e.edtTop.text)-o)+parseFloat(e.edtTop.text),r=Math.random()*(parseFloat(e.edtMaxAngle.text)-parseFloat(e.edtMinAngle.text))+parseFloat(e.edtMinAngle.text),l=new CRect(s,n,s+o,n+o),h=new CPoint(s+l.width/2,n+l.height/2);t.fitIgnoreSize(l),t.rotate(h,r),i.pathData.addPointList(t)}for(let e=0;e<i.childs.length;e++)t(i.childs.get(e))}(t),null!=this.editor&&this.editor.doPaint()}}class CLayerPathEditorModel extends CPanel{constructor(t,e){super(t,e),this.__selectorDownChildsPathData=new Map,this.__selectorDownChildsBounds=new Map,this.__downPathData=new CPathPointList,this.__preSize=new CPoint,this.toolbar=new CPanel(this),this.btnToCanvasItemsData=new CButton(this.toolbar),this.btnToLayersData=new CButton(this.toolbar),this.btnToAnimateControlData=new CButton(this.toolbar),this.btnSave=new CButton(this.toolbar),this.btnOpen=new CButton(this.toolbar),this.lLeft=new CPanel(this),this.lLTop=new CPanel(this.lLeft),this.btnItemAdd=new CButton(this.lLTop),this.btnItemDelete=new CButton(this.lLTop),this.btnItemDown=new CButton(this.lLTop),this.btnItemUp=new CButton(this.lLTop),this.list=new CObjectTreeListBox(this.lLeft),this.spl=new CSplitter(this),this.lClient=new CPanel(this),this.lCTopShape=new CPanel(this.lClient),this.pointKindArrow=new CSelectGroupBox(this.lCTopShape),this.pointKindTransfomer=new CSelectGroupBox(this.lCTopShape),this.pointKindPathEditor=new CSelectGroupBox(this.lCTopShape),this.peNone=new CSelectGroupBox(this.lCTopShape),this.peMoveTo=new CSelectGroupBox(this.lCTopShape),this.peLineTo=new CSelectGroupBox(this.lCTopShape),this.peCurveTo=new CSelectGroupBox(this.lCTopShape),this.peClose=new CButton(this.lCTopShape),this.lCClient=new CPanel(this.lClient),this.img=new CImage(this.lCClient),this.pathAreaResizer=new CPanel(this.lCClient),this.background=new CPanel(this.pathAreaResizer),this.pathArea=new CPanel(this.pathAreaResizer),this.selector=new CControlSelectorRotate(this.pathArea),this.btnInvertX=new CButton(this.selector),this.btnInvertY=new CButton(this.selector),this.transfomer=new CPathItemTransformer(this.pathArea),this.pathEditor=new CPathEditorControl(this.pathAreaResizer),this.axisX=new CPanel(this.pathAreaResizer),this.axisY=new CPanel(this.pathAreaResizer),this.destCenter=new CPanel(this.pathArea),this.rotationCenter=new CPanel(this.pathArea),this.shapeTool=new CPanel(this.lCClient),this.shpEmpty=new CPanel(this.shapeTool),this.shpEllipse=new CPanel(this.shapeTool),this.shpRectangle=new CPanel(this.shapeTool),this.shpPoligon=new CPanel(this.shapeTool),this.shpHorn=new CPanel(this.shapeTool),this.shpText=new CPanel(this.shapeTool),this.shpEtc=new CPanel(this.shapeTool),this.lCBottom=new CPanel(this.lClient),this.lblWidth=new CPanel(this.lCBottom),this.edtWidth=new CTextBox(this.lCBottom),this.lblHeight=new CPanel(this.lCBottom),this.edtHeight=new CTextBox(this.lCBottom),this.btnSize=new CButton(this.lCBottom),this.chkAlignPixcel=new CCheckBox(this.lCBottom),this.edtAlignPixcel=new CTextBox(this.lCBottom),this.selectBoxGrid=new CSelectBox(this.lCBottom),this.lCBottom2=new CPanel(this.lClient),this.lbl=new CPanel(this.lCBottom2),this.edtUrl=new CTextBox(this.lCBottom2),this.scrollOpacity=new CScrollbar(this.lCBottom2),this.btnImage=new CButton(this.lCBottom2),this.btnImageFit=new CButton(this.lCBottom2),this.btnShowImage=new CSelectBox(this.lCBottom2),this.lRight=new CPanel(this),this.scrollProperties=new CScrollBox(this.lRight),this.baseProperties=new CBasePathItemProperties(this.scrollProperties.content),this.lblTool=new CPanel(this.scrollProperties.content),this.rectProperties=new CRectanglePathItemProperties(this.scrollProperties.content),this.poligonProperties=new CPoligonPathItemProperties(this.scrollProperties.content),this.hornProperties=new CHornPathItemProperties(this.scrollProperties.content),this.textProperties=new CTextPathItemProperties(this.scrollProperties.content),this.axisProperties=new CAxisCopyTool(this.scrollProperties.content),this.rotationProperties=new CRotationCopyTool(this.scrollProperties.content),this.randomProperties=new CRandomCopyTool(this.scrollProperties.content),this.spr=new CSplitter(this),this.pathItems=new CPathItems,this.layer=this.pathArea.addLayer();let a=this;this.pointKindArrow.groupName=this.name+".pointKind",this.pointKindPathEditor.groupName=this.name+".pointKind",this.pointKindTransfomer.groupName=this.name+".pointKind",this.peNone.groupName=this.name+".peKind",this.peMoveTo.groupName=this.name+".peKind",this.peLineTo.groupName=this.name+".peKind",this.peCurveTo.groupName=this.name+".peKind",this.btnToCanvasItemsData.onClick=function(){let t=a.getSelectedPathItem();if(null!=t){let e=new CTextEditor(CSystem.desktopList.get(0).applicationLayer);e.showCenter(1200,600,"Canvas items data","remove"),e.editor.textArea.text=JSON.stringify(t.toCanvasItems(a.pathArea.position.width,a.pathArea.position.height).toData())}},this.btnToLayersData.onClick=function(){let t=a.getSelectedPathItem(),e=new CTextEditor(CSystem.desktopList.get(0).applicationLayer);if(e.showCenter(1200,600,"Layers data","remove"),null!=t){let o=new CCanvasLayers(void 0);o.addLayer().items.fromData(t.toCanvasItems(a.pathArea.position.width,a.pathArea.position.height).toData());let i=o.toData();for(let t=0;t<i.length;t++)i[t].width=a.pathArea.position.width,i[t].height=a.pathArea.position.height;e.editor.textArea.text=JSON.stringify(i),o.remove()}else{let t=new CCanvasLayers(void 0);for(let e=0;e<a.pathItems.length;e++){t.addLayer().items.fromData(a.pathItems.get(e).toCanvasItems(a.pathArea.position.width,a.pathArea.position.height).toData())}let o=t.toData();for(let t=0;t<o.length;t++)o[t].width=a.pathArea.position.width,o[t].height=a.pathArea.position.height;e.editor.textArea.text=JSON.stringify(o),t.remove()}},this.btnToAnimateControlData.onClick=function(){let t=new CAnimationControl;t.position.width=parseFloat(a.edtWidth.text),t.position.height=parseFloat(a.edtHeight.text),t.propertyName="animationControl",t.objectsCount=a.pathItems.length;let e=new CPathItems;e.copyFrom(a.pathItems);try{for(let a=0;a<e.length;a++){let o=e.get(a).getBounds();e.get(a).movePoint(-o.left,-o.top);let i=e.get(a).toCanvasItems(o.width,o.height);t.objects.get(a).layers.addLayer().items.fromData(i.toData()),t.objects.get(a).position.left=o.left,t.objects.get(a).position.top=o.top,t.objects.get(a).position.width=o.width,t.objects.get(a).position.height=o.height,t.objects.get(a).propertyName=e.get(a).name}let a=new CTextEditor(CSystem.desktopList.get(0).applicationLayer);a.showCenter(1200,600,"Layers data","remove"),a.editor.textArea.text=JSON.stringify(t.toData())}finally{t.remove()}},this.pointKindArrow.onChangeSelected=function(){a.pointKindArrow.selected&&a.doChangePointKind()},this.pointKindPathEditor.onChangeSelected=function(){a.pointKindPathEditor.selected&&a.doChangePointKind()},this.pointKindTransfomer.onChangeSelected=function(){a.pointKindTransfomer.selected&&a.doChangePointKind()},this.peNone.onChangeSelected=function(){a.peNone.selected&&a.doChangePathEditorMode()},this.peMoveTo.onChangeSelected=function(){a.peMoveTo.selected&&a.doChangePathEditorMode()},this.peLineTo.onChangeSelected=function(){a.peLineTo.selected&&a.doChangePathEditorMode()},this.peCurveTo.onChangeSelected=function(){a.peCurveTo.selected&&a.doChangePathEditorMode()},this.peClose.onClick=function(){null!=a.pathEditor.pathPointList&&a.pathEditor.pathPointList.addPointClose()},this.baseProperties.editor=this,this.lCClient.onClick=function(){a.doHideSelector(),a.refresh()},this.pathAreaResizer.onClick=function(){a.doHideSelector(),a.refresh()},this.__preSize.x=400,this.__preSize.y=400,this.pathAreaResizer.onChangeSize=function(){a.doChangePathAreaResizer(),a.__preSize.x=a.pathAreaResizer.position.width,a.__preSize.y=a.pathAreaResizer.position.height},this.scrollProperties.onChangeSize=function(){a.scrollProperties.contentWidth=a.scrollProperties.position.width-10},this.btnSize.onClick=function(){let t=parseFloat(a.edtWidth.text),e=parseFloat(a.edtHeight.text);a.loopPathItems(function(a){a.pathData.width=t,a.pathData.height=e}),a.pathAreaResizer.position.width=t+40,a.pathAreaResizer.position.height=e+50},this.edtWidth.onKeyDown=function(t,e){"Enter"==e.key&&a.btnSize.click()},this.edtHeight.onKeyDown=function(t,e){"Enter"==e.key&&a.btnSize.click()},this.btnItemAdd.onClick=function(){a.doItemAdd()},this.btnItemDelete.onClick=function(){a.doItemDelete()},this.pathArea.onClick=function(t,e){a.doPathAreaClick(e)},this.list.onSelectItem=function(){a.doListSelect()},this.list.onKeyDown=function(t,e){a.doListKeyDown(e)},this.shpEmpty.onClick=function(){a.doPathItemAddQuick(EPathItemItemKind.EMPTY)},this.shpEllipse.onClick=function(){a.doPathItemAddQuick(EPathItemItemKind.ELLIPSE)},this.shpRectangle.onClick=function(){a.doPathItemAddQuick(EPathItemItemKind.RECTANGLE)},this.shpPoligon.onClick=function(){a.doPathItemAddQuick(EPathItemItemKind.POLIGON)},this.shpHorn.onClick=function(){a.doPathItemAddQuick(EPathItemItemKind.HORN)},this.shpText.onClick=function(){a.doPathItemAddQuick(EPathItemItemKind.TEXT)},this.shpEmpty.onDragStart=function(){a.shpEmpty.dragData="empty"},this.shpEllipse.onDragStart=function(){a.shpEllipse.dragData="ellipse"},this.shpRectangle.onDragStart=function(){a.shpRectangle.dragData="rectangle"},this.shpPoligon.onDragStart=function(){a.shpPoligon.dragData="poligon"},this.shpHorn.onDragStart=function(){a.shpHorn.dragData="horn"},this.shpText.onDragStart=function(){a.shpText.dragData="text"},this.btnImage.onClick=function(){a.img.src=a.edtUrl.text},this.scrollOpacity.onChangeValue=function(){a.img.opacity=a.scrollOpacity.valueRatio},this.img.onWheel=function(t,e){e.deltaY>0&&(a.img.transform.scale+=.1),e.deltaY<0&&a.img.transform.scale>.2&&(a.img.transform.scale-=.1)},this.btnShowImage.onChangeSelected=function(){a.img.visible=a.btnShowImage.selected},this.btnImageFit.onClick=function(){a.pathAreaResizer.position.left=a.img.position.left-20,a.pathAreaResizer.position.top=a.img.position.top-30,a.pathAreaResizer.position.width=a.img.position.width+40,a.pathAreaResizer.position.height=a.img.position.height+50,a.pathAreaResizer.bringToFront()},this.btnItemUp.onClick=function(){a.doItemUp()},this.btnItemDown.onClick=function(){a.doItemDown()},this.selectBoxGrid.onChangeSelected=function(){a.pathAreaResizer.layers.get(0).items.get(4).visible=a.selectBoxGrid.selected},this.pathArea.onDropCatch=function(t,e,o,i,s){a.doPathAreaCatch(o,i,s)},this.selector.onThisPointerDown=function(){a.doSelectorDown()},this.selector.onThisPointerUp=function(){a.doSelectorUp()},this.selector.onChangeSize=function(){a.doChangeSelectorPosition()},this.selector.onChangeOffset=function(){a.doChangeSelectorPosition()},this.selector.onRotation=function(t,e){a.doSelectorRotation()},this.selector.onBeforeRotation=function(t,e){a.doSelectorBeforeRotation()},this.selector.onAfterRotation=function(t,e){a.doSelectorAfterRotation()},this.btnInvertX.onClick=function(){a.doSelectorInvertX()},this.btnInvertY.onClick=function(){a.doSelectorInvertY()},this.axisX.onChangeOffset=function(){a.doChangeAsixXOffset()},this.axisY.onChangeOffset=function(){a.doChangeAsixYOffset()},this.destCenter.onChangeOffset=function(){a.doChangeDestCenterOffset()},this.rotationCenter.onChangeOffset=function(){a.doChangeRotationCenterOffset()},this.selector.resource="controlSelector_rotation.control",this.selector.visible=!1,this.transfomer.resource="path_controller.control",this.transfomer.position.align=EPositionAlign.CLIENT,this.transfomer.visible=!1,this.transfomer.onPathDataTransform=function(){a.doPaint()},this.chkAlignPixcel.onChangeChecked=function(){a.doSetCheckAlignPixel()},this.axisProperties.btnGuide.onChangeSelected=function(){a.doChangeAsixGuide()},this.axisProperties.btnHorz.onChangeSelected=function(){a.doChangeAsixHorz()},this.rotationProperties.btnGuide.onChangeSelected=function(){a.doChangeRotationGuide()},this.transfomer.btnGridPathSet.onClick=function(){let t=a.getSelectedPathItem();if(null!=t){let e=a.transfomer.gridToPathData();t.pathData.copyFrom(e.background);let o=t.childs.addItem();o.stroke.styleKind=EStyleKind.SOLID,o.stroke.lineWidth=1,o.pathData.copyFrom(e.grid),a.refresh(),a.doPaint()}},this.btnSave.onClick=function(){},this.btnOpen.onClick=function(){}}doToData(t){super.doToData(t),CDataClass.putData(t,"toolbar",this.toolbar.toData(),{},!0),CDataClass.putData(t,"btnToCanvasItemsData",this.btnToCanvasItemsData.toData(),{},!0),CDataClass.putData(t,"btnToLayersData",this.btnToLayersData.toData(),{},!0),CDataClass.putData(t,"btnToAnimateControlData",this.btnToAnimateControlData.toData(),{},!0),CDataClass.putData(t,"btnSave",this.btnSave.toData(),{},!0),CDataClass.putData(t,"btnOpen",this.btnOpen.toData(),{},!0),CDataClass.putData(t,"lLeft",this.lLeft.toData(),{},!0),CDataClass.putData(t,"lLTop",this.lLTop.toData(),{},!0),CDataClass.putData(t,"btnItemAdd",this.btnItemAdd.toData(),{},!0),CDataClass.putData(t,"btnItemDelete",this.btnItemDelete.toData(),{},!0),CDataClass.putData(t,"btnItemUp",this.btnItemUp.toData(),{},!0),CDataClass.putData(t,"btnItemDown",this.btnItemDown.toData(),{},!0),CDataClass.putData(t,"list",this.list.toData(),{},!0),CDataClass.putData(t,"spl",this.spl.toData(),{},!0),CDataClass.putData(t,"lClient",this.lClient.toData(),{},!0),CDataClass.putData(t,"lCTopShape",this.lCTopShape.toData(),{},!0),CDataClass.putData(t,"pointKindArrow",this.pointKindArrow.toData(),{},!0),CDataClass.putData(t,"pointKindPathEditor",this.pointKindPathEditor.toData(),{},!0),CDataClass.putData(t,"pointKindTransfomer",this.pointKindTransfomer.toData(),{},!0),CDataClass.putData(t,"peNone",this.peNone.toData(),{},!0),CDataClass.putData(t,"peMoveTo",this.peMoveTo.toData(),{},!0),CDataClass.putData(t,"peLineTo",this.peLineTo.toData(),{},!0),CDataClass.putData(t,"peCurveTo",this.peCurveTo.toData(),{},!0),CDataClass.putData(t,"peClose",this.peClose.toData(),{},!0),CDataClass.putData(t,"shapeTool",this.shapeTool.toData(),{},!0),CDataClass.putData(t,"shpEmpty",this.shpEmpty.toData(),{},!0),CDataClass.putData(t,"shpEllipse",this.shpEllipse.toData(),{},!0),CDataClass.putData(t,"shpRectangle",this.shpRectangle.toData(),{},!0),CDataClass.putData(t,"shpPoligon",this.shpPoligon.toData(),{},!0),CDataClass.putData(t,"shpHorn",this.shpHorn.toData(),{},!0),CDataClass.putData(t,"shpText",this.shpText.toData(),{},!0),CDataClass.putData(t,"shpEtc",this.shpEtc.toData(),{},!0),CDataClass.putData(t,"lCClient",this.lCClient.toData(),{},!0),CDataClass.putData(t,"img",this.img.toData(),{},!0),CDataClass.putData(t,"pathAreaResizer",this.pathAreaResizer.toData(),{},!0),CDataClass.putData(t,"background",this.background.toData(),{},!0),CDataClass.putData(t,"pathArea",this.pathArea.toData(),{},!0),CDataClass.putData(t,"pathEditor",this.pathEditor.toData(),{},!0),CDataClass.putData(t,"btnInvertX",this.btnInvertX.toData(),{},!0),CDataClass.putData(t,"btnInvertY",this.btnInvertY.toData(),{},!0),CDataClass.putData(t,"axisX",this.axisX.toData(),{},!0),CDataClass.putData(t,"axisY",this.axisY.toData(),{},!0),CDataClass.putData(t,"destCenter",this.destCenter.toData(),{},!0),CDataClass.putData(t,"rotationCenter",this.rotationCenter.toData(),{},!0),CDataClass.putData(t,"lRight",this.lRight.toData(),{},!0),CDataClass.putData(t,"scrollProperties",this.scrollProperties.toData(),{},!0),CDataClass.putData(t,"baseProperties",this.baseProperties.toData(),{},!0),CDataClass.putData(t,"lblTool",this.lblTool.toData(),{},!0),CDataClass.putData(t,"rectProperties",this.rectProperties.toData(),{},!0),CDataClass.putData(t,"poligonProperties",this.poligonProperties.toData(),{},!0),CDataClass.putData(t,"hornProperties",this.hornProperties.toData(),{},!0),CDataClass.putData(t,"textProperties",this.textProperties.toData(),{},!0),CDataClass.putData(t,"axisProperties",this.axisProperties.toData(),{},!0),CDataClass.putData(t,"rotationProperties",this.rotationProperties.toData(),{},!0),CDataClass.putData(t,"randomProperties",this.randomProperties.toData(),{},!0),CDataClass.putData(t,"spr",this.spr.toData(),{},!0),CDataClass.putData(t,"lCBottom",this.lCBottom.toData(),{},!0),CDataClass.putData(t,"lblWidth",this.lblWidth.toData(),{},!0),CDataClass.putData(t,"edtWidth",this.edtWidth.toData(),{},!0),CDataClass.putData(t,"lblHeight",this.lblHeight.toData(),{},!0),CDataClass.putData(t,"edtHeight",this.edtHeight.toData(),{},!0),CDataClass.putData(t,"btnSize",this.btnSize.toData(),{},!0),CDataClass.putData(t,"chkAlignPixcel",this.chkAlignPixcel.toData(),{},!0),CDataClass.putData(t,"edtAlignPixcel",this.edtAlignPixcel.toData(),{},!0),CDataClass.putData(t,"selectBoxGrid",this.selectBoxGrid.toData(),{},!0),CDataClass.putData(t,"lCBottom2",this.lCBottom2.toData(),{},!0),CDataClass.putData(t,"lbl",this.lbl.toData(),{},!0),CDataClass.putData(t,"edtUrl",this.edtUrl.toData(),{},!0),CDataClass.putData(t,"scrollOpacity",this.scrollOpacity.toData(),{},!0),CDataClass.putData(t,"btnImage",this.btnImage.toData(),{},!0),CDataClass.putData(t,"btnImageFit",this.btnImageFit.toData(),{},!0),CDataClass.putData(t,"btnShowImage",this.btnShowImage.toData(),{},!0)}doFromData(t){super.doFromData(t),this.toolbar.fromData(CDataClass.getData(t,"toolbar",{},!0)),this.btnToCanvasItemsData.fromData(CDataClass.getData(t,"btnToCanvasItemsData",{},!0)),this.btnToLayersData.fromData(CDataClass.getData(t,"btnToLayersData",{},!0)),this.btnToAnimateControlData.fromData(CDataClass.getData(t,"btnToAnimateControlData",{},!0)),this.btnSave.fromData(CDataClass.getData(t,"btnSave",{},!0)),this.btnOpen.fromData(CDataClass.getData(t,"btnOpen",{},!0)),this.lLeft.fromData(CDataClass.getData(t,"lLeft",{},!0)),this.lLTop.fromData(CDataClass.getData(t,"lLTop",{},!0)),this.btnItemAdd.fromData(CDataClass.getData(t,"btnItemAdd",{},!0)),this.btnItemDelete.fromData(CDataClass.getData(t,"btnItemDelete",{},!0)),this.btnItemUp.fromData(CDataClass.getData(t,"btnItemUp",{},!0)),this.btnItemDown.fromData(CDataClass.getData(t,"btnItemDown",{},!0)),this.list.fromData(CDataClass.getData(t,"list",{},!0)),this.spl.fromData(CDataClass.getData(t,"spl",{},!0)),this.lClient.fromData(CDataClass.getData(t,"lClient",{},!0)),this.lCTopShape.fromData(CDataClass.getData(t,"lCTopShape",{},!0)),this.pointKindArrow.fromData(CDataClass.getData(t,"pointKindArrow",{},!0)),this.pointKindTransfomer.fromData(CDataClass.getData(t,"pointKindTransfomer",{},!0)),this.pointKindPathEditor.fromData(CDataClass.getData(t,"pointKindPathEditor",{},!0)),this.peNone.fromData(CDataClass.getData(t,"peNone",{},!0)),this.peMoveTo.fromData(CDataClass.getData(t,"peMoveTo",{},!0)),this.peLineTo.fromData(CDataClass.getData(t,"peLineTo",{},!0)),this.peCurveTo.fromData(CDataClass.getData(t,"peCurveTo",{},!0)),this.peClose.fromData(CDataClass.getData(t,"peClose",{},!0)),this.shapeTool.fromData(CDataClass.getData(t,"shapeTool",{},!0)),this.shpEmpty.fromData(CDataClass.getData(t,"shpEmpty",{},!0)),this.shpEllipse.fromData(CDataClass.getData(t,"shpEllipse",{},!0)),this.shpRectangle.fromData(CDataClass.getData(t,"shpRectangle",{},!0)),this.shpPoligon.fromData(CDataClass.getData(t,"shpPoligon",{},!0)),this.shpHorn.fromData(CDataClass.getData(t,"shpHorn",{},!0)),this.shpText.fromData(CDataClass.getData(t,"shpText",{},!0)),this.shpEtc.fromData(CDataClass.getData(t,"shpEtc",{},!0)),this.lCClient.fromData(CDataClass.getData(t,"lCClient",{},!0)),this.img.fromData(CDataClass.getData(t,"img",{},!0)),this.pathAreaResizer.fromData(CDataClass.getData(t,"pathAreaResizer",{},!0)),this.background.fromData(CDataClass.getData(t,"background",{},!0)),this.pathArea.fromData(CDataClass.getData(t,"pathArea",{},!0)),this.pathEditor.fromData(CDataClass.getData(t,"pathEditor",{},!0)),this.btnInvertX.fromData(CDataClass.getData(t,"btnInvertX",{},!0)),this.btnInvertY.fromData(CDataClass.getData(t,"btnInvertY",{},!0)),this.axisX.fromData(CDataClass.getData(t,"axisX",{},!0)),this.axisY.fromData(CDataClass.getData(t,"axisY",{},!0)),this.destCenter.fromData(CDataClass.getData(t,"destCenter",{},!0)),this.rotationCenter.fromData(CDataClass.getData(t,"rotationCenter",{},!0)),this.lRight.fromData(CDataClass.getData(t,"lRight",{},!0)),this.scrollProperties.fromData(CDataClass.getData(t,"scrollProperties",{},!0)),this.baseProperties.fromData(CDataClass.getData(t,"baseProperties",{},!0)),this.lblTool.fromData(CDataClass.getData(t,"lblTool",{},!0)),this.rectProperties.fromData(CDataClass.getData(t,"rectProperties",{},!0)),this.poligonProperties.fromData(CDataClass.getData(t,"poligonProperties",{},!0)),this.hornProperties.fromData(CDataClass.getData(t,"hornProperties",{},!0)),this.textProperties.fromData(CDataClass.getData(t,"textProperties",{},!0)),this.axisProperties.fromData(CDataClass.getData(t,"axisProperties",{},!0)),this.rotationProperties.fromData(CDataClass.getData(t,"rotationProperties",{},!0)),this.randomProperties.fromData(CDataClass.getData(t,"randomProperties",{},!0)),this.spr.fromData(CDataClass.getData(t,"spr",{},!0)),this.lCBottom.fromData(CDataClass.getData(t,"lCBottom",{},!0)),this.lblWidth.fromData(CDataClass.getData(t,"lblWidth",{},!0)),this.edtWidth.fromData(CDataClass.getData(t,"edtWidth",{},!0)),this.lblHeight.fromData(CDataClass.getData(t,"lblHeight",{},!0)),this.edtHeight.fromData(CDataClass.getData(t,"edtHeight",{},!0)),this.btnSize.fromData(CDataClass.getData(t,"btnSize",{},!0)),this.chkAlignPixcel.fromData(CDataClass.getData(t,"chkAlignPixcel",{},!0)),this.edtAlignPixcel.fromData(CDataClass.getData(t,"edtAlignPixcel",{},!0)),this.selectBoxGrid.fromData(CDataClass.getData(t,"selectBoxGrid",{},!0)),this.lCBottom2.fromData(CDataClass.getData(t,"lCBottom2",{},!0)),this.lbl.fromData(CDataClass.getData(t,"lbl",{},!0)),this.edtUrl.fromData(CDataClass.getData(t,"edtUrl",{},!0)),this.scrollOpacity.fromData(CDataClass.getData(t,"scrollOpacity",{},!0)),this.btnImage.fromData(CDataClass.getData(t,"btnImage",{},!0)),this.btnImageFit.fromData(CDataClass.getData(t,"btnImageFit",{},!0)),this.btnShowImage.fromData(CDataClass.getData(t,"btnShowImage",{},!0))}doResource(){super.doResource(),0==this.pathArea.layers.length&&(this.layer=this.pathArea.layers.addLayer())}doSetCheckAlignPixel(){if(this.chkAlignPixcel.checked){this.selector.magneticLength=parseInt(this.edtAlignPixcel.text);for(let t=0;t<this.pathEditor.points.length;t++)this.pathEditor.points.get(t).alignPixel=parseInt(this.edtAlignPixcel.text);this.transfomer.freeTransformHandleLT.magneticLength=parseInt(this.edtAlignPixcel.text),this.transfomer.freeTransformHandleRT.magneticLength=parseInt(this.edtAlignPixcel.text),this.transfomer.freeTransformHandleLB.magneticLength=parseInt(this.edtAlignPixcel.text),this.transfomer.freeTransformHandleRB.magneticLength=parseInt(this.edtAlignPixcel.text),this.transfomer.freeTransformHandleLeftC1.magneticLength=parseInt(this.edtAlignPixcel.text),this.transfomer.freeTransformHandleLeftC2.magneticLength=parseInt(this.edtAlignPixcel.text),this.transfomer.freeTransformHandleTopC1.magneticLength=parseInt(this.edtAlignPixcel.text),this.transfomer.freeTransformHandleTopC2.magneticLength=parseInt(this.edtAlignPixcel.text),this.transfomer.freeTransformHandleRightC1.magneticLength=parseInt(this.edtAlignPixcel.text),this.transfomer.freeTransformHandleRightC2.magneticLength=parseInt(this.edtAlignPixcel.text),this.transfomer.freeTransformHandleBottomC1.magneticLength=parseInt(this.edtAlignPixcel.text),this.transfomer.freeTransformHandleBottomC2.magneticLength=parseInt(this.edtAlignPixcel.text)}else{this.selector.magneticLength=0;for(let t=0;t<this.pathEditor.points.length;t++)this.pathEditor.points.get(t).alignPixel=0;this.transfomer.freeTransformHandleLT.magneticLength=0,this.transfomer.freeTransformHandleRT.magneticLength=0,this.transfomer.freeTransformHandleLB.magneticLength=0,this.transfomer.freeTransformHandleRB.magneticLength=0,this.transfomer.freeTransformHandleLeftC1.magneticLength=0,this.transfomer.freeTransformHandleLeftC2.magneticLength=0,this.transfomer.freeTransformHandleTopC1.magneticLength=0,this.transfomer.freeTransformHandleTopC2.magneticLength=0,this.transfomer.freeTransformHandleRightC1.magneticLength=0,this.transfomer.freeTransformHandleRightC2.magneticLength=0,this.transfomer.freeTransformHandleBottomC1.magneticLength=0,this.transfomer.freeTransformHandleBottomC2.magneticLength=0}}doListSelect(){if(this.list.selectItems.length>0){let t=this.list.selectItems[0];this.pointKindPathEditor.selected?this.doShowPathEditor():this.pointKindTransfomer.selected?this.doShowTransformer(t.value.asObject.pathItem):this.doShowSelector(t.value.asObject.pathItem.pathData),this.doSetBaseProperties(t.value.asObject.pathItem),this.rectProperties.item=t.value.asObject.pathItem,this.rectProperties.editor=this,this.poligonProperties.item=t.value.asObject.pathItem,this.poligonProperties.editor=this,this.hornProperties.item=t.value.asObject.pathItem,this.hornProperties.editor=this,this.textProperties.item=t.value.asObject.pathItem,this.textProperties.editor=this,this.axisProperties.item=t.value.asObject.pathItem,this.axisProperties.editor=this,this.rotationProperties.item=t.value.asObject.pathItem,this.rotationProperties.editor=this,this.randomProperties.item=t.value.asObject.pathItem,this.randomProperties.editor=this}}doListKeyDown(t){if(t.ctrlKey&&"C"==t.key.toUpperCase()){let t=this.getSelectedPathItem();null!=t&&(CSystem.copyData=t.toData())}if(t.ctrlKey&&"V"==t.key.toUpperCase()&&null!=CSystem.copyData){let t=this.getSelectedPathItem();if(null!=t){t.childs.addItem().fromData(CSystem.copyData),this.refresh()}else{this.pathItems.addItem().fromData(CSystem.copyData),this.refresh()}}if(t.ctrlKey&&"X"==t.key.toUpperCase()){let t=this.getSelectedPathItem();null!=t&&(CSystem.copyData=t.toData(),this.doItemDelete())}}doChangePathAreaResizer(){let t=this;this.loopPathItems(function(e){e.pathData.width=t.pathAreaResizer.position.width-40,e.pathData.height=t.pathAreaResizer.position.height-50}),t.edtWidth.text=t.pathAreaResizer.position.width-40+"",t.edtHeight.text=t.pathAreaResizer.position.height-50+"",t.axisX.lockMaxX=t.pathArea.position.width+20,t.axisX.position.left>t.axisX.lockMaxX&&(t.axisX.position.left=t.axisX.lockMaxX),t.axisY.lockMaxY=t.pathArea.position.height+30,t.axisY.position.top>t.axisY.lockMaxY&&(t.axisY.position.top=t.axisY.lockMaxY);let e=this.background.getCanvasItems("asixX");for(let t=0;t<e.length;t++)e[t].position.top=0,e[t].position.bottom=this.pathArea.position.height;e=this.background.getCanvasItems("asixY");for(let t=0;t<e.length;t++)e[t].position.left=0,e[t].position.right=this.pathArea.position.width}doChangePointKind(){if(this.pointKindArrow.selected)this.doHidePathEditor(),this.transfomer.visible=!1,this.transfomer.pathItem=void 0;else if(this.pointKindPathEditor.selected)this.transfomer.visible=!1,this.transfomer.pathItem=void 0,this.doHideSelector(),this.doShowPathEditor();else{this.doHideSelector(),this.doHidePathEditor();let t=this.getSelectedPathItem();null!=t&&(this.doShowTransformer(t),this.doHideSelector())}}doShowPathEditor(){if(this.selector.visible&&this.doHideSelector(),this.transfomer.visible&&(this.transfomer.visible=!1,this.transfomer.pathItem=void 0),this.pathEditor.visible=!0,this.list.selectItems.length>0){let t=this.list.selectItems[0].value.asObject.pathItem.pathData,e=this;t.onChange=function(){e.pathEditor.visible&&e.doPaint()},this.pathEditor.pathPointList=t}}doChangeAsixXOffset(){this.axisProperties.edtAxis.text=this.axisX.position.left-20+"";let t=this.background.getCanvasItems("asixX");for(let e=0;e<t.length;e++)t[e].position.left=this.axisX.position.left-20,t[e].position.right=this.axisX.position.left-20}doChangeAsixYOffset(){this.axisProperties.edtAxis.text=this.axisY.position.top-30+"";let t=this.background.getCanvasItems("asixY");for(let e=0;e<t.length;e++)t[e].position.top=this.axisY.position.top-30,t[e].position.bottom=this.axisY.position.top-30}doChangeAsixGuide(){this.background.layers.get(0).items.get(0).visible=this.axisProperties.btnGuide.selected&&this.axisProperties.btnHorz.selected,this.background.layers.get(0).items.get(1).visible=this.axisProperties.btnGuide.selected&&this.axisProperties.btnVert.selected,this.axisX.visible=this.axisProperties.btnGuide.selected&&this.axisProperties.btnHorz.selected,this.axisY.visible=this.axisProperties.btnGuide.selected&&this.axisProperties.btnVert.selected,this.axisX.position.left=parseFloat(this.axisProperties.edtAxis.text)+20,this.axisY.position.top=parseFloat(this.axisProperties.edtAxis.text)+30}doChangeAsixHorz(){this.background.layers.get(0).items.get(0).visible=this.axisProperties.btnGuide.selected&&this.axisProperties.btnHorz.selected,this.background.layers.get(0).items.get(1).visible=this.axisProperties.btnGuide.selected&&this.axisProperties.btnVert.selected,this.axisX.visible=this.axisProperties.btnGuide.selected&&this.axisProperties.btnHorz.selected,this.axisY.visible=this.axisProperties.btnGuide.selected&&this.axisProperties.btnVert.selected,this.axisX.position.left=parseFloat(this.axisProperties.edtAxis.text)+20,this.axisY.position.top=parseFloat(this.axisProperties.edtAxis.text)+30}doChangeRotationGuide(){this.background.layers.get(0).items.get(2).visible=this.rotationProperties.btnGuide.selected,this.destCenter.visible=this.rotationProperties.btnGuide.selected,this.rotationCenter.visible=this.rotationProperties.btnGuide.selected,this.setRotation()}setRotation(){let t=this.background.getCanvasItems("rotation"),e=this.destCenter.position.left+this.destCenter.position.width/2,a=this.destCenter.position.top+this.destCenter.position.height/2,o=this.rotationCenter.position.left+this.rotationCenter.position.width/2,i=this.rotationCenter.position.top+this.rotationCenter.position.height/2;for(let s=0;s<t.length;s++)t[s].pathData.clear(),t[s].pathData.addPointMoveTo(new CPoint(e,a)),t[s].pathData.addPointLineTo(new CPoint(o,i));this.rotationProperties.edtStartAngle.text=CPoint.getAngleFromTwoPoint(new CPoint(o,i),new CPoint(e,a))+"",this.rotationProperties.edtCenterX.text=o+"",this.rotationProperties.edtCenterY.text=i+""}doChangeDestCenterOffset(){this.setRotation()}doChangeRotationCenterOffset(){this.setRotation()}doHidePathEditor(){this.pathEditor.pathPointList=void 0,this.pathEditor.visible=!1}doChangePathEditorMode(){this.peNone.selected&&(this.pathEditor.mode="None"),this.peMoveTo.selected&&(this.pathEditor.mode="MoveTo"),this.peLineTo.selected&&(this.pathEditor.mode="LineTo"),this.peCurveTo.selected&&(this.pathEditor.mode="CurveTo")}doSetBaseProperties(t){this.baseProperties.item=t}doPathAreaCatch(t,e,a){let o=EPathItemItemKind.EMPTY;"ellipse"==a&&(o=EPathItemItemKind.ELLIPSE),"rectangle"==a&&(o=EPathItemItemKind.RECTANGLE),"poligon"==a&&(o=EPathItemItemKind.POLIGON),"horn"==a&&(o=EPathItemItemKind.HORN),"text"==a&&(o=EPathItemItemKind.TEXT),this.doPathItemAdd(o,t,e)}doPathAreaClick(t){let e=this.list.items.getExpandedItems(),a=!1;for(let o=e.length-1;o>=0;o--){let i=e[o].item.value.asObject.pathItem.pathData.getBounds();if(t.offsetX>=i.left&&t.offsetX<=i.right&&t.offsetY>=i.top&&t.offsetY<=i.bottom){this.selectListItem(e[o].item.value.asObject.pathItem),a=!0;break}}a||this.doHideSelector()}doItemAdd(){this.pathItems.addItem().kind="Empty",this.refresh()}doItemDelete(){if(0==this.list.selectItems.length)CSystem.showMessage("Warning","Item select");else{this.selector.visible&&this.doHideSelector(),this.pathEditor.visible&&this.doHidePathEditor();let t,e=this;this.loopPathItems(function(a){if(e.list.selectItems[0].value.asObject.pathItem==a){let o=a.parent;t=null==o?e.pathItems:o.childs}});for(let e=0;e<t.length;e++)if(this.list.selectItems[0].value.asObject.pathItem==t.get(e)){t.delete(e),this.refresh(),this.doPaint();break}}}doItemUp(){if(this.list.selectItems.length>0){let t,e=this;this.loopPathItems(function(a){if(e.list.selectItems[0].value.asObject.pathItem==a){let o=a.parent;t=null==o?e.pathItems:o.childs}});for(let a=0;a<t.length;a++)if(e.list.selectItems[0].value.asObject.pathItem==t.get(a)&&a>0){t.swap(a,a-1),e.refresh(!0),e.doPaint();break}}}doItemDown(){if(this.list.selectItems.length>0){let t,e=this;this.loopPathItems(function(a){if(e.list.selectItems[0].value.asObject.pathItem==a){let o=a.parent;t=null==o?e.pathItems:o.childs}});for(let a=0;a<t.length;a++)if(e.list.selectItems[0].value.asObject.pathItem==t.get(a)&&a<t.length-1){t.swap(a,a+1),e.refresh(!0),e.doPaint();break}}}doPathItemAddQuick(t){this.doPathItemAdd(t,25,25)}async doPathItemAdd(t,e,a){let o=this;function i(){let e;if(0==o.list.selectItems.length)e=o.pathItems.addItem();else{e=o.list.selectItems[0].value.asObject.pathItem.childs.addItem()}let a=e;return a.fill.styleKind=EStyleKind.SOLID,a.fill.solidColor="#ffffff",a.stroke.styleKind=EStyleKind.SOLID,a.stroke.lineWidth=1,a.stroke.solidColor="#000000",a.pathData.width=o.pathArea.position.width,a.pathData.height=o.pathArea.position.height,a.kind=o.itemKindToString(t),a}if(t==EPathItemItemKind.EMPTY&&(i(),this.refresh(!0),this.doPaint()),t==EPathItemItemKind.ELLIPSE){i().pathData.makeEllipseData(e-25,a-25,50,50,!1),this.refresh(!0),this.doPaint()}if(t==EPathItemItemKind.RECTANGLE){i().pathData.makeRoundRectData(e-25,a-25,50,50,0,0,new CStringSet,new CStringSet,!1),this.refresh(!0),this.doPaint()}if(t==EPathItemItemKind.POLIGON){let t=i();t.pathData.makePoligonData(5,!0,-90),t.pathData.fitIgnoreSize(new CRect(e-25,a-25,e+25,a+25)),this.refresh(!0),this.doPaint()}if(t==EPathItemItemKind.HORN){let t=i();t.pathData.makeHornData(5,.5,!0,-90),t.pathData.fitIgnoreSize(new CRect(e-25,a-25,e+25,a+25)),this.refresh(!0),this.doPaint()}t==EPathItemItemKind.TEXT&&CSystem.prompt("Text info",["Text","Bold","Italic","Font name","Each letter"],CSystem.browserCovers.get("cover"),async function(t){if("Y"==t[4]){let s=await CStringUtil.getTextPathDataEach(t[0],t[3]);for(let t=0;t<s.data.length;t++)if(""!=s.data[t].data){let o=i();o.pathData.fromFontPathData(s.data[t].data),o.pathData.fitIgnoreSize(new CRect(e-25,a-25,e+25,a+25))}o.refresh(!0),o.doPaint()}else{let s=i(),n=await CStringUtil.getTextPathData(t[0],t[3]);s.pathData.fromFontPathData(n),s.pathData.fitIgnoreSize(new CRect(e-25,a-25,e+25,a+25)),o.refresh(!0),o.doPaint()}},["","N","N","Arial","N"])}doShowSelector(t){if(t.length>0){let e=t.getBounds();this.selector.position.left=e.left-10,this.selector.position.top=e.top-10,this.selector.position.width=e.width+20,this.selector.position.height=e.height+20,this.selector.visible=!0}else this.selector.position.left=-10,this.selector.position.top=-10,this.selector.position.width=this.pathArea.position.width+20,this.selector.position.height=this.pathArea.position.height+20,this.selector.visible=!0;this.doSetCheckAlignPixel()}doShowTransformer(t){this.transfomer.pathItem=t,this.transfomer.visible=!0,this.doSetCheckAlignPixel()}doHideSelector(){this.selector.visible=!1,this.selector.transform.rotateZ=0,this.selector.transform.rotationPointX=.5,this.selector.transform.rotationPointY=.5}doSelectorDown(){if(this.list.selectItems.length>0){this.__selectorDownChildsBounds.clear();let t=this.list.selectItems[0].items.getExpandedItems();for(let e=0;e<t.length;e++){let a=t[e].item.value.asObject.pathItem;this.__selectorDownChildsBounds.set(a,a.pathData.getBounds())}}}doSelectorInvertX(){let t=this.getSelectedPathItem();null!=t&&(t.pathData.invertX(),this.doPaint())}doSelectorInvertY(){let t=this.getSelectedPathItem();null!=t&&(t.pathData.invertY(),this.doPaint())}doSelectorBeforeRotation(){if(this.list.selectItems.length>0){this.__selectorDownChildsPathData.clear(),this.__downPathData=this.list.selectItems[0].value.asObject.pathItem.pathData.copyTo();let t=this.list.selectItems[0].items.getExpandedItems();for(let e=0;e<t.length;e++){let a=t[e].item.value.asObject.pathItem;this.__selectorDownChildsPathData.set(a,a.pathData.copyTo())}}}doSelectorUp(){this.__selectorDownChildsBounds.clear()}doChangeSelectorPosition(){if(this.list.selectItems.length>0){let t=this.selector.getBounds();t.left+=10,t.top+=10,t.right-=10,t.bottom-=10;let e=this.list.selectItems[0];if(e.value.asObject.pathItem.stretch(t),this.selector.moveKind==EControlMoveKind.MOVE){let t=e.items.getExpandedItems();for(let e=0;e<t.length;e++){let a=t[e].item.value.asObject.pathItem,o=this.__selectorDownChildsBounds.get(a);if(null!=o){let t=a.pathData.getBounds();a.pathData.movePoint(-(t.left-o.left),-(t.top-o.top)),a.pathData.movePoint(this.selector.position.left-this.selector.downPoint.x,this.selector.position.top-this.selector.downPoint.y)}}}this.destCenter.position.left=this.selector.position.left+this.selector.position.width/2-this.destCenter.position.width/2,this.destCenter.position.top=this.selector.position.top+this.selector.position.height/2-this.destCenter.position.height/2,this.doPaint()}}doSelectorRotation(){if(this.list.selectItems.length>0){let t=this.list.selectItems[0],e=t.value.asObject.pathItem;e.pathData.fromData(this.__downPathData.toData()),e.pathData.rotate(new CPoint(this.selector.position.left+this.selector.position.width*this.selector.transform.rotationPointX,this.selector.position.top+this.selector.position.height*this.selector.transform.rotationPointY),this.selector.transform.rotateZ);let a=t.items.getExpandedItems();for(let t=0;t<a.length;t++){let e=a[t].item.value.asObject.pathItem,o=this.__selectorDownChildsPathData.get(e);null!=o&&(e.pathData.fromData(o.toData()),e.pathData.rotate(new CPoint(this.selector.position.left+this.selector.position.width*this.selector.transform.rotationPointX,this.selector.position.top+this.selector.position.height*this.selector.transform.rotationPointY),this.selector.transform.rotateZ))}this.doPaint()}}doSelectorAfterRotation(){this.doHideSelector(),this.list.selectItems.length>0&&this.doShowSelector(this.list.selectItems[0].value.asObject.pathItem.pathData)}doRefresh(){this.list.clear(),function t(e,a){for(let o=0;o<e.length;o++){let i=e.get(o),s=a.addItem({text:i.name,kind:i.kind,pathItem:i});i.group||t(i.childs,s.items)}}(this.pathItems,this.list.items),this.list.items.expandAll()}doPaint(){this.pathArea.layers.get(0).items.clear();let t=this;this.loopPathItems(function(e){let a=t.newCanvasItem();t.copyItem(a,e)})}getSelectedPathItem(){let t;return this.list.selectItems.length>0&&(t=this.list.selectItems[0].value.asObject.pathItem),t}copyItem(t,e){t.pathData.addPointList(e.pathData),t.fill.fromData(e.fill.toData()),t.stroke.fromData(e.stroke.toData()),t.opacity=e.opacity,t.shadowBlur=e.shadowBlur,t.shadowColor=e.shadowColor,t.shadowOffsetX=e.shadowOffsetX,t.shadowOffsetY=e.shadowOffsetY,new Function("ci","pi","ci.composite = pi.composite")(t,e),t.text=e.text,t.textSet.fromData(e.textSet.toData())}loopPathItems(t){!function e(a){for(let o=0;o<a.length;o++)t(a.get(o)),e(a.get(o).childs)}(this.pathItems)}newCanvasItem(){let t=this.layer.addItem();return t.kind=ECanvasItemKind.PATH,t.pathFitMode=EFitMode.ORIGINAL,t}itemKindToString(t){let e="Empty";return t==EPathItemItemKind.ELLIPSE&&(e="Ellipse"),t==EPathItemItemKind.RECTANGLE&&(e="Rectangle"),t==EPathItemItemKind.POLIGON&&(e="Poligon"),t==EPathItemItemKind.HORN&&(e="Horn"),t==EPathItemItemKind.ETC&&(e="ETC"),e}addKindToString(t){let e="Normal";return t==EPathItemAddKind.PATTERN&&(e="Pattern"),t==EPathItemAddKind.ROTATION&&(e="Rotaion"),t==EPathItemAddKind.RANDOM&&(e="Random"),e}selectListItem(t){let e=this.list.items.getExpandedItems();for(let a=0;a<e.length;a++)if(e[a].item.value.asObject.pathItem==t){this.list.selectItem(e[a].item);break}}refresh(t=!1){if(t)if(this.list.selectItems.length>0){let t=this.list.selectItems[0].value.asObject.pathItem;this.doRefresh(),this.selectListItem(t)}else this.doRefresh();else this.doRefresh()}async loadFile(t){}async saveFile(t){}getLayersData(){let t=new CCanvasLayers(void 0);for(let e=0;e<this.pathItems.length;e++){let a=this.pathItems.get(e);t.addLayer().items.fromData(a.toCanvasItems(this.pathArea.position.width,this.pathArea.position.height).toData())}let e=t.toData();return t.remove(),e}}class CLayerPathEditor extends CLayerPathEditorModel{constructor(t,e){super(t,e),this.resource="layerPathEditor.frame"}}class CAppPathEditor extends CWindowApplication{constructor(){super(),this.defaultWidth=1200,this.defaultHeight=670,this.appName="레이어 편집기",this.editor=new CLayerPathEditor(this.mainWindow.body),this.editor.position.align=EPositionAlign.CLIENT}doExecute(){super.doExecute()}}class CLayersAnimationEditorModel extends CPanel{constructor(t,e){super(t,e),this.cover=new CCover(this),this.con=new CPanel(this.cover),this.btnStart=new CButton(this.cover),this.toolbar=new CPanel(this),this.btnShowAnimation=new CButton(this.toolbar),this.editorLayer=new CPanel(this),this.startEditor=new CLayerPathEditor(this.editorLayer),this.stopEditor=new CLayerPathEditor(this.editorLayer),this.animatorEditor=new CAnimatorEditorFrame(this);let a=this;this.con.visible=!1,this.editorLayer.position.align=EPositionAlign.CLIENT,this.editorLayer.position.parentAlignInfo.gridColumnCount=2,this.editorLayer.position.parentAlignInfo.gridRowCount=1,this.editorLayer.position.parentAlignInfo.marginX=5,this.editorLayer.position.margins.all=5,this.startEditor.resource="layerPathEditor.frame",this.stopEditor.resource="layerPathEditor.frame",this.startEditor.position.align=EPositionAlign.GRID,this.stopEditor.position.align=EPositionAlign.GRID,this.stopEditor.position.alignInfo.gridColumn=1,this.startEditor.edtWidth.text="300",this.startEditor.edtHeight.text="300",this.startEditor.btnSize.click(),this.stopEditor.edtWidth.text="300",this.stopEditor.edtHeight.text="300",this.stopEditor.btnSize.click(),this.animatorEditor.position.align=EPositionAlign.BOTTOM,this.animatorEditor.position.margins.all=5,this.animatorEditor.position.margins.top=0,this.animatorEditor.position.height=270,this.btnShowAnimation.onClick=function(){a.cover.showCover()},this.btnStart.onClick=function(){a.doAnimationStart()},this.con.clickAnimationTrigger=new CAnimator(this.con),this.animatorEditor.animator=this.con.clickAnimationTrigger,this.animatorEditor.animatorParent=this.con,this.animatorEditor.btnOk.onClick=function(){a.con.clickAnimationTrigger=a.animatorEditor.getAnimator(a.con)}}doToData(t){super.doToData(t),CDataClass.putData(t,"cover",this.cover.toData(),{},!0),CDataClass.putData(t,"toolbar",this.toolbar.toData(),{},!0),CDataClass.putData(t,"btnShowAnimation",this.btnShowAnimation.toData(),{},!0),CDataClass.putData(t,"btnStart",this.btnStart.toData(),{},!0)}doFromData(t){super.doFromData(t),this.cover.fromData(CDataClass.getData(t,"cover",{},!0)),this.toolbar.fromData(CDataClass.getData(t,"toolbar",{},!0)),this.btnShowAnimation.fromData(CDataClass.getData(t,"btnShowAnimation",{},!0)),this.btnStart.fromData(CDataClass.getData(t,"btnStart",{},!0))}doAnimationStart(){let t=this.startEditor.getLayersData(),e=this.stopEditor.getLayersData();CSystem.resources.set("__tmpStart__",t),CSystem.resources.set("__tmpStop__",e),null!=this.con.clickAnimationTrigger&&(this.con.clickAnimationTrigger.beforeScript='//parameter : animator, params\n            params.control = animator.parent\n            params.layers1 = new CCanvasLayers(undefined)\n            let rc = CSystem.resources.get("__tmpStart__")\n            params.layers1.fromData(rc)\n            params.layers2 = new CCanvasLayers(undefined)\n            rc = CSystem.resources.get("__tmpStop__")\n            params.layers2.fromData(rc)'),null!=this.con.clickAnimationTrigger&&(this.con.clickAnimationTrigger.animationScript="//parameter : animator, params, graphName, graphValue\n            if(animator.graphNames[0] == graphName) {\n                for(let x = 0; x < params.control.layers.length; x++) {\n                    for(let n = 0; n < params.control.layers.get(x).items.length; n++) {\n                        if(params.layers1.get(x).items.length > n && params.layers2.get(x).items.length > n) {\n                            let pd1 = params.layers1.get(x).items.get(n).pathData\n                            let pd2 = params.layers2.get(x).items.get(n).pathData\n                            let pdnw = params.control.layers.get(x).items.get(n).pathData\n                            for(let i = 0; i < pdnw.length; i++) {\n                                    pdnw.get(i).point.x = CCalc.crRange2Value(0, 1, graphValue, pd1.get(i).point.x, pd2.get(i).point.x)\n                                    pdnw.get(i).point.y = CCalc.crRange2Value(0, 1, graphValue, pd1.get(i).point.y, pd2.get(i).point.y)\n                                    pdnw.get(i).cPoint1.x = CCalc.crRange2Value(0, 1, graphValue, pd1.get(i).cPoint1.x, pd2.get(i).cPoint1.x)\n                                    pdnw.get(i).cPoint1.y = CCalc.crRange2Value(0, 1, graphValue, pd1.get(i).cPoint1.y, pd2.get(i).cPoint1.y)\n                                    pdnw.get(i).cPoint2.x = CCalc.crRange2Value(0, 1, graphValue, pd1.get(i).cPoint2.x, pd2.get(i).cPoint2.x)\n                                    pdnw.get(i).cPoint2.y = CCalc.crRange2Value(0, 1, graphValue, pd1.get(i).cPoint2.y, pd2.get(i).cPoint2.y)\n                            }\n                        }\n                    }\n                }\n            }\n            "),this.con.layers.fromData(t),this.con.position.align=EPositionAlign.CENTER,this.con.position.width=parseFloat(this.startEditor.edtWidth.text),this.con.position.height=parseFloat(this.startEditor.edtHeight.text),this.con.visible=!0,this.con.bringToFront(),this.con.click()}}class CLayersAnimationEditor extends CLayersAnimationEditorModel{constructor(t,e){super(t,e),this.resource="layersAnimationEditor.frame"}}class CAppLayersAnimationEditor extends CWindowApplication{constructor(){super(),this.defaultWidth=1700,this.defaultHeight=850,this.appName="Layers Animation Editor",this.editor=new CLayersAnimationEditor(this.mainWindow.body),this.editor.position.align=EPositionAlign.CLIENT}doExecute(){super.doExecute()}}
+"use strict";
+class CPathEditorModel extends CPanel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.__points = new CList();
+        this._pointResource = "";
+        this._cpoint1Resource = "";
+        this._cpoint2Resource = "";
+        this.toolbar = new CPanel(this);
+        this.lblKind = new CPanel(this.toolbar);
+        this.btnNone = new CButton(this.toolbar);
+        this.btnMoveTo = new CButton(this.toolbar);
+        this.btnLineTo = new CButton(this.toolbar);
+        this.btnCurveTo = new CButton(this.toolbar);
+        this.btnClose = new CButton(this.toolbar);
+        this.btnSave = new CButton(this.toolbar);
+        this.btnOpen = new CButton(this.toolbar);
+        this.btnGetTextData = new CButton(this.toolbar);
+        this.toolbarBottom = new CPanel(this);
+        this.lblWidth = new CLabelTextBox(this.toolbarBottom);
+        this.lblheight = new CLabelTextBox(this.toolbarBottom);
+        this.btnSize = new CButton(this.toolbarBottom);
+        this.chkAlignPixel = new CCheckBox(this.toolbarBottom);
+        this.edtAlignPixel = new CTextBox(this.toolbarBottom);
+        this.btnApply = new CButton(this.toolbarBottom);
+        this.lRight = new CPanel(this);
+        this.spr = new CSplitter(this);
+        this.lRTop = new CPanel(this.lRight);
+        this.btnDelete = new CButton(this.lRTop);
+        this.btnClear = new CButton(this.lRTop);
+        this.grid = new CDataGrid(this.lRight);
+        this.lClient = new CPanel(this);
+        this.lCTop = new CPanel(this.lClient);
+        this.lCClient = new CPanel(this.lClient);
+        this.path = new CPanel(this.lCClient);
+        this.pathGraphic = new CSelectArea(this.path);
+        let self = this;
+        this.pathGraphic.position.align = EPositionAlign.CLIENT;
+        let l = this.pathGraphic.layers.addLayer();
+        this.__backItem = l.addItem();
+        this.__backItem.kind = ECanvasItemKind.PATH;
+        this.__backItem.stroke.styleKind = EStyleKind.SOLID;
+        this.__backItem.stroke.solidColor = "#404040";
+        this.__backItem.stroke.lineWidth = 1;
+        this.__backItem.pathFitMode = EFitMode.ORIGINAL;
+        this.__item = l.addItem();
+        this.__item.kind = ECanvasItemKind.PATH;
+        this.__item.fill.styleKind = EStyleKind.SOLID;
+        this.__item.fill.solidColor = "rgba(255,255,255,0.05)";
+        this.__item.stroke.styleKind = EStyleKind.SOLID;
+        this.__item.stroke.solidColor = "#ffffff";
+        this.__item.stroke.lineWidth = 1;
+        this.__item.pathFitMode = EFitMode.ORIGINAL;
+        this.btnSave.onClick = function () {
+        };
+        this.btnOpen.onClick = function () {
+        };
+        this.btnSize.onClick = function () {
+            self.path.position.width = parseInt(self.lblWidth.value);
+            self.path.position.height = parseInt(self.lblheight.value);
+            self.__item.pathData.width = parseInt(self.lblWidth.value);
+            self.__item.pathData.height = parseInt(self.lblheight.value);
+        };
+        this.btnNone.onClick = function () {
+            self.lblKind.text = "None";
+        };
+        this.btnMoveTo.onClick = function () {
+            self.lblKind.text = "MoveTo";
+        };
+        this.btnLineTo.onClick = function () {
+            self.lblKind.text = "LineTo";
+        };
+        this.btnCurveTo.onClick = function () {
+            self.lblKind.text = "CurveTo";
+        };
+        this.btnClose.onClick = function () {
+            self.lblKind.text = "Close";
+            let pt = self.__item.pathData.addPointClose();
+            self.grid.add(["CL", CPoint.create(0, 0).toString(), CPoint.create(0, 0).toString(), CPoint.create(0, 0).toString(), pt]);
+        };
+        this.lblWidth.textBox.onKeyDown = function (s, e) {
+            if (e.key == "Enter") {
+                self.btnSize.click();
+            }
+        };
+        this.lblheight.textBox.onKeyDown = function (s, e) {
+            if (e.key == "Enter") {
+                self.btnSize.click();
+            }
+        };
+        let prePoint;
+        this.pathGraphic.selectAreaResource = "selectAreaCursor.control";
+        this.pathGraphic.usePointerCapture = true;
+        this.pathGraphic.onThisPointerDown = function (s, e, poinst) {
+            if (self.lblKind.text == "MoveTo") {
+                let pt = CPoint.create(e.offsetX, e.offsetY);
+                let ppt = self.__item.pathData.addPointMoveTo(pt);
+                prePoint = pt;
+                let row = self.grid.add(["M", pt.toString(), CPoint.create(0, 0).toString(), CPoint.create(0, 0).toString(), ppt]);
+                ppt.onChange = function () {
+                    if (row != undefined) {
+                        row.get(1).asString = ppt.point.toString();
+                    }
+                };
+                let selector = new CPathPointSelectorModel(self.pointResource, self.cpoint1Resource, self.cpoint2Resource);
+                selector.parent = self.pathGraphic;
+                selector.pathPoint = ppt;
+                self.__points.add(selector);
+            }
+            if (self.lblKind.text == "LineTo") {
+                let pt = CPoint.create(e.offsetX, e.offsetY);
+                let ppt = self.__item.pathData.addPointLineTo(CPoint.create(e.offsetX, e.offsetY));
+                prePoint = pt;
+                let row = self.grid.add(["L", pt.toString(), CPoint.create(0, 0).toString(), CPoint.create(0, 0).toString(), ppt]);
+                ppt.onChange = function () {
+                    if (row != undefined) {
+                        row.get(1).asString = ppt.point.toString();
+                    }
+                };
+                let selector = new CPathPointSelectorModel(self.pointResource, self.cpoint1Resource, self.cpoint2Resource);
+                selector.parent = self.pathGraphic;
+                selector.pathPoint = ppt;
+                self.__points.add(selector);
+            }
+            if (self.lblKind.text == "CurveTo") {
+                let pt = CPoint.create(e.offsetX, e.offsetY);
+                if (prePoint != undefined) {
+                    let ds = CPoint.getDistancePoints(pt, prePoint);
+                    let cpt1 = CPoint.getLineMiddlePoint(prePoint, pt, CCalc.crRange2Value(0, ds, ds / 3, 0, 1));
+                    let cpt2 = CPoint.getLineMiddlePoint(prePoint, pt, CCalc.crRange2Value(0, ds, (ds / 3) * 2, 0, 1));
+                    let ppt = self.__item.pathData.addPointCurveTo3(pt, cpt1, cpt2);
+                    let row = self.grid.add(["C", pt.toString(), cpt1.toString(), cpt2.toString(), ppt]);
+                    prePoint = pt;
+                    let selector = new CPathPointSelectorModel(self.pointResource, self.cpoint1Resource, self.cpoint2Resource);
+                    selector.parent = self.pathGraphic;
+                    selector.pathPoint = ppt;
+                    self.__points.add(selector);
+                    ppt.onChange = function () {
+                        if (row != undefined) {
+                            row.get(1).asString = ppt.point.toString();
+                            row.get(2).asString = ppt.cPoint1.toString();
+                            row.get(3).asString = ppt.cPoint2.toString();
+                        }
+                    };
+                }
+            }
+        };
+        this.grid.onEditorApply = function (s, col, row, text) {
+            let pt = self.grid.cell(4, row);
+            if (pt != undefined) {
+                let arr = text.split(",");
+                if (col == 1) {
+                    pt.point.x = parseFloat(arr[0]);
+                    pt.point.y = parseFloat(arr[1]);
+                    self.pathGraphic.draw();
+                }
+                if (col == 2) {
+                    pt.cPoint1.x = parseFloat(arr[0]);
+                    pt.cPoint1.y = parseFloat(arr[1]);
+                    self.pathGraphic.draw();
+                }
+                if (col == 3) {
+                    pt.cPoint2.x = parseFloat(arr[0]);
+                    pt.cPoint2.y = parseFloat(arr[1]);
+                    self.pathGraphic.draw();
+                }
+            }
+            self.refreshPoints();
+        };
+        this.btnClear.onClick = function () {
+            self.clear();
+        };
+        this.btnDelete.onClick = function () {
+            if (self.grid.row != -1) {
+                self.deletePoint(self.grid.cell(4, self.grid.row));
+            }
+        };
+        this.chkAlignPixel.onChangeChecked = function () {
+            self.setAlignPixel();
+        };
+        this.edtAlignPixel.onKeyDown = function (s, e) {
+            if (e.key == "Enter") {
+                self.setAlignPixel();
+            }
+        };
+        this.btnApply.onClick = function () {
+            if (self.pathData != undefined) {
+                self.pathData.copyFrom(self.__item.pathData);
+            }
+        };
+        this.btnGetTextData.onClick = async function () {
+            let s = await fetchBody("http://localhost/resource/api/v1/textpath?text=BJK&size=50&bold=y");
+            self.item.pathData.fromFontPathData(s);
+            self.item.pathData.fit(new CRect(0, 0, 400, 400));
+            self.refresh();
+        };
+    }
+    get item() {
+        return this.__item;
+    }
+    get pointResource() {
+        return this._pointResource;
+    }
+    set pointResource(value) {
+        if (this._pointResource != value) {
+            this._pointResource = value;
+            for (let n = 0; n < this.__points.length; n++) {
+                this.__points.get(n).point.resource = value;
+            }
+        }
+    }
+    get cpoint1Resource() {
+        return this._cpoint1Resource;
+    }
+    set cpoint1Resource(value) {
+        if (this._cpoint1Resource != value) {
+            this._cpoint1Resource = value;
+            for (let n = 0; n < this.__points.length; n++) {
+                let h = this.__points.get(n).cpoint1;
+                if (h != undefined)
+                    h.resource = value;
+            }
+        }
+    }
+    get cpoint2Resource() {
+        return this._cpoint2Resource;
+    }
+    set cpoint2Resource(value) {
+        if (this._cpoint2Resource != value) {
+            this._cpoint2Resource = value;
+            for (let n = 0; n < this.__points.length; n++) {
+                let h = this.__points.get(n).cpoint2;
+                if (h != undefined)
+                    h.resource = value;
+            }
+        }
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "toolbar", this.toolbar.toData(), {}, true);
+        CDataClass.putData(data, "lblKind", this.lblKind.toData(), {}, true);
+        CDataClass.putData(data, "btnNone", this.btnNone.toData(), {}, true);
+        CDataClass.putData(data, "btnMoveTo", this.btnMoveTo.toData(), {}, true);
+        CDataClass.putData(data, "btnLineTo", this.btnLineTo.toData(), {}, true);
+        CDataClass.putData(data, "btnCurveTo", this.btnCurveTo.toData(), {}, true);
+        CDataClass.putData(data, "btnClose", this.btnClose.toData(), {}, true);
+        CDataClass.putData(data, "btnSave", this.btnSave.toData(), {}, true);
+        CDataClass.putData(data, "btnOpen", this.btnOpen.toData(), {}, true);
+        CDataClass.putData(data, "btnGetTextData", this.btnGetTextData.toData(), {}, true);
+        CDataClass.putData(data, "toolbarBottom", this.toolbarBottom.toData(), {}, true);
+        CDataClass.putData(data, "lblWidth", this.lblWidth.toData(), {}, true);
+        CDataClass.putData(data, "lblheight", this.lblheight.toData(), {}, true);
+        CDataClass.putData(data, "btnSize", this.btnSize.toData(), {}, true);
+        CDataClass.putData(data, "chkAlignPixel", this.chkAlignPixel.toData(), {}, true);
+        CDataClass.putData(data, "edtAlignPixel", this.edtAlignPixel.toData(), {}, true);
+        CDataClass.putData(data, "btnApply", this.btnApply.toData(), {}, true);
+        CDataClass.putData(data, "lRight", this.lRight.toData(), {}, true);
+        CDataClass.putData(data, "spr", this.spr.toData(), {}, true);
+        CDataClass.putData(data, "lRTop", this.lRTop.toData(), {}, true);
+        CDataClass.putData(data, "btnDelete", this.btnDelete.toData(), {}, true);
+        CDataClass.putData(data, "btnClear", this.btnClear.toData(), {}, true);
+        CDataClass.putData(data, "grid", this.grid.toData(), {}, true);
+        CDataClass.putData(data, "lClient", this.lClient.toData(), {}, true);
+        CDataClass.putData(data, "lCTop", this.lCTop.toData(), {}, true);
+        CDataClass.putData(data, "lCClient", this.lCClient.toData(), {}, true);
+        CDataClass.putData(data, "path", this.path.toData(), {}, true);
+        CDataClass.putData(data, "pointResource", this.pointResource, "");
+        CDataClass.putData(data, "cpoint1Resource", this.cpoint1Resource, "");
+        CDataClass.putData(data, "cpoint2Resource", this.cpoint2Resource, "");
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.toolbar.fromData(CDataClass.getData(data, "toolbar", {}, true));
+        this.lblKind.fromData(CDataClass.getData(data, "lblKind", {}, true));
+        this.btnNone.fromData(CDataClass.getData(data, "btnNone", {}, true));
+        this.btnMoveTo.fromData(CDataClass.getData(data, "btnMoveTo", {}, true));
+        this.btnLineTo.fromData(CDataClass.getData(data, "btnLineTo", {}, true));
+        this.btnCurveTo.fromData(CDataClass.getData(data, "btnCurveTo", {}, true));
+        this.btnClose.fromData(CDataClass.getData(data, "btnClose", {}, true));
+        this.btnSave.fromData(CDataClass.getData(data, "btnSave", {}, true));
+        this.btnOpen.fromData(CDataClass.getData(data, "btnOpen", {}, true));
+        this.btnGetTextData.fromData(CDataClass.getData(data, "btnGetTextData", {}, true));
+        this.toolbarBottom.fromData(CDataClass.getData(data, "toolbarBottom", {}, true));
+        this.lblWidth.fromData(CDataClass.getData(data, "lblWidth", {}, true));
+        this.lblheight.fromData(CDataClass.getData(data, "lblheight", {}, true));
+        this.btnSize.fromData(CDataClass.getData(data, "btnSize", {}, true));
+        this.chkAlignPixel.fromData(CDataClass.getData(data, "chkAlignPixel", {}, true));
+        this.edtAlignPixel.fromData(CDataClass.getData(data, "edtAlignPixel", {}, true));
+        this.btnApply.fromData(CDataClass.getData(data, "btnApply", {}, true));
+        this.lRight.fromData(CDataClass.getData(data, "lRight", {}, true));
+        this.spr.fromData(CDataClass.getData(data, "spr", {}, true));
+        this.lRTop.fromData(CDataClass.getData(data, "lRTop", {}, true));
+        this.btnDelete.fromData(CDataClass.getData(data, "btnDelete", {}, true));
+        this.btnClear.fromData(CDataClass.getData(data, "btnClear", {}, true));
+        this.grid.fromData(CDataClass.getData(data, "grid", {}, true));
+        this.lClient.fromData(CDataClass.getData(data, "lClient", {}, true));
+        this.lCTop.fromData(CDataClass.getData(data, "lCTop", {}, true));
+        this.lCClient.fromData(CDataClass.getData(data, "lCClient", {}, true));
+        this.path.fromData(CDataClass.getData(data, "path", {}, true));
+        this.pointResource = CDataClass.getData(data, "pointResource", "");
+        this.cpoint1Resource = CDataClass.getData(data, "cpoint1Resource", "");
+        this.cpoint2Resource = CDataClass.getData(data, "cpoint2Resource", "");
+    }
+    deletePoint(pathPoint) {
+        for (let n = 0; n < this.__points.length; n++) {
+            if (this.__points.get(n).pathPoint == pathPoint) {
+                this.__points.get(n).point.remove();
+                let cp1 = this.__points.get(n).cpoint1;
+                if (cp1 != undefined)
+                    cp1.remove();
+                let cp2 = this.__points.get(n).cpoint2;
+                if (cp2 != undefined)
+                    cp2.remove();
+                this.__points.delete(n);
+                break;
+            }
+        }
+        for (let n = 0; n < this.grid.length; n++) {
+            if (this.grid.cell(4, n) == pathPoint) {
+                this.grid.delete(n);
+                break;
+            }
+        }
+        for (let n = 0; n < this.__item.pathData.length; n++) {
+            if (this.__item.pathData.get(n) == pathPoint) {
+                this.__item.pathData.delete(n);
+                break;
+            }
+        }
+    }
+    clearPoints() {
+        for (let n = 0; n < this.__points.length; n++) {
+            this.__points.get(n).point.remove();
+            let cp1 = this.__points.get(n).cpoint1;
+            if (cp1 != undefined)
+                cp1.remove();
+            let cp2 = this.__points.get(n).cpoint2;
+            if (cp2 != undefined)
+                cp2.remove();
+        }
+        this.__points.clear();
+    }
+    reCreatePoints() {
+        this.clearPoints();
+        for (let n = 0; n < this.item.pathData.length; n++) {
+            if (this.item.pathData.get(n).pointKind == EPathPointKind.MOVETO) {
+                let selector = new CPathPointSelectorModel(this.pointResource, this.cpoint1Resource, this.cpoint2Resource);
+                selector.parent = this.pathGraphic;
+                selector.pathPoint = this.item.pathData.get(n);
+                this.__points.add(selector);
+            }
+            if (this.item.pathData.get(n).pointKind == EPathPointKind.LINETO) {
+                let selector = new CPathPointSelectorModel(this.pointResource, this.cpoint1Resource, this.cpoint2Resource);
+                selector.parent = this.pathGraphic;
+                selector.pathPoint = this.item.pathData.get(n);
+                this.__points.add(selector);
+            }
+            if (this.item.pathData.get(n).pointKind == EPathPointKind.CURVETO3) {
+                let selector = new CPathPointSelectorModel(this.pointResource, this.cpoint1Resource, this.cpoint2Resource);
+                selector.parent = this.pathGraphic;
+                selector.pathPoint = this.item.pathData.get(n);
+                this.__points.add(selector);
+            }
+        }
+    }
+    refreshPoints() {
+        for (let n = 0; n < this.__points.length; n++) {
+            let pt = this.__points.get(n).pathPoint;
+            if (pt != undefined) {
+                this.__points.get(n).isUpdate = false;
+                this.__points.get(n).point.position.left = pt.point.x - 5;
+                this.__points.get(n).point.position.top = pt.point.y - 5;
+                let cp1 = this.__points.get(n).cpoint1;
+                if (cp1 != undefined) {
+                    cp1.position.left = pt.cPoint1.x - 3;
+                    cp1.position.top = pt.cPoint1.y - 3;
+                }
+                let cp2 = this.__points.get(n).cpoint2;
+                if (cp2 != undefined) {
+                    cp2.position.left = pt.cPoint2.x - 3;
+                    cp2.position.top = pt.cPoint2.y - 3;
+                }
+                this.__points.get(n).isUpdate = true;
+            }
+        }
+    }
+    setAlignPixel() {
+        for (let n = 0; n < this.__points.length; n++) {
+            if (this.chkAlignPixel.checked) {
+                this.__points.get(n).alignPixel = parseInt(this.edtAlignPixel.text);
+            }
+            else {
+                this.__points.get(n).alignPixel = 0;
+            }
+        }
+    }
+    clear() {
+        this.__item.pathData.clear();
+        this.clearPoints();
+        this.grid.clear();
+    }
+    refresh() {
+        this.grid.clear();
+        this.reCreatePoints();
+        for (let n = 0; n < this.__item.pathData.length; n++) {
+            let s = "";
+            if (this.__item.pathData.get(n).pointKind == EPathPointKind.BEGIN) {
+                s = "B";
+            }
+            else if (this.__item.pathData.get(n).pointKind == EPathPointKind.MOVETO) {
+                s = "M";
+            }
+            else if (this.__item.pathData.get(n).pointKind == EPathPointKind.LINETO) {
+                s = "L";
+            }
+            else if (this.__item.pathData.get(n).pointKind == EPathPointKind.CURVETO3) {
+                s = "C";
+            }
+            else if (this.__item.pathData.get(n).pointKind == EPathPointKind.CLOSE) {
+                s = "CL";
+            }
+            let row = this.grid.add([
+                s,
+                this.__item.pathData.get(n).point.toString(),
+                this.__item.pathData.get(n).cPoint1.toString(),
+                this.__item.pathData.get(n).cPoint2.toString(),
+                this.__item.pathData.get(n)
+            ]);
+            let self = this;
+            this.item.pathData.get(n).onChange = function () {
+                if (row != undefined) {
+                    row.get(1).asString = self.item.pathData.get(n).point.toString();
+                    row.get(2).asString = self.item.pathData.get(n).cPoint1.toString();
+                    row.get(3).asString = self.item.pathData.get(n).cPoint2.toString();
+                }
+            };
+        }
+    }
+    async loadFile(filename) {
+        /*let o = await this.openFinder.fetchBodyApi(CON_HOST + "/api/file/v1/fileload?filename=" + filename)
+        if(o.result == "success") {
+            if(o.data != undefined) {
+                let oo = JSON.parse(o.data)
+                if(this.pathData != undefined) this.pathData.fromData(oo.path)
+                this.item.pathData.fromData(oo.path)
+                this.lblWidth.value = oo.width + ""
+                this.lblheight.value = oo.height + ""
+                this.btnSize.click()
+                this.refresh()
+            }
+        }
+        return o*/
+    }
+    async saveFile(filename) {
+        /*let oo = {width:parseInt(this.lblWidth.value), height:parseInt(this.lblheight.value)}
+        oo["path"] = this.item.pathData.toData()
+        if(CGlobal.userInfo != undefined) {
+            let strm = new CStream()
+            strm.putString(filename)
+            strm.putString(JSON.stringify(oo))
+            let self = this
+            CGlobal.userInfo.sendSocketData("savetextfile", strm, function(data) {
+                self.saveCover.hideCover()
+            })
+        }*/
+    }
+}
+class CGraphEditorModel extends CPathEditorModel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.cover = new CCover(this);
+        this.startValueHandle = new CPanel(this.pathGraphic);
+        this.stopValueHandle = new CPanel(this.pathGraphic);
+        this.lblScaleY = new CPanel(this.lCTop);
+        this.edtScaleY = new CTextBox(this.lCTop);
+        this.lblPrecision = new CPanel(this.lCTop);
+        this.edtPrecision = new CTextBox(this.lCTop);
+        this.lblDuration = new CPanel(this.lCTop);
+        this.edtDuration = new CTextBox(this.lCTop);
+        this.lblFrame = new CPanel(this.lCTop);
+        this.edtFrame = new CTextBox(this.lCTop);
+        this.btnReg = new CButton(this.lCTop);
+        this.lblStart = new CPanel(this.toolbarBottom);
+        this.edtStart = new CTextBox(this.toolbarBottom);
+        this.lblStop = new CPanel(this.toolbarBottom);
+        this.edtStop = new CTextBox(this.toolbarBottom);
+        let self = this;
+        this.item.fill.styleKind = EStyleKind.EMPTY;
+        this.tagItem = this.pathGraphic.layers.get(0).items.addItem();
+        this.tagItem.stroke.lineWidth = 1;
+        this.tagItem.stroke.styleKind = EStyleKind.SOLID;
+        this.tagItem.kind = ECanvasItemKind.PATH;
+        this.tagItem.pathFitMode = EFitMode.ORIGINAL;
+        this.tagItem.stroke.solidColor = "#808080";
+        this.tagItem.pathData.clear();
+        this.onChangeSize = function () {
+            self.cover.position.width = self.position.width;
+            self.cover.position.height = self.position.height;
+        };
+        this.startValueHandle.onChangeOffset = function () {
+            self.edtStart.text = (self.pathGraphic.position.height - (self.startValueHandle.position.top + 15)) + "";
+            self.setStartStopValue();
+        };
+        this.stopValueHandle.onChangeOffset = function () {
+            self.edtStop.text = (self.pathGraphic.position.height - (self.stopValueHandle.position.top + 15)) + "";
+            self.setStartStopValue();
+        };
+        this.edtStart.onKeyDown = function (s, e) {
+            if (e.key == "Enter") {
+                self.startValueHandle.position.top = self.pathGraphic.position.height - (parseInt(self.edtStart.text) + 15);
+                self.setStartStopValue();
+            }
+        };
+        this.edtStop.onKeyDown = function (s, e) {
+            if (e.key == "Enter") {
+                self.stopValueHandle.position.top = self.pathGraphic.position.height - (parseInt(self.edtStop.text) + 15);
+                self.setStartStopValue();
+            }
+        };
+        this.btnReg.onClick = function () {
+            /*let arrpd = new Array<{pointKind: number, point:{x:number, y:number}, cPoint1:{x:number, y:number}, cPoint2:{x:number, y:number}}>()
+            for(let n = 0; n < self.item.pathData.length; n++) {
+                let pt = self.item.pathData.get(n)
+                arrpd.push({
+                    pointKind: pt.pointKind,
+                    point:{x:pt.point.x, y:pt.point.y},
+                    cPoint1:{x:pt.cPoint1.x, y:pt.cPoint1.y},
+                    cPoint2:{x:pt.cPoint2.x, y:pt.cPoint2.y}
+                })
+            }
+
+            if(CGlobal.userInfo != undefined) {
+                let strm = new CStream()
+                strm.putString(self.edtDuration.text)
+                strm.putString(self.lblWidth.value)
+                strm.putString(self.lblheight.value)
+                strm.putString(self.edtStart.text)
+                strm.putString(self.edtStop.text)
+                strm.putString(self.edtScaleY.text)
+                strm.putString(self.edtPrecision.text)
+                strm.putString(self.edtFrame.text)
+                strm.putString(CStringUtil.strToUriBase64(JSON.stringify(arrpd)))
+                CGlobal.userInfo.sendSocketData("getGraphData", strm, function(data) {
+                    data.getString()
+                    data.getString()
+                    let result = data.getString()
+                    if(result == "success") {
+                        data.getString()
+                        let frm = new CTextEditor(CSystem.desktopList.get(0).applicationLayer)
+                        frm.show(100, 100, 600, 400, "Graph data", "remove")
+                        frm.editor.textArea.text = data.getString()
+                    }
+                })
+            }*/
+            /*
+            CSystem.prompt("Add Graph", ["Resource name"], self.cover, async function(arr) {
+                let o = await postData(CON_HOST + "/resource/api/v1/graphdataadd", {
+                    duration:self.edtDuration.text,
+                    width:self.lblWidth.value,
+                    scaley:self.edtScaleY.text,
+                    start:self.edtStart.text,
+                    stop:self.edtStop.text,
+                    height:self.lblheight.value,
+                    precision:self.edtPrecision.text,
+                    frame:self.edtFrame.text,
+                    resourcename:arr[0],
+                    pathdata:CStringUtil.strToUriBase64(JSON.stringify(arrpd))
+                })
+                if(o.result == "success") {
+                    alert("Success")
+                } else {
+                    alert(o.message)
+                }
+            }, undefined, 350)*/
+        };
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "startValueHandle", this.startValueHandle.toData(), {}, true);
+        CDataClass.putData(data, "stopValueHandle", this.stopValueHandle.toData(), {}, true);
+        CDataClass.putData(data, "lblScaleY", this.lblScaleY.toData(), {}, true);
+        CDataClass.putData(data, "edtScaleY", this.edtScaleY.toData(), {}, true);
+        CDataClass.putData(data, "lblPrecision", this.lblPrecision.toData(), {}, true);
+        CDataClass.putData(data, "edtPrecision", this.edtPrecision.toData(), {}, true);
+        CDataClass.putData(data, "lblDuration", this.lblDuration.toData(), {}, true);
+        CDataClass.putData(data, "edtDuration", this.edtDuration.toData(), {}, true);
+        CDataClass.putData(data, "lblFrame", this.lblFrame.toData(), {}, true);
+        CDataClass.putData(data, "edtFrame", this.edtFrame.toData(), {}, true);
+        CDataClass.putData(data, "btnReg", this.btnReg.toData(), {}, true);
+        CDataClass.putData(data, "lblStart", this.lblStart.toData(), {}, true);
+        CDataClass.putData(data, "edtStart", this.edtStart.toData(), {}, true);
+        CDataClass.putData(data, "lblStop", this.lblStop.toData(), {}, true);
+        CDataClass.putData(data, "edtStop", this.edtStop.toData(), {}, true);
+        CDataClass.putData(data, "cover", this.cover.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.startValueHandle.fromData(CDataClass.getData(data, "startValueHandle", {}, true));
+        this.stopValueHandle.fromData(CDataClass.getData(data, "stopValueHandle", {}, true));
+        this.lblScaleY.fromData(CDataClass.getData(data, "lblScaleY", {}, true));
+        this.edtScaleY.fromData(CDataClass.getData(data, "edtScaleY", {}, true));
+        this.lblPrecision.fromData(CDataClass.getData(data, "lblPrecision", {}, true));
+        this.edtPrecision.fromData(CDataClass.getData(data, "edtPrecision", {}, true));
+        this.lblDuration.fromData(CDataClass.getData(data, "lblDuration", {}, true));
+        this.edtDuration.fromData(CDataClass.getData(data, "edtDuration", {}, true));
+        this.lblFrame.fromData(CDataClass.getData(data, "lblFrame", {}, true));
+        this.edtFrame.fromData(CDataClass.getData(data, "edtFrame", {}, true));
+        this.btnReg.fromData(CDataClass.getData(data, "btnReg", {}, true));
+        this.lblStart.fromData(CDataClass.getData(data, "lblStart", {}, true));
+        this.edtStart.fromData(CDataClass.getData(data, "edtStart", {}, true));
+        this.lblStop.fromData(CDataClass.getData(data, "lblStop", {}, true));
+        this.edtStop.fromData(CDataClass.getData(data, "edtStop", {}, true));
+        this.cover.fromData(CDataClass.getData(data, "cover", {}, true));
+    }
+    setStartStopValue() {
+        let sty = this.startValueHandle.position.top + 15;
+        let edy = this.stopValueHandle.position.top + 15;
+        this.__backItem.pathData.clear();
+        this.__backItem.pathData.addPointMoveTo(new CPoint(0, sty));
+        this.__backItem.pathData.addPointLineTo(new CPoint(this.pathGraphic.position.width, sty));
+        this.__backItem.pathData.addPointMoveTo(new CPoint(0, edy));
+        this.__backItem.pathData.addPointLineTo(new CPoint(this.pathGraphic.position.width, edy));
+        this.pathGraphic.draw();
+    }
+    setHandle() {
+        this.startValueHandle.position.top = this.pathGraphic.position.height - (parseInt(this.edtStart.text) + 15);
+        this.stopValueHandle.position.top = this.pathGraphic.position.height - (parseInt(this.edtStop.text) + 15);
+        this.setStartStopValue();
+    }
+    async loadFile(filename) {
+        /*let o = await this.openFinder.fetchBodyApi(CON_HOST + "/api/file/v1/fileload?filename=" + filename)
+        if(o.result == "success") {
+            if(o.data != undefined) {
+                let oo = JSON.parse(o.data)
+                if(this.pathData != undefined) this.pathData.fromData(oo.path)
+                this.item.pathData.fromData(oo.path)
+                this.lblWidth.value = oo.width + ""
+                this.lblheight.value = oo.height + ""
+                this.btnSize.click()
+                this.edtScaleY.text = oo.scaleY
+                this.edtPrecision.text = oo.precision
+                this.edtDuration.text = oo.duration
+                this.edtFrame.text = oo.frame
+                this.edtStart.text = oo.startY
+                this.edtStop.text = oo.stopY
+                this.setHandle()
+                this.refresh()
+            }
+        }
+        return o*/
+    }
+    async saveFile(filename) {
+        /*let oo = {
+            width:parseInt(this.lblWidth.value),
+            height:parseInt(this.lblheight.value),
+            scaleY:this.edtScaleY.text,
+            precision:this.edtPrecision.text,
+            duration:this.edtDuration.text,
+            frame:this.edtFrame.text,
+            startY:this.edtStart.text,
+            stopY:this.edtStop.text
+        }
+        oo["path"] = this.item.pathData.toData()
+        if(CGlobal.userInfo != undefined) {
+            let strm = new CStream()
+            strm.putString(filename)
+            strm.putString(JSON.stringify(oo))
+            let self = this
+            CGlobal.userInfo.sendSocketData("savetextfile", strm, function(data) {
+                self.saveCover.hideCover()
+            })
+        }*/
+    }
+    getGraphData() {
+        let self = this;
+        return new Promise(function (rs) {
+            /*let arrpd = new Array<{pointKind: number, point:{x:number, y:number}, cPoint1:{x:number, y:number}, cPoint2:{x:number, y:number}}>()
+            for(let n = 0; n < self.item.pathData.length; n++) {
+                let pt = self.item.pathData.get(n)
+                arrpd.push({
+                    pointKind: pt.pointKind,
+                    point:{x:pt.point.x, y:pt.point.y},
+                    cPoint1:{x:pt.cPoint1.x, y:pt.cPoint1.y},
+                    cPoint2:{x:pt.cPoint2.x, y:pt.cPoint2.y}
+                })
+            }
+
+            if(CGlobal.userInfo != undefined) {
+                let strm = new CStream()
+                strm.putString(self.edtDuration.text)
+                strm.putString(self.lblWidth.value)
+                strm.putString(self.lblheight.value)
+                strm.putString(self.edtStart.text)
+                strm.putString(self.edtStop.text)
+                strm.putString(self.edtScaleY.text)
+                strm.putString(self.edtPrecision.text)
+                strm.putString(self.edtFrame.text)
+                strm.putString(CStringUtil.strToUriBase64(JSON.stringify(arrpd)))
+                CGlobal.userInfo.sendSocketData("getGraphData", strm, function(data) {
+                    data.getString()
+                    data.getString()
+                    let result = data.getString()
+                    if(result == "success") {
+                        data.getString()
+                        rs(JSON.parse(data.getString()))
+                    } else {
+                        rs(data.getString())
+                    }
+                })
+            }*/
+        });
+    }
+}
+class CPathEditorFrame extends CPathEditorModel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.resource = "pathEditor.frame";
+    }
+}
+class CGraphEditorFrame extends CGraphEditorModel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.resource = "graphEditor.frame";
+    }
+}
+class CPathEditor extends CWindowBlue {
+    constructor(parent, name) {
+        super(parent, name);
+        this.editor = new CPathEditorFrame(this.body);
+        this.editor.position.align = EPositionAlign.CLIENT;
+    }
+}
+class CGraphEditor extends CWindowBlue {
+    constructor(parent, name) {
+        super(parent, name);
+        this.editor = new CGraphEditorFrame(this.body);
+        this.editor.position.align = EPositionAlign.CLIENT;
+    }
+}
+class CAppGraphEditor extends CWindowApplication {
+    constructor() {
+        super();
+        this.defaultWidth = 1200;
+        this.defaultHeight = 600;
+        this.appName = "Graph Editor";
+        this.editor = new CGraphEditorFrame(this.mainWindow.body);
+        this.editor.position.align = EPositionAlign.CLIENT;
+    }
+}
+class CPathController extends CPanel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.__isTransForm = true;
+        this.__isTransForm2 = true;
+        this.xLineCount = 9;
+        this.yLineCount = 9;
+        this.toolbar = new CPanel(this);
+        this.lblXline = new CPanel(this.toolbar);
+        this.edtXLine = new CTextBox(this.toolbar);
+        this.lblYline = new CPanel(this.toolbar);
+        this.edtYLine = new CTextBox(this.toolbar);
+        this.btnLine = new CButton(this.toolbar);
+        this.btnGridPathSet = new CButton(this.toolbar);
+        this.lblSplite = new CPanel(this.toolbar);
+        this.edtSplite = new CTextBox(this.toolbar);
+        this.btnSplit = new CButton(this.toolbar);
+        this.btnSplitAll = new CButton(this.toolbar);
+        this.btnClose = new CButton(this.toolbar);
+        this.freeTransformHandleLT = new CPanel(this);
+        this.freeTransformHandleRT = new CPanel(this);
+        this.freeTransformHandleLB = new CPanel(this);
+        this.freeTransformHandleRB = new CPanel(this);
+        this.freeTransformHandleLeftC1 = new CPanel(this);
+        this.freeTransformHandleLeftC2 = new CPanel(this);
+        this.freeTransformHandleTopC1 = new CPanel(this);
+        this.freeTransformHandleTopC2 = new CPanel(this);
+        this.freeTransformHandleRightC1 = new CPanel(this);
+        this.freeTransformHandleRightC2 = new CPanel(this);
+        this.freeTransformHandleBottomC1 = new CPanel(this);
+        this.freeTransformHandleBottomC2 = new CPanel(this);
+        let self = this;
+        this.freeTransformHandleLT.onChangeOffset = function () {
+            self.__isTransForm = false;
+            self.setLTCurve();
+            self.__isTransForm = true;
+            if (self.__isTransForm)
+                self.doFreeTransformHandleTrack();
+        };
+        this.freeTransformHandleRT.onChangeOffset = function () {
+            self.__isTransForm = false;
+            self.setRTCurve();
+            self.__isTransForm = true;
+            if (self.__isTransForm)
+                self.doFreeTransformHandleTrack();
+        };
+        this.freeTransformHandleLB.onChangeOffset = function () {
+            self.__isTransForm = false;
+            self.setLBCurve();
+            self.__isTransForm = true;
+            if (self.__isTransForm)
+                self.doFreeTransformHandleTrack();
+        };
+        this.freeTransformHandleRB.onChangeOffset = function () {
+            self.__isTransForm = false;
+            self.setRBCurve();
+            self.__isTransForm = true;
+            if (self.__isTransForm)
+                self.doFreeTransformHandleTrack();
+        };
+        this.freeTransformHandleLeftC1.onChangeOffset = function () {
+            if (self.__isTransForm)
+                self.doFreeTransformHandleTrack();
+        };
+        this.freeTransformHandleLeftC2.onChangeOffset = function () {
+            if (self.__isTransForm)
+                self.doFreeTransformHandleTrack();
+        };
+        this.freeTransformHandleTopC1.onChangeOffset = function () {
+            if (self.__isTransForm)
+                self.doFreeTransformHandleTrack();
+        };
+        this.freeTransformHandleTopC2.onChangeOffset = function () {
+            if (self.__isTransForm)
+                self.doFreeTransformHandleTrack();
+        };
+        this.freeTransformHandleRightC1.onChangeOffset = function () {
+            if (self.__isTransForm)
+                self.doFreeTransformHandleTrack();
+        };
+        this.freeTransformHandleRightC2.onChangeOffset = function () {
+            if (self.__isTransForm)
+                self.doFreeTransformHandleTrack();
+        };
+        this.freeTransformHandleBottomC1.onChangeOffset = function () {
+            if (self.__isTransForm)
+                self.doFreeTransformHandleTrack();
+        };
+        this.freeTransformHandleBottomC2.onChangeOffset = function () {
+            if (self.__isTransForm)
+                self.doFreeTransformHandleTrack();
+        };
+        this.btnClose.onClick = function () {
+            self.visible = false;
+        };
+        this.btnLine.onClick = function () {
+            self.xLineCount = parseInt(self.edtXLine.text);
+            self.yLineCount = parseInt(self.edtYLine.text);
+        };
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "toolbar", this.toolbar.toData(), {}, true);
+        CDataClass.putData(data, "lblXline", this.lblXline.toData(), {}, true);
+        CDataClass.putData(data, "edtXLine", this.edtXLine.toData(), {}, true);
+        CDataClass.putData(data, "lblYline", this.lblYline.toData(), {}, true);
+        CDataClass.putData(data, "edtYLine", this.edtYLine.toData(), {}, true);
+        CDataClass.putData(data, "btnLine", this.btnLine.toData(), {}, true);
+        CDataClass.putData(data, "btnGridPathSet", this.btnGridPathSet.toData(), {}, true);
+        CDataClass.putData(data, "lblSplite", this.lblSplite.toData(), {}, true);
+        CDataClass.putData(data, "edtSplite", this.edtSplite.toData(), {}, true);
+        CDataClass.putData(data, "btnSplit", this.btnSplit.toData(), {}, true);
+        CDataClass.putData(data, "btnSplitAll", this.btnSplitAll.toData(), {}, true);
+        CDataClass.putData(data, "btnClose", this.btnClose.toData(), {}, true);
+        CDataClass.putData(data, "freeTransformHandleLT", this.freeTransformHandleLT.toData(), {}, true);
+        CDataClass.putData(data, "freeTransformHandleRT", this.freeTransformHandleRT.toData(), {}, true);
+        CDataClass.putData(data, "freeTransformHandleLB", this.freeTransformHandleLB.toData(), {}, true);
+        CDataClass.putData(data, "freeTransformHandleRB", this.freeTransformHandleRB.toData(), {}, true);
+        CDataClass.putData(data, "freeTransformHandleLeftC1", this.freeTransformHandleLeftC1.toData(), {}, true);
+        CDataClass.putData(data, "freeTransformHandleLeftC2", this.freeTransformHandleLeftC2.toData(), {}, true);
+        CDataClass.putData(data, "freeTransformHandleTopC1", this.freeTransformHandleTopC1.toData(), {}, true);
+        CDataClass.putData(data, "freeTransformHandleTopC2", this.freeTransformHandleTopC2.toData(), {}, true);
+        CDataClass.putData(data, "freeTransformHandleRightC1", this.freeTransformHandleRightC1.toData(), {}, true);
+        CDataClass.putData(data, "freeTransformHandleRightC2", this.freeTransformHandleRightC2.toData(), {}, true);
+        CDataClass.putData(data, "freeTransformHandleBottomC1", this.freeTransformHandleBottomC1.toData(), {}, true);
+        CDataClass.putData(data, "freeTransformHandleBottomC2", this.freeTransformHandleBottomC2.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.toolbar.fromData(CDataClass.getData(data, "toolbar", {}, true));
+        this.lblXline.fromData(CDataClass.getData(data, "lblXline", {}, true));
+        this.edtXLine.fromData(CDataClass.getData(data, "edtXLine", {}, true));
+        this.lblYline.fromData(CDataClass.getData(data, "lblYline", {}, true));
+        this.edtYLine.fromData(CDataClass.getData(data, "edtYLine", {}, true));
+        this.btnLine.fromData(CDataClass.getData(data, "btnLine", {}, true));
+        this.btnGridPathSet.fromData(CDataClass.getData(data, "btnGridPathSet", {}, true));
+        this.lblSplite.fromData(CDataClass.getData(data, "lblSplite", {}, true));
+        this.edtSplite.fromData(CDataClass.getData(data, "edtSplite", {}, true));
+        this.btnSplit.fromData(CDataClass.getData(data, "btnSplit", {}, true));
+        this.btnSplitAll.fromData(CDataClass.getData(data, "btnSplitAll", {}, true));
+        this.btnClose.fromData(CDataClass.getData(data, "btnClose", {}, true));
+        this.freeTransformHandleLT.fromData(CDataClass.getData(data, "freeTransformHandleLT", {}, true));
+        this.freeTransformHandleRT.fromData(CDataClass.getData(data, "freeTransformHandleRT", {}, true));
+        this.freeTransformHandleLB.fromData(CDataClass.getData(data, "freeTransformHandleLB", {}, true));
+        this.freeTransformHandleRB.fromData(CDataClass.getData(data, "freeTransformHandleRB", {}, true));
+        this.freeTransformHandleLeftC1.fromData(CDataClass.getData(data, "freeTransformHandleLeftC1", {}, true));
+        this.freeTransformHandleLeftC2.fromData(CDataClass.getData(data, "freeTransformHandleLeftC2", {}, true));
+        this.freeTransformHandleTopC1.fromData(CDataClass.getData(data, "freeTransformHandleTopC1", {}, true));
+        this.freeTransformHandleTopC2.fromData(CDataClass.getData(data, "freeTransformHandleTopC2", {}, true));
+        this.freeTransformHandleRightC1.fromData(CDataClass.getData(data, "freeTransformHandleRightC1", {}, true));
+        this.freeTransformHandleRightC2.fromData(CDataClass.getData(data, "freeTransformHandleRightC2", {}, true));
+        this.freeTransformHandleBottomC1.fromData(CDataClass.getData(data, "freeTransformHandleBottomC1", {}, true));
+        this.freeTransformHandleBottomC2.fromData(CDataClass.getData(data, "freeTransformHandleBottomC2", {}, true));
+    }
+    doFreeTransformHandleTrack() {
+        if (this.__isTransForm && this.__isTransForm2) {
+            this.doPathDataTransform();
+            if (this.onFreeTransformHandleTrack != undefined) {
+                this.onFreeTransformHandleTrack(this);
+            }
+        }
+    }
+    doPathDataTransform() {
+        let pds = this.layers.getCanvasItems("line");
+        let ptLT = this.getLTPoint();
+        let ptRT = this.getRTPoint();
+        let ptLB = this.getLBPoint();
+        let ptRB = this.getRBPoint();
+        let ptLeftC1 = new CPoint(this.freeTransformHandleLeftC1.position.left, this.freeTransformHandleLeftC1.position.top);
+        let ptLeftC2 = new CPoint(this.freeTransformHandleLeftC2.position.left, this.freeTransformHandleLeftC2.position.top);
+        let ptTopC1 = new CPoint(this.freeTransformHandleTopC1.position.left, this.freeTransformHandleTopC1.position.top);
+        let ptTopC2 = new CPoint(this.freeTransformHandleTopC2.position.left, this.freeTransformHandleTopC2.position.top);
+        let ptRightC1 = new CPoint(this.freeTransformHandleRightC1.position.left, this.freeTransformHandleRightC1.position.top);
+        let ptRightC2 = new CPoint(this.freeTransformHandleRightC2.position.left, this.freeTransformHandleRightC2.position.top);
+        let ptBottomC1 = new CPoint(this.freeTransformHandleBottomC1.position.left, this.freeTransformHandleBottomC1.position.top);
+        let ptBottomC2 = new CPoint(this.freeTransformHandleBottomC2.position.left, this.freeTransformHandleBottomC2.position.top);
+        for (let n = 0; n < pds.length; n++) {
+            pds[n].pathData.clear();
+            /*pds[n].pathData.addPointMoveTo(ptLT)
+            pds[n].pathData.addPointLineTo(ptRT)
+            pds[n].pathData.addPointLineTo(ptRB)
+            pds[n].pathData.addPointLineTo(ptLB)
+            pds[n].pathData.addPointClose()*/
+            pds[n].pathData.addPointMoveTo(ptLT);
+            pds[n].pathData.addPointCurveTo3(ptRT, ptTopC1, ptTopC2);
+            pds[n].pathData.addPointCurveTo3(ptRB, ptRightC1, ptRightC2);
+            pds[n].pathData.addPointMoveTo(ptLB);
+            pds[n].pathData.addPointCurveTo3(ptRB, ptBottomC1, ptBottomC2);
+            pds[n].pathData.addPointMoveTo(ptLT);
+            pds[n].pathData.addPointCurveTo3(ptLB, ptLeftC1, ptLeftC2);
+            //y축
+            for (let x = 0; x < this.yLineCount; x++) {
+                let m = (1 / (this.yLineCount + 1)) * (x + 1);
+                let pts = CPoint.yTransformLine(ptLT, ptRT, ptLB, ptRB, ptLeftC1, ptLeftC2, ptTopC1, ptTopC2, ptRightC1, ptRightC2, ptBottomC1, ptBottomC2, m);
+                pds[n].pathData.addPointMoveTo(pts.startPoint);
+                pds[n].pathData.addPointCurveTo3(pts.stopPoint, pts.curve1, pts.curve2);
+            }
+            //x축
+            for (let x = 0; x < this.xLineCount; x++) {
+                let m = (1 / (this.xLineCount + 1)) * (x + 1);
+                let pts = CPoint.xTransformLine(ptLT, ptRT, ptLB, ptRB, ptLeftC1, ptLeftC2, ptTopC1, ptTopC2, ptRightC1, ptRightC2, ptBottomC1, ptBottomC2, m);
+                pds[n].pathData.addPointMoveTo(pts.startPoint);
+                pds[n].pathData.addPointCurveTo3(pts.stopPoint, pts.curve1, pts.curve2);
+            }
+        }
+        if (this.onPathDataTransform != undefined) {
+            this.onPathDataTransform(this);
+        }
+    }
+    getLTPoint() {
+        return new CPoint(this.freeTransformHandleLT.position.left + this.freeTransformHandleLT.position.width, this.freeTransformHandleLT.position.top + this.freeTransformHandleLT.position.height);
+    }
+    getRTPoint() {
+        return new CPoint(this.freeTransformHandleRT.position.left, this.freeTransformHandleRT.position.top + this.freeTransformHandleRT.position.height);
+    }
+    getLBPoint() {
+        return new CPoint(this.freeTransformHandleLB.position.left + this.freeTransformHandleLB.position.width, this.freeTransformHandleLB.position.top);
+    }
+    getRBPoint() {
+        return new CPoint(this.freeTransformHandleRB.position.left, this.freeTransformHandleRB.position.top);
+    }
+    getC1(p1, p2) {
+        return CPoint.getLineMiddlePoint(p1, p2, 1 / 3);
+    }
+    getC2(p1, p2) {
+        return CPoint.getLineMiddlePoint(p1, p2, 1 / 3 * 2);
+    }
+    setLTCurve() {
+        let lt = this.getLTPoint();
+        let rt = this.getRTPoint();
+        let lb = this.getLBPoint();
+        let pt = this.getC1(lt, rt);
+        this.freeTransformHandleTopC1.position.left = pt.x;
+        this.freeTransformHandleTopC1.position.top = pt.y;
+        pt = this.getC2(lt, rt);
+        this.freeTransformHandleTopC2.position.left = pt.x;
+        this.freeTransformHandleTopC2.position.top = pt.y;
+        pt = this.getC1(lt, lb);
+        this.freeTransformHandleLeftC1.position.left = pt.x;
+        this.freeTransformHandleLeftC1.position.top = pt.y;
+        pt = this.getC2(lt, lb);
+        this.freeTransformHandleLeftC2.position.left = pt.x;
+        this.freeTransformHandleLeftC2.position.top = pt.y;
+    }
+    setRTCurve() {
+        let lt = this.getLTPoint();
+        let rt = this.getRTPoint();
+        let rb = this.getRBPoint();
+        let pt = this.getC1(lt, rt);
+        this.freeTransformHandleTopC1.position.left = pt.x;
+        this.freeTransformHandleTopC1.position.top = pt.y;
+        pt = this.getC2(lt, rt);
+        this.freeTransformHandleTopC2.position.left = pt.x;
+        this.freeTransformHandleTopC2.position.top = pt.y;
+        pt = this.getC1(rt, rb);
+        this.freeTransformHandleRightC1.position.left = pt.x;
+        this.freeTransformHandleRightC1.position.top = pt.y;
+        pt = this.getC2(rt, rb);
+        this.freeTransformHandleRightC2.position.left = pt.x;
+        this.freeTransformHandleRightC2.position.top = pt.y;
+    }
+    setLBCurve() {
+        let lt = this.getLTPoint();
+        let lb = this.getLBPoint();
+        let rb = this.getRBPoint();
+        let pt = this.getC1(lb, rb);
+        this.freeTransformHandleBottomC1.position.left = pt.x;
+        this.freeTransformHandleBottomC1.position.top = pt.y;
+        pt = this.getC2(lb, rb);
+        this.freeTransformHandleBottomC2.position.left = pt.x;
+        this.freeTransformHandleBottomC2.position.top = pt.y;
+        pt = this.getC1(lt, lb);
+        this.freeTransformHandleLeftC1.position.left = pt.x;
+        this.freeTransformHandleLeftC1.position.top = pt.y;
+        pt = this.getC2(lt, lb);
+        this.freeTransformHandleLeftC2.position.left = pt.x;
+        this.freeTransformHandleLeftC2.position.top = pt.y;
+    }
+    setRBCurve() {
+        let rt = this.getRTPoint();
+        let rb = this.getRBPoint();
+        let lb = this.getLBPoint();
+        let pt = this.getC1(rt, rb);
+        this.freeTransformHandleRightC1.position.left = pt.x;
+        this.freeTransformHandleRightC1.position.top = pt.y;
+        pt = this.getC2(rt, rb);
+        this.freeTransformHandleRightC2.position.left = pt.x;
+        this.freeTransformHandleRightC2.position.top = pt.y;
+        pt = this.getC1(lb, rb);
+        this.freeTransformHandleBottomC1.position.left = pt.x;
+        this.freeTransformHandleBottomC1.position.top = pt.y;
+        pt = this.getC2(lb, rb);
+        this.freeTransformHandleBottomC2.position.left = pt.x;
+        this.freeTransformHandleBottomC2.position.top = pt.y;
+    }
+    gridToPathData() {
+        let ptLT = this.getLTPoint();
+        let ptRT = this.getRTPoint();
+        let ptLB = this.getLBPoint();
+        let ptRB = this.getRBPoint();
+        let ptLeftC1 = new CPoint(this.freeTransformHandleLeftC1.position.left, this.freeTransformHandleLeftC1.position.top);
+        let ptLeftC2 = new CPoint(this.freeTransformHandleLeftC2.position.left, this.freeTransformHandleLeftC2.position.top);
+        let ptTopC1 = new CPoint(this.freeTransformHandleTopC1.position.left, this.freeTransformHandleTopC1.position.top);
+        let ptTopC2 = new CPoint(this.freeTransformHandleTopC2.position.left, this.freeTransformHandleTopC2.position.top);
+        let ptRightC1 = new CPoint(this.freeTransformHandleRightC1.position.left, this.freeTransformHandleRightC1.position.top);
+        let ptRightC2 = new CPoint(this.freeTransformHandleRightC2.position.left, this.freeTransformHandleRightC2.position.top);
+        let ptBottomC1 = new CPoint(this.freeTransformHandleBottomC1.position.left, this.freeTransformHandleBottomC1.position.top);
+        let ptBottomC2 = new CPoint(this.freeTransformHandleBottomC2.position.left, this.freeTransformHandleBottomC2.position.top);
+        let pd = new CPathPointList();
+        pd.clear();
+        pd.addPointMoveTo(ptLT);
+        pd.addPointCurveTo3(ptRT, ptTopC1, ptTopC2);
+        pd.addPointCurveTo3(ptRB, ptRightC1, ptRightC2);
+        //pd.addPointMoveTo(ptLB)
+        //pd.addPointCurveTo3(ptRB, ptBottomC1, ptBottomC2)
+        pd.addPointCurveTo3(ptLB, ptBottomC2, ptBottomC1);
+        //pd.addPointMoveTo(ptLT)
+        //pd.addPointCurveTo3(ptLB, ptLeftC1, ptLeftC2)
+        pd.addPointCurveTo3(ptLT, ptLeftC2, ptLeftC1);
+        pd.addPointClose();
+        let pd2 = new CPathPointList();
+        //y축
+        for (let x = 0; x < this.yLineCount; x++) {
+            let m = (1 / (this.yLineCount + 1)) * (x + 1);
+            let pts = CPoint.yTransformLine(ptLT, ptRT, ptLB, ptRB, ptLeftC1, ptLeftC2, ptTopC1, ptTopC2, ptRightC1, ptRightC2, ptBottomC1, ptBottomC2, m);
+            pd2.addPointMoveTo(pts.startPoint);
+            pd2.addPointCurveTo3(pts.stopPoint, pts.curve1, pts.curve2);
+        }
+        //x축
+        for (let x = 0; x < this.xLineCount; x++) {
+            let m = (1 / (this.xLineCount + 1)) * (x + 1);
+            let pts = CPoint.xTransformLine(ptLT, ptRT, ptLB, ptRB, ptLeftC1, ptLeftC2, ptTopC1, ptTopC2, ptRightC1, ptRightC2, ptBottomC1, ptBottomC2, m);
+            pd2.addPointMoveTo(pts.startPoint);
+            pd2.addPointCurveTo3(pts.stopPoint, pts.curve1, pts.curve2);
+        }
+        return { background: pd, grid: pd2 };
+    }
+    getTransformBounds() {
+        let ptLT = this.getLTPoint();
+        let ptRT = this.getRTPoint();
+        let ptLB = this.getLBPoint();
+        let ptRB = this.getRBPoint();
+        let ptLeftC1 = new CPoint(this.freeTransformHandleLeftC1.position.left, this.freeTransformHandleLeftC1.position.top);
+        let ptLeftC2 = new CPoint(this.freeTransformHandleLeftC2.position.left, this.freeTransformHandleLeftC2.position.top);
+        let ptTopC1 = new CPoint(this.freeTransformHandleTopC1.position.left, this.freeTransformHandleTopC1.position.top);
+        let ptTopC2 = new CPoint(this.freeTransformHandleTopC2.position.left, this.freeTransformHandleTopC2.position.top);
+        let ptRightC1 = new CPoint(this.freeTransformHandleRightC1.position.left, this.freeTransformHandleRightC1.position.top);
+        let ptRightC2 = new CPoint(this.freeTransformHandleRightC2.position.left, this.freeTransformHandleRightC2.position.top);
+        let ptBottomC1 = new CPoint(this.freeTransformHandleBottomC1.position.left, this.freeTransformHandleBottomC1.position.top);
+        let ptBottomC2 = new CPoint(this.freeTransformHandleBottomC2.position.left, this.freeTransformHandleBottomC2.position.top);
+        let l = Math.min(ptLT.x, ptRT.x, ptLB.x, ptRB.x, ptLeftC1.x, ptLeftC2.x, ptTopC1.x, ptTopC2.x, ptRightC1.x, ptRightC2.x, ptBottomC1.x, ptBottomC2.x);
+        let t = Math.min(ptLT.y, ptRT.y, ptLB.y, ptRB.y, ptLeftC1.y, ptLeftC2.y, ptTopC1.y, ptTopC2.y, ptRightC1.y, ptRightC2.y, ptBottomC1.y, ptBottomC2.y);
+        let r = Math.max(ptLT.x, ptRT.x, ptLB.x, ptRB.x, ptLeftC1.x, ptLeftC2.x, ptTopC1.x, ptTopC2.x, ptRightC1.x, ptRightC2.x, ptBottomC1.x, ptBottomC2.x);
+        let b = Math.max(ptLT.y, ptRT.y, ptLB.y, ptRB.y, ptLeftC1.y, ptLeftC2.y, ptTopC1.y, ptTopC2.y, ptRightC1.y, ptRightC2.y, ptBottomC1.y, ptBottomC2.y);
+        return new CRect(l, t, r, b);
+    }
+    offTransform() {
+        this.__isTransForm2 = false;
+    }
+    onTransform() {
+        this.__isTransForm2 = true;
+        this.doFreeTransformHandleTrack();
+    }
+}
+class CPathItemTransformer extends CPathController {
+    constructor(parent, name) {
+        super(parent, name);
+        this.__orgPathData = new Map();
+        this.__orgBounds = new CRect();
+        let self = this;
+        this.btnSplit.onClick = function () {
+            if (self.pathItem != undefined) {
+                self.pathItem.pathData.splitLine(parseInt(self.edtSplite.text));
+            }
+        };
+        this.btnSplitAll.onClick = function () {
+            if (self.pathItem != undefined) {
+                self.pathItem.loopPathItem(function (item) {
+                    item.pathData.splitLine(parseInt(self.edtSplite.text));
+                });
+            }
+        };
+        this.btnClose.onClick = function () {
+            self.visible = false;
+            self.pathItem = undefined;
+        };
+    }
+    get pathItem() {
+        return this._pathItem;
+    }
+    set pathItem(value) {
+        if (this._pathItem != value) {
+            this._pathItem = value;
+            if (value != undefined) {
+                this.doSetPathData(value);
+            }
+        }
+    }
+    doSetPathData(pathItem) {
+        let rt = pathItem.pathData.getBounds();
+        if (pathItem.pathData.length == 0) {
+            rt = new CRect(0, 0, 0, 0);
+        }
+        let self = this;
+        this.__orgPathData.clear();
+        function setItem(item) {
+            let pd = item.pathData.copyTo();
+            item.pathData.lineToCurve();
+            pd.lineToCurve();
+            self.__orgPathData.set(item, pd);
+            for (let n = 0; n < item.childs.length; n++) {
+                setItem(item.childs.get(n));
+            }
+        }
+        this.__orgBounds = pathItem.pathData.getBounds();
+        setItem(pathItem);
+        this.freeTransformHandleLT.position.left = rt.left - this.freeTransformHandleLT.position.width;
+        this.freeTransformHandleLT.position.top = rt.top - this.freeTransformHandleLT.position.height;
+        this.freeTransformHandleRT.position.left = rt.right;
+        this.freeTransformHandleRT.position.top = rt.top - this.freeTransformHandleLT.position.height;
+        this.freeTransformHandleLB.position.left = rt.left - this.freeTransformHandleLT.position.width;
+        this.freeTransformHandleLB.position.top = rt.bottom;
+        this.freeTransformHandleRB.position.left = rt.right;
+        this.freeTransformHandleRB.position.top = rt.bottom;
+    }
+    doGridToItem() {
+        if (this.pathItem != undefined) {
+            let pd = this.gridToPathData();
+            this.pathItem.pathData.copyFrom(pd.background);
+            let item = this.pathItem.childs.addItem();
+            item.pathData.copyFrom(pd.grid);
+        }
+    }
+    doPathDataTransform() {
+        if (this.pathItem != undefined) {
+            let self = this;
+            let pds = this.layers.getCanvasItems("line");
+            let ptLT = this.getLTPoint();
+            let ptRT = this.getRTPoint();
+            let ptLB = this.getLBPoint();
+            let ptRB = this.getRBPoint();
+            let ptLeftC1 = new CPoint(this.freeTransformHandleLeftC1.position.left, this.freeTransformHandleLeftC1.position.top);
+            let ptLeftC2 = new CPoint(this.freeTransformHandleLeftC2.position.left, this.freeTransformHandleLeftC2.position.top);
+            let ptTopC1 = new CPoint(this.freeTransformHandleTopC1.position.left, this.freeTransformHandleTopC1.position.top);
+            let ptTopC2 = new CPoint(this.freeTransformHandleTopC2.position.left, this.freeTransformHandleTopC2.position.top);
+            let ptRightC1 = new CPoint(this.freeTransformHandleRightC1.position.left, this.freeTransformHandleRightC1.position.top);
+            let ptRightC2 = new CPoint(this.freeTransformHandleRightC2.position.left, this.freeTransformHandleRightC2.position.top);
+            let ptBottomC1 = new CPoint(this.freeTransformHandleBottomC1.position.left, this.freeTransformHandleBottomC1.position.top);
+            let ptBottomC2 = new CPoint(this.freeTransformHandleBottomC2.position.left, this.freeTransformHandleBottomC2.position.top);
+            function setPath(item) {
+                let opd = self.__orgPathData.get(item);
+                if (opd != undefined && self.__orgBounds != undefined) {
+                    for (let n = 0; n < opd.length; n++) {
+                        if (opd.get(n).pointKind == EPathPointKind.MOVETO ||
+                            opd.get(n).pointKind == EPathPointKind.LINETO ||
+                            opd.get(n).pointKind == EPathPointKind.CURVETO2 ||
+                            opd.get(n).pointKind == EPathPointKind.CURVETO3) {
+                            let pt = opd.get(n).point;
+                            //let tpt = CPoint.getTransformPoint(self.__orgBounds, pt.toPoint(), ptLT, ptRT, ptLB, ptRB)
+                            let tpt = CPoint.getTransformCurvePoint(self.__orgBounds, pt.toPoint(), ptLT, ptRT, ptLB, ptRB, ptLeftC1, ptLeftC2, ptTopC1, ptTopC2, ptRightC1, ptRightC2, ptBottomC1, ptBottomC2);
+                            item.pathData.get(n).point.x = tpt.x;
+                            item.pathData.get(n).point.y = tpt.y;
+                            pt = opd.get(n).cPoint1;
+                            //tpt = CPoint.getTransformPoint(self.__orgBounds, pt.toPoint(), ptLT, ptRT, ptLB, ptRB)
+                            tpt = CPoint.getTransformCurvePoint(self.__orgBounds, pt.toPoint(), ptLT, ptRT, ptLB, ptRB, ptLeftC1, ptLeftC2, ptTopC1, ptTopC2, ptRightC1, ptRightC2, ptBottomC1, ptBottomC2);
+                            item.pathData.get(n).cPoint1.x = tpt.x;
+                            item.pathData.get(n).cPoint1.y = tpt.y;
+                            pt = opd.get(n).cPoint2;
+                            //tpt = CPoint.getTransformPoint(self.__orgBounds, pt.toPoint(), ptLT, ptRT, ptLB, ptRB)
+                            tpt = CPoint.getTransformCurvePoint(self.__orgBounds, pt.toPoint(), ptLT, ptRT, ptLB, ptRB, ptLeftC1, ptLeftC2, ptTopC1, ptTopC2, ptRightC1, ptRightC2, ptBottomC1, ptBottomC2);
+                            item.pathData.get(n).cPoint2.x = tpt.x;
+                            item.pathData.get(n).cPoint2.y = tpt.y;
+                        }
+                    }
+                }
+                for (let n = 0; n < item.childs.length; n++) {
+                    setPath(item.childs.get(n));
+                }
+            }
+            setPath(this.pathItem);
+        }
+        super.doPathDataTransform();
+    }
+}
+class CCanvasControlTransfomer extends CPathController {
+    constructor(parent, name) {
+        super(parent, name);
+        this.__orgHasPoint = false;
+        this.__orgPathData = new Map();
+        this.__orgBounds = new CRect();
+        let self = this;
+        this.btnSplit.onClick = function () {
+            if (self.control != undefined) {
+                for (let n = 0; n < self.control.layers.length; n++) {
+                    for (let i = 0; i < self.control.layers.get(n).items.length; i++) {
+                        self.control.layers.get(n).items.get(i).pathData.splitLine(parseInt(self.edtSplite.text));
+                    }
+                }
+            }
+        };
+        this.btnSplitAll.visible = false;
+        this.btnClose.onClick = function () {
+            self.visible = false;
+            if (self.control != undefined)
+                self.control.hasPointerEvent = self.__orgHasPoint;
+            self.control = undefined;
+        };
+    }
+    doPathDataTransform() {
+        if (this.control != undefined) {
+            let ptLT = this.getLTPoint();
+            let ptRT = this.getRTPoint();
+            let ptLB = this.getLBPoint();
+            let ptRB = this.getRBPoint();
+            let ptLeftC1 = new CPoint(this.freeTransformHandleLeftC1.position.left, this.freeTransformHandleLeftC1.position.top);
+            let ptLeftC2 = new CPoint(this.freeTransformHandleLeftC2.position.left, this.freeTransformHandleLeftC2.position.top);
+            let ptTopC1 = new CPoint(this.freeTransformHandleTopC1.position.left, this.freeTransformHandleTopC1.position.top);
+            let ptTopC2 = new CPoint(this.freeTransformHandleTopC2.position.left, this.freeTransformHandleTopC2.position.top);
+            let ptRightC1 = new CPoint(this.freeTransformHandleRightC1.position.left, this.freeTransformHandleRightC1.position.top);
+            let ptRightC2 = new CPoint(this.freeTransformHandleRightC2.position.left, this.freeTransformHandleRightC2.position.top);
+            let ptBottomC1 = new CPoint(this.freeTransformHandleBottomC1.position.left, this.freeTransformHandleBottomC1.position.top);
+            let ptBottomC2 = new CPoint(this.freeTransformHandleBottomC2.position.left, this.freeTransformHandleBottomC2.position.top);
+            let rt = this.getTransformBounds();
+            this.control.position.left = rt.left;
+            this.control.position.top = rt.top;
+            this.control.position.width = rt.width;
+            this.control.position.height = rt.height;
+            for (let n = 0; n < this.control.layers.length; n++) {
+                for (let i = 0; i < this.control.layers.get(n).items.length; i++) {
+                    let opd = this.__orgPathData.get(this.control.layers.get(n).items.get(i));
+                    if (opd != undefined && this.__orgBounds != undefined) {
+                        for (let x = 0; x < opd.length; x++) {
+                            if (opd.get(x).pointKind == EPathPointKind.MOVETO ||
+                                opd.get(x).pointKind == EPathPointKind.LINETO ||
+                                opd.get(x).pointKind == EPathPointKind.CURVETO2 ||
+                                opd.get(x).pointKind == EPathPointKind.CURVETO3) {
+                                let pt = opd.get(x).point;
+                                let tpt = CPoint.getTransformCurvePoint(this.__orgBounds, pt.toPoint(), ptLT, ptRT, ptLB, ptRB, ptLeftC1, ptLeftC2, ptTopC1, ptTopC2, ptRightC1, ptRightC2, ptBottomC1, ptBottomC2);
+                                tpt.x -= this.control.position.left;
+                                tpt.y -= this.control.position.top;
+                                this.control.layers.get(n).items.get(i).pathData.get(x).point.x = tpt.x;
+                                this.control.layers.get(n).items.get(i).pathData.get(x).point.y = tpt.y;
+                                pt = opd.get(x).cPoint1;
+                                tpt = CPoint.getTransformCurvePoint(this.__orgBounds, pt.toPoint(), ptLT, ptRT, ptLB, ptRB, ptLeftC1, ptLeftC2, ptTopC1, ptTopC2, ptRightC1, ptRightC2, ptBottomC1, ptBottomC2);
+                                tpt.x -= this.control.position.left;
+                                tpt.y -= this.control.position.top;
+                                this.control.layers.get(n).items.get(i).pathData.get(x).cPoint1.x = tpt.x;
+                                this.control.layers.get(n).items.get(i).pathData.get(x).cPoint1.y = tpt.y;
+                                pt = opd.get(x).cPoint2;
+                                tpt = CPoint.getTransformCurvePoint(this.__orgBounds, pt.toPoint(), ptLT, ptRT, ptLB, ptRB, ptLeftC1, ptLeftC2, ptTopC1, ptTopC2, ptRightC1, ptRightC2, ptBottomC1, ptBottomC2);
+                                tpt.x -= this.control.position.left;
+                                tpt.y -= this.control.position.top;
+                                this.control.layers.get(n).items.get(i).pathData.get(x).cPoint2.x = tpt.x;
+                                this.control.layers.get(n).items.get(i).pathData.get(x).cPoint2.y = tpt.y;
+                            }
+                        }
+                    }
+                    this.control.layers.get(n).items.get(i).pathData.width = this.control.position.width;
+                    this.control.layers.get(n).items.get(i).pathData.height = this.control.position.height;
+                }
+            }
+        }
+        super.doPathDataTransform();
+    }
+    setControl(control) {
+        if (control.layers.length > 0 && control.layers.get(0).items.length > 0) {
+            let ci = control.layers.get(0).items.get(0);
+            let w = ci.pathData.width;
+            let h = ci.pathData.height;
+            //this.control.position.width = w
+            //this.control.position.height = h
+            //this.control.position.left = (this.position.width - this.control.position.width) / 2            
+            //this.control.position.top = (this.position.height - this.control.position.height) / 2
+            this.control = control;
+            this.__orgBounds = ci.pathData.getBounds();
+            this.offTransform();
+            this.freeTransformHandleLT.position.left = this.control.position.left; // - 20
+            this.freeTransformHandleLT.position.top = this.control.position.top; // - 20
+            this.freeTransformHandleRT.position.left = this.control.position.left + this.control.position.width;
+            this.freeTransformHandleRT.position.top = this.control.position.top; // - 20
+            this.freeTransformHandleLB.position.left = this.control.position.left; // - 20
+            this.freeTransformHandleLB.position.top = this.control.position.top + this.control.position.height;
+            this.freeTransformHandleRB.position.left = this.control.position.left + this.control.position.width;
+            this.freeTransformHandleRB.position.top = this.control.position.top + this.control.position.height;
+            this.onTransform();
+            this.control.layers.fromData(control.layers.toData());
+            this.__orgPathData.clear();
+            for (let n = 0; n < this.control.layers.length; n++) {
+                for (let i = 0; i < this.control.layers.get(n).items.length; i++) {
+                    let ci = this.control.layers.get(n).items.get(i);
+                    //ci.pathFitMode = EFitMode.ORIGINAL
+                    ci.pathData.width = this.control.position.width;
+                    ci.pathData.height = this.control.position.height;
+                    ci.pathData.stretch(new CRect(0, 0, this.control.position.width, this.control.position.height));
+                    let pd = new CPathPointList();
+                    pd.fromData(ci.pathData.toData());
+                    this.__orgPathData.set(ci, pd);
+                }
+            }
+            this.draw();
+            this.__orgHasPoint = control.hasPointerEvent;
+            control.hasPointerEvent = false;
+        }
+    }
+}
+class CAnimationTransfomer extends CPathController {
+    constructor(parent, name) {
+        super(parent, name);
+        this.__orgPathData = new Map();
+        this.__orgBounds = new CRect();
+        let self = this;
+        this.btnSplit.onClick = function () {
+            if (self.control != undefined) {
+                for (let n = 0; n < self.control.layers.length; n++) {
+                    for (let i = 0; i < self.control.layers.get(n).items.length; i++) {
+                        self.control.layers.get(n).items.get(i).pathData.splitLine(parseInt(self.edtSplite.text));
+                    }
+                }
+            }
+        };
+        this.btnSplitAll.visible = false;
+        this.btnClose.onClick = function () {
+            self.visible = false;
+            self.control = undefined;
+        };
+    }
+    doPathDataTransform() {
+        if (this.control != undefined) {
+            let ptLT = this.getLTPoint();
+            let ptRT = this.getRTPoint();
+            let ptLB = this.getLBPoint();
+            let ptRB = this.getRBPoint();
+            let ptLeftC1 = new CPoint(this.freeTransformHandleLeftC1.position.left, this.freeTransformHandleLeftC1.position.top);
+            let ptLeftC2 = new CPoint(this.freeTransformHandleLeftC2.position.left, this.freeTransformHandleLeftC2.position.top);
+            let ptTopC1 = new CPoint(this.freeTransformHandleTopC1.position.left, this.freeTransformHandleTopC1.position.top);
+            let ptTopC2 = new CPoint(this.freeTransformHandleTopC2.position.left, this.freeTransformHandleTopC2.position.top);
+            let ptRightC1 = new CPoint(this.freeTransformHandleRightC1.position.left, this.freeTransformHandleRightC1.position.top);
+            let ptRightC2 = new CPoint(this.freeTransformHandleRightC2.position.left, this.freeTransformHandleRightC2.position.top);
+            let ptBottomC1 = new CPoint(this.freeTransformHandleBottomC1.position.left, this.freeTransformHandleBottomC1.position.top);
+            let ptBottomC2 = new CPoint(this.freeTransformHandleBottomC2.position.left, this.freeTransformHandleBottomC2.position.top);
+            let rt = this.getTransformBounds();
+            this.control.transformerPoints.leftTop.x = ptLT.x;
+            this.control.transformerPoints.leftTop.y = ptLT.y;
+            this.control.transformerPoints.leftBottom.x = ptLB.x;
+            this.control.transformerPoints.leftBottom.y = ptLB.y;
+            this.control.transformerPoints.rightTop.x = ptRT.x;
+            this.control.transformerPoints.rightTop.y = ptRT.y;
+            this.control.transformerPoints.rightBottom.x = ptRB.x;
+            this.control.transformerPoints.rightBottom.y = ptRB.y;
+            this.control.transformerPoints.leftC1.x = ptLeftC1.x;
+            this.control.transformerPoints.leftC1.y = ptLeftC1.y;
+            this.control.transformerPoints.leftC2.x = ptLeftC2.x;
+            this.control.transformerPoints.leftC2.y = ptLeftC2.y;
+            this.control.transformerPoints.topC1.x = ptTopC1.x;
+            this.control.transformerPoints.topC1.y = ptTopC1.y;
+            this.control.transformerPoints.topC2.x = ptTopC2.x;
+            this.control.transformerPoints.topC2.y = ptTopC2.y;
+            this.control.transformerPoints.rightC1.x = ptRightC1.x;
+            this.control.transformerPoints.rightC1.y = ptRightC1.y;
+            this.control.transformerPoints.rightC2.x = ptRightC2.x;
+            this.control.transformerPoints.rightC2.y = ptRightC2.y;
+            this.control.transformerPoints.bottomC1.x = ptBottomC1.x;
+            this.control.transformerPoints.bottomC1.y = ptBottomC1.y;
+            this.control.transformerPoints.bottomC2.x = ptBottomC2.x;
+            this.control.transformerPoints.bottomC2.y = ptBottomC2.y;
+            //this.control.position.left = rt.left
+            //this.control.position.top = rt.top
+            //this.control.position.width = rt.width
+            //this.control.position.height = rt.height
+        }
+        super.doPathDataTransform();
+    }
+    setControl(control) {
+        if (control.layers.length > 0 && control.layers.get(0).items.length > 0) {
+            let ci = control.layers.get(0).items.get(0);
+            let w = ci.pathData.width;
+            let h = ci.pathData.height;
+            //this.control.position.width = w
+            //this.control.position.height = h
+            //this.control.position.left = (this.position.width - this.control.position.width) / 2            
+            //this.control.position.top = (this.position.height - this.control.position.height) / 2
+            this.control = control;
+            this.__orgBounds = ci.pathData.getBounds();
+            this.offTransform();
+            this.freeTransformHandleLT.position.left = this.control.position.left - 20;
+            this.freeTransformHandleLT.position.top = this.control.position.top - 20;
+            this.freeTransformHandleRT.position.left = this.control.position.left + this.control.position.width;
+            this.freeTransformHandleRT.position.top = this.control.position.top - 20;
+            this.freeTransformHandleLB.position.left = this.control.position.left - 20;
+            this.freeTransformHandleLB.position.top = this.control.position.top + this.control.position.height;
+            this.freeTransformHandleRB.position.left = this.control.position.left + this.control.position.width;
+            this.freeTransformHandleRB.position.top = this.control.position.top + this.control.position.height;
+            this.onTransform();
+            this.draw();
+            this.control.layers.fromData(control.layers.toData());
+            this.__orgPathData.clear();
+            for (let n = 0; n < this.control.layers.length; n++) {
+                for (let i = 0; i < this.control.layers.get(n).items.length; i++) {
+                    let ci = this.control.layers.get(n).items.get(i);
+                    ci.pathFitMode = EFitMode.ORIGINAL;
+                    let pd = new CPathPointList();
+                    pd.fromData(ci.pathData.toData());
+                    this.__orgPathData.set(ci, pd);
+                }
+            }
+        }
+    }
+}
+class CTransformerFrame extends CPanel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.__orgPathData = new Map();
+        this.__orgBounds = new CRect();
+        this.control = new CCanvasLayerControl(this);
+        this.transformer = new CPathController(this);
+        let self = this;
+        //this.control.position.align = EPositionAlign.CENTER
+        this.transformer.resource = "path_controller.control";
+        this.transformer.position.align = EPositionAlign.CLIENT;
+        this.transformer.onFreeTransformHandleTrack = function () {
+            self.doTransform();
+        };
+        this.transformer.btnSplit.onClick = function () {
+        };
+        this.transformer.btnSplitAll.onClick = function () {
+        };
+        this.transformer.btnClose.onClick = function () {
+        };
+    }
+    doTransform() {
+        let ptLT = this.transformer.getLTPoint();
+        let ptRT = this.transformer.getRTPoint();
+        let ptLB = this.transformer.getLBPoint();
+        let ptRB = this.transformer.getRBPoint();
+        let ptLeftC1 = new CPoint(this.transformer.freeTransformHandleLeftC1.position.left, this.transformer.freeTransformHandleLeftC1.position.top);
+        let ptLeftC2 = new CPoint(this.transformer.freeTransformHandleLeftC2.position.left, this.transformer.freeTransformHandleLeftC2.position.top);
+        let ptTopC1 = new CPoint(this.transformer.freeTransformHandleTopC1.position.left, this.transformer.freeTransformHandleTopC1.position.top);
+        let ptTopC2 = new CPoint(this.transformer.freeTransformHandleTopC2.position.left, this.transformer.freeTransformHandleTopC2.position.top);
+        let ptRightC1 = new CPoint(this.transformer.freeTransformHandleRightC1.position.left, this.transformer.freeTransformHandleRightC1.position.top);
+        let ptRightC2 = new CPoint(this.transformer.freeTransformHandleRightC2.position.left, this.transformer.freeTransformHandleRightC2.position.top);
+        let ptBottomC1 = new CPoint(this.transformer.freeTransformHandleBottomC1.position.left, this.transformer.freeTransformHandleBottomC1.position.top);
+        let ptBottomC2 = new CPoint(this.transformer.freeTransformHandleBottomC2.position.left, this.transformer.freeTransformHandleBottomC2.position.top);
+        let rt = this.transformer.getTransformBounds();
+        for (let n = 0; n < this.control.layers.length; n++) {
+            for (let i = 0; i < this.control.layers.get(n).items.length; i++) {
+                let opd = this.__orgPathData.get(this.control.layers.get(n).items.get(i));
+                if (opd != undefined && this.__orgBounds != undefined) {
+                    for (let x = 0; x < opd.length; x++) {
+                        if (opd.get(x).pointKind == EPathPointKind.MOVETO ||
+                            opd.get(x).pointKind == EPathPointKind.LINETO ||
+                            opd.get(x).pointKind == EPathPointKind.CURVETO2 ||
+                            opd.get(x).pointKind == EPathPointKind.CURVETO3) {
+                            let pt = opd.get(x).point;
+                            let tpt = CPoint.getTransformCurvePoint(this.__orgBounds, pt.toPoint(), ptLT, ptRT, ptLB, ptRB, ptLeftC1, ptLeftC2, ptTopC1, ptTopC2, ptRightC1, ptRightC2, ptBottomC1, ptBottomC2);
+                            tpt.x -= this.control.position.left;
+                            tpt.y -= this.control.position.top;
+                            this.control.layers.get(n).items.get(i).pathData.get(x).point.x = tpt.x;
+                            this.control.layers.get(n).items.get(i).pathData.get(x).point.y = tpt.y;
+                            pt = opd.get(x).cPoint1;
+                            tpt = CPoint.getTransformCurvePoint(this.__orgBounds, pt.toPoint(), ptLT, ptRT, ptLB, ptRB, ptLeftC1, ptLeftC2, ptTopC1, ptTopC2, ptRightC1, ptRightC2, ptBottomC1, ptBottomC2);
+                            tpt.x -= this.control.position.left;
+                            tpt.y -= this.control.position.top;
+                            this.control.layers.get(n).items.get(i).pathData.get(x).cPoint1.x = tpt.x;
+                            this.control.layers.get(n).items.get(i).pathData.get(x).cPoint1.y = tpt.y;
+                            pt = opd.get(x).cPoint2;
+                            tpt = CPoint.getTransformCurvePoint(this.__orgBounds, pt.toPoint(), ptLT, ptRT, ptLB, ptRB, ptLeftC1, ptLeftC2, ptTopC1, ptTopC2, ptRightC1, ptRightC2, ptBottomC1, ptBottomC2);
+                            tpt.x -= this.control.position.left;
+                            tpt.y -= this.control.position.top;
+                            this.control.layers.get(n).items.get(i).pathData.get(x).cPoint2.x = tpt.x;
+                            this.control.layers.get(n).items.get(i).pathData.get(x).cPoint2.y = tpt.y;
+                        }
+                    }
+                }
+            }
+        }
+        this.control.position.left = rt.left;
+        this.control.position.top = rt.top;
+        this.control.position.width = rt.width;
+        this.control.position.height = rt.height;
+    }
+    setControl(control) {
+        if (control.layers.length > 0 && control.layers.get(0).items.length > 0) {
+            let ci = control.layers.get(0).items.get(0);
+            let w = ci.pathData.width;
+            let h = ci.pathData.height;
+            this.control.position.width = w;
+            this.control.position.height = h;
+            this.control.position.left = (this.position.width - this.control.position.width) / 2;
+            this.control.position.top = (this.position.height - this.control.position.height) / 2;
+            this.control = control;
+            this.__orgBounds = ci.pathData.getBounds();
+            this.transformer.offTransform();
+            this.transformer.freeTransformHandleLT.position.left = this.control.position.left - 20;
+            this.transformer.freeTransformHandleLT.position.top = this.control.position.top - 20;
+            this.transformer.freeTransformHandleRT.position.left = this.control.position.left + this.control.position.width;
+            this.transformer.freeTransformHandleRT.position.top = this.control.position.top - 20;
+            this.transformer.freeTransformHandleLB.position.left = this.control.position.left - 20;
+            this.transformer.freeTransformHandleLB.position.top = this.control.position.top + this.control.position.height;
+            this.transformer.freeTransformHandleRB.position.left = this.control.position.left + this.control.position.width;
+            this.transformer.freeTransformHandleRB.position.top = this.control.position.top + this.control.position.height;
+            this.transformer.onTransform();
+            this.transformer.draw();
+            this.control.layers.fromData(control.layers.toData());
+            this.__orgPathData.clear();
+            for (let n = 0; n < this.control.layers.length; n++) {
+                for (let i = 0; i < this.control.layers.get(n).items.length; i++) {
+                    let ci = this.control.layers.get(n).items.get(i);
+                    ci.pathFitMode = EFitMode.ORIGINAL;
+                    let pd = new CPathPointList();
+                    pd.fromData(ci.pathData.toData());
+                    this.__orgPathData.set(ci, pd);
+                }
+            }
+        }
+    }
+}
+var EPathItemAddKind;
+(function (EPathItemAddKind) {
+    EPathItemAddKind[EPathItemAddKind["NORMAL"] = 0] = "NORMAL";
+    EPathItemAddKind[EPathItemAddKind["PATTERN"] = 1] = "PATTERN";
+    EPathItemAddKind[EPathItemAddKind["ROTATION"] = 2] = "ROTATION";
+    EPathItemAddKind[EPathItemAddKind["RANDOM"] = 3] = "RANDOM";
+})(EPathItemAddKind || (EPathItemAddKind = {}));
+var EPathItemItemKind;
+(function (EPathItemItemKind) {
+    EPathItemItemKind[EPathItemItemKind["EMPTY"] = 0] = "EMPTY";
+    EPathItemItemKind[EPathItemItemKind["ELLIPSE"] = 1] = "ELLIPSE";
+    EPathItemItemKind[EPathItemItemKind["RECTANGLE"] = 2] = "RECTANGLE";
+    EPathItemItemKind[EPathItemItemKind["POLIGON"] = 3] = "POLIGON";
+    EPathItemItemKind[EPathItemItemKind["HORN"] = 4] = "HORN";
+    EPathItemItemKind[EPathItemItemKind["TEXT"] = 5] = "TEXT";
+    EPathItemItemKind[EPathItemItemKind["ETC"] = 6] = "ETC";
+})(EPathItemItemKind || (EPathItemItemKind = {}));
+class CPathItem extends CNotifyChangeNotifyObject {
+    constructor() {
+        super();
+        this._name = CSequence.getSequence("item");
+        this._kind = "";
+        this._visible = true;
+        this._group = false;
+        //public bounds = new CNotifyRect()
+        this.pathData = new CPathPointList();
+        this.childs = new CPathItems();
+        this.fill = new CFillSet();
+        this.stroke = new CStrokeSet();
+        this.opacity = 1;
+        this.shadowBlur = 0;
+        this.shadowColor = "";
+        this.shadowOffsetX = 0;
+        this.shadowOffsetY = 0;
+        this.composite = "source-over";
+        this.text = "";
+        this.textSet = new CTextSet();
+        let self = this;
+        /*this.bounds.onChange = function() {
+            self.doChange()
+        }*/
+        this.childs.parent = this;
+        this.childs.onChange = function () {
+            self.doChange();
+        };
+    }
+    get name() {
+        return this._name;
+    }
+    set name(value) {
+        if (this._name != value) {
+            this._name = value;
+            this.doChange();
+        }
+    }
+    get kind() {
+        return this._kind;
+    }
+    set kind(value) {
+        if (this._kind != value) {
+            this._kind = value;
+            this.doChange();
+        }
+    }
+    get visible() {
+        return this._visible;
+    }
+    set visible(value) {
+        if (this._visible != value) {
+            this._visible = value;
+            this.doChange();
+        }
+    }
+    get group() {
+        return this._group;
+    }
+    set group(value) {
+        if (this._group != value) {
+            this._group = value;
+            this.doChange();
+        }
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "name", this.name, "");
+        CDataClass.putData(data, "kind", this.kind, "");
+        CDataClass.putData(data, "pathData", this.pathData.toData(), {}, true);
+        CDataClass.putData(data, "childs", this.childs.toData(), {}, true);
+        CDataClass.putData(data, "fill", this.fill.toData(), {}, true);
+        CDataClass.putData(data, "stroke", this.stroke.toData(), {}, true);
+        CDataClass.putData(data, "opacity", this.opacity, 1);
+        CDataClass.putData(data, "shadowBlur", this.shadowBlur, 0);
+        CDataClass.putData(data, "shadowColor", this.shadowColor, "");
+        CDataClass.putData(data, "shadowOffsetX", this.shadowOffsetX, 0);
+        CDataClass.putData(data, "shadowOffsetY", this.shadowOffsetY, 0);
+        CDataClass.putData(data, "composite", this.composite, "source-over");
+        CDataClass.putData(data, "visible", this.visible, true);
+        CDataClass.putData(data, "group", this.group, false);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.name = CDataClass.getData(data, "name", "");
+        this.kind = CDataClass.getData(data, "kind", "");
+        this.pathData.fromData(CDataClass.getData(data, "pathData", {}, true));
+        this.childs.fromData(CDataClass.getData(data, "childs", {}, true));
+        this.fill.fromData(CDataClass.getData(data, "fill", {}, true));
+        this.stroke.fromData(CDataClass.getData(data, "stroke", {}, true));
+        this.opacity = CDataClass.getData(data, "opacity", 1);
+        this.shadowBlur = CDataClass.getData(data, "shadowBlur", 0);
+        this.shadowColor = CDataClass.getData(data, "shadowColor", "");
+        this.shadowOffsetX = CDataClass.getData(data, "shadowOffsetX", 0);
+        this.shadowOffsetY = CDataClass.getData(data, "shadowOffsetY", 0);
+        this.composite = CDataClass.getData(data, "composite", "source-over");
+        this.visible = CDataClass.getData(data, "visible", true);
+        this.group = CDataClass.getData(data, "group", false);
+    }
+    getData() {
+        let rt = new CPathPointList();
+        function fn(item) {
+            rt.addPointList(item.pathData);
+            for (let n = 0; n < item.childs.length; n++) {
+                fn(item.childs.get(n));
+            }
+        }
+        fn(this);
+        return rt;
+    }
+    rotate(center, angle, isKeepAngle = false) {
+        function r(item, center, angle) {
+            item.pathData.rotate(center, angle);
+            if (isKeepAngle) {
+                let rt = item.pathData.getBounds();
+                item.pathData.rotate(new CPoint(rt.left + (rt.width / 2), rt.top + (rt.height / 2)), -angle);
+            }
+            for (let n = 0; n < item.childs.length; n++) {
+                r(item.childs.get(n), center, angle);
+            }
+        }
+        r(this, center, angle);
+    }
+    loopPathItem(fn) {
+        function loop(item) {
+            fn(item);
+            for (let n = 0; n < item.childs.length; n++) {
+                loop(item.childs.get(n));
+            }
+        }
+        loop(this);
+    }
+    toCanvasItems(width, height) {
+        let items = new CCanvasItems();
+        function newCanvasItem() {
+            let rt = items.addItem();
+            rt.kind = ECanvasItemKind.PATH;
+            rt.pathFitMode = EFitMode.STRETCH;
+            return rt;
+        }
+        function copyItem(ci, pi) {
+            ci.pathData.addPointList(pi.pathData);
+            ci.fill.fromData(pi.fill.toData());
+            ci.stroke.fromData(pi.stroke.toData());
+            ci.opacity = pi.opacity;
+            ci.shadowBlur = pi.shadowBlur;
+            ci.shadowColor = pi.shadowColor;
+            ci.shadowOffsetX = pi.shadowOffsetX;
+            ci.shadowOffsetY = pi.shadowOffsetY;
+            (new Function("ci", "pi", "ci.composite = pi.composite"))(ci, pi);
+            ci.text = pi.text;
+            ci.name = pi.name;
+            ci.textSet.fromData(pi.textSet.toData());
+        }
+        this.loopPathItem(function (item) {
+            if (item.visible) {
+                let it = newCanvasItem();
+                copyItem(it, item);
+                it.pathData.width = width;
+                it.pathData.height = height;
+            }
+        });
+        return items;
+    }
+    scale(x, y) {
+        this.loopPathItem(function (it) {
+            it.pathData.scale(x, y);
+        });
+    }
+    stretch(bounds) {
+        let org = this.pathData.getBounds();
+        this.pathData.stretchIgnoreSize(bounds);
+        let after = this.pathData.getBounds();
+        let sx = after.width / org.width;
+        let sy = after.height / org.height;
+        for (let n = 0; n < this.childs.length; n++) {
+            let corg = this.childs.get(n).pathData.getBounds();
+            if (corg.isEmpty()) {
+                this.childs.get(n).stretch(bounds);
+            }
+            else {
+                if (org.isEmpty()) {
+                    let x = ((corg.left - bounds.left) * sx) + after.left;
+                    let y = ((corg.top - org.top) * sy) + after.top;
+                    let rt = new CRect(x, y, x + (corg.width * sx), y + (corg.height * sy));
+                    this.childs.get(n).stretch(rt);
+                }
+                else {
+                    let x = ((corg.left - org.left) * sx) + after.left;
+                    let y = ((corg.top - org.top) * sy) + after.top;
+                    let rt = new CRect(x, y, x + (corg.width * sx), y + (corg.height * sy));
+                    this.childs.get(n).stretch(rt);
+                }
+            }
+        }
+        /*let org = this.getBounds()
+        let x = bounds.left - org.left
+        let y = bounds.top - org.top
+        let sx = bounds.width / org.width
+        let sy = bounds.height / org.height
+        this.loopPathItem(function(it) {
+            it.pathData.scale(sx, sy)
+            it.pathData.movePoint(x, y)
+        })
+        let af = this.getBounds()*/
+    }
+    movePoint(x, y) {
+        this.loopPathItem(function (it) {
+            it.pathData.movePoint(x, y);
+        });
+    }
+    getBounds() {
+        let l = Number.MAX_VALUE;
+        let t = Number.MAX_VALUE;
+        let r = Number.MIN_VALUE;
+        let b = Number.MIN_VALUE;
+        this.loopPathItem(function (it) {
+            let rt = it.pathData.getBounds();
+            if (!rt.isEmpty()) {
+                if (rt.left < l)
+                    l = rt.left;
+                if (rt.top < t)
+                    t = rt.top;
+                if (rt.right > r)
+                    r = rt.right;
+                if (rt.bottom > b)
+                    b = rt.bottom;
+            }
+        });
+        if (l == Number.MAX_VALUE,
+            t == Number.MAX_VALUE,
+            r == Number.MIN_VALUE,
+            b == Number.MIN_VALUE) {
+            return new CRect();
+        }
+        else {
+            return new CRect(l, t, r, b);
+        }
+    }
+}
+class CPathItems extends CList {
+    doToData(data) {
+        super.doToData(data);
+        let arr = [];
+        for (let n = 0; n < this.length; n++) {
+            arr.push(this.get(n).toData());
+        }
+        CDataClass.putData(data, "items", arr, [], true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.clear();
+        let arr = CDataClass.getData(data, "items", [], true);
+        for (let n = 0; n < arr.length; n++) {
+            let item = this.addItem();
+            item.fromData(arr[n]);
+        }
+    }
+    toData() {
+        let o = {};
+        this.doToData(o);
+        return o;
+    }
+    addItem() {
+        let it = new CPathItem();
+        this.add(it);
+        it.parent = this.parent;
+        return it;
+    }
+}
+class CCustomPathItemProperties extends CFold {
+    get item() {
+        return this._item;
+    }
+    set item(value) {
+        if (this._item != value) {
+            this._item = value;
+            this.doSetPathItem();
+        }
+    }
+    doSetPathItem() { }
+}
+class CBasePathItemProperties extends CCustomPathItemProperties {
+    constructor(parent, name) {
+        super(parent, name);
+        this.lblName = new CPanel(this.body);
+        this.edtName = new CTextBox(this.lblName);
+        this.l = new CPanel(this.body);
+        this.btnFill = new CButton(this.l);
+        this.btnStroke = new CButton(this.l);
+        this.lblOpacity = new CPanel(this.body);
+        this.edtOpacity = new CTextBox(this.lblOpacity);
+        this.lblShadowBlur = new CPanel(this.body);
+        this.edtShadowBlur = new CTextBox(this.lblShadowBlur);
+        this.lblShadowColor = new CPanel(this.body);
+        this.edtShadowColor = new CTextBox(this.lblShadowColor);
+        this.lblShadowOffsetX = new CPanel(this.body);
+        this.edtShadowOffsetX = new CTextBox(this.lblShadowOffsetX);
+        this.lblShadowOffsetY = new CPanel(this.body);
+        this.edtShadowOffsetY = new CTextBox(this.lblShadowOffsetY);
+        this.comboComposite = new CComboBox(this.body);
+        this.lblText = new CPanel(this.body);
+        this.edtText = new CTextBox(this.lblText);
+        this.btnTextSet = new CButton(this.body);
+        this.btnGroup = new CSelectBox(this.body);
+        this.btnVisible = new CSelectBox(this.body);
+        this.btnApply = new CButton(this.body);
+        let self = this;
+        this.lblName.propertyName = "lblName";
+        this.edtName.propertyName = "edtName";
+        this.btnFill.propertyName = "btnFill";
+        this.btnStroke.propertyName = "btnStroke";
+        this.lblOpacity.propertyName = "lblOpacity";
+        this.edtOpacity.propertyName = "edtOpacity";
+        this.lblShadowBlur.propertyName = "lblShadowBlur";
+        this.edtShadowBlur.propertyName = "edtShadowBlur";
+        this.lblShadowColor.propertyName = "lblShadowColor";
+        this.edtShadowColor.propertyName = "edtShadowColor";
+        this.lblShadowOffsetX.propertyName = "lblShadowOffsetX";
+        this.edtShadowOffsetX.propertyName = "edtShadowOffsetX";
+        this.lblShadowOffsetY.propertyName = "lblShadowOffsetY";
+        this.edtShadowOffsetY.propertyName = "edtShadowOffsetY";
+        this.lblText.propertyName = "lblText";
+        this.edtText.propertyName = "edtText";
+        this.btnTextSet.propertyName = "btnTextSet";
+        this.btnApply.propertyName = "btnApply";
+        this.comboComposite.items.add("source-over");
+        this.comboComposite.items.add("source-in");
+        this.comboComposite.items.add("source-out");
+        this.comboComposite.items.add("source-atop");
+        this.comboComposite.items.add("destination-over");
+        this.comboComposite.items.add("destination-in");
+        this.comboComposite.items.add("destination-out");
+        this.comboComposite.items.add("destination-atop");
+        this.comboComposite.items.add("lighter");
+        this.comboComposite.items.add("darker");
+        this.comboComposite.items.add("xor");
+        this.comboComposite.items.add("copy");
+        this.comboComposite.onChangeItem = function () {
+            if (self.item != undefined) {
+                self.item.composite = self.comboComposite.text;
+                self.applyEditor();
+            }
+        };
+        let cover = CSystem.browserCovers.get("cover");
+        this.btnFill.onClick = function () {
+            if (self.item == undefined) {
+                CSystem.showMessage("Warning", "Select item");
+            }
+            else {
+                let ed = new CFillEditorFrame(cover);
+                ed.position.align = EPositionAlign.CENTER;
+                ed.fill = self.item.fill;
+                if (cover != undefined) {
+                    cover.isHideClear = true;
+                    cover.onHide = function () {
+                        self.applyEditor();
+                    };
+                    cover.showCover();
+                }
+            }
+        };
+        this.btnStroke.onClick = function () {
+            if (self.item == undefined) {
+                CSystem.showMessage("Warning", "Select item");
+            }
+            else {
+                let ed = new CStrokeEditorFrame(cover);
+                ed.position.align = EPositionAlign.CENTER;
+                ed.stroke = self.item.stroke;
+                if (cover != undefined) {
+                    cover.isHideClear = true;
+                    cover.onHide = function () {
+                        self.applyEditor();
+                    };
+                    cover.showCover();
+                }
+            }
+        };
+        function keydown(sender, e) {
+            if (e.key == "Enter")
+                self.btnApply.click();
+        }
+        this.edtName.onKeyDown = keydown;
+        this.edtOpacity.onKeyDown = keydown;
+        this.edtShadowBlur.onKeyDown = keydown;
+        this.edtShadowColor.onKeyDown = keydown;
+        this.edtShadowOffsetX.onKeyDown = keydown;
+        this.edtShadowOffsetY.onKeyDown = keydown;
+        this.edtText.onKeyDown = keydown;
+        this.btnTextSet.onClick = function () {
+            let ed = new CBasePropertyEditor(CSystem.desktopList.get(0).applicationLayer);
+            ed.instance = self.item?.textSet;
+            ed.showCenter(300, 400, "Text Setting", "remove");
+        };
+        this.btnApply.onClick = function () {
+            let b = false;
+            if (self.item != undefined) {
+                if (self.item.name != self.edtName.text)
+                    b = true;
+                self.item.name = self.edtName.text;
+                self.item.opacity = parseFloat(self.edtOpacity.text);
+                self.item.shadowBlur = parseFloat(self.edtShadowBlur.text);
+                self.item.shadowColor = self.edtShadowColor.text;
+                self.item.shadowOffsetX = parseFloat(self.edtShadowOffsetX.text);
+                self.item.shadowOffsetY = parseFloat(self.edtShadowOffsetY.text);
+                self.item.text = self.edtText.text;
+                if (self.item.group != self.btnGroup.selected)
+                    b = true;
+                self.item.group = self.btnGroup.selected;
+                self.item.visible = self.btnVisible.selected;
+            }
+            self.applyEditor(b);
+        };
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "lblName", this.lblName.toData(), {}, true);
+        CDataClass.putData(data, "edtName", this.edtName.toData(), {}, true);
+        CDataClass.putData(data, "l", this.l.toData(), {}, true);
+        CDataClass.putData(data, "btnFill", this.btnFill.toData(), {}, true);
+        CDataClass.putData(data, "btnStroke", this.btnStroke.toData(), {}, true);
+        CDataClass.putData(data, "lblOpacity", this.lblOpacity.toData(), {}, true);
+        CDataClass.putData(data, "edtOpacity", this.edtOpacity.toData(), {}, true);
+        CDataClass.putData(data, "lblShadowBlur", this.lblShadowBlur.toData(), {}, true);
+        CDataClass.putData(data, "edtShadowBlur", this.edtShadowBlur.toData(), {}, true);
+        CDataClass.putData(data, "lblShadowColor", this.lblShadowColor.toData(), {}, true);
+        CDataClass.putData(data, "edtShadowColor", this.edtShadowColor.toData(), {}, true);
+        CDataClass.putData(data, "lblShadowOffsetX", this.lblShadowOffsetX.toData(), {}, true);
+        CDataClass.putData(data, "edtShadowOffsetX", this.edtShadowOffsetX.toData(), {}, true);
+        CDataClass.putData(data, "lblShadowOffsetY", this.lblShadowOffsetY.toData(), {}, true);
+        CDataClass.putData(data, "edtShadowOffsetY", this.edtShadowOffsetY.toData(), {}, true);
+        CDataClass.putData(data, "comboComposite", this.comboComposite.toData(), {}, true);
+        CDataClass.putData(data, "lblText", this.lblText.toData(), {}, true);
+        CDataClass.putData(data, "edtText", this.edtText.toData(), {}, true);
+        CDataClass.putData(data, "btnTextSet", this.btnTextSet.toData(), {}, true);
+        CDataClass.putData(data, "btnGroup", this.btnGroup.toData(), {}, true);
+        CDataClass.putData(data, "btnVisible", this.btnVisible.toData(), {}, true);
+        CDataClass.putData(data, "btnApply", this.btnApply.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.lblName.fromData(CDataClass.getData(data, "lblName", {}, true));
+        this.edtName.fromData(CDataClass.getData(data, "edtName", {}, true));
+        this.l.fromData(CDataClass.getData(data, "l", {}, true));
+        this.btnFill.fromData(CDataClass.getData(data, "btnFill", {}, true));
+        this.btnStroke.fromData(CDataClass.getData(data, "btnStroke", {}, true));
+        this.lblOpacity.fromData(CDataClass.getData(data, "lblOpacity", {}, true));
+        this.edtOpacity.fromData(CDataClass.getData(data, "edtOpacity", {}, true));
+        this.lblShadowBlur.fromData(CDataClass.getData(data, "lblShadowBlur", {}, true));
+        this.edtShadowBlur.fromData(CDataClass.getData(data, "edtShadowBlur", {}, true));
+        this.lblShadowColor.fromData(CDataClass.getData(data, "lblShadowColor", {}, true));
+        this.edtShadowColor.fromData(CDataClass.getData(data, "edtShadowColor", {}, true));
+        this.lblShadowOffsetX.fromData(CDataClass.getData(data, "lblShadowOffsetX", {}, true));
+        this.edtShadowOffsetX.fromData(CDataClass.getData(data, "edtShadowOffsetX", {}, true));
+        this.lblShadowOffsetY.fromData(CDataClass.getData(data, "lblShadowOffsetY", {}, true));
+        this.edtShadowOffsetY.fromData(CDataClass.getData(data, "edtShadowOffsetY", {}, true));
+        this.comboComposite.fromData(CDataClass.getData(data, "comboComposite", {}, true));
+        this.lblText.fromData(CDataClass.getData(data, "lblText", {}, true));
+        this.edtText.fromData(CDataClass.getData(data, "edtText", {}, true));
+        this.btnTextSet.fromData(CDataClass.getData(data, "btnTextSet", {}, true));
+        this.btnGroup.fromData(CDataClass.getData(data, "btnGroup", {}, true));
+        this.btnVisible.fromData(CDataClass.getData(data, "btnVisible", {}, true));
+        this.btnApply.fromData(CDataClass.getData(data, "btnApply", {}, true));
+    }
+    doSetPathItem() {
+        super.doSetPathItem();
+        if (this._item != undefined) {
+            this.edtName.text = this._item.name;
+            this.edtOpacity.text = this._item.opacity + "";
+            this.edtShadowBlur.text = this._item.shadowBlur + "";
+            this.edtShadowColor.text = this._item.shadowColor;
+            this.edtShadowOffsetX.text = this._item.shadowOffsetX + "";
+            this.edtShadowOffsetY.text = this._item.shadowOffsetY + "";
+            this.edtText.text = this._item.text;
+            if (this._item.composite == "source-over")
+                this.comboComposite.itemIndex = 0;
+            if (this._item.composite == "source-in")
+                this.comboComposite.itemIndex = 1;
+            if (this._item.composite == "source-out")
+                this.comboComposite.itemIndex = 2;
+            if (this._item.composite == "source-atop")
+                this.comboComposite.itemIndex = 3;
+            if (this._item.composite == "destination-over")
+                this.comboComposite.itemIndex = 4;
+            if (this._item.composite == "destination-in")
+                this.comboComposite.itemIndex = 5;
+            if (this._item.composite == "destination-out")
+                this.comboComposite.itemIndex = 6;
+            if (this._item.composite == "destination-atop")
+                this.comboComposite.itemIndex = 7;
+            if (this._item.composite == "lighter")
+                this.comboComposite.itemIndex = 8;
+            if (this._item.composite == "darker")
+                this.comboComposite.itemIndex = 9;
+            if (this._item.composite == "xor")
+                this.comboComposite.itemIndex = 10;
+            if (this._item.composite == "copy")
+                this.comboComposite.itemIndex = 11;
+            this.btnGroup.selected = this._item.group;
+            this.btnVisible.selected = this._item.visible;
+        }
+    }
+    applyEditor(isRefresh = false) {
+        if (this.editor != undefined) {
+            if (isRefresh) {
+                this.editor.refresh(true);
+            }
+            this.editor.doPaint();
+        }
+    }
+}
+class CRectanglePathItemProperties extends CCustomPathItemProperties {
+    constructor(parent, name) {
+        super(parent, name);
+        this.lblRadiusX = new CPanel(this.body);
+        this.edtRadiusX = new CTextBox(this.lblRadiusX);
+        this.lblRadiusY = new CPanel(this.body);
+        this.edtRadiusY = new CTextBox(this.lblRadiusY);
+        this.lblDisableLine = new CPanel(this.body);
+        this.l1 = new CPanel(this.body);
+        this.btnLeft = new CSelectBox(this.l1);
+        this.btnTop = new CSelectBox(this.l1);
+        this.btnRight = new CSelectBox(this.l1);
+        this.btnBottom = new CSelectBox(this.l1);
+        this.lblDisableRound = new CPanel(this.body);
+        this.l2 = new CPanel(this.body);
+        this.btnLeftTop = new CSelectBox(this.l2);
+        this.btnRightTop = new CSelectBox(this.l2);
+        this.btnLeftBottom = new CSelectBox(this.l2);
+        this.btnRightBottom = new CSelectBox(this.l2);
+        this.btnApply = new CButton(this.body);
+        let self = this;
+        this.lblRadiusX.propertyName = "lblRadiusX";
+        this.edtRadiusX.propertyName = "edtRadiusX";
+        this.lblRadiusY.propertyName = "lblRadiusY";
+        this.edtRadiusY.propertyName = "edtRadiusY";
+        this.lblDisableLine.propertyName = "lblDisableLine";
+        this.l1.propertyName = "l1";
+        this.btnLeft.propertyName = "btnLeft";
+        this.btnTop.propertyName = "btnTop";
+        this.btnRight.propertyName = "btnRight";
+        this.btnBottom.propertyName = "btnBottom";
+        this.lblDisableRound.propertyName = "lblDisableRound";
+        this.l2.propertyName = "l2";
+        this.btnLeftTop.propertyName = "btnLeftTop";
+        this.btnRightTop.propertyName = "btnRightTop";
+        this.btnLeftBottom.propertyName = "btnLeftBottom";
+        this.btnRightBottom.propertyName = "btnRightBottom";
+        this.btnApply.propertyName = "btnApply";
+        this.btnApply.onClick = function () {
+            if (self.item != undefined) {
+                let s1 = new CStringSet();
+                if (self.btnLeft.selected)
+                    s1.add("left");
+                if (self.btnTop.selected)
+                    s1.add("top");
+                if (self.btnRight.selected)
+                    s1.add("right");
+                if (self.btnBottom.selected)
+                    s1.add("bottom");
+                let s2 = new CStringSet();
+                if (self.btnLeftTop.selected)
+                    s2.add("leftTop");
+                if (self.btnLeftBottom.selected)
+                    s2.add("leftBottom");
+                if (self.btnRightTop.selected)
+                    s2.add("rightTop");
+                if (self.btnRightBottom.selected)
+                    s2.add("rightBottom");
+                if (self.editor != undefined) {
+                    self.item.pathData.clear();
+                    self.item.pathData.makeRoundRectData(self.editor.selector.position.left + 10, self.editor.selector.position.top + 10, self.editor.selector.position.width - 20, self.editor.selector.position.height - 20, parseInt(self.edtRadiusX.text), parseInt(self.edtRadiusY.text), s2, s1, false);
+                    self.editor.doPaint();
+                }
+            }
+            else {
+                CSystem.showMessage("Warning", "Select item");
+            }
+        };
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "lblRadiusX", this.lblRadiusX.toData(), {}, true);
+        CDataClass.putData(data, "edtRadiusX", this.edtRadiusX.toData(), {}, true);
+        CDataClass.putData(data, "lblRadiusY", this.lblRadiusY.toData(), {}, true);
+        CDataClass.putData(data, "edtRadiusY", this.edtRadiusY.toData(), {}, true);
+        CDataClass.putData(data, "lblDisableLine", this.lblDisableLine.toData(), {}, true);
+        CDataClass.putData(data, "l1", this.l1.toData(), {}, true);
+        CDataClass.putData(data, "btnLeft", this.btnLeft.toData(), {}, true);
+        CDataClass.putData(data, "btnTop", this.btnTop.toData(), {}, true);
+        CDataClass.putData(data, "btnRight", this.btnRight.toData(), {}, true);
+        CDataClass.putData(data, "btnBottom", this.btnBottom.toData(), {}, true);
+        CDataClass.putData(data, "lblDisableRound", this.lblDisableRound.toData(), {}, true);
+        CDataClass.putData(data, "l2", this.l2.toData(), {}, true);
+        CDataClass.putData(data, "btnLeftTop", this.btnLeftTop.toData(), {}, true);
+        CDataClass.putData(data, "btnRightTop", this.btnRightTop.toData(), {}, true);
+        CDataClass.putData(data, "btnLeftBottom", this.btnLeftBottom.toData(), {}, true);
+        CDataClass.putData(data, "btnRightBottom", this.btnRightBottom.toData(), {}, true);
+        CDataClass.putData(data, "btnApply", this.btnApply.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.lblRadiusX.fromData(CDataClass.getData(data, "lblRadiusX", {}, true));
+        this.edtRadiusX.fromData(CDataClass.getData(data, "edtRadiusX", {}, true));
+        this.lblRadiusY.fromData(CDataClass.getData(data, "lblRadiusY", {}, true));
+        this.edtRadiusY.fromData(CDataClass.getData(data, "edtRadiusY", {}, true));
+        this.lblDisableLine.fromData(CDataClass.getData(data, "lblDisableLine", {}, true));
+        this.l1.fromData(CDataClass.getData(data, "l1", {}, true));
+        this.btnLeft.fromData(CDataClass.getData(data, "btnLeft", {}, true));
+        this.btnTop.fromData(CDataClass.getData(data, "btnTop", {}, true));
+        this.btnRight.fromData(CDataClass.getData(data, "btnRight", {}, true));
+        this.btnBottom.fromData(CDataClass.getData(data, "btnBottom", {}, true));
+        this.lblDisableRound.fromData(CDataClass.getData(data, "lblDisableRound", {}, true));
+        this.l2.fromData(CDataClass.getData(data, "l2", {}, true));
+        this.btnLeftTop.fromData(CDataClass.getData(data, "btnLeftTop", {}, true));
+        this.btnRightTop.fromData(CDataClass.getData(data, "btnRightTop", {}, true));
+        this.btnLeftBottom.fromData(CDataClass.getData(data, "btnLeftBottom", {}, true));
+        this.btnRightBottom.fromData(CDataClass.getData(data, "btnRightBottom", {}, true));
+        this.btnApply.fromData(CDataClass.getData(data, "btnApply", {}, true));
+    }
+}
+class CPoligonPathItemProperties extends CCustomPathItemProperties {
+    constructor(parent, name) {
+        super(parent, name);
+        this.lblCount = new CPanel(this.body);
+        this.edtCount = new CTextBox(this.lblCount);
+        this.lblStartAngle = new CPanel(this.body);
+        this.edtStartAngle = new CTextBox(this.lblStartAngle);
+        this.btnApply = new CButton(this.body);
+        let self = this;
+        this.btnApply.onClick = function () {
+            if (self.item != undefined) {
+                if (self.editor != undefined) {
+                    self.item.pathData.clear();
+                    self.item.pathData.makePoligonData(parseInt(self.edtCount.text), true, parseInt(self.edtStartAngle.text));
+                    let rt = self.editor.selector.getBounds();
+                    rt.left += 10;
+                    rt.top += 10;
+                    rt.right -= 10;
+                    rt.bottom -= 10;
+                    self.item.pathData.stretchIgnoreSize(rt);
+                    self.editor.doPaint();
+                }
+            }
+            else {
+                CSystem.showMessage("Warning", "Select item");
+            }
+        };
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "lblCount", this.lblCount.toData(), {}, true);
+        CDataClass.putData(data, "edtCount", this.edtCount.toData(), {}, true);
+        CDataClass.putData(data, "lblStartAngle", this.lblStartAngle.toData(), {}, true);
+        CDataClass.putData(data, "edtStartAngle", this.edtStartAngle.toData(), {}, true);
+        CDataClass.putData(data, "btnApply", this.btnApply.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.lblCount.fromData(CDataClass.getData(data, "lblCount", {}, true));
+        this.edtCount.fromData(CDataClass.getData(data, "edtCount", {}, true));
+        this.lblStartAngle.fromData(CDataClass.getData(data, "lblStartAngle", {}, true));
+        this.edtStartAngle.fromData(CDataClass.getData(data, "edtStartAngle", {}, true));
+        this.btnApply.fromData(CDataClass.getData(data, "btnApply", {}, true));
+    }
+}
+class CHornPathItemProperties extends CCustomPathItemProperties {
+    constructor(parent, name) {
+        super(parent, name);
+        this.lblCount = new CPanel(this.body);
+        this.edtCount = new CTextBox(this.lblCount);
+        this.lblInnerLength = new CPanel(this.body);
+        this.edtInnerLength = new CTextBox(this.lblInnerLength);
+        this.lblStartAngle = new CPanel(this.body);
+        this.edtStartAngle = new CTextBox(this.lblStartAngle);
+        this.btnApply = new CButton(this.body);
+        let self = this;
+        this.btnApply.onClick = function () {
+            if (self.item != undefined) {
+                if (self.editor != undefined) {
+                    self.item.pathData.clear();
+                    self.item.pathData.makeHornData(parseInt(self.edtCount.text), parseFloat(self.edtInnerLength.text), true, parseInt(self.edtStartAngle.text));
+                    let rt = self.editor.selector.getBounds();
+                    rt.left += 10;
+                    rt.top += 10;
+                    rt.right -= 10;
+                    rt.bottom -= 10;
+                    self.item.pathData.stretchIgnoreSize(rt);
+                    self.editor.doPaint();
+                }
+            }
+            else {
+                CSystem.showMessage("Warning", "Select item");
+            }
+        };
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "lblCount", this.lblCount.toData(), {}, true);
+        CDataClass.putData(data, "edtCount", this.edtCount.toData(), {}, true);
+        CDataClass.putData(data, "lblInnerLength", this.lblInnerLength.toData(), {}, true);
+        CDataClass.putData(data, "edtInnerLength", this.edtInnerLength.toData(), {}, true);
+        CDataClass.putData(data, "lblStartAngle", this.lblStartAngle.toData(), {}, true);
+        CDataClass.putData(data, "edtStartAngle", this.edtStartAngle.toData(), {}, true);
+        CDataClass.putData(data, "btnApply", this.btnApply.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.lblCount.fromData(CDataClass.getData(data, "lblCount", {}, true));
+        this.edtCount.fromData(CDataClass.getData(data, "edtCount", {}, true));
+        this.lblInnerLength.fromData(CDataClass.getData(data, "lblInnerLength", {}, true));
+        this.edtInnerLength.fromData(CDataClass.getData(data, "edtInnerLength", {}, true));
+        this.lblStartAngle.fromData(CDataClass.getData(data, "lblStartAngle", {}, true));
+        this.edtStartAngle.fromData(CDataClass.getData(data, "edtStartAngle", {}, true));
+        this.btnApply.fromData(CDataClass.getData(data, "btnApply", {}, true));
+    }
+}
+class CTextPathItemProperties extends CCustomPathItemProperties {
+    constructor(parent, name) {
+        super(parent, name);
+        this.txt = new CTextArea(this.body);
+        this.comboFont = new CComboBox(this.body);
+        this.btnEachLetter = new CSelectBox(this.body);
+        this.btnApply = new CButton(this.body);
+        let self = this;
+        CSystem.systemFont.forEach(function (k) {
+            self.comboFont.items.add(k);
+        });
+        this.btnApply.onClick = async function () {
+            if (self.item != undefined && self.editor != undefined) {
+                if (self.btnEachLetter.selected) {
+                    let o = await CStringUtil.getTextPathDataEach(self.txt.text, self.comboFont.text);
+                    let x = 0;
+                    let y = 0;
+                    for (let n = 0; n < o.data.length; n++) {
+                        let pic = self.item.childs.addItem();
+                        pic.fill.styleKind = EStyleKind.SOLID;
+                        pic.fill.solidColor = "#ffffff";
+                        pic.stroke.styleKind = EStyleKind.SOLID;
+                        pic.stroke.lineWidth = 1;
+                        pic.stroke.solidColor = "#000000";
+                        pic.pathData.width = self.editor.pathArea.position.width;
+                        pic.pathData.height = self.editor.pathArea.position.height;
+                        if (o.data[n].letter == "\n") {
+                            pic.name = "Enter";
+                            x = 0;
+                            y += 50;
+                        }
+                        else {
+                            pic.name = o.data[n].letter;
+                        }
+                        pic.kind = "Text";
+                        if (o.data[n].letter != "blank" && o.data[n].letter != "\n") {
+                            pic.pathData.fromFontPathData(o.data[n].data);
+                            pic.pathData.fitIgnoreSize(new CRect(x, y, x + 50, y + 50));
+                        }
+                        if (o.data[n].letter != "\n")
+                            x += 50;
+                    }
+                    self.editor.refresh();
+                    self.editor.doPaint();
+                }
+                else {
+                    self.item.pathData.clear();
+                    let s = await CStringUtil.getTextPathData(self.txt.text, self.comboFont.text);
+                    self.item.pathData.fromFontPathData(s);
+                    let rt = self.editor.selector.getBounds();
+                    rt.left += 10;
+                    rt.top += 10;
+                    rt.right -= 10;
+                    rt.bottom -= 10;
+                    self.item.pathData.fitIgnoreSize(rt);
+                    //self.item.pathData.splitLine(100)
+                    self.editor.doPaint();
+                }
+            }
+            else {
+                CSystem.showMessage("Warning", "Select item");
+            }
+        };
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "txt", this.txt.toData(), {}, true);
+        CDataClass.putData(data, "comboFont", this.comboFont.toData(), {}, true);
+        CDataClass.putData(data, "btnEachLetter", this.btnEachLetter.toData(), {}, true);
+        CDataClass.putData(data, "btnApply", this.btnApply.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.txt.fromData(CDataClass.getData(data, "txt", {}, true));
+        this.comboFont.fromData(CDataClass.getData(data, "comboFont", {}, true));
+        this.btnEachLetter.fromData(CDataClass.getData(data, "btnEachLetter", {}, true));
+        this.btnApply.fromData(CDataClass.getData(data, "btnApply", {}, true));
+    }
+}
+class CAxisCopyTool extends CCustomPathItemProperties {
+    constructor(parent, name) {
+        super(parent, name);
+        this.lblAxis = new CPanel(this.body);
+        this.edtAxis = new CTextBox(this.lblAxis);
+        this.btnGuide = new CSelectBox(this.edtAxis);
+        this.lblKind = new CPanel(this.body);
+        this.btnHorz = new CSelectGroupBox(this.lblKind);
+        this.btnVert = new CSelectGroupBox(this.lblKind);
+        this.btnUseReverse = new CSelectBox(this.body);
+        this.btnUseLastPointLink = new CSelectBox(this.body);
+        this.btnUsePathClose = new CSelectBox(this.body);
+        this.btnNewItem = new CSelectBox(this.body);
+        this.btnApply = new CButton(this.body);
+        let self = this;
+        this.btnHorz.groupName = this.name + ".kind";
+        this.btnVert.groupName = this.name + ".kind";
+        this.btnApply.onClick = function () {
+            if (self.item != undefined) {
+                self.doAxisCopy(self.item);
+            }
+            else {
+                CSystem.showMessage("Warning", "Select item");
+            }
+        };
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "lblAxis", this.lblAxis.toData(), {}, true);
+        CDataClass.putData(data, "edtAxis", this.edtAxis.toData(), {}, true);
+        CDataClass.putData(data, "btnGuide", this.btnGuide.toData(), {}, true);
+        CDataClass.putData(data, "lblKind", this.lblKind.toData(), {}, true);
+        CDataClass.putData(data, "btnHorz", this.btnHorz.toData(), {}, true);
+        CDataClass.putData(data, "btnVert", this.btnVert.toData(), {}, true);
+        CDataClass.putData(data, "btnUseReverse", this.btnUseReverse.toData(), {}, true);
+        CDataClass.putData(data, "btnUseLastPointLink", this.btnUseLastPointLink.toData(), {}, true);
+        CDataClass.putData(data, "btnUsePathClose", this.btnUsePathClose.toData(), {}, true);
+        CDataClass.putData(data, "btnNewItem", this.btnNewItem.toData(), {}, true);
+        CDataClass.putData(data, "btnApply", this.btnApply.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.lblAxis.fromData(CDataClass.getData(data, "lblAxis", {}, true));
+        this.edtAxis.fromData(CDataClass.getData(data, "edtAxis", {}, true));
+        this.btnGuide.fromData(CDataClass.getData(data, "btnGuide", {}, true));
+        this.lblKind.fromData(CDataClass.getData(data, "lblKind", {}, true));
+        this.btnHorz.fromData(CDataClass.getData(data, "btnHorz", {}, true));
+        this.btnVert.fromData(CDataClass.getData(data, "btnVert", {}, true));
+        this.btnUseReverse.fromData(CDataClass.getData(data, "btnUseReverse", {}, true));
+        this.btnUseLastPointLink.fromData(CDataClass.getData(data, "btnUseLastPointLink", {}, true));
+        this.btnUsePathClose.fromData(CDataClass.getData(data, "btnUsePathClose", {}, true));
+        this.btnNewItem.fromData(CDataClass.getData(data, "btnNewItem", {}, true));
+        this.btnApply.fromData(CDataClass.getData(data, "btnApply", {}, true));
+    }
+    doAxisCopy(item) {
+        let self = this;
+        if (this.btnNewItem.selected) {
+            if (self.btnUseReverse.selected) {
+                CSystem.showMessage("Warning", "Reverse is selected");
+            }
+            else {
+                if (self.editor != undefined) {
+                    let ci = self.editor.pathItems.addItem();
+                    ci.fromData(item.toData());
+                    function setAxis(item, isH) {
+                        for (let n = 0; n < item.pathData.length; n++) {
+                            if (isH) {
+                                item.pathData.get(n).point.x += (parseFloat(self.edtAxis.text) - item.pathData.get(n).point.x) * 2;
+                                item.pathData.get(n).cPoint1.x += (parseFloat(self.edtAxis.text) - item.pathData.get(n).cPoint1.x) * 2;
+                                item.pathData.get(n).cPoint2.x += (parseFloat(self.edtAxis.text) - item.pathData.get(n).cPoint2.x) * 2;
+                            }
+                            else {
+                                item.pathData.get(n).point.y += (parseFloat(self.edtAxis.text) - item.pathData.get(n).point.y) * 2;
+                                item.pathData.get(n).cPoint1.y += (parseFloat(self.edtAxis.text) - item.pathData.get(n).cPoint1.y) * 2;
+                                item.pathData.get(n).cPoint2.y += (parseFloat(self.edtAxis.text) - item.pathData.get(n).cPoint2.y) * 2;
+                            }
+                        }
+                        for (let n = 0; n < item.childs.length; n++) {
+                            setAxis(item.childs.get(n), self.btnHorz.selected);
+                        }
+                    }
+                    setAxis(ci, self.btnHorz.selected);
+                    self.editor.refresh();
+                }
+            }
+        }
+        else {
+            function setAxis(item) {
+                if (self.btnHorz.selected) {
+                    if (self.btnUseReverse.selected) {
+                        item.pathData.addDecalcomanieXReverse(parseFloat(self.edtAxis.text), self.btnUseLastPointLink.selected, self.btnUsePathClose.selected);
+                    }
+                    else {
+                        item.pathData.addDecalcomanieX(parseFloat(self.edtAxis.text));
+                    }
+                }
+                else {
+                    if (self.btnUseReverse.selected) {
+                        item.pathData.addDecalcomanieYReverse(parseFloat(self.edtAxis.text), self.btnUseLastPointLink.selected, self.btnUsePathClose.selected);
+                    }
+                    else {
+                        item.pathData.addDecalcomanieY(parseFloat(self.edtAxis.text));
+                    }
+                }
+                for (let n = 0; n < item.childs.length; n++) {
+                    setAxis(item.childs.get(n));
+                }
+            }
+            setAxis(item);
+        }
+        if (this.editor != undefined)
+            this.editor.doPaint();
+    }
+}
+class CRotationCopyTool extends CCustomPathItemProperties {
+    constructor(parent, name) {
+        super(parent, name);
+        this.btnGuide = new CSelectBox(this.body);
+        this.lblStartAngle = new CPanel(this.body);
+        this.edtStartAngle = new CTextBox(this.lblStartAngle);
+        this.lblStopAngle = new CPanel(this.body);
+        this.edtStopAngle = new CTextBox(this.lblStopAngle);
+        this.btnStopAngle = new CButton(this.edtStopAngle);
+        this.lblCenterX = new CPanel(this.body);
+        this.edtCenterX = new CTextBox(this.lblCenterX);
+        this.lblCenterY = new CPanel(this.body);
+        this.edtCenterY = new CTextBox(this.lblCenterY);
+        this.lblCount = new CPanel(this.body);
+        this.edtCount = new CTextBox(this.lblCount);
+        this.btnFillStopAngle = new CSelectBox(this.body);
+        this.btnKeepItemAngle = new CSelectBox(this.body);
+        this.btnNewItem = new CSelectBox(this.body);
+        this.btnApply = new CButton(this.body);
+        let self = this;
+        this.btnApply.onClick = function () {
+            if (self.item != undefined) {
+                self.doRotationCopy(self.item);
+            }
+            else {
+                CSystem.showMessage("Warning", "Select item");
+            }
+        };
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "btnGuide", this.btnGuide.toData(), {}, true);
+        CDataClass.putData(data, "lblStartAngle", this.lblStartAngle.toData(), {}, true);
+        CDataClass.putData(data, "edtStartAngle", this.edtStartAngle.toData(), {}, true);
+        CDataClass.putData(data, "lblStopAngle", this.lblStopAngle.toData(), {}, true);
+        CDataClass.putData(data, "edtStopAngle", this.edtStopAngle.toData(), {}, true);
+        CDataClass.putData(data, "btnStopAngle", this.btnStopAngle.toData(), {}, true);
+        CDataClass.putData(data, "lblCenterX", this.lblCenterX.toData(), {}, true);
+        CDataClass.putData(data, "edtCenterX", this.edtCenterX.toData(), {}, true);
+        CDataClass.putData(data, "lblCenterY", this.lblCenterY.toData(), {}, true);
+        CDataClass.putData(data, "edtCenterY", this.edtCenterY.toData(), {}, true);
+        CDataClass.putData(data, "lblCount", this.lblCount.toData(), {}, true);
+        CDataClass.putData(data, "edtCount", this.edtCount.toData(), {}, true);
+        CDataClass.putData(data, "btnFillStopAngle", this.btnFillStopAngle.toData(), {}, true);
+        CDataClass.putData(data, "btnKeepItemAngle", this.btnKeepItemAngle.toData(), {}, true);
+        CDataClass.putData(data, "btnNewItem", this.btnNewItem.toData(), {}, true);
+        CDataClass.putData(data, "btnApply", this.btnApply.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.btnGuide.fromData(CDataClass.getData(data, "btnGuide", {}, true));
+        this.lblStartAngle.fromData(CDataClass.getData(data, "lblStartAngle", {}, true));
+        this.edtStartAngle.fromData(CDataClass.getData(data, "edtStartAngle", {}, true));
+        this.lblStopAngle.fromData(CDataClass.getData(data, "lblStopAngle", {}, true));
+        this.edtStopAngle.fromData(CDataClass.getData(data, "edtStopAngle", {}, true));
+        this.btnStopAngle.fromData(CDataClass.getData(data, "btnStopAngle", {}, true));
+        this.lblCenterX.fromData(CDataClass.getData(data, "lblCenterX", {}, true));
+        this.edtCenterX.fromData(CDataClass.getData(data, "edtCenterX", {}, true));
+        this.lblCenterY.fromData(CDataClass.getData(data, "lblCenterY", {}, true));
+        this.edtCenterY.fromData(CDataClass.getData(data, "edtCenterY", {}, true));
+        this.lblCount.fromData(CDataClass.getData(data, "lblCount", {}, true));
+        this.edtCount.fromData(CDataClass.getData(data, "edtCount", {}, true));
+        this.btnFillStopAngle.fromData(CDataClass.getData(data, "btnFillStopAngle", {}, true));
+        this.btnKeepItemAngle.fromData(CDataClass.getData(data, "btnKeepItemAngle", {}, true));
+        this.btnNewItem.fromData(CDataClass.getData(data, "btnNewItem", {}, true));
+        this.btnApply.fromData(CDataClass.getData(data, "btnApply", {}, true));
+    }
+    doRotationCopy(item) {
+        let self = this;
+        if (this.btnNewItem.selected) {
+            let center = new CPoint(parseFloat(this.edtCenterX.text), parseFloat(this.edtCenterY.text));
+            let cnt = parseInt(this.edtCount.text);
+            let div = cnt;
+            if (this.btnFillStopAngle.selected) {
+                div--;
+            }
+            let ang = (parseFloat(this.edtStopAngle.text) - parseFloat(this.edtStartAngle.text)) / div;
+            let newitems = new CPathItems();
+            for (let n = 0; n < cnt; n++) {
+                let it = newitems.addItem();
+                it.fromData(item.toData());
+                it.name = item.name + "_copy" + (n + 1);
+                it.rotate(center, ang * n, self.btnKeepItemAngle.selected);
+            }
+            for (let n = 0; n < newitems.length; n++) {
+                if (item.parent != undefined) {
+                    item.parent.childs.add(newitems.get(n));
+                    newitems.get(n).parent = item.parent;
+                }
+                else {
+                    if (self.editor != undefined) {
+                        self.editor.pathItems.add(newitems.get(n));
+                    }
+                }
+            }
+            if (self.editor != undefined)
+                self.editor.refresh();
+        }
+        else {
+            let center = new CPoint(parseFloat(this.edtCenterX.text), parseFloat(this.edtCenterY.text));
+            let cnt = parseInt(this.edtCount.text);
+            let div = cnt;
+            if (this.btnFillStopAngle.selected) {
+                div--;
+            }
+            let ang = (parseFloat(this.edtStopAngle.text) - parseFloat(this.edtStartAngle.text)) / div;
+            let org = item.pathData.copyTo();
+            function setRotate(item) {
+                for (let n = 1; n < cnt; n++) {
+                    let pt = org.copyTo();
+                    pt.rotate(center, ang * n);
+                    if (self.btnKeepItemAngle.selected) {
+                        let rt = pt.getBounds();
+                        pt.rotate(new CPoint(rt.left + (rt.width / 2), rt.top + (rt.height / 2)), -(ang * n));
+                    }
+                    item.pathData.addPointList(pt);
+                }
+                for (let n = 0; n < item.childs.length; n++) {
+                    setRotate(item.childs.get(n));
+                }
+            }
+            setRotate(item);
+        }
+        if (this.editor != undefined)
+            this.editor.doPaint();
+    }
+}
+class CRandomCopyTool extends CCustomPathItemProperties {
+    constructor(parent, name) {
+        super(parent, name);
+        this.lblCount = new CPanel(this.body);
+        this.edtCount = new CTextBox(this.lblCount);
+        this.lblMinSize = new CPanel(this.body);
+        this.edtMinSize = new CTextBox(this.lblMinSize);
+        this.lblMaxSize = new CPanel(this.body);
+        this.edtMaxSize = new CTextBox(this.lblMaxSize);
+        this.lblMinAngle = new CPanel(this.body);
+        this.edtMinAngle = new CTextBox(this.lblMinAngle);
+        this.lblMaxAngle = new CPanel(this.body);
+        this.edtMaxAngle = new CTextBox(this.lblMaxAngle);
+        this.lblLeft = new CPanel(this.body);
+        this.edtLeft = new CTextBox(this.lblLeft);
+        this.lblTop = new CPanel(this.body);
+        this.edtTop = new CTextBox(this.lblTop);
+        this.lblRight = new CPanel(this.body);
+        this.edtRight = new CTextBox(this.lblRight);
+        this.lblBottom = new CPanel(this.body);
+        this.edtBottom = new CTextBox(this.lblBottom);
+        this.btnApply = new CButton(this.body);
+        let self = this;
+        this.btnApply.onClick = function () {
+            if (self.item != undefined) {
+                self.doRandom(self.item);
+            }
+            else {
+                CSystem.showMessage("Warning", "Select item");
+            }
+        };
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "lblCount", this.lblCount.toData(), {}, true);
+        CDataClass.putData(data, "edtCount", this.edtCount.toData(), {}, true);
+        CDataClass.putData(data, "lblMinSize", this.lblMinSize.toData(), {}, true);
+        CDataClass.putData(data, "edtMinSize", this.edtMinSize.toData(), {}, true);
+        CDataClass.putData(data, "lblMaxSize", this.lblMaxSize.toData(), {}, true);
+        CDataClass.putData(data, "edtMaxSize", this.edtMaxSize.toData(), {}, true);
+        CDataClass.putData(data, "lblMinAngle", this.lblMinAngle.toData(), {}, true);
+        CDataClass.putData(data, "edtMinAngle", this.edtMinAngle.toData(), {}, true);
+        CDataClass.putData(data, "lblMaxAngle", this.lblMaxAngle.toData(), {}, true);
+        CDataClass.putData(data, "edtMaxAngle", this.edtMaxAngle.toData(), {}, true);
+        CDataClass.putData(data, "lblLeft", this.lblLeft.toData(), {}, true);
+        CDataClass.putData(data, "edtLeft", this.edtLeft.toData(), {}, true);
+        CDataClass.putData(data, "lblTop", this.lblTop.toData(), {}, true);
+        CDataClass.putData(data, "edtTop", this.edtTop.toData(), {}, true);
+        CDataClass.putData(data, "lblRight", this.lblRight.toData(), {}, true);
+        CDataClass.putData(data, "edtRight", this.edtRight.toData(), {}, true);
+        CDataClass.putData(data, "lblBottom", this.lblBottom.toData(), {}, true);
+        CDataClass.putData(data, "edtBottom", this.edtBottom.toData(), {}, true);
+        CDataClass.putData(data, "btnApply", this.btnApply.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.lblCount.fromData(CDataClass.getData(data, "lblCount", {}, true));
+        this.edtCount.fromData(CDataClass.getData(data, "edtCount", {}, true));
+        this.lblMinSize.fromData(CDataClass.getData(data, "lblMinSize", {}, true));
+        this.edtMinSize.fromData(CDataClass.getData(data, "edtMinSize", {}, true));
+        this.lblMaxSize.fromData(CDataClass.getData(data, "lblMaxSize", {}, true));
+        this.edtMaxSize.fromData(CDataClass.getData(data, "edtMaxSize", {}, true));
+        this.lblMinAngle.fromData(CDataClass.getData(data, "lblMinAngle", {}, true));
+        this.edtMinAngle.fromData(CDataClass.getData(data, "edtMinAngle", {}, true));
+        this.lblMaxAngle.fromData(CDataClass.getData(data, "lblMaxAngle", {}, true));
+        this.edtMaxAngle.fromData(CDataClass.getData(data, "edtMaxAngle", {}, true));
+        this.lblLeft.fromData(CDataClass.getData(data, "lblLeft", {}, true));
+        this.edtLeft.fromData(CDataClass.getData(data, "edtLeft", {}, true));
+        this.lblTop.fromData(CDataClass.getData(data, "lblTop", {}, true));
+        this.edtTop.fromData(CDataClass.getData(data, "edtTop", {}, true));
+        this.lblRight.fromData(CDataClass.getData(data, "lblRight", {}, true));
+        this.edtRight.fromData(CDataClass.getData(data, "edtRight", {}, true));
+        this.lblBottom.fromData(CDataClass.getData(data, "lblBottom", {}, true));
+        this.edtBottom.fromData(CDataClass.getData(data, "edtBottom", {}, true));
+        this.btnApply.fromData(CDataClass.getData(data, "btnApply", {}, true));
+    }
+    doRandom(item) {
+        let self = this;
+        let org = item.pathData.copyTo();
+        item.pathData.clear();
+        let cnt = parseInt(this.edtCount.text);
+        function setRandom(item) {
+            for (let n = 0; n < cnt; n++) {
+                let pt = org.copyTo();
+                let sz = (Math.random() * (parseFloat(self.edtMaxSize.text) - parseFloat(self.edtMinSize.text))) + parseFloat(self.edtMinSize.text);
+                let x = (Math.random() * (parseFloat(self.edtRight.text) - parseFloat(self.edtLeft.text) - sz)) + parseFloat(self.edtLeft.text);
+                let y = (Math.random() * (parseFloat(self.edtBottom.text) - parseFloat(self.edtTop.text) - sz)) + parseFloat(self.edtTop.text);
+                let ang = (Math.random() * (parseFloat(self.edtMaxAngle.text) - parseFloat(self.edtMinAngle.text))) + parseFloat(self.edtMinAngle.text);
+                let rt = new CRect(x, y, x + sz, y + sz);
+                let center = new CPoint(x + (rt.width / 2), y + (rt.height / 2));
+                pt.fitIgnoreSize(rt);
+                pt.rotate(center, ang);
+                item.pathData.addPointList(pt);
+            }
+            for (let n = 0; n < item.childs.length; n++) {
+                setRandom(item.childs.get(n));
+            }
+        }
+        setRandom(item);
+        if (this.editor != undefined)
+            this.editor.doPaint();
+    }
+}
+class CLayerPathEditorModel extends CPanel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.__selectorDownChildsPathData = new Map();
+        this.__selectorDownChildsBounds = new Map();
+        this.__downPathData = new CPathPointList();
+        this.__preSize = new CPoint();
+        this.toolbar = new CPanel(this);
+        this.btnToCanvasItemsData = new CButton(this.toolbar);
+        this.btnToLayersData = new CButton(this.toolbar);
+        this.btnToAnimateControlData = new CButton(this.toolbar);
+        this.btnSave = new CButton(this.toolbar);
+        this.btnOpen = new CButton(this.toolbar);
+        this.lLeft = new CPanel(this);
+        this.lLTop = new CPanel(this.lLeft);
+        this.btnItemAdd = new CButton(this.lLTop);
+        this.btnItemDelete = new CButton(this.lLTop);
+        this.btnItemDown = new CButton(this.lLTop);
+        this.btnItemUp = new CButton(this.lLTop);
+        this.list = new CObjectTreeListBox(this.lLeft);
+        this.spl = new CSplitter(this);
+        this.lClient = new CPanel(this);
+        this.lCTopShape = new CPanel(this.lClient);
+        this.pointKindArrow = new CSelectGroupBox(this.lCTopShape);
+        this.pointKindTransfomer = new CSelectGroupBox(this.lCTopShape);
+        this.pointKindPathEditor = new CSelectGroupBox(this.lCTopShape);
+        this.peNone = new CSelectGroupBox(this.lCTopShape);
+        this.peMoveTo = new CSelectGroupBox(this.lCTopShape);
+        this.peLineTo = new CSelectGroupBox(this.lCTopShape);
+        this.peCurveTo = new CSelectGroupBox(this.lCTopShape);
+        this.peClose = new CButton(this.lCTopShape);
+        this.lCClient = new CPanel(this.lClient);
+        this.img = new CImage(this.lCClient);
+        this.pathAreaResizer = new CPanel(this.lCClient);
+        this.background = new CPanel(this.pathAreaResizer);
+        this.pathArea = new CPanel(this.pathAreaResizer);
+        this.selector = new CControlSelectorRotate(this.pathArea);
+        this.btnInvertX = new CButton(this.selector);
+        this.btnInvertY = new CButton(this.selector);
+        this.transfomer = new CPathItemTransformer(this.pathArea);
+        this.pathEditor = new CPathEditorControl(this.pathAreaResizer);
+        this.axisX = new CPanel(this.pathAreaResizer);
+        this.axisY = new CPanel(this.pathAreaResizer);
+        this.destCenter = new CPanel(this.pathArea);
+        this.rotationCenter = new CPanel(this.pathArea);
+        this.shapeTool = new CPanel(this.lCClient);
+        this.shpEmpty = new CPanel(this.shapeTool);
+        this.shpEllipse = new CPanel(this.shapeTool);
+        this.shpRectangle = new CPanel(this.shapeTool);
+        this.shpPoligon = new CPanel(this.shapeTool);
+        this.shpHorn = new CPanel(this.shapeTool);
+        this.shpText = new CPanel(this.shapeTool);
+        this.shpEtc = new CPanel(this.shapeTool);
+        this.lCBottom = new CPanel(this.lClient);
+        this.lblWidth = new CPanel(this.lCBottom);
+        this.edtWidth = new CTextBox(this.lCBottom);
+        this.lblHeight = new CPanel(this.lCBottom);
+        this.edtHeight = new CTextBox(this.lCBottom);
+        this.btnSize = new CButton(this.lCBottom);
+        this.chkAlignPixcel = new CCheckBox(this.lCBottom);
+        this.edtAlignPixcel = new CTextBox(this.lCBottom);
+        this.selectBoxGrid = new CSelectBox(this.lCBottom);
+        this.lCBottom2 = new CPanel(this.lClient);
+        this.lbl = new CPanel(this.lCBottom2);
+        this.edtUrl = new CTextBox(this.lCBottom2);
+        this.scrollOpacity = new CScrollbar(this.lCBottom2);
+        this.btnImage = new CButton(this.lCBottom2);
+        this.btnImageFit = new CButton(this.lCBottom2);
+        this.btnShowImage = new CSelectBox(this.lCBottom2);
+        this.lRight = new CPanel(this);
+        this.scrollProperties = new CScrollBox(this.lRight);
+        this.baseProperties = new CBasePathItemProperties(this.scrollProperties.content);
+        this.lblTool = new CPanel(this.scrollProperties.content);
+        this.rectProperties = new CRectanglePathItemProperties(this.scrollProperties.content);
+        this.poligonProperties = new CPoligonPathItemProperties(this.scrollProperties.content);
+        this.hornProperties = new CHornPathItemProperties(this.scrollProperties.content);
+        this.textProperties = new CTextPathItemProperties(this.scrollProperties.content);
+        this.axisProperties = new CAxisCopyTool(this.scrollProperties.content);
+        this.rotationProperties = new CRotationCopyTool(this.scrollProperties.content);
+        this.randomProperties = new CRandomCopyTool(this.scrollProperties.content);
+        this.spr = new CSplitter(this);
+        this.pathItems = new CPathItems();
+        this.layer = this.pathArea.addLayer();
+        let self = this;
+        this.pointKindArrow.groupName = this.name + ".pointKind";
+        this.pointKindPathEditor.groupName = this.name + ".pointKind";
+        this.pointKindTransfomer.groupName = this.name + ".pointKind";
+        this.peNone.groupName = this.name + ".peKind";
+        this.peMoveTo.groupName = this.name + ".peKind";
+        this.peLineTo.groupName = this.name + ".peKind";
+        this.peCurveTo.groupName = this.name + ".peKind";
+        this.btnToCanvasItemsData.onClick = function () {
+            let item = self.getSelectedPathItem();
+            if (item != undefined) {
+                let frm = new CTextEditor(CSystem.desktopList.get(0).applicationLayer);
+                frm.showCenter(1200, 600, "Canvas items data", "remove");
+                frm.editor.textArea.text = JSON.stringify(item.toCanvasItems(self.pathArea.position.width, self.pathArea.position.height).toData());
+            }
+        };
+        this.btnToLayersData.onClick = function () {
+            let item = self.getSelectedPathItem();
+            let frm = new CTextEditor(CSystem.desktopList.get(0).applicationLayer);
+            frm.showCenter(1200, 600, "Layers data", "remove");
+            if (item != undefined) {
+                let layers = new CCanvasLayers(undefined);
+                let layer = layers.addLayer();
+                layer.items.fromData(item.toCanvasItems(self.pathArea.position.width, self.pathArea.position.height).toData());
+                let o = layers.toData();
+                for (let n = 0; n < o.length; n++) {
+                    o[n].width = self.pathArea.position.width;
+                    o[n].height = self.pathArea.position.height;
+                }
+                frm.editor.textArea.text = JSON.stringify(o);
+                layers.remove();
+            }
+            else {
+                let layers = new CCanvasLayers(undefined);
+                for (let n = 0; n < self.pathItems.length; n++) {
+                    let layer = layers.addLayer();
+                    layer.items.fromData(self.pathItems.get(n).toCanvasItems(self.pathArea.position.width, self.pathArea.position.height).toData());
+                }
+                let o = layers.toData();
+                for (let n = 0; n < o.length; n++) {
+                    o[n].width = self.pathArea.position.width;
+                    o[n].height = self.pathArea.position.height;
+                }
+                frm.editor.textArea.text = JSON.stringify(o);
+                layers.remove();
+            }
+        };
+        this.btnToAnimateControlData.onClick = function () {
+            self.controlSave();
+        };
+        this.pointKindArrow.onChangeSelected = function () {
+            if (self.pointKindArrow.selected)
+                self.doChangePointKind();
+        };
+        this.pointKindPathEditor.onChangeSelected = function () {
+            if (self.pointKindPathEditor.selected)
+                self.doChangePointKind();
+        };
+        this.pointKindTransfomer.onChangeSelected = function () {
+            if (self.pointKindTransfomer.selected)
+                self.doChangePointKind();
+        };
+        this.peNone.onChangeSelected = function () {
+            if (self.peNone.selected)
+                self.doChangePathEditorMode();
+        };
+        this.peMoveTo.onChangeSelected = function () {
+            if (self.peMoveTo.selected)
+                self.doChangePathEditorMode();
+        };
+        this.peLineTo.onChangeSelected = function () {
+            if (self.peLineTo.selected)
+                self.doChangePathEditorMode();
+        };
+        this.peCurveTo.onChangeSelected = function () {
+            if (self.peCurveTo.selected)
+                self.doChangePathEditorMode();
+        };
+        this.peClose.onClick = function () {
+            if (self.pathEditor.pathPointList != undefined)
+                self.pathEditor.pathPointList.addPointClose();
+        };
+        this.baseProperties.editor = this;
+        this.lCClient.onClick = function () {
+            self.doHideSelector();
+            self.refresh();
+        };
+        this.pathAreaResizer.onClick = function () {
+            self.doHideSelector();
+            self.refresh();
+        };
+        this.__preSize.x = 400;
+        this.__preSize.y = 400;
+        this.pathAreaResizer.onChangeSize = function () {
+            self.doChangePathAreaResizer();
+            self.__preSize.x = self.pathAreaResizer.position.width;
+            self.__preSize.y = self.pathAreaResizer.position.height;
+        };
+        this.scrollProperties.onChangeSize = function () {
+            self.scrollProperties.contentWidth = self.scrollProperties.position.width - 10;
+        };
+        this.btnSize.onClick = function () {
+            let w = parseFloat(self.edtWidth.text);
+            let h = parseFloat(self.edtHeight.text);
+            self.loopPathItems(function (item) {
+                item.pathData.width = w;
+                item.pathData.height = h;
+            });
+            self.pathAreaResizer.position.width = w + 40;
+            self.pathAreaResizer.position.height = h + 50;
+        };
+        this.edtWidth.onKeyDown = function (s, e) {
+            if (e.key == "Enter")
+                self.btnSize.click();
+        };
+        this.edtHeight.onKeyDown = function (s, e) {
+            if (e.key == "Enter")
+                self.btnSize.click();
+        };
+        this.btnItemAdd.onClick = function () {
+            self.doItemAdd();
+        };
+        this.btnItemDelete.onClick = function () {
+            self.doItemDelete();
+        };
+        this.pathArea.onClick = function (s, e) {
+            self.doPathAreaClick(e);
+        };
+        this.list.onSelectItem = function () {
+            self.doListSelect();
+        };
+        this.list.onKeyDown = function (s, e) {
+            self.doListKeyDown(e);
+        };
+        this.shpEmpty.onClick = function () {
+            self.doPathItemAddQuick(EPathItemItemKind.EMPTY);
+        };
+        this.shpEllipse.onClick = function () {
+            self.doPathItemAddQuick(EPathItemItemKind.ELLIPSE);
+        };
+        this.shpRectangle.onClick = function () {
+            self.doPathItemAddQuick(EPathItemItemKind.RECTANGLE);
+        };
+        this.shpPoligon.onClick = function () {
+            self.doPathItemAddQuick(EPathItemItemKind.POLIGON);
+        };
+        this.shpHorn.onClick = function () {
+            self.doPathItemAddQuick(EPathItemItemKind.HORN);
+        };
+        this.shpText.onClick = function () {
+            self.doPathItemAddQuick(EPathItemItemKind.TEXT);
+        };
+        this.shpEmpty.onDragStart = function () {
+            self.shpEmpty.dragData = "empty";
+        };
+        this.shpEllipse.onDragStart = function () {
+            self.shpEllipse.dragData = "ellipse";
+        };
+        this.shpRectangle.onDragStart = function () {
+            self.shpRectangle.dragData = "rectangle";
+        };
+        this.shpPoligon.onDragStart = function () {
+            self.shpPoligon.dragData = "poligon";
+        };
+        this.shpHorn.onDragStart = function () {
+            self.shpHorn.dragData = "horn";
+        };
+        this.shpText.onDragStart = function () {
+            self.shpText.dragData = "text";
+        };
+        this.btnImage.onClick = function () {
+            self.img.src = self.edtUrl.text;
+        };
+        this.scrollOpacity.onChangeValue = function () {
+            self.img.opacity = self.scrollOpacity.valueRatio;
+        };
+        this.img.onWheel = function (s, e) {
+            if (e.deltaY > 0) {
+                self.img.transform.scale += 0.1;
+            }
+            if (e.deltaY < 0) {
+                if (self.img.transform.scale > 0.2)
+                    self.img.transform.scale -= 0.1;
+            }
+        };
+        this.btnShowImage.onChangeSelected = function () {
+            self.img.visible = self.btnShowImage.selected;
+        };
+        this.btnImageFit.onClick = function () {
+            self.pathAreaResizer.position.left = self.img.position.left - 20;
+            self.pathAreaResizer.position.top = self.img.position.top - 30;
+            self.pathAreaResizer.position.width = self.img.position.width + 40;
+            self.pathAreaResizer.position.height = self.img.position.height + 50;
+            self.pathAreaResizer.bringToFront();
+        };
+        this.btnItemUp.onClick = function () {
+            self.doItemUp();
+        };
+        this.btnItemDown.onClick = function () {
+            self.doItemDown();
+        };
+        this.selectBoxGrid.onChangeSelected = function () {
+            self.pathAreaResizer.layers.get(0).items.get(4).visible = self.selectBoxGrid.selected;
+        };
+        this.pathArea.onDropCatch = function (obj, dragCon, x, y, data) {
+            self.doPathAreaCatch(x, y, data);
+        };
+        this.selector.onThisPointerDown = function () {
+            self.doSelectorDown();
+        };
+        this.selector.onThisPointerUp = function () {
+            self.doSelectorUp();
+        };
+        this.selector.onChangeSize = function () {
+            self.doChangeSelectorPosition();
+        };
+        this.selector.onChangeOffset = function () {
+            self.doChangeSelectorPosition();
+        };
+        this.selector.onRotation = function (s, e) {
+            self.doSelectorRotation();
+        };
+        this.selector.onBeforeRotation = function (s, e) {
+            self.doSelectorBeforeRotation();
+        };
+        this.selector.onAfterRotation = function (s, e) {
+            self.doSelectorAfterRotation();
+        };
+        this.btnInvertX.onClick = function () {
+            self.doSelectorInvertX();
+        };
+        this.btnInvertY.onClick = function () {
+            self.doSelectorInvertY();
+        };
+        this.axisX.onChangeOffset = function () {
+            self.doChangeAsixXOffset();
+        };
+        this.axisY.onChangeOffset = function () {
+            self.doChangeAsixYOffset();
+        };
+        this.destCenter.onChangeOffset = function () {
+            self.doChangeDestCenterOffset();
+        };
+        this.rotationCenter.onChangeOffset = function () {
+            self.doChangeRotationCenterOffset();
+        };
+        this.selector.resource = "controlSelector_rotation.control";
+        this.selector.visible = false;
+        this.transfomer.resource = "path_controller.control";
+        this.transfomer.position.align = EPositionAlign.CLIENT;
+        this.transfomer.visible = false;
+        this.transfomer.onPathDataTransform = function () {
+            self.doPaint();
+        };
+        this.chkAlignPixcel.onChangeChecked = function () {
+            self.doSetCheckAlignPixel();
+        };
+        this.axisProperties.btnGuide.onChangeSelected = function () {
+            self.doChangeAsixGuide();
+        };
+        this.axisProperties.btnHorz.onChangeSelected = function () {
+            self.doChangeAsixHorz();
+        };
+        this.rotationProperties.btnGuide.onChangeSelected = function () {
+            self.doChangeRotationGuide();
+        };
+        this.transfomer.btnGridPathSet.onClick = function () {
+            let item = self.getSelectedPathItem();
+            if (item != undefined) {
+                let pd = self.transfomer.gridToPathData();
+                item.pathData.copyFrom(pd.background);
+                let n = item.childs.addItem();
+                n.stroke.styleKind = EStyleKind.SOLID;
+                n.stroke.lineWidth = 1;
+                n.pathData.copyFrom(pd.grid);
+                self.refresh();
+                self.doPaint();
+            }
+        };
+        this.btnSave.onClick = function () {
+            self.saveFile();
+        };
+        this.btnOpen.onClick = function () {
+            self.loadFile();
+        };
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "toolbar", this.toolbar.toData(), {}, true);
+        CDataClass.putData(data, "btnToCanvasItemsData", this.btnToCanvasItemsData.toData(), {}, true);
+        CDataClass.putData(data, "btnToLayersData", this.btnToLayersData.toData(), {}, true);
+        CDataClass.putData(data, "btnToAnimateControlData", this.btnToAnimateControlData.toData(), {}, true);
+        CDataClass.putData(data, "btnSave", this.btnSave.toData(), {}, true);
+        CDataClass.putData(data, "btnOpen", this.btnOpen.toData(), {}, true);
+        CDataClass.putData(data, "lLeft", this.lLeft.toData(), {}, true);
+        CDataClass.putData(data, "lLTop", this.lLTop.toData(), {}, true);
+        CDataClass.putData(data, "btnItemAdd", this.btnItemAdd.toData(), {}, true);
+        CDataClass.putData(data, "btnItemDelete", this.btnItemDelete.toData(), {}, true);
+        CDataClass.putData(data, "btnItemUp", this.btnItemUp.toData(), {}, true);
+        CDataClass.putData(data, "btnItemDown", this.btnItemDown.toData(), {}, true);
+        CDataClass.putData(data, "list", this.list.toData(), {}, true);
+        CDataClass.putData(data, "spl", this.spl.toData(), {}, true);
+        CDataClass.putData(data, "lClient", this.lClient.toData(), {}, true);
+        CDataClass.putData(data, "lCTopShape", this.lCTopShape.toData(), {}, true);
+        CDataClass.putData(data, "pointKindArrow", this.pointKindArrow.toData(), {}, true);
+        CDataClass.putData(data, "pointKindPathEditor", this.pointKindPathEditor.toData(), {}, true);
+        CDataClass.putData(data, "pointKindTransfomer", this.pointKindTransfomer.toData(), {}, true);
+        CDataClass.putData(data, "peNone", this.peNone.toData(), {}, true);
+        CDataClass.putData(data, "peMoveTo", this.peMoveTo.toData(), {}, true);
+        CDataClass.putData(data, "peLineTo", this.peLineTo.toData(), {}, true);
+        CDataClass.putData(data, "peCurveTo", this.peCurveTo.toData(), {}, true);
+        CDataClass.putData(data, "peClose", this.peClose.toData(), {}, true);
+        CDataClass.putData(data, "shapeTool", this.shapeTool.toData(), {}, true);
+        CDataClass.putData(data, "shpEmpty", this.shpEmpty.toData(), {}, true);
+        CDataClass.putData(data, "shpEllipse", this.shpEllipse.toData(), {}, true);
+        CDataClass.putData(data, "shpRectangle", this.shpRectangle.toData(), {}, true);
+        CDataClass.putData(data, "shpPoligon", this.shpPoligon.toData(), {}, true);
+        CDataClass.putData(data, "shpHorn", this.shpHorn.toData(), {}, true);
+        CDataClass.putData(data, "shpText", this.shpText.toData(), {}, true);
+        CDataClass.putData(data, "shpEtc", this.shpEtc.toData(), {}, true);
+        CDataClass.putData(data, "lCClient", this.lCClient.toData(), {}, true);
+        CDataClass.putData(data, "img", this.img.toData(), {}, true);
+        CDataClass.putData(data, "pathAreaResizer", this.pathAreaResizer.toData(), {}, true);
+        CDataClass.putData(data, "background", this.background.toData(), {}, true);
+        CDataClass.putData(data, "pathArea", this.pathArea.toData(), {}, true);
+        CDataClass.putData(data, "pathEditor", this.pathEditor.toData(), {}, true);
+        CDataClass.putData(data, "btnInvertX", this.btnInvertX.toData(), {}, true);
+        CDataClass.putData(data, "btnInvertY", this.btnInvertY.toData(), {}, true);
+        CDataClass.putData(data, "axisX", this.axisX.toData(), {}, true);
+        CDataClass.putData(data, "axisY", this.axisY.toData(), {}, true);
+        CDataClass.putData(data, "destCenter", this.destCenter.toData(), {}, true);
+        CDataClass.putData(data, "rotationCenter", this.rotationCenter.toData(), {}, true);
+        CDataClass.putData(data, "lRight", this.lRight.toData(), {}, true);
+        CDataClass.putData(data, "scrollProperties", this.scrollProperties.toData(), {}, true);
+        CDataClass.putData(data, "baseProperties", this.baseProperties.toData(), {}, true);
+        CDataClass.putData(data, "lblTool", this.lblTool.toData(), {}, true);
+        CDataClass.putData(data, "rectProperties", this.rectProperties.toData(), {}, true);
+        CDataClass.putData(data, "poligonProperties", this.poligonProperties.toData(), {}, true);
+        CDataClass.putData(data, "hornProperties", this.hornProperties.toData(), {}, true);
+        CDataClass.putData(data, "textProperties", this.textProperties.toData(), {}, true);
+        CDataClass.putData(data, "axisProperties", this.axisProperties.toData(), {}, true);
+        CDataClass.putData(data, "rotationProperties", this.rotationProperties.toData(), {}, true);
+        CDataClass.putData(data, "randomProperties", this.randomProperties.toData(), {}, true);
+        CDataClass.putData(data, "spr", this.spr.toData(), {}, true);
+        CDataClass.putData(data, "lCBottom", this.lCBottom.toData(), {}, true);
+        CDataClass.putData(data, "lblWidth", this.lblWidth.toData(), {}, true);
+        CDataClass.putData(data, "edtWidth", this.edtWidth.toData(), {}, true);
+        CDataClass.putData(data, "lblHeight", this.lblHeight.toData(), {}, true);
+        CDataClass.putData(data, "edtHeight", this.edtHeight.toData(), {}, true);
+        CDataClass.putData(data, "btnSize", this.btnSize.toData(), {}, true);
+        CDataClass.putData(data, "chkAlignPixcel", this.chkAlignPixcel.toData(), {}, true);
+        CDataClass.putData(data, "edtAlignPixcel", this.edtAlignPixcel.toData(), {}, true);
+        CDataClass.putData(data, "selectBoxGrid", this.selectBoxGrid.toData(), {}, true);
+        CDataClass.putData(data, "lCBottom2", this.lCBottom2.toData(), {}, true);
+        CDataClass.putData(data, "lbl", this.lbl.toData(), {}, true);
+        CDataClass.putData(data, "edtUrl", this.edtUrl.toData(), {}, true);
+        CDataClass.putData(data, "scrollOpacity", this.scrollOpacity.toData(), {}, true);
+        CDataClass.putData(data, "btnImage", this.btnImage.toData(), {}, true);
+        CDataClass.putData(data, "btnImageFit", this.btnImageFit.toData(), {}, true);
+        CDataClass.putData(data, "btnShowImage", this.btnShowImage.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.toolbar.fromData(CDataClass.getData(data, "toolbar", {}, true));
+        this.btnToCanvasItemsData.fromData(CDataClass.getData(data, "btnToCanvasItemsData", {}, true));
+        this.btnToLayersData.fromData(CDataClass.getData(data, "btnToLayersData", {}, true));
+        this.btnToAnimateControlData.fromData(CDataClass.getData(data, "btnToAnimateControlData", {}, true));
+        this.btnSave.fromData(CDataClass.getData(data, "btnSave", {}, true));
+        this.btnOpen.fromData(CDataClass.getData(data, "btnOpen", {}, true));
+        this.lLeft.fromData(CDataClass.getData(data, "lLeft", {}, true));
+        this.lLTop.fromData(CDataClass.getData(data, "lLTop", {}, true));
+        this.btnItemAdd.fromData(CDataClass.getData(data, "btnItemAdd", {}, true));
+        this.btnItemDelete.fromData(CDataClass.getData(data, "btnItemDelete", {}, true));
+        this.btnItemUp.fromData(CDataClass.getData(data, "btnItemUp", {}, true));
+        this.btnItemDown.fromData(CDataClass.getData(data, "btnItemDown", {}, true));
+        this.list.fromData(CDataClass.getData(data, "list", {}, true));
+        this.spl.fromData(CDataClass.getData(data, "spl", {}, true));
+        this.lClient.fromData(CDataClass.getData(data, "lClient", {}, true));
+        this.lCTopShape.fromData(CDataClass.getData(data, "lCTopShape", {}, true));
+        this.pointKindArrow.fromData(CDataClass.getData(data, "pointKindArrow", {}, true));
+        this.pointKindTransfomer.fromData(CDataClass.getData(data, "pointKindTransfomer", {}, true));
+        this.pointKindPathEditor.fromData(CDataClass.getData(data, "pointKindPathEditor", {}, true));
+        this.peNone.fromData(CDataClass.getData(data, "peNone", {}, true));
+        this.peMoveTo.fromData(CDataClass.getData(data, "peMoveTo", {}, true));
+        this.peLineTo.fromData(CDataClass.getData(data, "peLineTo", {}, true));
+        this.peCurveTo.fromData(CDataClass.getData(data, "peCurveTo", {}, true));
+        this.peClose.fromData(CDataClass.getData(data, "peClose", {}, true));
+        this.shapeTool.fromData(CDataClass.getData(data, "shapeTool", {}, true));
+        this.shpEmpty.fromData(CDataClass.getData(data, "shpEmpty", {}, true));
+        this.shpEllipse.fromData(CDataClass.getData(data, "shpEllipse", {}, true));
+        this.shpRectangle.fromData(CDataClass.getData(data, "shpRectangle", {}, true));
+        this.shpPoligon.fromData(CDataClass.getData(data, "shpPoligon", {}, true));
+        this.shpHorn.fromData(CDataClass.getData(data, "shpHorn", {}, true));
+        this.shpText.fromData(CDataClass.getData(data, "shpText", {}, true));
+        this.shpEtc.fromData(CDataClass.getData(data, "shpEtc", {}, true));
+        this.lCClient.fromData(CDataClass.getData(data, "lCClient", {}, true));
+        this.img.fromData(CDataClass.getData(data, "img", {}, true));
+        this.pathAreaResizer.fromData(CDataClass.getData(data, "pathAreaResizer", {}, true));
+        this.background.fromData(CDataClass.getData(data, "background", {}, true));
+        this.pathArea.fromData(CDataClass.getData(data, "pathArea", {}, true));
+        this.pathEditor.fromData(CDataClass.getData(data, "pathEditor", {}, true));
+        this.btnInvertX.fromData(CDataClass.getData(data, "btnInvertX", {}, true));
+        this.btnInvertY.fromData(CDataClass.getData(data, "btnInvertY", {}, true));
+        this.axisX.fromData(CDataClass.getData(data, "axisX", {}, true));
+        this.axisY.fromData(CDataClass.getData(data, "axisY", {}, true));
+        this.destCenter.fromData(CDataClass.getData(data, "destCenter", {}, true));
+        this.rotationCenter.fromData(CDataClass.getData(data, "rotationCenter", {}, true));
+        this.lRight.fromData(CDataClass.getData(data, "lRight", {}, true));
+        this.scrollProperties.fromData(CDataClass.getData(data, "scrollProperties", {}, true));
+        this.baseProperties.fromData(CDataClass.getData(data, "baseProperties", {}, true));
+        this.lblTool.fromData(CDataClass.getData(data, "lblTool", {}, true));
+        this.rectProperties.fromData(CDataClass.getData(data, "rectProperties", {}, true));
+        this.poligonProperties.fromData(CDataClass.getData(data, "poligonProperties", {}, true));
+        this.hornProperties.fromData(CDataClass.getData(data, "hornProperties", {}, true));
+        this.textProperties.fromData(CDataClass.getData(data, "textProperties", {}, true));
+        this.axisProperties.fromData(CDataClass.getData(data, "axisProperties", {}, true));
+        this.rotationProperties.fromData(CDataClass.getData(data, "rotationProperties", {}, true));
+        this.randomProperties.fromData(CDataClass.getData(data, "randomProperties", {}, true));
+        this.spr.fromData(CDataClass.getData(data, "spr", {}, true));
+        this.lCBottom.fromData(CDataClass.getData(data, "lCBottom", {}, true));
+        this.lblWidth.fromData(CDataClass.getData(data, "lblWidth", {}, true));
+        this.edtWidth.fromData(CDataClass.getData(data, "edtWidth", {}, true));
+        this.lblHeight.fromData(CDataClass.getData(data, "lblHeight", {}, true));
+        this.edtHeight.fromData(CDataClass.getData(data, "edtHeight", {}, true));
+        this.btnSize.fromData(CDataClass.getData(data, "btnSize", {}, true));
+        this.chkAlignPixcel.fromData(CDataClass.getData(data, "chkAlignPixcel", {}, true));
+        this.edtAlignPixcel.fromData(CDataClass.getData(data, "edtAlignPixcel", {}, true));
+        this.selectBoxGrid.fromData(CDataClass.getData(data, "selectBoxGrid", {}, true));
+        this.lCBottom2.fromData(CDataClass.getData(data, "lCBottom2", {}, true));
+        this.lbl.fromData(CDataClass.getData(data, "lbl", {}, true));
+        this.edtUrl.fromData(CDataClass.getData(data, "edtUrl", {}, true));
+        this.scrollOpacity.fromData(CDataClass.getData(data, "scrollOpacity", {}, true));
+        this.btnImage.fromData(CDataClass.getData(data, "btnImage", {}, true));
+        this.btnImageFit.fromData(CDataClass.getData(data, "btnImageFit", {}, true));
+        this.btnShowImage.fromData(CDataClass.getData(data, "btnShowImage", {}, true));
+    }
+    doResource() {
+        super.doResource();
+        if (this.pathArea.layers.length == 0) {
+            this.layer = this.pathArea.layers.addLayer();
+        }
+    }
+    doSetCheckAlignPixel() {
+        if (this.chkAlignPixcel.checked) {
+            this.selector.magneticLength = parseInt(this.edtAlignPixcel.text);
+            for (let n = 0; n < this.pathEditor.points.length; n++) {
+                this.pathEditor.points.get(n).alignPixel = parseInt(this.edtAlignPixcel.text);
+            }
+            this.transfomer.freeTransformHandleLT.magneticLength = parseInt(this.edtAlignPixcel.text);
+            this.transfomer.freeTransformHandleRT.magneticLength = parseInt(this.edtAlignPixcel.text);
+            this.transfomer.freeTransformHandleLB.magneticLength = parseInt(this.edtAlignPixcel.text);
+            this.transfomer.freeTransformHandleRB.magneticLength = parseInt(this.edtAlignPixcel.text);
+            this.transfomer.freeTransformHandleLeftC1.magneticLength = parseInt(this.edtAlignPixcel.text);
+            this.transfomer.freeTransformHandleLeftC2.magneticLength = parseInt(this.edtAlignPixcel.text);
+            this.transfomer.freeTransformHandleTopC1.magneticLength = parseInt(this.edtAlignPixcel.text);
+            this.transfomer.freeTransformHandleTopC2.magneticLength = parseInt(this.edtAlignPixcel.text);
+            this.transfomer.freeTransformHandleRightC1.magneticLength = parseInt(this.edtAlignPixcel.text);
+            this.transfomer.freeTransformHandleRightC2.magneticLength = parseInt(this.edtAlignPixcel.text);
+            this.transfomer.freeTransformHandleBottomC1.magneticLength = parseInt(this.edtAlignPixcel.text);
+            this.transfomer.freeTransformHandleBottomC2.magneticLength = parseInt(this.edtAlignPixcel.text);
+        }
+        else {
+            this.selector.magneticLength = 0;
+            for (let n = 0; n < this.pathEditor.points.length; n++) {
+                this.pathEditor.points.get(n).alignPixel = 0;
+            }
+            this.transfomer.freeTransformHandleLT.magneticLength = 0;
+            this.transfomer.freeTransformHandleRT.magneticLength = 0;
+            this.transfomer.freeTransformHandleLB.magneticLength = 0;
+            this.transfomer.freeTransformHandleRB.magneticLength = 0;
+            this.transfomer.freeTransformHandleLeftC1.magneticLength = 0;
+            this.transfomer.freeTransformHandleLeftC2.magneticLength = 0;
+            this.transfomer.freeTransformHandleTopC1.magneticLength = 0;
+            this.transfomer.freeTransformHandleTopC2.magneticLength = 0;
+            this.transfomer.freeTransformHandleRightC1.magneticLength = 0;
+            this.transfomer.freeTransformHandleRightC2.magneticLength = 0;
+            this.transfomer.freeTransformHandleBottomC1.magneticLength = 0;
+            this.transfomer.freeTransformHandleBottomC2.magneticLength = 0;
+        }
+    }
+    doListSelect() {
+        if (this.list.selectItems.length > 0) {
+            let item = this.list.selectItems[0];
+            if (this.pointKindPathEditor.selected) {
+                this.doShowPathEditor();
+            }
+            else if (this.pointKindTransfomer.selected) {
+                this.doShowTransformer(item.value.asObject["pathItem"]);
+            }
+            else {
+                this.doShowSelector(item.value.asObject["pathItem"].pathData);
+            }
+            this.doSetBaseProperties(item.value.asObject["pathItem"]);
+            this.rectProperties.item = item.value.asObject["pathItem"];
+            this.rectProperties.editor = this;
+            this.poligonProperties.item = item.value.asObject["pathItem"];
+            this.poligonProperties.editor = this;
+            this.hornProperties.item = item.value.asObject["pathItem"];
+            this.hornProperties.editor = this;
+            this.textProperties.item = item.value.asObject["pathItem"];
+            this.textProperties.editor = this;
+            this.axisProperties.item = item.value.asObject["pathItem"];
+            this.axisProperties.editor = this;
+            this.rotationProperties.item = item.value.asObject["pathItem"];
+            this.rotationProperties.editor = this;
+            this.randomProperties.item = item.value.asObject["pathItem"];
+            this.randomProperties.editor = this;
+        }
+    }
+    doListKeyDown(e) {
+        if (e.ctrlKey && e.key.toUpperCase() == "C") {
+            let item = this.getSelectedPathItem();
+            if (item != undefined) {
+                CSystem.copyData = item.toData();
+            }
+        }
+        if (e.ctrlKey && e.key.toUpperCase() == "V") {
+            if (CSystem.copyData != undefined) {
+                let item = this.getSelectedPathItem();
+                if (item != undefined) {
+                    let it = item.childs.addItem();
+                    it.fromData(CSystem.copyData);
+                    this.refresh();
+                }
+                else {
+                    let it = this.pathItems.addItem();
+                    it.fromData(CSystem.copyData);
+                    this.refresh();
+                }
+            }
+        }
+        if (e.ctrlKey && e.key.toUpperCase() == "X") {
+            let item = this.getSelectedPathItem();
+            if (item != undefined) {
+                CSystem.copyData = item.toData();
+                this.doItemDelete();
+            }
+        }
+    }
+    doChangePathAreaResizer() {
+        let self = this;
+        this.loopPathItems(function (item) {
+            item.pathData.width = self.pathAreaResizer.position.width - 40;
+            item.pathData.height = self.pathAreaResizer.position.height - 50;
+        });
+        self.edtWidth.text = (self.pathAreaResizer.position.width - 40) + "";
+        self.edtHeight.text = (self.pathAreaResizer.position.height - 50) + "";
+        self.axisX.lockMaxX = self.pathArea.position.width + 20;
+        if (self.axisX.position.left > self.axisX.lockMaxX)
+            self.axisX.position.left = self.axisX.lockMaxX;
+        self.axisY.lockMaxY = self.pathArea.position.height + 30;
+        if (self.axisY.position.top > self.axisY.lockMaxY)
+            self.axisY.position.top = self.axisY.lockMaxY;
+        let item = this.background.getCanvasItems("asixX");
+        for (let n = 0; n < item.length; n++) {
+            item[n].position.top = 0;
+            item[n].position.bottom = this.pathArea.position.height;
+        }
+        item = this.background.getCanvasItems("asixY");
+        for (let n = 0; n < item.length; n++) {
+            item[n].position.left = 0;
+            item[n].position.right = this.pathArea.position.width;
+        }
+        /*let sx = this.pathAreaResizer.position.width / this.__preSize.x
+        let sy = this.pathAreaResizer.position.width / this.__preSize.y
+        for(let n = 0; n < this.pathItems.length; n++) {
+            this.pathItems.get(n).scale(sx, sy)
+        }*/
+    }
+    doChangePointKind() {
+        if (this.pointKindArrow.selected) {
+            this.doHidePathEditor();
+            this.transfomer.visible = false;
+            this.transfomer.pathItem = undefined;
+        }
+        else if (this.pointKindPathEditor.selected) {
+            this.transfomer.visible = false;
+            this.transfomer.pathItem = undefined;
+            this.doHideSelector();
+            this.doShowPathEditor();
+        }
+        else {
+            this.doHideSelector();
+            this.doHidePathEditor();
+            let item = this.getSelectedPathItem();
+            if (item != undefined) {
+                this.doShowTransformer(item);
+                this.doHideSelector();
+            }
+        }
+    }
+    doShowPathEditor() {
+        if (this.selector.visible)
+            this.doHideSelector();
+        if (this.transfomer.visible) {
+            this.transfomer.visible = false;
+            this.transfomer.pathItem = undefined;
+        }
+        this.pathEditor.visible = true;
+        if (this.list.selectItems.length > 0) {
+            let pl = this.list.selectItems[0].value.asObject["pathItem"].pathData;
+            let self = this;
+            pl.onChange = function () {
+                if (self.pathEditor.visible)
+                    self.doPaint();
+            };
+            this.pathEditor.pathPointList = pl;
+        }
+        /*let pl = new CPathPointList()
+        this.loopPathItems(function(item) {
+            for(let n = 0; n < item.pathData.length; n++) {
+                pl.add(item.pathData.get(n))
+            }
+        })*/
+        //this.pathEditor.pathPointList = pl
+    }
+    doChangeAsixXOffset() {
+        this.axisProperties.edtAxis.text = (this.axisX.position.left - 20) + "";
+        let item = this.background.getCanvasItems("asixX");
+        for (let n = 0; n < item.length; n++) {
+            item[n].position.left = this.axisX.position.left - 20;
+            item[n].position.right = this.axisX.position.left - 20;
+        }
+    }
+    doChangeAsixYOffset() {
+        this.axisProperties.edtAxis.text = (this.axisY.position.top - 30) + "";
+        let item = this.background.getCanvasItems("asixY");
+        for (let n = 0; n < item.length; n++) {
+            item[n].position.top = this.axisY.position.top - 30;
+            item[n].position.bottom = this.axisY.position.top - 30;
+        }
+    }
+    doChangeAsixGuide() {
+        this.background.layers.get(0).items.get(0).visible = this.axisProperties.btnGuide.selected && this.axisProperties.btnHorz.selected;
+        this.background.layers.get(0).items.get(1).visible = this.axisProperties.btnGuide.selected && this.axisProperties.btnVert.selected;
+        this.axisX.visible = this.axisProperties.btnGuide.selected && this.axisProperties.btnHorz.selected;
+        this.axisY.visible = this.axisProperties.btnGuide.selected && this.axisProperties.btnVert.selected;
+        this.axisX.position.left = parseFloat(this.axisProperties.edtAxis.text) + 20;
+        this.axisY.position.top = parseFloat(this.axisProperties.edtAxis.text) + 30;
+    }
+    doChangeAsixHorz() {
+        this.background.layers.get(0).items.get(0).visible = this.axisProperties.btnGuide.selected && this.axisProperties.btnHorz.selected;
+        this.background.layers.get(0).items.get(1).visible = this.axisProperties.btnGuide.selected && this.axisProperties.btnVert.selected;
+        this.axisX.visible = this.axisProperties.btnGuide.selected && this.axisProperties.btnHorz.selected;
+        this.axisY.visible = this.axisProperties.btnGuide.selected && this.axisProperties.btnVert.selected;
+        this.axisX.position.left = parseFloat(this.axisProperties.edtAxis.text) + 20;
+        this.axisY.position.top = parseFloat(this.axisProperties.edtAxis.text) + 30;
+    }
+    doChangeRotationGuide() {
+        this.background.layers.get(0).items.get(2).visible = this.rotationProperties.btnGuide.selected;
+        this.destCenter.visible = this.rotationProperties.btnGuide.selected;
+        this.rotationCenter.visible = this.rotationProperties.btnGuide.selected;
+        this.setRotation();
+    }
+    setRotation() {
+        let item = this.background.getCanvasItems("rotation");
+        let dx = this.destCenter.position.left + (this.destCenter.position.width / 2);
+        let dy = this.destCenter.position.top + (this.destCenter.position.height / 2);
+        let rx = this.rotationCenter.position.left + (this.rotationCenter.position.width / 2);
+        let ry = this.rotationCenter.position.top + (this.rotationCenter.position.height / 2);
+        for (let n = 0; n < item.length; n++) {
+            item[n].pathData.clear();
+            item[n].pathData.addPointMoveTo(new CPoint(dx, dy));
+            item[n].pathData.addPointLineTo(new CPoint(rx, ry));
+        }
+        this.rotationProperties.edtStartAngle.text = CPoint.getAngleFromTwoPoint(new CPoint(rx, ry), new CPoint(dx, dy)) + "";
+        this.rotationProperties.edtCenterX.text = rx + "";
+        this.rotationProperties.edtCenterY.text = ry + "";
+    }
+    doChangeDestCenterOffset() {
+        this.setRotation();
+    }
+    doChangeRotationCenterOffset() {
+        this.setRotation();
+    }
+    doHidePathEditor() {
+        this.pathEditor.pathPointList = undefined;
+        this.pathEditor.visible = false;
+    }
+    doChangePathEditorMode() {
+        if (this.peNone.selected)
+            this.pathEditor.mode = "None";
+        if (this.peMoveTo.selected)
+            this.pathEditor.mode = "MoveTo";
+        if (this.peLineTo.selected)
+            this.pathEditor.mode = "LineTo";
+        if (this.peCurveTo.selected)
+            this.pathEditor.mode = "CurveTo";
+    }
+    doSetBaseProperties(item) {
+        this.baseProperties.item = item;
+    }
+    doPathAreaCatch(x, y, data) {
+        let itemKind = EPathItemItemKind.EMPTY;
+        if (data == "ellipse") {
+            itemKind = EPathItemItemKind.ELLIPSE;
+        }
+        if (data == "rectangle") {
+            itemKind = EPathItemItemKind.RECTANGLE;
+        }
+        if (data == "poligon") {
+            itemKind = EPathItemItemKind.POLIGON;
+        }
+        if (data == "horn") {
+            itemKind = EPathItemItemKind.HORN;
+        }
+        if (data == "text") {
+            itemKind = EPathItemItemKind.TEXT;
+        }
+        this.doPathItemAdd(itemKind, x, y);
+    }
+    doPathAreaClick(e) {
+        let arr = this.list.items.getExpandedItems();
+        let b = false;
+        for (let n = arr.length - 1; n >= 0; n--) {
+            let rt = arr[n].item.value.asObject["pathItem"].pathData.getBounds();
+            if (e.offsetX >= rt.left && e.offsetX <= rt.right && e.offsetY >= rt.top && e.offsetY <= rt.bottom) {
+                this.selectListItem(arr[n].item.value.asObject["pathItem"]);
+                b = true;
+                break;
+            }
+        }
+        if (!b)
+            this.doHideSelector();
+    }
+    doItemAdd() {
+        let it = this.pathItems.addItem();
+        it.kind = "Empty";
+        this.refresh();
+    }
+    doItemDelete() {
+        if (this.list.selectItems.length == 0) {
+            CSystem.showMessage("Warning", "Item select");
+        }
+        else {
+            if (this.selector.visible)
+                this.doHideSelector();
+            if (this.pathEditor.visible)
+                this.doHidePathEditor();
+            let self = this;
+            let items;
+            this.loopPathItems(function (item) {
+                if (self.list.selectItems[0].value.asObject["pathItem"] == item) {
+                    let pr = item.parent;
+                    if (pr == undefined) {
+                        items = self.pathItems;
+                    }
+                    else {
+                        items = pr.childs;
+                    }
+                }
+            });
+            for (let n = 0; n < items.length; n++) {
+                if (this.list.selectItems[0].value.asObject["pathItem"] == items.get(n)) {
+                    items.delete(n);
+                    this.refresh();
+                    this.doPaint();
+                    break;
+                }
+            }
+        }
+    }
+    doItemUp() {
+        if (this.list.selectItems.length > 0) {
+            let self = this;
+            let items;
+            this.loopPathItems(function (item) {
+                if (self.list.selectItems[0].value.asObject["pathItem"] == item) {
+                    let pr = item.parent;
+                    if (pr == undefined) {
+                        items = self.pathItems;
+                    }
+                    else {
+                        items = pr.childs;
+                    }
+                }
+            });
+            for (let n = 0; n < items.length; n++) {
+                if (self.list.selectItems[0].value.asObject["pathItem"] == items.get(n) && n > 0) {
+                    items.swap(n, n - 1);
+                    self.refresh(true);
+                    self.doPaint();
+                    break;
+                }
+            }
+        }
+    }
+    doItemDown() {
+        if (this.list.selectItems.length > 0) {
+            let self = this;
+            let items;
+            this.loopPathItems(function (item) {
+                if (self.list.selectItems[0].value.asObject["pathItem"] == item) {
+                    let pr = item.parent;
+                    if (pr == undefined) {
+                        items = self.pathItems;
+                    }
+                    else {
+                        items = pr.childs;
+                    }
+                }
+            });
+            for (let n = 0; n < items.length; n++) {
+                if (self.list.selectItems[0].value.asObject["pathItem"] == items.get(n) && n < items.length - 1) {
+                    items.swap(n, n + 1);
+                    self.refresh(true);
+                    self.doPaint();
+                    break;
+                }
+            }
+        }
+    }
+    doPathItemAddQuick(itemKind) {
+        this.doPathItemAdd(itemKind, 25, 25);
+    }
+    async doPathItemAdd(itemKind, x, y) {
+        let self = this;
+        function newItem() {
+            let picc;
+            if (self.list.selectItems.length == 0) {
+                picc = self.pathItems.addItem();
+            }
+            else {
+                let treeitem = self.list.selectItems[0];
+                let pi = treeitem.value.asObject["pathItem"];
+                picc = pi.childs.addItem();
+            }
+            let pic = picc;
+            pic.fill.styleKind = EStyleKind.SOLID;
+            pic.fill.solidColor = "#ffffff";
+            pic.stroke.styleKind = EStyleKind.SOLID;
+            pic.stroke.lineWidth = 1;
+            pic.stroke.solidColor = "#000000";
+            pic.pathData.width = self.pathArea.position.width;
+            pic.pathData.height = self.pathArea.position.height;
+            pic.kind = self.itemKindToString(itemKind);
+            return pic;
+        }
+        if (itemKind == EPathItemItemKind.EMPTY) {
+            newItem();
+            this.refresh(true);
+            this.doPaint();
+        }
+        if (itemKind == EPathItemItemKind.ELLIPSE) {
+            let pic = newItem();
+            pic.pathData.makeEllipseData(x - 25, y - 25, 50, 50, false);
+            this.refresh(true);
+            this.doPaint();
+        }
+        if (itemKind == EPathItemItemKind.RECTANGLE) {
+            let pic = newItem();
+            pic.pathData.makeRoundRectData(x - 25, y - 25, 50, 50, 0, 0, new CStringSet(), new CStringSet(), false);
+            this.refresh(true);
+            this.doPaint();
+        }
+        if (itemKind == EPathItemItemKind.POLIGON) {
+            let pic = newItem();
+            pic.pathData.makePoligonData(5, true, -90);
+            pic.pathData.fitIgnoreSize(new CRect(x - 25, y - 25, x + 25, y + 25));
+            this.refresh(true);
+            this.doPaint();
+        }
+        if (itemKind == EPathItemItemKind.HORN) {
+            let pic = newItem();
+            pic.pathData.makeHornData(5, 0.5, true, -90);
+            pic.pathData.fitIgnoreSize(new CRect(x - 25, y - 25, x + 25, y + 25));
+            this.refresh(true);
+            this.doPaint();
+        }
+        if (itemKind == EPathItemItemKind.TEXT) {
+            CSystem.prompt("Text info", ["Text", "Bold", "Italic", "Font name", "Each letter"], CSystem.browserCovers.get("cover"), async function (arrr) {
+                if (arrr[4] == "Y") {
+                    let o = await CStringUtil.getTextPathDataEach(arrr[0], arrr[3]);
+                    for (let n = 0; n < o.data.length; n++) {
+                        if (o.data[n].data != "") {
+                            let pic = newItem();
+                            pic.pathData.fromFontPathData(o.data[n].data);
+                            pic.pathData.fitIgnoreSize(new CRect(x - 25, y - 25, x + 25, y + 25));
+                        }
+                    }
+                    self.refresh(true);
+                    self.doPaint();
+                }
+                else {
+                    let pic = newItem();
+                    let s = await CStringUtil.getTextPathData(arrr[0], arrr[3]);
+                    pic.pathData.fromFontPathData(s);
+                    pic.pathData.fitIgnoreSize(new CRect(x - 25, y - 25, x + 25, y + 25));
+                    self.refresh(true);
+                    self.doPaint();
+                }
+            }, ["", "N", "N", "Arial", "N"]);
+        }
+    }
+    doShowSelector(data) {
+        if (data.length > 0) {
+            let rt = data.getBounds();
+            this.selector.position.left = rt.left - 10;
+            this.selector.position.top = rt.top - 10;
+            this.selector.position.width = rt.width + 20;
+            this.selector.position.height = rt.height + 20;
+            this.selector.visible = true;
+        }
+        else {
+            this.selector.position.left = -10;
+            this.selector.position.top = -10;
+            this.selector.position.width = this.pathArea.position.width + 20;
+            this.selector.position.height = this.pathArea.position.height + 20;
+            this.selector.visible = true;
+        }
+        this.doSetCheckAlignPixel();
+    }
+    doShowTransformer(data) {
+        this.transfomer.pathItem = data;
+        this.transfomer.visible = true;
+        this.doSetCheckAlignPixel();
+    }
+    doHideSelector() {
+        this.selector.visible = false;
+        this.selector.transform.rotateZ = 0;
+        this.selector.transform.rotationPointX = 0.5;
+        this.selector.transform.rotationPointY = 0.5;
+    }
+    doSelectorDown() {
+        if (this.list.selectItems.length > 0) {
+            this.__selectorDownChildsBounds.clear();
+            let arr = this.list.selectItems[0].items.getExpandedItems();
+            for (let n = 0; n < arr.length; n++) {
+                let pii = arr[n].item.value.asObject["pathItem"];
+                this.__selectorDownChildsBounds.set(pii, pii.pathData.getBounds());
+            }
+        }
+    }
+    doSelectorInvertX() {
+        let item = this.getSelectedPathItem();
+        if (item != undefined) {
+            item.pathData.invertX();
+            this.doPaint();
+        }
+    }
+    doSelectorInvertY() {
+        let item = this.getSelectedPathItem();
+        if (item != undefined) {
+            item.pathData.invertY();
+            this.doPaint();
+        }
+    }
+    doSelectorBeforeRotation() {
+        if (this.list.selectItems.length > 0) {
+            this.__selectorDownChildsPathData.clear();
+            this.__downPathData = this.list.selectItems[0].value.asObject["pathItem"].pathData.copyTo();
+            let arr = this.list.selectItems[0].items.getExpandedItems();
+            for (let n = 0; n < arr.length; n++) {
+                let pii = arr[n].item.value.asObject["pathItem"];
+                this.__selectorDownChildsPathData.set(pii, pii.pathData.copyTo());
+            }
+        }
+    }
+    doSelectorUp() {
+        this.__selectorDownChildsBounds.clear();
+    }
+    doChangeSelectorPosition() {
+        if (this.list.selectItems.length > 0) {
+            let rt = this.selector.getBounds();
+            rt.left += 10;
+            rt.top += 10;
+            rt.right -= 10;
+            rt.bottom -= 10;
+            let treeitem = this.list.selectItems[0];
+            let pi = treeitem.value.asObject["pathItem"];
+            pi.stretch(rt);
+            if (this.selector.moveKind == EControlMoveKind.MOVE) {
+                let arr = treeitem.items.getExpandedItems();
+                for (let n = 0; n < arr.length; n++) {
+                    let pii = arr[n].item.value.asObject["pathItem"];
+                    let bounds = this.__selectorDownChildsBounds.get(pii);
+                    if (bounds != undefined) {
+                        let nb = pii.pathData.getBounds();
+                        pii.pathData.movePoint(-(nb.left - bounds.left), -(nb.top - bounds.top));
+                        pii.pathData.movePoint(this.selector.position.left - this.selector.downPoint.x, this.selector.position.top - this.selector.downPoint.y);
+                    }
+                }
+            }
+            this.destCenter.position.left = (this.selector.position.left + (this.selector.position.width / 2)) - (this.destCenter.position.width / 2);
+            this.destCenter.position.top = (this.selector.position.top + (this.selector.position.height / 2)) - (this.destCenter.position.height / 2);
+            this.doPaint();
+        }
+    }
+    doSelectorRotation() {
+        if (this.list.selectItems.length > 0) {
+            let treeitem = this.list.selectItems[0];
+            let pi = treeitem.value.asObject["pathItem"];
+            pi.pathData.fromData(this.__downPathData.toData());
+            pi.pathData.rotate(new CPoint(this.selector.position.left + (this.selector.position.width * this.selector.transform.rotationPointX), this.selector.position.top + (this.selector.position.height * this.selector.transform.rotationPointY)), this.selector.transform.rotateZ);
+            let arr = treeitem.items.getExpandedItems();
+            for (let n = 0; n < arr.length; n++) {
+                let pii = arr[n].item.value.asObject["pathItem"];
+                let pd = this.__selectorDownChildsPathData.get(pii);
+                if (pd != undefined) {
+                    pii.pathData.fromData(pd.toData());
+                    pii.pathData.rotate(new CPoint(this.selector.position.left + (this.selector.position.width * this.selector.transform.rotationPointX), this.selector.position.top + (this.selector.position.height * this.selector.transform.rotationPointY)), this.selector.transform.rotateZ);
+                }
+            }
+            this.doPaint();
+        }
+    }
+    doSelectorAfterRotation() {
+        this.doHideSelector();
+        if (this.list.selectItems.length > 0) {
+            this.doShowSelector(this.list.selectItems[0].value.asObject["pathItem"].pathData);
+        }
+    }
+    doRefresh() {
+        this.list.clear();
+        function fn(lst, treeData) {
+            for (let n = 0; n < lst.length; n++) {
+                let pi = lst.get(n);
+                let it = treeData.addItem({ text: pi.name, kind: pi.kind, pathItem: pi });
+                if (!pi.group)
+                    fn(pi.childs, it.items);
+            }
+        }
+        fn(this.pathItems, this.list.items);
+        this.list.items.expandAll();
+    }
+    doPaint() {
+        this.pathArea.layers.get(0).items.clear();
+        let self = this;
+        this.loopPathItems(function (item) {
+            let it = self.newCanvasItem();
+            self.copyItem(it, item);
+        });
+        /*for(let n = 0; n < this.pathItems.length; n++) {
+            let it = this.newCanvasItem()
+            it.pathData.addPointList(this.pathItems.get(n).getData())
+        }*/
+    }
+    getSelectedPathItem() {
+        let rt;
+        if (this.list.selectItems.length > 0) {
+            rt = this.list.selectItems[0].value.asObject["pathItem"];
+        }
+        return rt;
+    }
+    copyItem(ci, pi) {
+        ci.pathData.addPointList(pi.pathData);
+        ci.fill.fromData(pi.fill.toData());
+        ci.stroke.fromData(pi.stroke.toData());
+        ci.opacity = pi.opacity;
+        ci.shadowBlur = pi.shadowBlur;
+        ci.shadowColor = pi.shadowColor;
+        ci.shadowOffsetX = pi.shadowOffsetX;
+        ci.shadowOffsetY = pi.shadowOffsetY;
+        (new Function("ci", "pi", "ci.composite = pi.composite"))(ci, pi);
+        ci.text = pi.text;
+        ci.textSet.fromData(pi.textSet.toData());
+    }
+    loopPathItems(fn) {
+        function loop(list) {
+            for (let n = 0; n < list.length; n++) {
+                fn(list.get(n));
+                loop(list.get(n).childs);
+            }
+        }
+        loop(this.pathItems);
+    }
+    newCanvasItem() {
+        let rt = this.layer.addItem();
+        rt.kind = ECanvasItemKind.PATH;
+        rt.pathFitMode = EFitMode.ORIGINAL;
+        return rt;
+    }
+    itemKindToString(kind) {
+        let rt = "Empty";
+        if (kind == EPathItemItemKind.ELLIPSE)
+            rt = "Ellipse";
+        if (kind == EPathItemItemKind.RECTANGLE)
+            rt = "Rectangle";
+        if (kind == EPathItemItemKind.POLIGON)
+            rt = "Poligon";
+        if (kind == EPathItemItemKind.HORN)
+            rt = "Horn";
+        if (kind == EPathItemItemKind.ETC)
+            rt = "ETC";
+        return rt;
+    }
+    addKindToString(kind) {
+        let rt = "Normal";
+        if (kind == EPathItemAddKind.PATTERN)
+            rt = "Pattern";
+        if (kind == EPathItemAddKind.ROTATION)
+            rt = "Rotaion";
+        if (kind == EPathItemAddKind.RANDOM)
+            rt = "Random";
+        return rt;
+    }
+    selectListItem(pathitem) {
+        let arr = this.list.items.getExpandedItems();
+        for (let n = 0; n < arr.length; n++) {
+            if (arr[n].item.value.asObject["pathItem"] == pathitem) {
+                this.list.selectItem(arr[n].item);
+                break;
+            }
+        }
+    }
+    refresh(isReSelect = false) {
+        if (isReSelect) {
+            if (this.list.selectItems.length > 0) {
+                let treeitem = this.list.selectItems[0];
+                let pi = treeitem.value.asObject["pathItem"];
+                this.doRefresh();
+                this.selectListItem(pi);
+            }
+            else {
+                this.doRefresh();
+            }
+        }
+        else {
+            this.doRefresh();
+        }
+    }
+    async loadFile() {
+        let self = this;
+        CSystem.loadFromFile(function (f) {
+            f.text().then(function (fs) {
+                let data = JSON.parse(fs);
+                if (data.width != undefined && data.height != undefined) {
+                    self.edtWidth.text = data.width;
+                    self.edtHeight.text = data.height;
+                    self.btnSize.click();
+                }
+                if (data.img != undefined) {
+                    self.img.fromData(data.img);
+                    self.edtUrl.text = data.url;
+                    self.scrollOpacity.valueRatio = self.img.opacity;
+                    self.btnShowImage.selected = self.img.visible;
+                }
+                if (data.area != undefined) {
+                    self.pathAreaResizer.fromData(data.area);
+                }
+                self.pathItems.fromData(data);
+                self.refresh();
+                self.doPaint();
+            });
+        });
+    }
+    async saveFile() {
+        let self = this;
+        CSystem.prompt("Data save", ["File name"], CSystem.browserCovers.get("cover"), function (arr) {
+            let o = self.pathItems.toData();
+            o["width"] = self.edtWidth.text;
+            o["height"] = self.edtHeight.text;
+            o["url"] = self.edtUrl.text;
+            o["img"] = self.img.toData();
+            o["area"] = self.pathAreaResizer.toData();
+            CSystem.saveAsFile(JSON.stringify(o), arr[0] + ".pathitems");
+        });
+    }
+    async controlSave() {
+        let con = new CAnimationControl();
+        con.position.width = parseFloat(this.edtWidth.text);
+        con.position.height = parseFloat(this.edtHeight.text);
+        con.propertyName = "animationControl";
+        con.objectsCount = this.pathItems.length;
+        let pi = new CPathItems();
+        pi.copyFrom(this.pathItems);
+        for (let n = 0; n < pi.length; n++) {
+            //let rt = pi.get(n).pathData.getBounds()
+            let rt = pi.get(n).getBounds();
+            pi.get(n).movePoint(-rt.left, -rt.top);
+            let items = pi.get(n).toCanvasItems(rt.width, rt.height);
+            let l = con.objects.get(n).layers.addLayer();
+            l.items.fromData(items.toData());
+            con.objects.get(n).position.left = rt.left;
+            con.objects.get(n).position.top = rt.top;
+            con.objects.get(n).position.width = rt.width;
+            con.objects.get(n).position.height = rt.height;
+            con.objects.get(n).propertyName = pi.get(n).name;
+        }
+        let self = this;
+        CSystem.prompt("Control save", ["File name"], CSystem.browserCovers.get("cover"), function (arr) {
+            CSystem.saveAsFile(JSON.stringify(con.toData()), arr[0] + ".control");
+            con.remove();
+        });
+    }
+    getLayersData() {
+        let layers = new CCanvasLayers(undefined);
+        for (let n = 0; n < this.pathItems.length; n++) {
+            let item = this.pathItems.get(n);
+            let layer = layers.addLayer();
+            layer.items.fromData(item.toCanvasItems(this.pathArea.position.width, this.pathArea.position.height).toData());
+        }
+        let rt = layers.toData();
+        layers.remove();
+        return rt;
+    }
+}
+class CLayerPathEditor extends CLayerPathEditorModel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.resource = "layerPathEditor.frame";
+    }
+}
+class CAppPathEditor extends CWindowApplication {
+    constructor() {
+        super();
+        this.defaultWidth = 1200;
+        this.defaultHeight = 670;
+        this.appName = "Animation control editor";
+        this.editor = new CLayerPathEditor(this.mainWindow.body);
+        this.editor.position.align = EPositionAlign.CLIENT;
+    }
+    doExecute() {
+        super.doExecute();
+        //this.editor.properties.editorCover = this.desktop?.cover
+    }
+}

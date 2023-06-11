@@ -1,1 +1,81 @@
-﻿"use strict";function loadSystemResource(){return new Promise(function(t){let o=new Map;o.set("acc_head_10000.graph","https://baekjonggyu.github.io/resource/acc_head_10000.graph"),o.set("line_10000.graph","https://baekjonggyu.github.io/resource/line_10000.graph"),o.set("heart_10000.graph","https://baekjonggyu.github.io/resource/heart_10000.graph"),o.set("clock_moon.layers","https://baekjonggyu.github.io/resource/clock_moon.layers"),o.set("layer_editor_icon_1.layers","https://baekjonggyu.github.io/resource/layer_editor_icon_1.layers"),o.set("layer_editor_icon_2.layers","https://baekjonggyu.github.io/resource/layer_editor_icon_2.layers"),o.set("texteditor_1.layers","https://baekjonggyu.github.io/resource/texteditor_1.layers"),o.set("texteditor_2.layers","https://baekjonggyu.github.io/resource/texteditor_2.layers"),o.set("graph_editor_icon_1.layers","https://baekjonggyu.github.io/resource/graph_editor_icon_1.layers"),o.set("graph_editor_icon_2.layers","https://baekjonggyu.github.io/resource/graph_editor_icon_2.layers"),o.set("graph_button.control","https://baekjonggyu.github.io/resource/graph_button.control"),o.set("shape_button.control","https://baekjonggyu.github.io/resource/shape_button.control"),o.set("text_button.control","https://baekjonggyu.github.io/resource/text_button.control"),o.set("desktop_dark2.control","https://baekjonggyu.github.io/resource/desktop_dark2.control"),o.forEach(function(e,r){fetchBody(e).then(function(e){CSystem.resources.set(r,JSON.parse(e)),o.delete(r),0==o.size&&t()})})})}async function loadLazyResource(){let t=new Map;t.set("selectAreaCursor.control","https://baekjonggyu.github.io/resource/selectAreaCursor.control"),t.set("scrollbar24.control","https://baekjonggyu.github.io/resource/scrollbar24.control"),t.set("controlSelector_rotation.control","https://baekjonggyu.github.io/resource/controlSelector_rotation.control"),t.set("path_controller.control","https://baekjonggyu.github.io/resource/path_controller.control"),t.set("hint.control","https://baekjonggyu.github.io/resource/hint.control"),t.set("listbox16noMargin.control","https://baekjonggyu.github.io/resource/listbox16noMargin.control"),t.set("scrollbar20.control","https://baekjonggyu.github.io/resource/scrollbar20.control"),t.set("shape_ellipse.control","https://baekjonggyu.github.io/resource/shape_ellipse.control"),t.set("shape_empty.control","https://baekjonggyu.github.io/resource/shape_empty.control"),t.set("shape_horn.control","https://baekjonggyu.github.io/resource/shape_horn.control"),t.set("shape_poligon.control","https://baekjonggyu.github.io/resource/shape_poligon.control"),t.set("shape_rectangle.control","https://baekjonggyu.github.io/resource/shape_rectangle.control"),t.set("shape_text.control","https://baekjonggyu.github.io/resource/shape_text.control"),t.set("button16_2.control","https://baekjonggyu.github.io/resource/button16_2.control"),t.set("scrollbar32.control","https://baekjonggyu.github.io/resource/scrollbar32.control"),t.set("graphEditor.frame","https://baekjonggyu.github.io/resource/graphEditor.frame"),t.set("window_sky.frame","https://baekjonggyu.github.io/resource/window_sky.frame"),t.set("textEditor.frame","https://baekjonggyu.github.io/resource/textEditor.frame"),t.set("layerPathEditor.frame","https://baekjonggyu.github.io/resource/layerPathEditor.frame"),t.set("chiled_window_20_dialog.frame","https://baekjonggyu.github.io/resource/chiled_window_20_dialog.frame"),t.set("sceneEditor.frame","https://baekjonggyu.github.io/resource/sceneEditor.frame"),t.forEach(function(t,o){fetchBody(t).then(function(t){CSystem.resources.set(o,JSON.parse(t))})})}
+"use strict";
+function loadSystemResource() {
+    return new Promise(function (rs) {
+        let map = new Map();
+        map.set("acc_head_10000.graph", "https://baekjonggyu.github.io/resource/acc_head_10000.graph");
+        map.set("line_10000.graph", "https://baekjonggyu.github.io/resource/line_10000.graph");
+        map.set("heart_10000.graph", "https://baekjonggyu.github.io/resource/heart_10000.graph");
+        map.set("clock_moon.layers", "https://baekjonggyu.github.io/resource/clock_moon.layers");
+        map.set("layer_editor_icon_1.layers", "https://baekjonggyu.github.io/resource/layer_editor_icon_1.layers");
+        map.set("layer_editor_icon_2.layers", "https://baekjonggyu.github.io/resource/layer_editor_icon_2.layers");
+        map.set("texteditor_1.layers", "https://baekjonggyu.github.io/resource/texteditor_1.layers");
+        map.set("texteditor_2.layers", "https://baekjonggyu.github.io/resource/texteditor_2.layers");
+        map.set("graph_editor_icon_1.layers", "https://baekjonggyu.github.io/resource/graph_editor_icon_1.layers");
+        map.set("graph_editor_icon_2.layers", "https://baekjonggyu.github.io/resource/graph_editor_icon_2.layers");
+        map.set("graph_button.control", "https://baekjonggyu.github.io/resource/graph_button.control");
+        map.set("shape_button.control", "https://baekjonggyu.github.io/resource/shape_button.control");
+        map.set("text_button.control", "https://baekjonggyu.github.io/resource/text_button.control");
+        map.set("desktop_dark2.control", "https://baekjonggyu.github.io/resource/desktop_dark2.control");
+        map.forEach(function (v, k) {
+            fetchBody(v)
+                .then(function (json) {
+                CSystem.resources.set(k, JSON.parse(json));
+                map.delete(k);
+                if (map.size == 0) {
+                    rs();
+                }
+            });
+        });
+    });
+}
+async function loadLazyResource() {
+    let map = new Map();
+    map.set("treeitem_check_small_f20.canvasitems", "https://baekjonggyu.github.io/resource/treeitem_check_small_f20.canvasitems");
+    map.set("treeitem_check_small32.canvasitems", "https://baekjonggyu.github.io/resource/treeitem_check_small32.canvasitems");
+    map.set("black18.canvasitems", "https://baekjonggyu.github.io/resource/black18.canvasitems");
+    map.set("blackGra18.canvasitems", "https://baekjonggyu.github.io/resource/blackGra18.canvasitems");
+    map.set("cellL20.canvasitems", "https://baekjonggyu.github.io/resource/cellL20.canvasitems");
+    map.set("cellL28.canvasitems", "https://baekjonggyu.github.io/resource/cellL28.canvasitems");
+    map.set("listitem24.canvasitems", "https://baekjonggyu.github.io/resource/listitem24.canvasitems");
+    map.set("listitem32.canvasitems", "https://baekjonggyu.github.io/resource/listitem32.canvasitems");
+    map.set("cellBlue.canvasitems", "https://baekjonggyu.github.io/resource/cellBlue.canvasitems");
+    map.set("cellRed.canvasitems", "https://baekjonggyu.github.io/resource/cellRed.canvasitems");
+    map.set("blackL.canvasitems", "https://baekjonggyu.github.io/resource/blackL.canvasitems");
+    map.set("selectAreaCursor.control", "https://baekjonggyu.github.io/resource/selectAreaCursor.control");
+    map.set("scrollbar24.control", "https://baekjonggyu.github.io/resource/scrollbar24.control");
+    map.set("controlSelector_rotation.control", "https://baekjonggyu.github.io/resource/controlSelector_rotation.control");
+    map.set("path_controller.control", "https://baekjonggyu.github.io/resource/path_controller.control");
+    map.set("hint.control", "https://baekjonggyu.github.io/resource/hint.control");
+    map.set("listbox16noMargin.control", "https://baekjonggyu.github.io/resource/listbox16noMargin.control");
+    map.set("scrollbar20.control", "https://baekjonggyu.github.io/resource/scrollbar20.control");
+    map.set("shape_ellipse.control", "https://baekjonggyu.github.io/resource/shape_ellipse.control");
+    map.set("shape_empty.control", "https://baekjonggyu.github.io/resource/shape_empty.control");
+    map.set("shape_horn.control", "https://baekjonggyu.github.io/resource/shape_horn.control");
+    map.set("shape_poligon.control", "https://baekjonggyu.github.io/resource/shape_poligon.control");
+    map.set("shape_rectangle.control", "https://baekjonggyu.github.io/resource/shape_rectangle.control");
+    map.set("shape_text.control", "https://baekjonggyu.github.io/resource/shape_text.control");
+    map.set("button16_2.control", "https://baekjonggyu.github.io/resource/button16_2.control");
+    map.set("scrollbar32.control", "https://baekjonggyu.github.io/resource/scrollbar32.control");
+    map.set("textbox24.control", "https://baekjonggyu.github.io/resource/textbox24.control");
+    map.set("textbox32.control", "https://baekjonggyu.github.io/resource/textbox32.control");
+    map.set("label_center.control", "https://baekjonggyu.github.io/resource/label_center.control");
+    map.set("label_left.control", "https://baekjonggyu.github.io/resource/label_left.control");
+    map.set("textbox16.control", "https://baekjonggyu.github.io/resource/textbox16.control");
+    map.set("button8.control", "https://baekjonggyu.github.io/resource/button8.control");
+    map.set("empty.control", "https://baekjonggyu.github.io/resource/empty.control");
+    map.set("textboxDarkEditor.control", "https://baekjonggyu.github.io/resource/textboxDarkEditor.control");
+    map.set("button_gray_gra.control", "https://baekjonggyu.github.io/resource/button_gray_gra.control");
+    map.set("graphEditor.frame", "https://baekjonggyu.github.io/resource/graphEditor.frame");
+    map.set("window_sky.frame", "https://baekjonggyu.github.io/resource/window_sky.frame");
+    map.set("textEditor.frame", "https://baekjonggyu.github.io/resource/textEditor.frame");
+    map.set("layerPathEditor.frame", "https://baekjonggyu.github.io/resource/layerPathEditor.frame");
+    map.set("chiled_window_20_dialog.frame", "https://baekjonggyu.github.io/resource/chiled_window_20_dialog.frame");
+    map.set("sceneEditor.frame", "https://baekjonggyu.github.io/resource/sceneEditor.frame");
+    map.set("sceneExample.frame", "https://baekjonggyu.github.io/resource/sceneExample.frame");
+    map.forEach(function (v, k) {
+        fetchBody(v)
+            .then(function (json) {
+            CSystem.resources.set(k, JSON.parse(json));
+        });
+    });
+}

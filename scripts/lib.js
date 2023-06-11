@@ -1,1 +1,2962 @@
-"use strict";async function fetchBody(t){let e=await fetch(t);return await e.text()}async function postData(t,e={}){let s=new URLSearchParams(e);return(await fetch(t,{method:"POST",mode:"cors",cache:"no-cache",credentials:"same-origin",headers:{"Content-Type":"application/x-www-form-urlencoded"},redirect:"follow",referrerPolicy:"no-referrer",body:s})).json()}class CTimeChecker{constructor(){this._startTime=(new Date).getTime(),this._stopTime=(new Date).getTime()}startChecker(){this._startTime=(new Date).getTime()}stopChecker(){return this._stopTime=(new Date).getTime(),(this._stopTime-this._startTime)/1e3}static startChecker(){CTimeChecker.sc=(new Date).getTime()}static stopChecker(){return CTimeChecker.ed=(new Date).getTime(),(CTimeChecker.ed-CTimeChecker.sc)/1e3}}var ELanguageStringKind,ETreeItemState;!function(t){t[t.WORD=0]="WORD",t[t.SENTENCE=1]="SENTENCE"}(ELanguageStringKind||(ELanguageStringKind={}));class CLanguage{static get localCode(){return CLanguage._localCode}static set localCode(t){this._localCode!=t&&(this._localCode=t,this.doChangeCountry())}static doChangeCountry(){console.log("change country",this._localCode);for(let t=0;t<CSystem.controls.length;t++){CSystem.controls.getRow(0).get(0).asObject.doChangeCountry(CLanguage._localCode)}}static count(){return 104}static getLanguage(t){return{code:this._codes[t],name:this._names[t],localName:this._localNames[t]}}static getLanguageFromCode(t){let e=-1;for(let s=0;s<this._codes.length;s++)if(t==this._codes[s]){e=s;break}return-1==e?void 0:{code:this._codes[e],name:this._names[e],localName:this._localNames[e]}}static getLanguageFromCountry(t){let e=-1;for(let s=0;s<this._names.length;s++)if(t==this._names[s]){e=s;break}return-1==e?void 0:{code:this._codes[e],name:this._names[e],localName:this._localNames[e]}}static loadDictionary(t){this._dictionary.clear();for(let e=0;e<t.length;e++)this._dictionary.set(t[e].key,t[e].value)}static getText(t){return this._dictionary.get(t)}}CLanguage._localCode="en",CLanguage._dictionary=new Map,CLanguage._codes=["ko","en","gl","gu","el","nl","ne","no","da","de","lo","lv","la","ru","ro","lb","lt","mr","mi","mk","mg","ml","ms","mt","mn","hmn","my","eu","vi","be","bn","bs","bg","sm","sr","ceb","st","so","sn","su","sw","sv","gd","es","sk","sl","sd","si","ar","hy","is","ht","ga","az","af","sq","am","et","eo","yo","ur","uz","uk","cy","ig","yi","it","id","ja","jw","ka","zu","zh_ch","zh_tw","ny","cs","kk","ca","kn","co","xh","ku","hr","km","ky","tl","ta","tg","th","tr","te","ps","pa","fa","pt","pl","fr","fy","fi","haw","ha","hu","iw","hi"],CLanguage._names=["Korean","English","Galician","Gujarati","Greek","Dutch","Nepali","Norwegian","Danish","German","Lao","Latvian","Latin","Russian","Romanian","Luxembourgish","Lithuanian","Marathi","Maori","Macedonian","Malagasy","Malayalam","Malay","Maltese","Mongolian","Mongolian","Myanmar(Burmese)","Basque","Vietnamese","Belarusian","Bengali","Bosnian","Bulgarian","Samoan","Serbian","CebuAno","Sesotho","Somali","Shona","Sundar","Swahili","Swedish","ScottishGaelic","Spanish","Slovak","Slovenian","Sindhi","Sinhalese","Arabic","Armenian","Icelandic","Haitian","Irish","Azerbaijani","Afrikaans","Albanian","Amharic","Estonian","Esperanto","Yoruba","Urdu","Uzbek","Ukrainian","Welsh","Igbo","Yiddish","Italian","Indonesian","Japanese","Javanese","Georgian","Zulu","Chinese(Simplified)","Chinese(Traditional)","Chewara","Czech","Kazakh","Catalan","Kannada","Corsican","Cosa","Kurdish","Croatian","Khmer","Kyrgyz","Tagalog","Tamil","Tajik","Thai","Turkish","Telugu","Pashto","Punjabi","Persian","Portuguese","Polish","French","Frisian","Finnish","HAWEI","Hausa","Hungarian","Hebrew","Hindi"],CLanguage._localNames=["한국어","English","Galego","ગુજરાતી","Ελληνικά","Nederlands","नेपाली","norsk","dansk","Deutsch","ລາວ","Latviešu valoda","Latine","русский","românesc","Lëtzebuergesch","Lietuvių","मराठी","Maori","Македонски","Malagasy","മലയാളം","Melayu","Malti","Монгол хэл дээр","Mongolian","မြန်မာ (ဗမာ)","Euskal","Tiếng việt","Беларуская","বাঙালি","Bosanski","български","Samoa","Сербиан","Cebu Ano","Sesotho","Somali","Shona","Sundar","Kiswahili","Svenska","Gàidhlig na h-Alba","Español","slovenský","Slovenščina","سنڌي","සිංහල","العربية","Հայերեն","Íslensku","Ayisyen","Gaeilge","Azərbaycan","Afrikaans","shqiptar","አማርኛ","Eesti keel","Esperanto","Yorùbá","اردو","O'zbek","Українська","Cymraeg","Igbo","Yiddish","italiano","Orang indonesia","日本","Jawa","ქართული","Zulu","中文（简体）","中文（繁體）","Chiwara","Česky","Қазақша","Català","ಕನ್ನಡ","Corsa","Cosa","Kurdî","hrvatski","ភាសាខ្មែរ","Kirghiz","Tagalog","தமிழ்","Тоҷикӣ","ไทย","Türk","తెలుగు","پښتو","ਪੰਜਾਬੀ","فارسی","Português","Polski","Le français","Frysk","suomalainen","HAWEI","Hausa","magyar","עברית","हिन्दी"];class CStringUtil{static lpad(t,e,s){if(t.length>=s)return t;let a=(s-t.length)/e.length;for(let s=0;s<a;s++)t=e+t;return t}static rpad(t,e,s){if(t.length>=s)return t;let a=(s-t.length)/e.length;for(let s=0;s<a;s++)t+=e;return t}static strToBase64(t){return btoa(unescape(encodeURIComponent(t)))}static strToUriBase64(t){let e=this.strToBase64(t);return e=this.replaceAll(e,"/","@"),e=this.replaceAll(e,"+","^"),e=this.replaceAll(e,"=","*")}static strToUriBase64Prefix(t,e){let s=this.strToBase64(e);return s=this.replaceAll(s,"/","@"),s=this.replaceAll(s,"+","^"),s=t+";"+(s=this.replaceAll(s,"=","*"))}static base64ToUriBase64(t){let e=this.replaceAll(t,"/","@");return e=this.replaceAll(e,"+","^"),e=this.replaceAll(e,"=","*")}static base64ToUriBase64Prefix(t,e){let s=this.replaceAll(e,"/","@");return s=this.replaceAll(s,"+","^"),s=t+";"+(s=this.replaceAll(s,"=","*"))}static uriBase64ToBase64(t){let e=this.replaceAll(t,"*","=");return e=this.replaceAll(e,"^","+"),e=this.replaceAll(e,"@","/")}static base64ToStr(t){return decodeURIComponent(escape(atob(t)))}static UriBase64ToStr(t){let e=this.replaceAll(t,"*","=");return e=this.replaceAll(e,"^","+"),e=this.replaceAll(e,"@","/"),this.base64ToStr(e)}static setStringToText(t,e){let s="";for(let a of t)""!=s&&(s+=e),s+=a;return s}static setStringFromText(t,e,s){t.clear();let a=e.split(s);for(let e=0;e<a.length;e++)t.add(a[e])}static replaceAll(t,e,s){let a=t.split(e),i="";for(let t=0;t<a.length;t++)0!=t&&(i+=s),i+=a[t];return i}static getTextWidth(t,e){if(null!=CSystem.bufferingContext){t.setFont(CSystem.bufferingContext);let s=e.split("\n"),a=0;for(let t=0;t<s.length;t++)a=CCalc.max(CSystem.bufferingContext.measureText(s[t]).width,a);return a}return-1}static getTextHeight(t,e){let s=e.split("\n");return t.fontSize*s.length}static getTextPathData(t,e){return new Promise(function(t){t("")})}static getTextPathDataEach(t,e){return new Promise(function(t){})}static sheetDataToMap(t){let e=new Map,s={openidx:-1,closeidx:-1,isSearch:!1},a=0,i=0,n="";for(let r=0;r<t.length;r++)n+=t[r],s.isSearch||'"'!=t[r]||'"'!=n?!s.isSearch||'"'!=t[r]||r+1<t.length&&'"'==t[r+1]||r-1>=0&&'"'==t[r-1]?s.isSearch||"\n"!=t[r]?s.isSearch||"\t"!=t[r]?r==t.length-1&&("\r"==n.charAt(n.length-1)&&(n=CStringUtil.replaceAll(n,"\r","")),e.set(a+","+i,n)):("\r"==(n=n.substr(0,n.length-1)).charAt(n.length-1)&&(n=CStringUtil.replaceAll(n,"\r","")),e.set(a+","+i,n),a++,n=""):("\r"==(n=n.substr(0,n.length-1)).charAt(n.length-1)&&(n=CStringUtil.replaceAll(n,"\r","")),e.set(a+","+i,n),i++,a=0,n=""):(s.isSearch=!1,s.closeidx=r,n=n.substr(1,n.length-2),n=CStringUtil.replaceAll(n,'""','"'),r==t.length-1&&("\r"==n.charAt(n.length-1)&&(n=CStringUtil.replaceAll(n,"\r","")),e.set(a+","+i,n))):(s.isSearch=!0,s.openidx=r,r==t.length-1&&("\r"==n.charAt(n.length-1)&&(n=CStringUtil.replaceAll(n,"\r","")),e.set(a+","+i,n)));return e}static sha256(t){return new Promise(function(e){const s=(new TextEncoder).encode(t);crypto.subtle.digest("SHA-256",s).then(t=>{const s=Array.from(new Uint8Array(t)).map(t=>("00"+t.toString(16)).slice(-2)).join("");e(s)})})}}class CDatetime extends Date{get year(){return this.getFullYear()}get month(){return this.getMonth()+1}get day(){return this.getDate()}get dayOfWeek(){return this.getDay()}get yearS(){return this.getFullYear()+""}get monthS(){let t=this.getMonth()+1+"";return 1==t.length&&(t="0"+t),t}get dayS(){let t=this.getDate()+"";return 1==t.length&&(t="0"+t),t}toString(t=!1){return CDatetime.toTimeString(this,t)}getFirstDayDate(t){return null!=t?new CDatetime(t.year,t.month-1):new CDatetime(this.year,this.month-1)}getLastDayDate(t){return null!=t?new CDatetime(t.year,t.month-1,CDatetime.getLastDay(t.year,t.month)):new CDatetime(this.year,this.month-1,CDatetime.getLastDay(this.year,this.month))}getLastDay(){return CDatetime.getLastDay(this.getFullYear(),this.getMonth()+1)}addSecond(t){this.setSeconds(this.getSeconds()+t)}addMinute(t){this.setMinutes(this.getMinutes()+t)}addHour(t){this.setHours(this.getHours()+t)}addDay(t){this.setDate(this.getDate()+t)}addMonth(t){this.setMonth(this.getMonth()+t)}addYear(t){this.setFullYear(this.getFullYear()+t)}static isLeapYear(t){return t%4==0&&t%100!=0||t%400==0}static isValidMonth(t){return t>=1&&t<=12}static isValidDay(t,e,s){if(!this.isValidMonth(e))return!1;let a=new Array(31,28,31,30,31,30,31,31,30,31,30,31);return(t%4==0&&t%100!=0||t%400==0)&&(a[1]=29),s>=1&&s<=a[e-1]}static getLastDay(t,e){let s=new Array(31,28,31,30,31,30,31,31,30,31,30,31);return(t%4==0&&t%100!=0||t%400==0)&&(s[1]=29),s[e-1]}static toTimeString(t,e=!1,s=!1){let a=t.getFullYear()+"",i=t.getMonth()+1+"",n=t.getDate()+"",r=t.getHours()+"",o=t.getMinutes()+"",h=t.getSeconds()+"",l=t.getMilliseconds()+"";return 1==(""+i).length&&(i="0"+i),1==(""+n).length&&(n="0"+n),1==(""+r).length&&(r="0"+r),1==(""+o).length&&(o="0"+o),1==(""+h).length&&(h="0"+h),1==(""+l).length&&(l="00"+l),2==(""+l).length&&(l="0"+l),e?a+"-"+i+"-"+n+" "+r+":"+o+":"+h+"."+l:a+""+i+n+r+o+h+l}static getCurrentTime(){return this.toTimeString(new Date)}static getNowYear(){return this.getCurrentTime().substr(0,4)}static getNowMonth(){return this.getCurrentTime().substr(4,2)}static getNowDay(){return this.getCurrentTime().substr(6,2)}static getNowHour(){return this.getCurrentTime().substr(8,2)}static getNowMinute(){return this.getCurrentTime().substr(10,2)}static getNowSecond(){return this.getCurrentTime().substr(12,2)}static getDayOfWeek(t){return t.getDay()}static dateToYYYYMMDD(t,e=!1){let s=t.getFullYear()+"",a=t.getMonth()+1+"",i=t.getDate()+"";return 1==(""+a).length&&(a="0"+a),1==(""+i).length&&(i="0"+i),e?s+"-"+a+"-"+i:s+""+a+i}static getYYYYMMDD(t=!1){let e=new Date,s=e.getFullYear()+"",a=e.getMonth()+1+"",i=e.getDate()+"";return 1==(""+a).length&&(a="0"+a),1==(""+i).length&&(i="0"+i),t?s+"-"+a+"-"+i:s+""+a+i}static getYYYYMMDDHHMMSS(t=!1){let e=new Date,s=e.getFullYear()+"",a=e.getMonth()+1+"",i=e.getDate()+"",n=e.getHours()+"",r=e.getMinutes()+"",o=e.getSeconds()+"";return 1==(""+a).length&&(a="0"+a),1==(""+i).length&&(i="0"+i),1==(""+n).length&&(n="0"+n),1==(""+r).length&&(r="0"+r),1==(""+o).length&&(o="0"+o),t?s+"-"+a+"-"+i+" "+n+":"+r+":"+o:s+""+a+i+n+r+o}}class CHSLA{constructor(t,e,s,a=1){this.h=t,this.s=e,this.l=s,this.a=a}toColor(){return"hsla("+this.h+","+CCalc.cr(100,0,1,this.s,2)+"%,"+CCalc.cr(100,0,1,this.l,2)+"%,"+this.a+")"}}class CRGBA{constructor(t,e,s,a=1){this.r=t,this.g=e,this.b=s,this.a=a}toColor(){return"rgba("+this.r+","+this.g+","+this.b+","+this.a+")"}static getColor(t,e,s,a=1){return new CRGBA(t,e,s,a).toColor()}}class CColor{constructor(t){if(this.r=0,this.g=0,this.b=0,this.a=0,-1!=t.indexOf("#"))3==(t=t.replace(/^\s*#|\s*$/g,"")).length&&(t=t.replace(/(.)/g,"$1$1")),this.r=parseInt(t.substr(0,2),16),this.g=parseInt(t.substr(2,2),16),this.b=parseInt(t.substr(4,2),16),this.a=1;else if(-1!=t.indexOf("rgb"))if(-1!=t.indexOf("a")){let e=(t=t.replace(" ","").replace("rgba(","").replace(")","")).split(",");this.r=parseInt(e[0]),this.g=parseInt(e[1]),this.b=parseInt(e[2]),this.a=parseFloat(e[3])}else{let e=(t=t.replace(" ","").replace("rgb(","").replace(")","")).split(",");this.r=parseInt(e[0]),this.g=parseInt(e[1]),this.b=parseInt(e[2]),this.a=1}else if(-1!=t.indexOf("hsl"))if(-1!=t.indexOf("a")){let e=(t=t.replace(" ","").replace("hsla(","").replace(")","")).split(","),s=new CHSLA(parseFloat(e[0]),CCalc.cr(1,0,100,parseFloat(e[1].replace("%","")),2),CCalc.cr(1,0,100,parseFloat(e[2].replace("%","")),2),parseFloat(e[3])),a=CColor.hslToRGB(s);this.r=a.r,this.g=a.g,this.b=a.b,this.a=a.a}else{let e=(t=t.replace(" ","").replace("hsl(","").replace(")","")).split(","),s=new CHSLA(parseFloat(e[0]),CCalc.cr(1,0,100,parseFloat(e[1].replace("%","")),2),CCalc.cr(1,0,100,parseFloat(e[2].replace("%","")),2)),a=CColor.hslToRGB(s);this.r=a.r,this.g=a.g,this.b=a.b,this.a=1}else this.r=255,this.g=255,this.b=255,this.a=1}toColor(){return"rgba("+this.r+","+this.g+","+this.b+","+this.a+")"}toHSLAColor(){return CColor.rgbToHSL(new CRGBA(this.r,this.g,this.b,this.a)).toColor()}toHSLA(){return CColor.rgbToHSL(new CRGBA(this.r,this.g,this.b,this.a))}toRGBA(){return new CRGBA(this.r,this.g,this.b,this.a)}toUint8Array(){let t=new Uint8Array(4);return t[0]=this.r,t[1]=this.g,t[2]=this.b,t[3]=Math.round(CCalc.cr(1,this.a,255,0,4)),t}fromUint8Array(t){this.r=t[0],this.g=t[1],this.b=t[2],this.a=CCalc.cr(1,0,255,t[3],2)}static changeHue(t,e){let s=new CColor(t),a=this.rgbToHSL(new CRGBA(s.r,s.g,s.b,s.a));return a.h+=e,a.h>360?a.h-=360:a.h<0&&(a.h+=360),this.hslToRGB(a).toColor()}static rgbToHSL(t){let e=t.r/255,s=t.g/255,a=t.b/255,i=t.a,n=Math.max(e,s,a),r=Math.min(e,s,a),o=n-r,h=(n+r)/2,l=0,u=0;return(l=0==o?0:n==e?(s-a)/o%6*60:n==s?60*((a-e)/o+2):60*((e-s)/o+4))<0&&(l=360+l),u=0==o?0:o/(1-Math.abs(2*h-1)),new CHSLA(l,u,h,i)}static hslToRGB(t){var e,s,a,i=t.h,n=t.s,r=t.l,o=t.a,h=(1-Math.abs(2*r-1))*n,l=h*(1-Math.abs(i/60%2-1)),u=r-h/2;return i<60?(e=h,s=l,a=0):i<120?(e=l,s=h,a=0):i<180?(e=0,s=h,a=l):i<240?(e=0,s=l,a=h):i<300?(e=l,s=0,a=h):(e=h,s=0,a=l),e=this.normalize_rgb_value(e,u),s=this.normalize_rgb_value(s,u),a=this.normalize_rgb_value(a,u),new CRGBA(e,s,a,o)}static normalize_rgb_value(t,e){return(t=Math.floor(255*(t+e)))<0&&(t=0),t}static rgbToHex(t,e,s){return"#"+((1<<24)+(t<<16)+(e<<8)+s).toString(16).slice(1)}static randomColor(t=0,e=255){return"rgba("+CCalc.getRandom(t,e)+","+CCalc.getRandom(t,e)+","+CCalc.getRandom(t,e)+",1)"}}class CSequence{static getSequence(t=""){let e="",s=CSequence._map.get(t);return null==s?(CSequence._map.set(t,1),e=t+"1"):(s++,CSequence._map.set(t,s),e=t+s),e}}CSequence._map=new Map;class CCalc{static cr(t,e,s,a,i){let n=0;switch(i){case 1:if(0==a)throw new Error("zero devide");n=e*s/a;break;case 2:if(0==s)throw new Error("zero devide");n=t*a/s;break;case 3:if(0==e)throw new Error("zero devide");n=t*a/e;break;case 4:if(0==t)throw new Error("zero devide");n=e*s/t}return n}static min(t,e){return t<e?t:e}static max(t,e){return t>e?t:e}static minMax(t,e){return t<e?{min:t,max:e}:{min:e,max:t}}static minMaxPoint(t,e){let s=CCalc.minMax(t.x,e.x),a=CCalc.minMax(t.y,e.y);return{min:new CPoint(s.min,a.min),max:new CPoint(s.max,a.max)}}static crRange2Value(t,e,s,a,i){return(i-a)*((s-t)/(e-t))+a}static getNowValue(t,e,s){return(e-t)*s+t}static getRandom(t,e){return(e-t)*Math.random()+t}static sind(t){let e=t*(Math.PI/180);return Math.sin(e)}static sindy(t,e){return this.sind(t)*e}static cosd(t){let e=t*(Math.PI/180);return Math.cos(e)}static cosdx(t,e){return this.cosd(t)*e}static isIn(t,e){let s=!1;for(let a=0;a<e.length;a++)if(t==e[a]){s=!0;break}return s}}class CByte{static numberToUint8Array(t){let e=new Uint8Array(8);return new DataView(e.buffer,0).setFloat64(0,t),e}static Uint8ArrayToNumber(t){return new DataView(t.buffer,0).getFloat64(0)}static stringToUint8ArrayWithLength(t){let e=(new TextEncoder).encode(t),s=new Uint8Array(8),a=new Uint8Array(e.length+s.length);new DataView(a.buffer,0).setFloat64(0,e.length);for(let t=0;t<e.length;t++)a[t+8]=e[t];return a}static Uint8ArrayToStringWithLength(t){let e=new DataView(t.buffer).getFloat64(0),s=new Uint8Array(e);for(let a=0;a<e;a++)s[a]=t[a+8];return new TextDecoder("utf-8").decode(s)}static stringToUint8Array(t){return(new TextEncoder).encode(t)}static Uint8ArrayToString(t){return new TextDecoder("utf-8").decode(t)}static booleanToUint8Array(t){let e=new Uint8Array(1);return e[0]=t?1:0,e}static Uint8ArrayToBoolean(t){return 1==t[0]}static colorToUint8Array(t){return new CColor(t).toUint8Array()}static Uint8ArrayToColor(t){let e=new CColor("#000000");return e.fromUint8Array(t),e.toColor()}static UintToUint8Array(t){let e=t.toString(16);e.length%2==1&&(e=CStringUtil.lpad(e,"0",e.length+1));let s=new Uint8Array(e.length/2),a=0;for(let t=0;t<e.length;t++)t%2==0&&(s[a]=parseInt(e.substr(t,2),16),a++);return s}static Uint8ArrayToUint(t){let e="";for(let s=0;s<t.length;s++)e+=CStringUtil.lpad(t[s].toString(16),"0",2);return parseInt(e,16)}static bufferCopy(t,e,s){let a=new Uint8Array(s);for(let i=0;i<s;i++)a[i]=t[i+e];return a}static booleansToNumber(t){let e=0,s="";for(let e=0;e<t.length;e++)t[e]?s+="1":s+="0";return s="1"+s,e=parseInt(s,2)}static numberToBooleans(t){let e=t.toString(2),s=[];for(let t=1;t<e.length;t++)"1"==e[t]?s[t-1]=!0:s[t-1]=!1;return s}static number4bitToNumber(t){let e=0,s="";for(let e=0;e<t.length;e++){let a=t[e];a>15&&(a%=16),s+=a.toString(16)}return s="1"+s,e=parseInt(s,16)}static numberTo4bitNumbers(t){let e=t.toString(16),s=[];for(let t=1;t<e.length;t++)s[t-1]=parseInt(e[t],16);return s}static number1byteToNumber(t){let e=new Uint8Array(8);for(let s=0;s<8;s++){let a=t[s];a>255&&(a%=256),e[s]=a}return this.Uint8ArrayToNumber(e)}static numberTo1byteNumbers(t){let e=this.numberToUint8Array(t),s=[];for(let t=0;t<e.length;t++)s[t]=e[t];return s}static bufferToHexString(t){let e="";for(let s=0;s<t.length;s++)e+=CStringUtil.lpad(t[s].toString(16),"0",2);return e}static hexStringToBuffer(t){let e=new Uint8Array(t.length/2),s=0;for(let a=0;a<t.length;a++)a%2==0&&(e[s]=parseInt(t.substr(a,2),16),s++);return e}static bufferToBase64(t){var e=t.byteLength;let s="";for(var a=0;a<e;a++)s+=String.fromCharCode(t[a]);return btoa(s)}static base64ToBuffer(t){let e=atob(t),s=new ArrayBuffer(e.length),a=new Uint8Array(s);for(let t=0;t<e.length;t++)a[t]=e.charCodeAt(t);return a}}class CStream{constructor(){this._data=new Array,this._position=0}get data(){return this._data}set data(t){this._data=t}get position(){return this._position}set position(t){this._position=t}get size(){let t=0;for(let e=0;e<this._data.length;e++)t+=this._data[e].length;return t}get buffer(){if(null==this._buffer||this._buffer.length!=this.size){this._buffer=new Uint8Array(this.size);let t=0;for(let e=0;e<this._data.length;e++)for(let s=0;s<this._data[e].length;s++)this._buffer[t]=this._data[e][s],t++}return this._buffer}putNumber(t){let e=new Uint8Array(8);new DataView(e.buffer,0).setFloat64(0,t),this._data.push(e)}putDate(t){this.putNumber(t.getTime())}putString(t){let e=(new TextEncoder).encode(t);this.putNumber(e.length),this._data.push(e)}putBoolean(t){let e=new Uint8Array(1);e[0]=t?1:0,this._data.push(e)}putStream(t){this.putNumber(t.size);let e=new Uint8Array(t.size),s=t.position;t.first();for(let s=0;s<t.size;s++)e[s]=t.buffer[s];t.position=s,this._data.push(e)}first(){this._position=0}getNumber(){let t=0;return t=new DataView(this.buffer.buffer).getFloat64(this._position),this._position+=8,t}getDate(){return new Date(this.getNumber())}getString(){let t=this.getNumber(),e=new Uint8Array(t);for(let s=0;s<t;s++)e[s]=this.buffer[this._position],this._position++;return new TextDecoder("utf-8").decode(e)}getBoolean(){let t=1==this.buffer[this._position];return this._position++,t}getStream(){let t=this.getNumber(),e=new Uint8Array(t);for(let s=0;s<t;s++)e[s]=this.buffer[this._position],this._position++;let s=new CStream;return s.fromBuffer(e),s}fromBuffer(t){this.data=[];let e=new Uint8Array(t.length);for(let s=0;s<t.length;s++)e[s]=t[s];this.data.push(e)}fromArrayBuffer(t){this.data=[];let e=new Uint8Array(t.byteLength);for(let s=0;s<t.byteLength;s++){let a=new DataView(t);e[s]=a.getUint8(s)}this.data.push(e)}toBlob(){return new Blob([this.buffer])}async fromBlob(t){this.fromArrayBuffer(await t.arrayBuffer())}copyFrom(t){this.fromBuffer(t.buffer)}toBase64(){return CByte.bufferToBase64(this.buffer)}toHexString(){return CByte.bufferToHexString(this.buffer)}fromBase64(t){this._data=[],this._position=0;let e=CByte.base64ToBuffer(t);this._data.push(e)}saveAsLocalFile(t){CSystem.saveBlobAsFile(this.toBlob(),t)}loadFromLocalFile(t){let e=this;CSystem.loadFromFile(function(s){s.arrayBuffer().then(function(s){e.fromArrayBuffer(s),t(e)})})}}class CQueue{constructor(t=-1){this._idx=-1,this._position=-1,this._data=new Map,this._limitCount=-1,this._limitCount=t}get limitCount(){return this._limitCount}set limitCount(t){if(this._limitCount=t,-1!=t){let e=t-this._data.size;for(let t=0;t<e;t++)this.pop()}}get count(){return this._data.size}doToData(t){[]}push(t){return this._idx++,this._data.set(this._idx,t),-1!=this._limitCount&&this._data.size>this._limitCount&&this.pop(),this._idx}pop(){if(0==this._data.size)throw new Error("empry data");this._position++;let t=this._data.get(this._position);if(this._data.delete(this._position),null!=t)return t;throw new Error("pop is undefined")}view(t){let e=this._data.get(this._position+t+1);if(null!=e)return e;throw new Error("pop is undefined")}loopView(t){for(let e=0;e<this.count;e++)t(this.view(e))}clear(){this._data.clear(),this._idx=-1,this._position=-1}}class CEnum{static toArray(t){let e=Object.keys(t),s=new Array;for(let t=0;t<e.length;t++){let a=parseInt(e[t]);isNaN(a)&&s.push(e[t])}return s}}class CClass{get className(){return this.constructor.name}is(t){return this instanceof t}as(){return this}getProperty(t){return new Function("obj","return obj."+t)(this)}setProperty(t,e){if("string"==typeof this.getProperty(t)){new Function("obj","obj."+t+" = `"+e+"`")(this,e)}else{new Function("obj","obj."+t+" = "+e)(this,e)}}instanceOf(t){return new Function("obj","return obj instanceof "+t)(this)}addProperties(){let t=new Array;return t.push({instance:this.className,propertyName:"className",readOnly:!0,enum:[]}),t}static hasFunction(t,e){return null!=t[e]&&t[e]instanceof Function}static objectUndefined(t,e){t[e]=void 0}static createClass(t,e,s){let a="";for(let t=0;t<e.length;t++)a+=0==t?e[t]:","+e[t];return s(new Function(...e,"return new "+t+"("+a+");"))}static instanceOf(t,e){return new Function("obj","return obj instanceof "+e)(t)}static async getClassHash(t){return await CStringUtil.sha256(new Function("return "+t+".toString()")())}}class CDataClass extends CClass{doToData(t){}doFromData(t){}doRemove(){null!=this.onRemove&&this.onRemove(this)}toData(){let t={};return this.doToData(t),t}fromData(t){this.doFromData(t)}equal(t){return JSON.stringify(this.toData())==JSON.stringify(t.toData())}copyFrom(t){this.fromData(t.toData())}remove(){this.doRemove()}static putData(t,e,s,a,i=!1){i?JSON.stringify(s)!=JSON.stringify(a)&&(t[e]=s):s!=a&&(t[e]=s)}static getData(t,e,s,a=!1){return null!=t[e]?a?JSON.stringify(t[e])!=JSON.stringify(s)?t[e]:s:t[e]!=s?t[e]:s:s}}class CResourceClass extends CDataClass{constructor(){super(...arguments),this._resource=""}get resource(){return this._resource}set resource(t){""!=t&&console.log(t),this._resource!=t&&(this._resource=t,""!=t&&(CSystem.resourcesLoad?this.doResource():CSystem.requestResources.push(this)))}doToData(t){super.doToData(t),CDataClass.putData(t,"resource",this._resource,"")}doFromData(t){super.doFromData(t),this.resource=CDataClass.getData(t,"resource","")}doResource(){let t=CSystem.resources.get(this._resource);null!=t&&(this.fromData(t),null!=this.onResource&&this.onResource(this))}}class CNotifyChangeObject extends CResourceClass{constructor(){super(...arguments),this._useChangeEvent=!0}get useChangeEvent(){return this._useChangeEvent}set useChangeEvent(t){this._useChangeEvent=t}}class CNotifyChangeNotifyObject extends CNotifyChangeObject{doChange(){null!=this.onChange&&this.useChangeEvent&&this.onChange(this)}}class CNotifyChangeKindObject extends CNotifyChangeObject{doChange(t){null!=this.onChange&&this.useChangeEvent&&this.onChange(this,t)}}class ArrayString extends Array{}class ArrayNumber extends Array{}class CList extends CNotifyChangeKindObject{constructor(){super(...arguments),this.__data=new Array}static get CON_CHANGE_ADD(){return"a"}static get CON_CHANGE_INSERT(){return"i"}static get CON_CHANGE_DELETE(){return"d"}static get CON_CHANGE_SET(){return"s"}get length(){return this.__data.length}set length(t){this.__data.length=t}get array(){let t=new Array;for(let e=0;e<this.__data.length;e++)t.push(this.get(e));return t}doRemove(){this.__data=[],super.doRemove()}add(t){this.__data.push(t),this.doChange(CList.CON_CHANGE_ADD)}insert(t,e){this.__data.splice(t,0,e),this.doChange(CList.CON_CHANGE_INSERT)}delete(t,e=1){let s=this.__data.length>t&&t>=0;return this.__data.splice(t,e),this.doChange(CList.CON_CHANGE_DELETE),s}get(t){return this.__data[t]}set(t,e){this.__data[t]=e,this.doChange(CList.CON_CHANGE_SET)}deleteAll(){for(let t=this.__data.length-1;t>=0;t--)this.delete(t)}clear(){this.__data=[],this.doChange(CList.CON_CHANGE_DELETE)}sort(t){return this.__data.sort(t)}swap(t,e){if(t<0||t>this.length-1)throw new Error("invalid index1");if(e<0||e>this.length-1)throw new Error("invalid index2");let s=this.get(e);this.set(e,this.get(t)),this.set(t,s)}toData(){let t=[];return this.doToData(t),t}addProperties(){let t=super.addProperties();for(let e=0;e<this.length;e++)t.push({instance:this.get(e),propertyName:"__data["+e+"]",readOnly:!1,enum:[]});return t}}class CStringList extends CList{doToData(t){super.doToData(t);for(let e=0;e<this.length;e++)t.push(this.get(e))}doFromData(t){super.doFromData(t),this.clear();for(let e=0;e<t.length;e++)this.add(t[e])}}class CNumberList extends CList{doToData(t){super.doToData(t);for(let e=0;e<this.length;e++)t.push(this.get(e))}doFromData(t){super.doFromData(t),this.clear();for(let e=0;e<t.length;e++)this.add(t[e])}}class CMap extends CNotifyChangeObject{constructor(){super(...arguments),this.__data=new Map}static get CON_CHANGE_SET(){return"s"}static get CON_CHANGE_DELETE(){return"d"}static get CON_CHANGE_CLEAR(){return"c"}get size(){return this.__data.size}doRemove(){this.__data.clear(),super.doRemove()}doChange(t,e,s){null!=this.onChange&&this.onChange(this,t,e,s)}set(t,e){let s=this.__data.set(t,e);return this.doChange(CMap.CON_CHANGE_SET,t,e),s}get(t){return this.__data.get(t)}delete(t){let e=this.__data.delete(t);return this.doChange(CMap.CON_CHANGE_DELETE,t),e}clear(){this.__data.clear(),this.doChange(CMap.CON_CHANGE_CLEAR)}keys(){return this.__data.keys()}values(){return this.__data.values()}forEach(t){this.__data.forEach(t)}has(t){return this.__data.has(t)}toArray(){let t=new Array;return this.__data.forEach(function(e,s){let a={key:s,value:e};t.push(a)}),t}toData(){let t=[];return this.doToData(t),t}}class CNNMap extends CMap{doToData(t){super.doToData(t),this.forEach(function(e,s){t.push({key:s,value:e})})}doFromData(t){super.doFromData(t),this.clear();for(let e=0;e<t.length;e++)this.set(t[e].key,t[e].value)}}class CSSMap extends CMap{doToData(t){super.doToData(t),this.forEach(function(e,s){t.push({key:s,value:e})})}doFromData(t){super.doFromData(t),this.clear();for(let e=0;e<t.length;e++)this.set(t[e].key,t[e].value)}}class CSet extends CNotifyChangeKindObject{constructor(){super(...arguments),this.__data=new Set}static get CON_CHANGE_ADD(){return"a"}static get CON_CHANGE_DELETE(){return"d"}static get CON_CHANGE_CLEAR(){return"c"}get size(){return this.__data.size}doRemove(){this.__data.clear(),super.doRemove()}add(t){let e=this.__data.add(t);return this.doChange(CSet.CON_CHANGE_ADD),e}delete(t){let e=this.__data.delete(t);return this.doChange(CSet.CON_CHANGE_DELETE),e}clear(){this.__data.clear(),this.doChange(CSet.CON_CHANGE_CLEAR)}has(t){return this.__data.has(t)}forEach(t){this.__data.forEach(t)}toArray(){let t=new Array;return this.__data.forEach(function(e){t.push(e)}),t}toData(){let t=[];return this.doToData(t),t}}class CNotifyQueue extends CNotifyChangeKindObject{constructor(t=-1){super(),this._queue=new CQueue(t)}static get CON_CHANGE_PUSH(){return"p"}static get CON_CHANGE_POP(){return"po"}static get CON_CHANGE_CLEAR(){return"c"}static get CON_CHANGE_LIMIT_COUNT(){return"l"}get limitCount(){return this._queue.limitCount}set limitCount(t){t!=this._queue.limitCount&&(this._queue.limitCount=t,this.doChange(CNotifyQueue.CON_CHANGE_LIMIT_COUNT))}get count(){return this._queue.count}doRemove(){this._queue.clear(),super.doRemove()}push(t){let e=this._queue.push(t);return this.doChange(CNotifyQueue.CON_CHANGE_PUSH),e}pop(){let t=this._queue.pop();return this.doChange(CNotifyQueue.CON_CHANGE_POP),t}view(t){return this._queue.view(t)}loopView(t){for(let e=0;e<this.count;e++)t(this.view(e))}clear(){this._queue.clear(),this.doChange(CNotifyQueue.CON_CHANGE_CLEAR)}toData(){let t=[];return this.doToData(t),t}}class CStringSet extends CSet{doToData(t){super.doToData(t),this.forEach(function(e){t.push(e)})}doFromData(t){super.doFromData(t),this.clear();for(let e=0;e<t.length;e++)this.add(t[e])}}class CVariable extends CNotifyChangeNotifyObject{constructor(t){super(),null!=t&&(this._data=t)}get type(){return typeof this._data}get asString(){return this._data+""}set asString(t){t!=this._data&&(this._data=t,this.doChange())}get asNumber(){return this._data}set asNumber(t){t!=this._data&&(this._data=t,this.doChange())}get asBoolean(){return this._data}set asBoolean(t){t!=this._data&&(this._data=t,this.doChange())}get asObject(){return this._data}set asObject(t){t!=this._data&&(this._data=t,this.doChange())}get value(){return this._data}doRemove(){this._data=void 0,super.doRemove()}asType(){return this._data}setType(t){t!=this._data&&(this._data=t,this.doChange())}}class CRowData extends CNotifyChangeObject{constructor(t){super(),this._data=new Array;let e=this;if(null!=t)for(let s=0;s<t.length;s++){let a=new CVariable(t[s]);a.index=s,a.onChange=function(){e.doChange(a.index,a)},this._data.push(a)}}get length(){return this._data.length}doToData(t){for(let e=0;e<this._data.length;e++)"object"==typeof this._data[e].value?this._data[e].value instanceof CDataClass&&t.push(this._data[e].value.toData()):t.push(this._data[e].value);console.log(t)}doFromData(t){this._data=[];for(let e=0;e<t.length;e++){let s=new CVariable(t[e]);this._data.push(s)}}doRemove(){this._data=[],super.doRemove()}doChange(t,e){this.useChangeEvent&&null!=this.onChange&&this.onChange(this,t,e)}get(t){return this._data[t]}getValues(){let t=[];for(let e=0;e<this._data.length;e++)t.push(this._data[e].value);return t}toData(){let t=[];return this.doToData(t),t}}class CGridData extends CNotifyChangeObject{constructor(t,e,s){super(),this.__useIndex=!1,this._data=new CList,this._indexes=new CMap;let a=this;if(this._columnCount=t,this._indexColumns=e,this._uniqueColumns=s,null!=this._uniqueColumns){for(let t=0;t<this._uniqueColumns.length;t++){let e=new CMap;this._indexes.set(this._uniqueColumns[t],e)}this._uniqueColumns.length>0&&(this.__useIndex=!0)}if(null!=e){for(let t=0;t<e.length;t++){let s=new CMap;this._indexes.set(e[t],s)}e.length>0&&(this.__useIndex=!0)}this._data.onChange=function(t,e){CList.CON_CHANGE_ADD==e&&a.doChange(CGridData.CON_CHANGE_ADD),CList.CON_CHANGE_INSERT==e&&a.doChange(CGridData.CON_CHANGE_INSERT),CList.CON_CHANGE_DELETE==e&&a.doChange(CGridData.CON_CHANGE_DELETE),CList.CON_CHANGE_SET==e&&a.doChange(CGridData.CON_CHANGE_SET)}}static get CON_CHANGE_ADD(){return"a"}static get CON_CHANGE_INSERT(){return"i"}static get CON_CHANGE_DELETE(){return"d"}static get CON_CHANGE_CLEAR(){return"c"}static get CON_CHANGE_SET(){return"s"}static get CON_CHANGE_DATA(){return"da"}get columnCount(){return this._columnCount}get data(){return this._data}get indexes(){return this._indexes}get length(){return this._data.length}doToData(t){super.doToData(t),CDataClass.putData(t,"columnCount",this._columnCount);let e=new Array;for(let t=0;t<this._data.length;t++)e.push(this._data.get(t).toData());CDataClass.putData(t,"data",e,[],!0),CDataClass.putData(t,"indexColumns",this._indexColumns,void 0),CDataClass.putData(t,"uniqueColumns",this._uniqueColumns,void 0)}doFromData(t){if(super.doFromData(t),this.clear(),this.indexes.clear(),this._columnCount=CDataClass.getData(t,"columnCount",0),this._indexColumns=CDataClass.getData(t,"indexColumns",void 0),this._uniqueColumns=CDataClass.getData(t,"uniqueColumns",void 0),null!=this._uniqueColumns){for(let t=0;t<this._uniqueColumns.length;t++){let e=new CMap;this._indexes.set(this._uniqueColumns[t],e)}this._uniqueColumns.length>0&&(this.__useIndex=!0)}if(null!=this._indexColumns){for(let t=0;t<this._indexColumns.length;t++){let e=new CMap;this._indexes.set(this._indexColumns[t],e)}this._indexColumns.length>0&&(this.__useIndex=!0)}let e=CDataClass.getData(t,"data",[],!0);for(let t=0;t<e.length;t++)this.add(e[t])}doRemove(){this._data.remove(),this._indexes.remove(),this._indexColumns=void 0,this._uniqueColumns=void 0,super.doRemove()}doChange(t,e,s){this.useChangeEvent&&null!=this.onChange&&this.onChange(this,t,e,s)}doAdd(t){let e=this;if(null!=this._uniqueColumns&&this._uniqueColumns.length>0)for(let e=0;e<this._uniqueColumns.length;e++){if(this.findIndexRow(this._uniqueColumns[e],t[this._uniqueColumns[e]]).length>0)throw new Error("column "+this._uniqueColumns[e]+" is duplicated")}let s=new CRowData(t);return s.onChange=function(t,a,i){e.doChange(CGridData.CON_CHANGE_DATA,i,s)},this.__useIndex&&this.addIndex(this._data.length,s),this._data.add(s),this.useChangeEvent&&null!=this.onAdd&&this.onAdd(this,s),s}doInsert(t,e){let s=this;if(null!=this._uniqueColumns&&this._uniqueColumns.length>0)for(let t=0;t<this._uniqueColumns.length;t++){if(this.findIndexRow(this._uniqueColumns[t],e[this._uniqueColumns[t]]).length>0)throw new Error("column "+this._uniqueColumns[t]+" is duplicated")}let a=new CRowData(e);return a.onChange=function(t,e,i){s.doChange(CGridData.CON_CHANGE_DATA,i,a)},this.__useIndex&&this.addIndex(t,a),this._data.insert(t,a),this.useChangeEvent&&null!=this.onInsert&&this.onInsert(this,t,a),a}doDelete(t){let e=this._data.delete(t);this.__useIndex&&e&&this.deleteIndex(t),this.useChangeEvent&&null!=this.onDelete&&this.onDelete(this)}doSet(t,e){let s=this;if(null!=this._uniqueColumns&&this._uniqueColumns.length>0)for(let t=0;t<this._uniqueColumns.length;t++){if(this.findIndexRow(this._uniqueColumns[t],e[this._uniqueColumns[t]]).length>0)throw new Error("column "+this._uniqueColumns[t]+" is duplicated")}let a=new CRowData(e);return a.onChange=function(t,e,i){s.doChange(CGridData.CON_CHANGE_DATA,i,a)},this.__useIndex&&this.setIndex(t,a),this._data.set(t,a),this.useChangeEvent&&null!=this.onSet&&this.onSet(this,t,a),a}doClear(){this._data.clear(),this._indexes.clear(),this.useChangeEvent&&null!=this.onClear&&this.onClear(this)}addIndex(t,e){this._indexes.forEach(function(s,a){let i=e.get(a),n=s.get(i.value);null==n&&(n=new Set,s.set(i.value,n)),n.add({index:t})})}setIndex(t,e){this._indexes.forEach(function(e,s){e.forEach(function(e,s){e.delete({index:t})})}),this.addIndex(t,e)}deleteIndex(t){this._indexes.forEach(function(e,s){let a=new Array;e.forEach(function(e,s){let i;e.forEach(function(e){e.index==t&&(i=e),e.index>t&&e.index--}),e.delete(i),0==e.size&&a.push(s)});for(let t=0;t<a.length;t++)e.delete(a[t])})}add(t){return this.doAdd(t)}insert(t,e){return this.doInsert(t,e)}delete(t){if("number"==typeof t)this.doDelete(t);else for(let e=0;e<t.length;e++)this.doDelete(t[e])}set(t,e){return this.doSet(t,e)}deleteAll(){for(let t=this.length-1;t>=0;t--)this.delete(t)}clear(){this.doClear()}getRow(t){return this._data.get(t)}getRowValues(t){return this._data.get(t).getValues()}getRowIndex(t){let e=-1;for(let s=0;this._data.length;s++)if(this._data[s]==t){e=s;break}return e}cell(t,e){if(e<this._data.length&&t<this._data.get(e).length)return this._data.get(e).get(t)}setCell(t,e,s){if(!(e<this._data.length&&t<this._data.get(e).length))throw new Error("invalid column or row : "+t+","+e);"boolean"==typeof s&&(this._data.get(e).get(t).asBoolean=s),"number"==typeof s&&(this._data.get(e).get(t).asNumber=s),"string"==typeof s&&(this._data.get(e).get(t).asString=s),"object"==typeof s&&(this._data.get(e).get(t).asObject=s)}findIndexRow(t,e){let s=new Array,a=this._indexes.get(t);if(null!=a){let t=a.get(e);null!=t&&t.forEach(function(t){s.push(t.index)})}return s}findIndex(t,e){let s=new Array,a=this.findIndexRow(t,e);for(let t=0;t<a.length;t++)s.push(this._data.get(a[t]));return s}sort(t){return this._data.sort(t)}sortColumn(t,e=!0){return e?this.sort(function(e,s){let a=0;return e.get(t).value>s.get(t).value&&(a=1),e.get(t).value<s.get(t).value&&(a=-1),a}):this.sort(function(e,s){let a=0;return e.get(t).value>s.get(t).value&&(a=-1),e.get(t).value<s.get(t).value&&(a=1),a})}loopColumn(t,e){for(let s=0;s<this.length;s++)e(this.getRow(s).get(t))}}class CTableData extends CGridData{constructor(t,e,s){function a(e){let s=-1;for(let a=0;a<t.length;a++)if(t[a]==e){s=a;break}return s}let i,n;if(null!=e){i=new Array;for(let t=0;t<e.length;t++){let s=a(e[t]);-1!=s&&i.push(s)}}if(null!=s){n=new Array;for(let t=0;t<s.length;t++){let e=a(s[t]);-1!=e&&n.push(e)}}super(t.length,i,n),this._columnNames=new Map;for(let e=0;e<t.length;e++)this._columnNames.set(t[e],e);this._indexColumnNames=e,this._uniqueColumnNames=s}get columnNames(){return this._columnNames}get indexColumnNames(){return this._indexColumnNames}get uniqueColumnNames(){return this._uniqueColumnNames}doToData(t){super.doToData(t);let e=new Array;this._columnNames.forEach(function(t,s){let a={name:s,columnIndex:t};e.push(a)}),CDataClass.putData(t,"columnNames",e,[],!0),CDataClass.putData(t,"indexColumnNames",this._indexColumnNames,void 0),CDataClass.putData(t,"uniqueColumnNames",this._uniqueColumnNames,void 0)}doFromData(t){super.doFromData(t);let e=CDataClass.getData(t,"columnNames",[]);this._columnNames.clear();for(let t=0;t<e.length;t++)this._columnNames.set(e[t].name,e[t].columnIndex);this._indexColumnNames=CDataClass.getData(t,"indexColumnNames",void 0),this._uniqueColumnNames=CDataClass.getData(t,"uniqueColumnNames",void 0)}doRemove(){this._columnNames.clear(),this._indexColumnNames=void 0,this._uniqueColumnNames=void 0,super.doRemove()}cell(t,e){if("string"!=typeof t)return this._data.get(e).get(t);{let s=this._columnNames.get(t);if(null!=s)return this._data.get(e).get(s)}}findIndexRow(t,e){let s,a=new Array;s="string"==typeof t?this._columnNames.get(t):t;let i=this._indexes.get(s);if(null!=i){let t=i.get(e);null!=t&&t.forEach(function(t){a.push(t.index)})}return a}findIndex(t,e){let s,a=new Array;s="string"==typeof t?this._columnNames.get(t):t;let i=this.findIndexRow(s,e);for(let t=0;t<i.length;t++)a.push(this._data.get(i[t]));return a}find(t){let e;for(let s=0;s<t.length&&!(s>0&&0==e.length);s++){let a=this._columnNames.get(t[s].columnName);if(null!=a)if(0==s)e=this.findIndex(a,t[s].value);else for(let i=e.length-1;i>=0;i--){e[i].get(a).value!=t[s].value&&e.splice(i,1)}}return e}}class CFlowItem extends CDataClass{constructor(t){super(),this._id="",this._object=void 0,this._isFinish=!1,this._parent=t}get parent(){return this._parent}get id(){return this._id}set id(t){this._id=t}get isFinish(){return this._isFinish}get object(){return this._object}set object(t){this._object=t}doExecute(){this._isFinish=!1,null!=this.onExecute&&this.onExecute(this)}doFinish(){this._isFinish=!0,this.parent.doItemFinish(this),null!=this.onFinish&&this.onFinish(this)}finish(){this.doFinish()}}class CFlowModel extends CDataClass{constructor(){super(...arguments),this._items=new CSet,this._idMap=new CMap,this._previousItems=new CMap,this._nextItems=new CMap}get items(){return this._items}get previousItems(){return this._previousItems}get nextItems(){return this._nextItems}doCheckPrevious(t){if(this._previousItems.has(t)){let e=this._previousItems.get(t);if(null!=e){let s=!0;e.forEach(function(t){0==t.isFinish&&(s=!1)}),s&&t.doExecute()}}}doItemFinish(t){if(this._nextItems.has(t)){let e=this._nextItems.get(t);if(null!=e){let t=this;e.forEach(function(e){t.doCheckPrevious(e)})}}}doBeforeItemDelete(t){null!=this.onBeforeItemDelete&&this.onBeforeItemDelete(this,t)}getItem(t){return this._idMap.get(t)}addItem(t,e){if(!this._idMap.has(t)){let s=new CFlowItem(this);return s.id=t,null!=e&&(s.onExecute=e),this._items.add(s),this._idMap.set(t,s),s}}deleteItem(t){let e=this._idMap.get(t);if(null!=e){this.doBeforeItemDelete(e),this._previousItems.has(e)&&this._previousItems.delete(e),this._nextItems.has(e)&&this._nextItems.delete(e);for(let t of this._previousItems.values())t.has(e)&&t.delete(e);for(let t of this._nextItems.values())t.has(e)&&t.delete(e);this._items.delete(e),this._idMap.delete(t)}}addLink(t,e){if(null==this._nextItems.get(t)){let s=new CSet;s.add(e),this._nextItems.set(t,s)}else{let s=this._nextItems.get(t);null!=s&&s.add(e)}if(null==this._previousItems.get(e)){let s=new CSet;s.add(t),this._previousItems.set(e,s)}else{let s=this._previousItems.get(e);null!=s&&s.add(t)}}deleteLink(t,e){if(this._previousItems.has(e)){let s=this._previousItems.get(e);null!=s&&s.has(t)&&s.delete(t),this._previousItems.delete(e)}if(this._nextItems.has(t)){let s=this._nextItems.get(t);null!=s&&s.has(e)&&s.delete(e),this._nextItems.delete(t)}}startItems(){let t=new CList,e=this;return this._items.forEach(function(s){if(e._previousItems.has(s)){0==e._previousItems.get(s).size&&t.add(s)}else t.add(s)}),t}stopItems(){let t=new CList,e=this;return this._items.forEach(function(s){if(e._nextItems.has(s)){0==e._nextItems.get(s).size&&t.add(s)}else t.add(s)}),t}getFlowCount(t){let e=0,s=this;return function t(a){if(s._nextItems.has(a)){let e=s._nextItems.get(a);null!=e&&e.forEach(function(e){t(e)})}else e++}(t),e}getFlow(t){let e=new CList,s=this;return function t(a,i){if(s._nextItems.has(a)){let e=s._nextItems.get(a);null!=e&&e.forEach(function(e){t(e,i+","+e.id)})}else e.add(i)}(t,t.id),e}getAllFlow(){let t=new CList,e=this.startItems();for(let s=0;s<e.length;s++){let a=this.getFlow(e[s]);for(let e=0;e<a.length;e++)t.add(a.get(e))}return t}getAllFlowCount(){let t=0,e=this.startItems();for(let s=0;s<e.length;s++)t+=this.getFlowCount(e[s]);return t}}!function(t){t[t.COLLAPSE=0]="COLLAPSE",t[t.EXPAND=1]="EXPAND"}(ETreeItemState||(ETreeItemState={}));class CTreeItem extends CNotifyChangeObject{constructor(t){super(),this._value=new CVariable,this._items=new CTreeData,this._state=ETreeItemState.COLLAPSE;let e=this;this._value=new CVariable(t),this._value.onChange=function(){e.doChange(CTreeItem.CON_CHANGE_VALUE,void 0)},this._items.onChange=function(t,s,a){e.doChange(CTreeItem.CON_CHANGE_ITEMS,e.items)}}static get CON_CHANGE_STATE(){return"changeState"}static get CON_CHANGE_VALUE(){return"changeValue"}static get CON_CHANGE_ITEMS(){return"changeItems"}get value(){return this._value}get items(){return this._items}get state(){return this._state}set state(t){this._state!=t&&(this._state=t,this.doChange(CTreeItem.CON_CHANGE_STATE,void 0))}doRemove(){this._value.remove(),this._items.remove(),super.doRemove()}doChange(t,e){null!=this.onChange&&this.onChange(this,t,e)}doCollapse(){this.state=ETreeItemState.COLLAPSE}doExpand(){this.state=ETreeItemState.EXPAND}collapse(){this.doCollapse()}expand(){this.doExpand()}getState(){return 0==this.items.length?"empty":this.state}}class CTreeData extends CNotifyChangeObject{constructor(){super(...arguments),this._items=new CList}get items(){return this._items}get length(){return this._items.length}idx(t){let e;for(let s=0;s<this._items.length;s++)if(t==this._items.get(s)){e=s;break}return e}doToData(t){super.doToData(t),function t(e,s){for(let a=0;a<s.length;a++){let i=s.getItem(a);if(null!=i){let s=new Array;e.push({value:i.value.value,state:i.state,items:s}),t(s,i.items)}}}(t,this)}doFromData(t){super.doFromData(t),this.clear(),function t(e,s){for(let a=0;a<e.length;a++){let i=e[a],n=s.addItem(i.value);n.state=i.state,t(i.items,n.items)}}(t,this)}doRemove(){this._items.remove(),super.doRemove()}doChange(t,e,s){null!=this.onChange&&this.onChange(this,t,e,s)}addItem(t){let e=new CTreeItem(t),s=this;return e.onChange=function(t,e,a){s.doChange("update",a,t)},this._items.add(e),this.doChange("add",this,e),e}insertItem(t,e){let s=new CTreeItem(e),a=this;return s.onChange=function(t,e,s){a.doChange("update",s,t)},this._items.insert(t,e),this.doChange("insert",this,s),s}deleteItem(t){let e;null!=(e="number"==typeof t?t:this.idx(t))&&(this._items.delete(e),this.doChange("delete",this,void 0))}getItem(t){if("number"==typeof t)return this._items.get(t);{let e=this.getIndexes().findIndex("index",t);if(e.length>0)return e[0].get(2).asObject}}get(t){return this.items.get(t)}setItem(t,e){let s=this;e.onChange=function(t,e,a){s.doChange("update",a,t)},this._items.set(t,e),this.doChange("update",this,e)}clear(){this._items.clear(),this.doChange("clear",this,void 0)}getIndex(t){let e=this.getIndexes().findIndex("treeitem",t);if(e.length>0)return e[0].get(0).asString}getIndexes(){let t=new CTableData(["index","treedata","treeitem"],["index","treedata","treeitem"]);return function e(s,a){for(let i=0;i<a.length;i++){let n="";n=""==s?i+"":s+","+i;let r=a.getItem(i);t.add([n,a,r]),null!=r&&e(n,r.items)}}("",this),t}toData(){let t=[];return this.doToData(t),t}getExpandedItems(){let t=new Array;function e(t,s,a,i){if(a.push({level:t,index:s,item:i}),i.state==ETreeItemState.EXPAND)for(let n=0;n<i.items.length;n++)e(t+1,s+","+n,a,i.items.get(n))}for(let s=0;s<this.items.length;s++)e(0,s+"",t,this.items.get(s));return t}expandAll(){let t=this.getIndexes();for(let e=0;e<t.length;e++){t.getRow(e).get(2).value.expand()}}collapseAll(){let t=this.getIndexes();for(let e=0;e<t.length;e++){t.getRow(e).get(2).value.collapse()}}}
+"use strict";
+async function fetchBody(url) {
+    let f = await fetch(url);
+    return await f.text();
+}
+async function postData(url, data = {}) {
+    let body = new URLSearchParams(data);
+    const response = await fetch(url, {
+        method: 'POST',
+        mode: 'cors',
+        cache: 'no-cache',
+        credentials: 'same-origin',
+        headers: {
+            //'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        redirect: 'follow',
+        referrerPolicy: 'no-referrer',
+        body: body,
+    });
+    return response.json();
+}
+class CTimeChecker {
+    constructor() {
+        this._startTime = new Date().getTime();
+        this._stopTime = new Date().getTime();
+    }
+    startChecker() {
+        this._startTime = new Date().getTime();
+    }
+    stopChecker() {
+        this._stopTime = new Date().getTime();
+        let tm = (this._stopTime - this._startTime) / 1000;
+        return tm;
+    }
+    static startChecker() {
+        CTimeChecker.sc = new Date().getTime();
+    }
+    static stopChecker() {
+        CTimeChecker.ed = new Date().getTime();
+        let tm = (CTimeChecker.ed - CTimeChecker.sc) / 1000;
+        return tm;
+    }
+}
+var ELanguageStringKind;
+(function (ELanguageStringKind) {
+    ELanguageStringKind[ELanguageStringKind["WORD"] = 0] = "WORD";
+    ELanguageStringKind[ELanguageStringKind["SENTENCE"] = 1] = "SENTENCE";
+})(ELanguageStringKind || (ELanguageStringKind = {}));
+class CLanguage {
+    static get localCode() {
+        return CLanguage._localCode;
+    }
+    static set localCode(value) {
+        if (this._localCode != value) {
+            this._localCode = value;
+            this.doChangeCountry();
+        }
+    }
+    static doChangeCountry() {
+        console.log("change country", this._localCode);
+        for (let n = 0; n < CSystem.controls.length; n++) {
+            let con = CSystem.controls.getRow(0).get(0).asObject;
+            con.doChangeCountry(CLanguage._localCode);
+        }
+    }
+    static count() {
+        return 104;
+    }
+    static getLanguage(index) {
+        return { code: this._codes[index], name: this._names[index], localName: this._localNames[index] };
+    }
+    static getLanguageFromCode(code) {
+        let idx = -1;
+        for (let n = 0; n < this._codes.length; n++) {
+            if (code == this._codes[n]) {
+                idx = n;
+                break;
+            }
+        }
+        if (idx == -1) {
+            return undefined;
+        }
+        else {
+            return { code: this._codes[idx], name: this._names[idx], localName: this._localNames[idx] };
+        }
+    }
+    static getLanguageFromCountry(country) {
+        let idx = -1;
+        for (let n = 0; n < this._names.length; n++) {
+            if (country == this._names[n]) {
+                idx = n;
+                break;
+            }
+        }
+        if (idx == -1) {
+            return undefined;
+        }
+        else {
+            return { code: this._codes[idx], name: this._names[idx], localName: this._localNames[idx] };
+        }
+    }
+    static loadDictionary(values) {
+        this._dictionary.clear();
+        for (let n = 0; n < values.length; n++) {
+            this._dictionary.set(values[n].key, values[n].value);
+        }
+    }
+    static getText(key) {
+        let t = this._dictionary.get(key);
+        return t;
+    }
+}
+CLanguage._localCode = "en";
+CLanguage._dictionary = new Map();
+CLanguage._codes = ["ko", "en", "gl", "gu", "el", "nl", "ne", "no", "da", "de", "lo", "lv", "la", "ru", "ro", "lb", "lt", "mr", "mi", "mk", "mg", "ml", "ms", "mt", "mn", "hmn", "my", "eu", "vi", "be", "bn", "bs", "bg", "sm", "sr", "ceb", "st", "so", "sn", "su", "sw", "sv", "gd", "es", "sk", "sl", "sd", "si", "ar", "hy", "is", "ht", "ga", "az", "af", "sq", "am", "et", "eo", "yo", "ur", "uz", "uk", "cy", "ig", "yi", "it", "id", "ja", "jw", "ka", "zu", "zh_ch", "zh_tw", "ny", "cs", "kk", "ca", "kn", "co", "xh", "ku", "hr", "km", "ky", "tl", "ta", "tg", "th", "tr", "te", "ps", "pa", "fa", "pt", "pl", "fr", "fy", "fi", "haw", "ha", "hu", "iw", "hi"];
+CLanguage._names = ["Korean", "English", "Galician", "Gujarati", "Greek", "Dutch", "Nepali", "Norwegian", "Danish", "German", "Lao", "Latvian", "Latin", "Russian", "Romanian", "Luxembourgish", "Lithuanian", "Marathi", "Maori", "Macedonian", "Malagasy", "Malayalam", "Malay", "Maltese", "Mongolian", "Mongolian", "Myanmar(Burmese)", "Basque", "Vietnamese", "Belarusian", "Bengali", "Bosnian", "Bulgarian", "Samoan", "Serbian", "CebuAno", "Sesotho", "Somali", "Shona", "Sundar", "Swahili", "Swedish", "ScottishGaelic", "Spanish", "Slovak", "Slovenian", "Sindhi", "Sinhalese", "Arabic", "Armenian", "Icelandic", "Haitian", "Irish", "Azerbaijani", "Afrikaans", "Albanian", "Amharic", "Estonian", "Esperanto", "Yoruba", "Urdu", "Uzbek", "Ukrainian", "Welsh", "Igbo", "Yiddish", "Italian", "Indonesian", "Japanese", "Javanese", "Georgian", "Zulu", "Chinese(Simplified)", "Chinese(Traditional)", "Chewara", "Czech", "Kazakh", "Catalan", "Kannada", "Corsican", "Cosa", "Kurdish", "Croatian", "Khmer", "Kyrgyz", "Tagalog", "Tamil", "Tajik", "Thai", "Turkish", "Telugu", "Pashto", "Punjabi", "Persian", "Portuguese", "Polish", "French", "Frisian", "Finnish", "HAWEI", "Hausa", "Hungarian", "Hebrew", "Hindi"];
+CLanguage._localNames = ["한국어", "English", "Galego", "ગુજરાતી", "Ελληνικά", "Nederlands", "नेपाली", "norsk", "dansk", "Deutsch", "ລາວ", "Latviešu valoda", "Latine", "русский", "românesc", "Lëtzebuergesch", "Lietuvių", "मराठी", "Maori", "Македонски", "Malagasy", "മലയാളം", "Melayu", "Malti", "Монгол хэл дээр", "Mongolian", "မြန်မာ (ဗမာ)", "Euskal", "Tiếng việt", "Беларуская", "বাঙালি", "Bosanski", "български", "Samoa", "Сербиан", "Cebu Ano", "Sesotho", "Somali", "Shona", "Sundar", "Kiswahili", "Svenska", "Gàidhlig na h-Alba", "Español", "slovenský", "Slovenščina", "سنڌي", "සිංහල", "العربية", "Հայերեն", "Íslensku", "Ayisyen", "Gaeilge", "Azərbaycan", "Afrikaans", "shqiptar", "አማርኛ", "Eesti keel", "Esperanto", "Yorùbá", "اردو", "O'zbek", "Українська", "Cymraeg", "Igbo", "Yiddish", "italiano", "Orang indonesia", "日本", "Jawa", "ქართული", "Zulu", "中文（简体）", "中文（繁體）", "Chiwara", "Česky", "Қазақша", "Català", "ಕನ್ನಡ", "Corsa", "Cosa", "Kurdî", "hrvatski", "ភាសាខ្មែរ", "Kirghiz", "Tagalog", "தமிழ்", "Тоҷикӣ", "ไทย", "Türk", "తెలుగు", "پښتو", "ਪੰਜਾਬੀ", "فارسی", "Português", "Polski", "Le français", "Frysk", "suomalainen", "HAWEI", "Hausa", "magyar", "עברית", "हिन्दी"];
+class CStringUtil {
+    static lpad(str, char, length) {
+        if (str.length >= length) {
+            return str;
+        }
+        let max = (length - str.length) / char.length;
+        for (let n = 0; n < max; n++) {
+            str = char + str;
+        }
+        return str;
+    }
+    static rpad(str, char, length) {
+        if (str.length >= length) {
+            return str;
+        }
+        let max = (length - str.length) / char.length;
+        for (let n = 0; n < max; n++) {
+            str += char;
+        }
+        return str;
+    }
+    static strToBase64(text) {
+        return btoa(unescape(encodeURIComponent(text)));
+    }
+    static strToUriBase64(text) {
+        let s = this.strToBase64(text);
+        s = this.replaceAll(s, "/", "@");
+        s = this.replaceAll(s, "+", "^");
+        s = this.replaceAll(s, "=", "*");
+        return s;
+    }
+    static strToUriBase64Prefix(head, text) {
+        let s = this.strToBase64(text);
+        s = this.replaceAll(s, "/", "@");
+        s = this.replaceAll(s, "+", "^");
+        s = this.replaceAll(s, "=", "*");
+        s = head + ";" + s;
+        return s;
+    }
+    static base64ToUriBase64(base64) {
+        let s = this.replaceAll(base64, "/", "@");
+        s = this.replaceAll(s, "+", "^");
+        s = this.replaceAll(s, "=", "*");
+        return s;
+    }
+    static base64ToUriBase64Prefix(head, base64) {
+        let s = this.replaceAll(base64, "/", "@");
+        s = this.replaceAll(s, "+", "^");
+        s = this.replaceAll(s, "=", "*");
+        s = head + ";" + s;
+        return s;
+    }
+    static uriBase64ToBase64(uribase) {
+        let s = this.replaceAll(uribase, "*", "=");
+        s = this.replaceAll(s, "^", "+");
+        s = this.replaceAll(s, "@", "/");
+        return s;
+    }
+    static base64ToStr(text) {
+        return decodeURIComponent(escape(atob(text)));
+    }
+    static UriBase64ToStr(text) {
+        let s = this.replaceAll(text, "*", "=");
+        s = this.replaceAll(s, "^", "+");
+        s = this.replaceAll(s, "@", "/");
+        return this.base64ToStr(s);
+    }
+    static setStringToText(s, delimiter) {
+        let re = "";
+        for (let v of s) {
+            if (re != "") {
+                re += delimiter;
+            }
+            re += v;
+        }
+        return re;
+    }
+    static setStringFromText(set, s, delimiter) {
+        set.clear();
+        let arr = s.split(delimiter);
+        for (let n = 0; n < arr.length; n++) {
+            set.add(arr[n]);
+        }
+    }
+    static replaceAll(str, org, chg) {
+        let arr = str.split(org);
+        let re = "";
+        for (let n = 0; n < arr.length; n++) {
+            if (n != 0)
+                re += chg;
+            re += arr[n];
+        }
+        return re;
+    }
+    static getTextWidth(font, text) {
+        if (CSystem.bufferingContext != undefined) {
+            font.setFont(CSystem.bufferingContext);
+            let arr = text.split("\n");
+            let re = 0;
+            for (let n = 0; n < arr.length; n++) {
+                re = CCalc.max(CSystem.bufferingContext.measureText(arr[n]).width, re);
+            }
+            return re;
+        }
+        else {
+            return -1;
+        }
+    }
+    static getTextHeight(font, text) {
+        let re = -1;
+        let arr = text.split("\n");
+        return font.fontSize * arr.length;
+    }
+    static getTextPathData(text, fontName) {
+        return new Promise(function (rs) {
+            /*if(CGlobal.userInfo != undefined) {
+                //text: string, size: string, bold: string, italic: string, underline: string, strikeout: string, fontname: string
+                let strm = new CStream()
+                strm.putString(text)
+                strm.putString("100")
+                strm.putString(fontName)
+                CGlobal.userInfo.sendSocketData("getTextData", strm, function(data) {
+                    console.log(data)
+                    data.getString()
+                    data.getString()
+                    let result = data.getString()
+                    if(result == "success") {
+                        data.getString()
+                        let rt = data.getString()
+                        rs(rt)
+                    }
+                })
+            }*/
+            rs("");
+        });
+    }
+    static getTextPathDataEach(text, fontName) {
+        return new Promise(function (rs) {
+            /*if(CGlobal.userInfo != undefined) {
+                //text: string, size: string, bold: string, italic: string, underline: string, strikeout: string, fontname: string
+                let strm = new CStream()
+                strm.putString(text)
+                strm.putString("100")
+                strm.putString(fontName)
+                CGlobal.userInfo.sendSocketData("getTextDataEach", strm, function(data) {
+                    console.log(data)
+                    data.getString()
+                    data.getString()
+                    let result = data.getString()
+                    if(result == "success") {
+                        data.getString()
+                        let rt = data.getString()
+                        rs(JSON.parse(rt))
+                    }
+                })
+            }*/
+            //rs("")
+        });
+    }
+    static sheetDataToMap(value) {
+        let data = new Map();
+        let area = { openidx: -1, closeidx: -1, isSearch: false };
+        let col = 0;
+        let row = 0;
+        let ms = "";
+        for (let n = 0; n < value.length; n++) {
+            ms += value[n];
+            if (!area.isSearch && value[n] == `"` && ms == `"`) {
+                area.isSearch = true;
+                area.openidx = n;
+                if (n == value.length - 1) {
+                    if (ms.charAt(ms.length - 1) == "\r")
+                        ms = CStringUtil.replaceAll(ms, "\r", "");
+                    data.set(col + "," + row, ms);
+                }
+                continue;
+            }
+            if (area.isSearch && value[n] == `"` && !(n + 1 < value.length && value[n + 1] == `"`) && !(n - 1 >= 0 && value[n - 1] == `"`)) {
+                area.isSearch = false;
+                area.closeidx = n;
+                ms = ms.substr(1, ms.length - 2);
+                ms = CStringUtil.replaceAll(ms, `""`, `"`);
+                if (n == value.length - 1) {
+                    if (ms.charAt(ms.length - 1) == "\r")
+                        ms = CStringUtil.replaceAll(ms, "\r", "");
+                    data.set(col + "," + row, ms);
+                }
+                continue;
+            }
+            if (!area.isSearch && value[n] == "\n") {
+                ms = ms.substr(0, ms.length - 1);
+                if (ms.charAt(ms.length - 1) == "\r")
+                    ms = CStringUtil.replaceAll(ms, "\r", "");
+                data.set(col + "," + row, ms);
+                row++;
+                col = 0;
+                ms = "";
+                continue;
+            }
+            if (!area.isSearch && value[n] == "\t") {
+                ms = ms.substr(0, ms.length - 1);
+                if (ms.charAt(ms.length - 1) == "\r")
+                    ms = CStringUtil.replaceAll(ms, "\r", "");
+                data.set(col + "," + row, ms);
+                col++;
+                ms = "";
+                continue;
+            }
+            if (n == value.length - 1) {
+                if (ms.charAt(ms.length - 1) == "\r")
+                    ms = CStringUtil.replaceAll(ms, "\r", "");
+                data.set(col + "," + row, ms);
+            }
+        }
+        return data;
+    }
+    static sha256(text) {
+        return new Promise(function (rs) {
+            const encoder = new TextEncoder();
+            const dataBuffer = encoder.encode(text);
+            crypto.subtle.digest('SHA-256', dataBuffer).then(hashBuffer => {
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                const hashHex = hashArray.map(b => ('00' + b.toString(16)).slice(-2)).join('');
+                rs(hashHex);
+            });
+        });
+    }
+}
+class CDatetime extends Date {
+    get year() {
+        return this.getFullYear();
+    }
+    get month() {
+        return this.getMonth() + 1;
+    }
+    get day() {
+        return this.getDate();
+    }
+    get dayOfWeek() {
+        return this.getDay();
+    }
+    get yearS() {
+        return this.getFullYear() + "";
+    }
+    get monthS() {
+        let mm = (this.getMonth() + 1) + "";
+        if (mm.length == 1)
+            mm = "0" + mm;
+        return mm;
+    }
+    get dayS() {
+        let d = this.getDate() + "";
+        if (d.length == 1)
+            d = "0" + d;
+        return d;
+    }
+    toString(isSimpleFormat = false) {
+        return CDatetime.toTimeString(this, isSimpleFormat);
+    }
+    getFirstDayDate(date) {
+        if (date != undefined) {
+            return new CDatetime(date.year, date.month - 1);
+        }
+        else {
+            return new CDatetime(this.year, this.month - 1);
+        }
+    }
+    getLastDayDate(date) {
+        if (date != undefined) {
+            return new CDatetime(date.year, date.month - 1, CDatetime.getLastDay(date.year, date.month));
+        }
+        else {
+            return new CDatetime(this.year, this.month - 1, CDatetime.getLastDay(this.year, this.month));
+        }
+    }
+    getLastDay() {
+        return CDatetime.getLastDay(this.getFullYear(), this.getMonth() + 1);
+    }
+    addSecond(sec) {
+        this.setSeconds(this.getSeconds() + sec);
+    }
+    addMinute(min) {
+        this.setMinutes(this.getMinutes() + min);
+    }
+    addHour(hour) {
+        this.setHours(this.getHours() + hour);
+    }
+    addDay(day) {
+        this.setDate(this.getDate() + day);
+    }
+    addMonth(mon) {
+        this.setMonth(this.getMonth() + mon);
+    }
+    addYear(year) {
+        this.setFullYear(this.getFullYear() + year);
+    }
+    static isLeapYear(yyyy) {
+        return (yyyy % 4 == 0 && yyyy % 100 != 0) || yyyy % 400 == 0;
+    }
+    static isValidMonth(mm) {
+        return mm >= 1 && mm <= 12;
+    }
+    static isValidDay(yyyy, mm, dd) {
+        if (!this.isValidMonth(mm))
+            return false;
+        let end = new Array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
+        if ((yyyy % 4 == 0 && yyyy % 100 != 0) || yyyy % 400 == 0) {
+            end[1] = 29;
+        }
+        return dd >= 1 && dd <= end[mm - 1];
+    }
+    static getLastDay(yyyy, mm) {
+        let end = new Array(31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31);
+        if ((yyyy % 4 == 0 && yyyy % 100 != 0) || yyyy % 400 == 0) {
+            end[1] = 29;
+        }
+        return end[mm - 1];
+    }
+    static toTimeString(date, isSimpleFormat = false, isDelMillisec = false) {
+        let year = date.getFullYear() + "";
+        let month = date.getMonth() + 1 + "";
+        let day = date.getDate() + "";
+        let hour = date.getHours() + "";
+        let min = date.getMinutes() + "";
+        let sec = date.getSeconds() + "";
+        let msec = date.getMilliseconds() + "";
+        if (("" + month).length == 1) {
+            month = "0" + month;
+        }
+        if (("" + day).length == 1) {
+            day = "0" + day;
+        }
+        if (("" + hour).length == 1) {
+            hour = "0" + hour;
+        }
+        if (("" + min).length == 1) {
+            min = "0" + min;
+        }
+        if (("" + sec).length == 1) {
+            sec = "0" + sec;
+        }
+        if (("" + msec).length == 1) {
+            msec = "00" + msec;
+        }
+        if (("" + msec).length == 2) {
+            msec = "0" + msec;
+        }
+        if (isSimpleFormat) {
+            return year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + sec + "." + msec;
+        }
+        else {
+            return year + "" + month + "" + day + "" + hour + "" + min + "" + sec + "" + msec;
+        }
+    }
+    static getCurrentTime() {
+        return this.toTimeString(new Date());
+    }
+    static getNowYear() {
+        return this.getCurrentTime().substr(0, 4);
+    }
+    static getNowMonth() {
+        return this.getCurrentTime().substr(4, 2);
+    }
+    static getNowDay() {
+        return this.getCurrentTime().substr(6, 2);
+    }
+    static getNowHour() {
+        return this.getCurrentTime().substr(8, 2);
+    }
+    static getNowMinute() {
+        return this.getCurrentTime().substr(10, 2);
+    }
+    static getNowSecond() {
+        return this.getCurrentTime().substr(12, 2);
+    }
+    static getDayOfWeek(date) {
+        return date.getDay();
+    }
+    static dateToYYYYMMDD(date, isSimpleFormat = false) {
+        let year = date.getFullYear() + "";
+        let month = date.getMonth() + 1 + "";
+        let day = date.getDate() + "";
+        if (("" + month).length == 1) {
+            month = "0" + month;
+        }
+        if (("" + day).length == 1) {
+            day = "0" + day;
+        }
+        if (isSimpleFormat) {
+            return year + "-" + month + "-" + day;
+        }
+        else {
+            return year + "" + month + "" + day;
+        }
+    }
+    static getYYYYMMDD(isSimpleFormat = false) {
+        let dt = new Date();
+        let year = dt.getFullYear() + "";
+        let month = dt.getMonth() + 1 + "";
+        let day = dt.getDate() + "";
+        if (("" + month).length == 1) {
+            month = "0" + month;
+        }
+        if (("" + day).length == 1) {
+            day = "0" + day;
+        }
+        if (isSimpleFormat) {
+            return year + "-" + month + "-" + day;
+        }
+        else {
+            return year + "" + month + "" + day;
+        }
+    }
+    static getYYYYMMDDHHMMSS(isSimpleFormat = false) {
+        let dt = new Date();
+        let year = dt.getFullYear() + "";
+        let month = dt.getMonth() + 1 + "";
+        let day = dt.getDate() + "";
+        let hour = dt.getHours() + "";
+        let min = dt.getMinutes() + "";
+        let sec = dt.getSeconds() + "";
+        if (("" + month).length == 1) {
+            month = "0" + month;
+        }
+        if (("" + day).length == 1) {
+            day = "0" + day;
+        }
+        if (("" + hour).length == 1) {
+            hour = "0" + hour;
+        }
+        if (("" + min).length == 1) {
+            min = "0" + min;
+        }
+        if (("" + sec).length == 1) {
+            sec = "0" + sec;
+        }
+        if (isSimpleFormat) {
+            return year + "-" + month + "-" + day + " " + hour + ":" + min + ":" + sec;
+        }
+        else {
+            return year + "" + month + "" + day + "" + hour + "" + min + "" + sec;
+        }
+    }
+}
+class CHSLA {
+    constructor(h, s, l, a = 1) {
+        this.h = h;
+        this.s = s;
+        this.l = l;
+        this.a = a;
+    }
+    toColor() {
+        return "hsla(" + this.h + "," + CCalc.cr(100, 0, 1, this.s, 2) + "%," + CCalc.cr(100, 0, 1, this.l, 2) + "%," + this.a + ")";
+    }
+}
+class CRGBA {
+    constructor(r, g, b, a = 1) {
+        this.r = r;
+        this.g = g;
+        this.b = b;
+        this.a = a;
+    }
+    toColor() {
+        return "rgba(" + this.r + "," + this.g + "," + this.b + "," + this.a + ")";
+    }
+    static getColor(r, g, b, a = 1) {
+        let aa = new CRGBA(r, g, b, a);
+        return aa.toColor();
+    }
+}
+class CColor {
+    constructor(color) {
+        this.r = 0;
+        this.g = 0;
+        this.b = 0;
+        this.a = 0;
+        //#칼라
+        if (color.indexOf("#") != -1) {
+            color = color.replace(/^\s*#|\s*$/g, '');
+            if (color.length == 3) {
+                color = color.replace(/(.)/g, '$1$1');
+            }
+            this.r = parseInt(color.substr(0, 2), 16),
+                this.g = parseInt(color.substr(2, 2), 16),
+                this.b = parseInt(color.substr(4, 2), 16),
+                this.a = 1;
+            //#rgba
+        }
+        else if (color.indexOf("rgb") != -1) {
+            if (color.indexOf("a") != -1) {
+                color = color.replace(" ", "").replace("rgba(", "").replace(")", "");
+                let arr = color.split(",");
+                this.r = parseInt(arr[0]);
+                this.g = parseInt(arr[1]);
+                this.b = parseInt(arr[2]);
+                this.a = parseFloat(arr[3]);
+            }
+            else {
+                color = color.replace(" ", "").replace("rgb(", "").replace(")", "");
+                let arr = color.split(",");
+                this.r = parseInt(arr[0]);
+                this.g = parseInt(arr[1]);
+                this.b = parseInt(arr[2]);
+                this.a = 1;
+            }
+        }
+        else if (color.indexOf("hsl") != -1) {
+            if (color.indexOf("a") != -1) {
+                color = color.replace(" ", "").replace("hsla(", "").replace(")", "");
+                let arr = color.split(",");
+                let hsla = new CHSLA(parseFloat(arr[0]), CCalc.cr(1, 0, 100, parseFloat(arr[1].replace("%", "")), 2), CCalc.cr(1, 0, 100, parseFloat(arr[2].replace("%", "")), 2), parseFloat(arr[3]));
+                let rgba = CColor.hslToRGB(hsla);
+                this.r = rgba.r;
+                this.g = rgba.g;
+                this.b = rgba.b;
+                this.a = rgba.a;
+            }
+            else {
+                color = color.replace(" ", "").replace("hsl(", "").replace(")", "");
+                let arr = color.split(",");
+                let hsla = new CHSLA(parseFloat(arr[0]), CCalc.cr(1, 0, 100, parseFloat(arr[1].replace("%", "")), 2), CCalc.cr(1, 0, 100, parseFloat(arr[2].replace("%", "")), 2));
+                let rgba = CColor.hslToRGB(hsla);
+                this.r = rgba.r;
+                this.g = rgba.g;
+                this.b = rgba.b;
+                this.a = 1;
+            }
+        }
+        else {
+            this.r = 255;
+            this.g = 255;
+            this.b = 255;
+            this.a = 1;
+        }
+    }
+    toColor() {
+        return "rgba(" + this.r + "," + this.g + "," + this.b + "," + this.a + ")";
+    }
+    toHSLAColor() {
+        return CColor.rgbToHSL(new CRGBA(this.r, this.g, this.b, this.a)).toColor();
+    }
+    toHSLA() {
+        return CColor.rgbToHSL(new CRGBA(this.r, this.g, this.b, this.a));
+    }
+    toRGBA() {
+        return new CRGBA(this.r, this.g, this.b, this.a);
+    }
+    toUint8Array() {
+        let re = new Uint8Array(4);
+        re[0] = this.r;
+        re[1] = this.g;
+        re[2] = this.b;
+        re[3] = Math.round(CCalc.cr(1, this.a, 255, 0, 4));
+        return re;
+    }
+    fromUint8Array(buffer) {
+        this.r = buffer[0];
+        this.g = buffer[1];
+        this.b = buffer[2];
+        this.a = CCalc.cr(1, 0, 255, buffer[3], 2);
+    }
+    static changeHue(rgb, degree) {
+        let col = new CColor(rgb);
+        let hsl = this.rgbToHSL(new CRGBA(col.r, col.g, col.b, col.a));
+        hsl.h += degree;
+        if (hsl.h > 360) {
+            hsl.h -= 360;
+        }
+        else if (hsl.h < 0) {
+            hsl.h += 360;
+        }
+        return this.hslToRGB(hsl).toColor();
+    }
+    static rgbToHSL(rgb) {
+        let r = rgb.r / 255, g = rgb.g / 255, b = rgb.b / 255, a = rgb.a, cMax = Math.max(r, g, b), cMin = Math.min(r, g, b), delta = cMax - cMin, l = (cMax + cMin) / 2, h = 0, s = 0;
+        if (delta == 0) {
+            h = 0;
+        }
+        else if (cMax == r) {
+            h = 60 * (((g - b) / delta) % 6);
+        }
+        else if (cMax == g) {
+            h = 60 * (((b - r) / delta) + 2);
+        }
+        else {
+            h = 60 * (((r - g) / delta) + 4);
+        }
+        if (h < 0)
+            h = 360 + h;
+        if (delta == 0) {
+            s = 0;
+        }
+        else {
+            s = (delta / (1 - Math.abs(2 * l - 1)));
+        }
+        return new CHSLA(h, s, l, a);
+    }
+    static hslToRGB(hsl) {
+        var h = hsl.h, s = hsl.s, l = hsl.l, a = hsl.a, c = (1 - Math.abs(2 * l - 1)) * s, x = c * (1 - Math.abs((h / 60) % 2 - 1)), m = l - c / 2, r, g, b;
+        if (h < 60) {
+            r = c;
+            g = x;
+            b = 0;
+        }
+        else if (h < 120) {
+            r = x;
+            g = c;
+            b = 0;
+        }
+        else if (h < 180) {
+            r = 0;
+            g = c;
+            b = x;
+        }
+        else if (h < 240) {
+            r = 0;
+            g = x;
+            b = c;
+        }
+        else if (h < 300) {
+            r = x;
+            g = 0;
+            b = c;
+        }
+        else {
+            r = c;
+            g = 0;
+            b = x;
+        }
+        r = this.normalize_rgb_value(r, m);
+        g = this.normalize_rgb_value(g, m);
+        b = this.normalize_rgb_value(b, m);
+        return new CRGBA(r, g, b, a);
+    }
+    static normalize_rgb_value(color, m) {
+        color = Math.floor((color + m) * 255);
+        if (color < 0) {
+            color = 0;
+        }
+        return color;
+    }
+    static rgbToHex(r, g, b) {
+        return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    }
+    static randomColor(min = 0, max = 255) {
+        return "rgba(" + CCalc.getRandom(min, max) + "," + CCalc.getRandom(min, max) + "," + CCalc.getRandom(min, max) + ",1)";
+    }
+}
+class CSequence {
+    static getSequence(prefix = "") {
+        let rt = "";
+        let n = CSequence._map.get(prefix);
+        if (n == undefined) {
+            CSequence._map.set(prefix, 1);
+            rt = prefix + "1";
+        }
+        else {
+            n++;
+            CSequence._map.set(prefix, n);
+            rt = prefix + n;
+        }
+        return rt;
+    }
+}
+CSequence._map = new Map();
+class CCalc {
+    static cr(i1, i2, i3, i4, iVar) {
+        let re = 0;
+        switch (iVar) {
+            case 1:
+                if (i4 == 0)
+                    throw new Error("zero devide");
+                re = i2 * i3 / i4;
+                break;
+            case 2:
+                if (i3 == 0)
+                    throw new Error("zero devide");
+                re = i1 * i4 / i3;
+                break;
+            case 3:
+                if (i2 == 0)
+                    throw new Error("zero devide");
+                re = i1 * i4 / i2;
+                break;
+            case 4:
+                if (i1 == 0)
+                    throw new Error("zero devide");
+                re = i2 * i3 / i1;
+                break;
+        }
+        return re;
+    }
+    static min(i1, i2) {
+        if (i1 < i2) {
+            return i1;
+        }
+        else {
+            return i2;
+        }
+    }
+    static max(i1, i2) {
+        if (i1 > i2) {
+            return i1;
+        }
+        else {
+            return i2;
+        }
+    }
+    static minMax(i1, i2) {
+        if (i1 < i2) {
+            return { min: i1, max: i2 };
+        }
+        else {
+            return { min: i2, max: i1 };
+        }
+    }
+    static minMaxPoint(point1, point2) {
+        let x = CCalc.minMax(point1.x, point2.x);
+        let y = CCalc.minMax(point1.y, point2.y);
+        return { min: new CPoint(x.min, y.min), max: new CPoint(x.max, y.max) };
+    }
+    static crRange2Value(range1Start, range1End, range1Value, range2Start, range2End) {
+        let ratio = (range1Value - range1Start) / (range1End - range1Start);
+        return ((range2End - range2Start) * ratio) + range2Start;
+    }
+    static getNowValue(startValue, stopValue, t) {
+        return ((stopValue - startValue) * t) + startValue;
+    }
+    static getRandom(min, max) {
+        return ((max - min) * Math.random()) + min;
+    }
+    static sind(angle) {
+        let r = angle * (Math.PI / 180);
+        return Math.sin(r);
+    }
+    static sindy(angle, radius) {
+        return this.sind(angle) * radius;
+    }
+    static cosd(angle) {
+        let r = angle * (Math.PI / 180);
+        return Math.cos(r);
+    }
+    static cosdx(angle, radius) {
+        return this.cosd(angle) * radius;
+    }
+    static isIn(value, values) {
+        let b = false;
+        for (let n = 0; n < values.length; n++) {
+            if (value == values[n]) {
+                b = true;
+                break;
+            }
+        }
+        return b;
+    }
+}
+class CByte {
+    static numberToUint8Array(value) {
+        let bf = new Uint8Array(8);
+        let view = new DataView(bf.buffer, 0);
+        view.setFloat64(0, value);
+        return bf;
+    }
+    static Uint8ArrayToNumber(buffer) {
+        let view = new DataView(buffer.buffer, 0);
+        return view.getFloat64(0);
+    }
+    static stringToUint8ArrayWithLength(value) {
+        let bfStr = new TextEncoder().encode(value);
+        let bf = new Uint8Array(8);
+        let buffer = new Uint8Array(bfStr.length + bf.length);
+        let view = new DataView(buffer.buffer, 0);
+        view.setFloat64(0, bfStr.length);
+        for (let n = 0; n < bfStr.length; n++) {
+            buffer[n + 8] = bfStr[n];
+        }
+        return buffer;
+    }
+    static Uint8ArrayToStringWithLength(buffer) {
+        let view = new DataView(buffer.buffer);
+        let cnt = view.getFloat64(0);
+        let bf = new Uint8Array(cnt);
+        for (let n = 0; n < cnt; n++) {
+            bf[n] = buffer[n + 8];
+        }
+        return new TextDecoder("utf-8").decode(bf);
+    }
+    static stringToUint8Array(value) {
+        return new TextEncoder().encode(value);
+    }
+    static Uint8ArrayToString(buffer) {
+        return new TextDecoder("utf-8").decode(buffer);
+    }
+    static booleanToUint8Array(value) {
+        let bf = new Uint8Array(1);
+        if (value) {
+            bf[0] = 1;
+        }
+        else {
+            bf[0] = 0;
+        }
+        return bf;
+    }
+    static Uint8ArrayToBoolean(buffer) {
+        if (buffer[0] == 1) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+    static colorToUint8Array(value) {
+        let c = new CColor(value);
+        let bf = c.toUint8Array();
+        return bf;
+    }
+    static Uint8ArrayToColor(buffer) {
+        let c = new CColor("#000000");
+        c.fromUint8Array(buffer);
+        return c.toColor();
+    }
+    static UintToUint8Array(value) {
+        let s = value.toString(16);
+        if (s.length % 2 == 1)
+            s = CStringUtil.lpad(s, "0", s.length + 1);
+        let bf = new Uint8Array(s.length / 2);
+        let idx = 0;
+        for (let n = 0; n < s.length; n++) {
+            if (n % 2 == 0) {
+                bf[idx] = parseInt(s.substr(n, 2), 16);
+                idx++;
+            }
+        }
+        return bf;
+    }
+    static Uint8ArrayToUint(buffer) {
+        let s = "";
+        for (let n = 0; n < buffer.length; n++) {
+            s += CStringUtil.lpad(buffer[n].toString(16), "0", 2);
+        }
+        return parseInt(s, 16);
+    }
+    static bufferCopy(src, start, count) {
+        let bf = new Uint8Array(count);
+        for (let n = 0; n < count; n++) {
+            bf[n] = src[n + start];
+        }
+        return bf;
+    }
+    static booleansToNumber(values) {
+        let re = 0;
+        let str = "";
+        for (let n = 0; n < values.length; n++) {
+            if (values[n]) {
+                str += "1";
+            }
+            else {
+                str += "0";
+            }
+        }
+        str = "1" + str;
+        re = parseInt(str, 2);
+        return re;
+    }
+    static numberToBooleans(value) {
+        let str = value.toString(2);
+        let re = [];
+        for (let n = 1; n < str.length; n++) {
+            if (str[n] == "1") {
+                re[n - 1] = true;
+            }
+            else {
+                re[n - 1] = false;
+            }
+        }
+        return re;
+    }
+    static number4bitToNumber(values) {
+        let re = 0;
+        let str = "";
+        for (let n = 0; n < values.length; n++) {
+            let v = values[n];
+            if (v > 15)
+                v = v % 16;
+            str += v.toString(16);
+        }
+        str = "1" + str;
+        re = parseInt(str, 16);
+        return re;
+    }
+    static numberTo4bitNumbers(value) {
+        let str = value.toString(16);
+        let re = [];
+        for (let n = 1; n < str.length; n++) {
+            re[n - 1] = parseInt(str[n], 16);
+        }
+        return re;
+    }
+    static number1byteToNumber(values) {
+        let bf = new Uint8Array(8);
+        for (let n = 0; n < 8; n++) {
+            let v = values[n];
+            if (v > 255)
+                v = v % 256;
+            bf[n] = v;
+        }
+        return this.Uint8ArrayToNumber(bf);
+    }
+    static numberTo1byteNumbers(value) {
+        let bf = this.numberToUint8Array(value);
+        let re = [];
+        for (let n = 0; n < bf.length; n++) {
+            re[n] = bf[n];
+        }
+        return re;
+    }
+    static bufferToHexString(buffer) {
+        let s = "";
+        for (let n = 0; n < buffer.length; n++) {
+            s += CStringUtil.lpad(buffer[n].toString(16), "0", 2);
+        }
+        return s;
+    }
+    static hexStringToBuffer(hex) {
+        let bf = new Uint8Array(hex.length / 2);
+        let idx = 0;
+        for (let n = 0; n < hex.length; n++) {
+            if (n % 2 == 0) {
+                bf[idx] = parseInt(hex.substr(n, 2), 16);
+                idx++;
+            }
+        }
+        return bf;
+    }
+    static bufferToBase64(buffer) {
+        var len = buffer.byteLength;
+        let s = "";
+        for (var i = 0; i < len; i++) {
+            s += String.fromCharCode(buffer[i]);
+        }
+        return btoa(s);
+    }
+    static base64ToBuffer(str) {
+        let byteString = atob(str);
+        let ab = new ArrayBuffer(byteString.length);
+        let bf = new Uint8Array(ab);
+        for (let i = 0; i < byteString.length; i++) {
+            bf[i] = byteString.charCodeAt(i);
+        }
+        return bf;
+    }
+}
+class CStream {
+    constructor() {
+        this._data = new Array();
+        this._position = 0;
+    }
+    get data() {
+        return this._data;
+    }
+    set data(value) {
+        this._data = value;
+    }
+    get position() {
+        return this._position;
+    }
+    set position(value) {
+        this._position = value;
+    }
+    get size() {
+        let re = 0;
+        for (let n = 0; n < this._data.length; n++) {
+            re += this._data[n].length;
+        }
+        return re;
+    }
+    get buffer() {
+        if (this._buffer == undefined || this._buffer.length != this.size) {
+            this._buffer = new Uint8Array(this.size);
+            let ps = 0;
+            for (let n = 0; n < this._data.length; n++) {
+                for (let i = 0; i < this._data[n].length; i++) {
+                    this._buffer[ps] = this._data[n][i];
+                    ps++;
+                }
+            }
+        }
+        return this._buffer;
+    }
+    putNumber(value) {
+        let bf = new Uint8Array(8);
+        let view = new DataView(bf.buffer, 0);
+        view.setFloat64(0, value);
+        this._data.push(bf);
+    }
+    putDate(value) {
+        this.putNumber(value.getTime());
+    }
+    putString(value) {
+        let bfStr = new TextEncoder().encode(value);
+        this.putNumber(bfStr.length);
+        this._data.push(bfStr);
+    }
+    putBoolean(value) {
+        let bf = new Uint8Array(1);
+        if (value) {
+            bf[0] = 0x01;
+        }
+        else {
+            bf[0] = 0x00;
+        }
+        this._data.push(bf);
+    }
+    putStream(value) {
+        this.putNumber(value.size);
+        let bfStream = new Uint8Array(value.size);
+        let orgPs = value.position;
+        value.first();
+        for (let n = 0; n < value.size; n++) {
+            bfStream[n] = value.buffer[n];
+        }
+        value.position = orgPs;
+        this._data.push(bfStream);
+    }
+    first() {
+        this._position = 0;
+    }
+    getNumber() {
+        let re = 0;
+        let view = new DataView(this.buffer.buffer);
+        re = view.getFloat64(this._position);
+        this._position += 8;
+        return re;
+    }
+    getDate() {
+        return new Date(this.getNumber());
+    }
+    getString() {
+        let cnt = this.getNumber();
+        let bf = new Uint8Array(cnt);
+        for (let n = 0; n < cnt; n++) {
+            bf[n] = this.buffer[this._position];
+            this._position++;
+        }
+        return new TextDecoder("utf-8").decode(bf);
+    }
+    getBoolean() {
+        let b = this.buffer[this._position] == 1;
+        this._position++;
+        return b;
+    }
+    getStream() {
+        let cnt = this.getNumber();
+        let bf = new Uint8Array(cnt);
+        for (let n = 0; n < cnt; n++) {
+            bf[n] = this.buffer[this._position];
+            this._position++;
+        }
+        let re = new CStream();
+        re.fromBuffer(bf);
+        return re;
+    }
+    fromBuffer(buffer) {
+        this.data = [];
+        let bf = new Uint8Array(buffer.length);
+        for (let n = 0; n < buffer.length; n++) {
+            bf[n] = buffer[n];
+        }
+        this.data.push(bf);
+    }
+    fromArrayBuffer(buffer) {
+        this.data = [];
+        let bf = new Uint8Array(buffer.byteLength);
+        for (let n = 0; n < buffer.byteLength; n++) {
+            let view = new DataView(buffer);
+            bf[n] = view.getUint8(n);
+        }
+        this.data.push(bf);
+    }
+    toBlob() {
+        return new Blob([this.buffer]);
+    }
+    async fromBlob(data) {
+        this.fromArrayBuffer(await data.arrayBuffer());
+    }
+    copyFrom(stream) {
+        this.fromBuffer(stream.buffer);
+    }
+    toBase64() {
+        return CByte.bufferToBase64(this.buffer);
+    }
+    toHexString() {
+        return CByte.bufferToHexString(this.buffer);
+    }
+    fromBase64(base64) {
+        this._data = [];
+        this._position = 0;
+        let bf = CByte.base64ToBuffer(base64);
+        this._data.push(bf);
+    }
+    saveAsLocalFile(filename) {
+        CSystem.saveBlobAsFile(this.toBlob(), filename);
+    }
+    loadFromLocalFile(fn) {
+        let self = this;
+        CSystem.loadFromFile(function (f) {
+            f.arrayBuffer().then(function (v) {
+                self.fromArrayBuffer(v);
+                fn(self);
+            });
+        });
+    }
+}
+class CQueue {
+    constructor(limitConut = -1) {
+        this._idx = -1;
+        this._position = -1;
+        this._data = new Map();
+        this._limitCount = -1;
+        this._limitCount = limitConut;
+    }
+    get limitCount() {
+        return this._limitCount;
+    }
+    set limitCount(value) {
+        this._limitCount = value;
+        if (value != -1) {
+            let cnt = value - this._data.size;
+            for (let n = 0; n < cnt; n++) {
+                this.pop();
+            }
+        }
+    }
+    get count() {
+        return this._data.size;
+    }
+    doToData(data) {
+        data = [];
+    }
+    push(value) {
+        this._idx++;
+        this._data.set(this._idx, value);
+        if (this._limitCount != -1 && this._data.size > this._limitCount)
+            this.pop();
+        return this._idx;
+    }
+    pop() {
+        if (this._data.size == 0)
+            throw new Error("empry data");
+        this._position++;
+        let rt = this._data.get(this._position);
+        this._data.delete(this._position);
+        if (rt != undefined) {
+            return rt;
+        }
+        else {
+            throw new Error("pop is undefined");
+        }
+    }
+    view(index) {
+        let rt = this._data.get(this._position + index + 1);
+        if (rt != undefined) {
+            return rt;
+        }
+        else {
+            throw new Error("pop is undefined");
+        }
+    }
+    loopView(proc) {
+        for (let n = 0; n < this.count; n++) {
+            proc(this.view(n));
+        }
+    }
+    clear() {
+        this._data.clear();
+        this._idx = -1;
+        this._position = -1;
+    }
+}
+class CEnum {
+    static toArray(e) {
+        let arr = Object.keys(e);
+        let rt = new Array();
+        for (let n = 0; n < arr.length; n++) {
+            let v = parseInt(arr[n]);
+            if (isNaN(v)) {
+                rt.push(arr[n]);
+            }
+        }
+        return rt;
+    }
+}
+class CClass {
+    get className() {
+        return this.constructor.name;
+    }
+    is(compare) {
+        return this instanceof compare;
+    }
+    as() {
+        return this;
+    }
+    getProperty(propertyName) {
+        let f = new Function("obj", "return obj." + propertyName);
+        return f(this);
+    }
+    setProperty(propertyName, value) {
+        if (typeof this.getProperty(propertyName) == "string") {
+            let fn = new Function("obj", "obj." + propertyName + " = `" + value + "`");
+            fn(this, value);
+        }
+        else {
+            let fn = new Function("obj", "obj." + propertyName + " = " + value);
+            fn(this, value);
+        }
+    }
+    instanceOf(className) {
+        let f = new Function("obj", "return obj instanceof " + className);
+        return f(this);
+    }
+    addProperties() {
+        let arr = new Array();
+        arr.push({ instance: this.className, propertyName: "className", readOnly: true, enum: [] });
+        return arr;
+    }
+    static hasFunction(dst, functionName) {
+        return dst[functionName] != undefined && dst[functionName] instanceof Function;
+    }
+    static objectUndefined(obj, propertyName) {
+        obj[propertyName] = undefined;
+    }
+    static createClass(className, constructArgs, fnProc) {
+        let s = "";
+        for (let n = 0; n < constructArgs.length; n++) {
+            if (n == 0) {
+                s += constructArgs[n];
+            }
+            else {
+                s += "," + constructArgs[n];
+            }
+        }
+        let fn = new Function(...constructArgs, "return new " + className + "(" + s + ");");
+        return fnProc(fn);
+    }
+    static instanceOf(instance, className) {
+        let f = new Function("obj", "return obj instanceof " + className);
+        return f(instance);
+    }
+    static async getClassHash(className) {
+        return await CStringUtil.sha256(new Function("return " + className + ".toString()")());
+    }
+}
+class CDataClass extends CClass {
+    doToData(data) { }
+    doFromData(data) { }
+    doRemove() {
+        if (this.onRemove != undefined) {
+            this.onRemove(this);
+        }
+    }
+    toData() {
+        let o = {};
+        this.doToData(o);
+        return o;
+    }
+    fromData(data) {
+        this.doFromData(data);
+    }
+    equal(src) {
+        return JSON.stringify(this.toData()) == JSON.stringify(src.toData());
+    }
+    copyFrom(src) {
+        this.fromData(src.toData());
+    }
+    remove() {
+        this.doRemove();
+    }
+    static putData(obj, propertyName, value, defaultValue = undefined, checkJsonValue = false) {
+        if (checkJsonValue) {
+            if (JSON.stringify(value) != JSON.stringify(defaultValue)) {
+                obj[propertyName] = value;
+            }
+        }
+        else {
+            if (value != defaultValue) {
+                obj[propertyName] = value;
+            }
+        }
+    }
+    static getData(obj, propertyName, defaultValue = undefined, checkJsonValue = false) {
+        if (obj[propertyName] != undefined) {
+            if (checkJsonValue) {
+                if (JSON.stringify(obj[propertyName]) != JSON.stringify(defaultValue)) {
+                    return obj[propertyName];
+                }
+                else {
+                    return defaultValue;
+                }
+            }
+            else {
+                if (obj[propertyName] != defaultValue) {
+                    return obj[propertyName];
+                }
+                else {
+                    return defaultValue;
+                }
+            }
+        }
+        else {
+            return defaultValue;
+        }
+    }
+}
+class CResourceClass extends CDataClass {
+    constructor() {
+        super(...arguments);
+        this._resource = "";
+    }
+    get resource() {
+        return this._resource;
+    }
+    set resource(value) {
+        if (value != "")
+            console.log(value);
+        if (this._resource != value) {
+            this._resource = value;
+            if (value != "") {
+                if (CSystem.resourcesLoad) {
+                    this.doResource();
+                }
+                else {
+                    CSystem.requestResources.push(this);
+                }
+            }
+        }
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "resource", this._resource, "");
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.resource = CDataClass.getData(data, "resource", "");
+    }
+    doResource() {
+        let data = CSystem.resources.get(this._resource);
+        if (data != undefined) {
+            this.fromData(data);
+            if (this.onResource != undefined) {
+                this.onResource(this);
+            }
+        }
+    }
+}
+class CNotifyChangeObject extends CResourceClass {
+    constructor() {
+        super(...arguments);
+        this._useChangeEvent = true;
+    }
+    get useChangeEvent() {
+        return this._useChangeEvent;
+    }
+    set useChangeEvent(value) {
+        this._useChangeEvent = value;
+    }
+}
+class CNotifyChangeNotifyObject extends CNotifyChangeObject {
+    doChange() {
+        if (this.onChange != undefined && this.useChangeEvent)
+            this.onChange(this);
+    }
+}
+class CNotifyChangeKindObject extends CNotifyChangeObject {
+    doChange(kind) {
+        if (this.onChange != undefined && this.useChangeEvent)
+            this.onChange(this, kind);
+    }
+}
+class ArrayString extends Array {
+}
+class ArrayNumber extends Array {
+}
+class CList extends CNotifyChangeKindObject {
+    constructor() {
+        super(...arguments);
+        this.__data = new Array();
+    }
+    static get CON_CHANGE_ADD() { return "a"; }
+    static get CON_CHANGE_INSERT() { return "i"; }
+    static get CON_CHANGE_DELETE() { return "d"; }
+    static get CON_CHANGE_SET() { return "s"; }
+    get length() {
+        return this.__data.length;
+    }
+    set length(value) {
+        this.__data.length = value;
+    }
+    get array() {
+        let arr = new Array();
+        for (let n = 0; n < this.__data.length; n++) {
+            arr.push(this.get(n));
+        }
+        return arr;
+    }
+    doRemove() {
+        this.__data = [];
+        super.doRemove();
+    }
+    add(item) {
+        this.__data.push(item);
+        this.doChange(CList.CON_CHANGE_ADD);
+    }
+    insert(index, item) {
+        this.__data.splice(index, 0, item);
+        this.doChange(CList.CON_CHANGE_INSERT);
+    }
+    delete(index, count = 1) {
+        let rt = this.__data.length > index && index >= 0;
+        this.__data.splice(index, count);
+        this.doChange(CList.CON_CHANGE_DELETE);
+        return rt;
+    }
+    get(index) {
+        return this.__data[index];
+    }
+    set(index, item) {
+        this.__data[index] = item;
+        this.doChange(CList.CON_CHANGE_SET);
+    }
+    deleteAll() {
+        for (let n = this.__data.length - 1; n >= 0; n--) {
+            this.delete(n);
+        }
+    }
+    clear() {
+        this.__data = [];
+        this.doChange(CList.CON_CHANGE_DELETE);
+    }
+    sort(compareFn) {
+        return this.__data.sort(compareFn);
+    }
+    swap(index1, index2) {
+        if (index1 < 0 || index1 > this.length - 1)
+            throw new Error("invalid index1");
+        if (index2 < 0 || index2 > this.length - 1)
+            throw new Error("invalid index2");
+        let tmp = this.get(index2);
+        this.set(index2, this.get(index1));
+        this.set(index1, tmp);
+    }
+    toData() {
+        let o = [];
+        this.doToData(o);
+        return o;
+    }
+    addProperties() {
+        let arr = super.addProperties();
+        for (let n = 0; n < this.length; n++) {
+            arr.push({ instance: this.get(n), propertyName: "__data[" + n + "]", readOnly: false, enum: [] });
+        }
+        return arr;
+    }
+}
+class CStringList extends CList {
+    doToData(data) {
+        super.doToData(data);
+        for (let n = 0; n < this.length; n++) {
+            data.push(this.get(n));
+        }
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.clear();
+        for (let n = 0; n < data.length; n++) {
+            this.add(data[n]);
+        }
+    }
+}
+class CNumberList extends CList {
+    doToData(data) {
+        super.doToData(data);
+        for (let n = 0; n < this.length; n++) {
+            data.push(this.get(n));
+        }
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.clear();
+        for (let n = 0; n < data.length; n++) {
+            this.add(data[n]);
+        }
+    }
+}
+class CMap extends CNotifyChangeObject {
+    constructor() {
+        super(...arguments);
+        this.__data = new Map();
+    }
+    static get CON_CHANGE_SET() { return "s"; }
+    static get CON_CHANGE_DELETE() { return "d"; }
+    static get CON_CHANGE_CLEAR() { return "c"; }
+    get size() {
+        return this.__data.size;
+    }
+    doRemove() {
+        this.__data.clear();
+        super.doRemove();
+    }
+    doChange(kind, key, value) {
+        if (this.onChange != undefined) {
+            this.onChange(this, kind, key, value);
+        }
+    }
+    set(key, value) {
+        let rt = this.__data.set(key, value);
+        this.doChange(CMap.CON_CHANGE_SET, key, value);
+        return rt;
+    }
+    get(key) {
+        return this.__data.get(key);
+    }
+    delete(key) {
+        let b = this.__data.delete(key);
+        this.doChange(CMap.CON_CHANGE_DELETE, key);
+        return b;
+    }
+    clear() {
+        this.__data.clear();
+        this.doChange(CMap.CON_CHANGE_CLEAR);
+    }
+    keys() {
+        let rt = this.__data.keys();
+        return rt;
+    }
+    values() {
+        let rt = this.__data.values();
+        return rt;
+    }
+    forEach(callbackfn) {
+        this.__data.forEach(callbackfn);
+    }
+    has(key) {
+        return this.__data.has(key);
+    }
+    toArray() {
+        let rt = new Array();
+        this.__data.forEach(function (value, key) {
+            let item = { key: key, value: value };
+            rt.push(item);
+        });
+        return rt;
+    }
+    toData() {
+        let o = [];
+        this.doToData(o);
+        return o;
+    }
+}
+class CNNMap extends CMap {
+    doToData(data) {
+        super.doToData(data);
+        this.forEach(function (v, k) {
+            data.push({ key: k, value: v });
+        });
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.clear();
+        for (let n = 0; n < data.length; n++) {
+            this.set(data[n].key, data[n].value);
+        }
+    }
+}
+class CSSMap extends CMap {
+    doToData(data) {
+        super.doToData(data);
+        this.forEach(function (v, k) {
+            data.push({ key: k, value: v });
+        });
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.clear();
+        for (let n = 0; n < data.length; n++) {
+            this.set(data[n].key, data[n].value);
+        }
+    }
+}
+class CSet extends CNotifyChangeKindObject {
+    constructor() {
+        super(...arguments);
+        this.__data = new Set();
+    }
+    static get CON_CHANGE_ADD() { return "a"; }
+    static get CON_CHANGE_DELETE() { return "d"; }
+    static get CON_CHANGE_CLEAR() { return "c"; }
+    get size() {
+        return this.__data.size;
+    }
+    doRemove() {
+        this.__data.clear();
+        super.doRemove();
+    }
+    add(value) {
+        let rt = this.__data.add(value);
+        this.doChange(CSet.CON_CHANGE_ADD);
+        return rt;
+    }
+    delete(value) {
+        let rt = this.__data.delete(value);
+        this.doChange(CSet.CON_CHANGE_DELETE);
+        return rt;
+    }
+    clear() {
+        this.__data.clear();
+        this.doChange(CSet.CON_CHANGE_CLEAR);
+    }
+    has(value) {
+        return this.__data.has(value);
+    }
+    forEach(callbackfn) {
+        this.__data.forEach(callbackfn);
+    }
+    toArray() {
+        let rt = new Array();
+        this.__data.forEach(function (v) {
+            rt.push(v);
+        });
+        return rt;
+    }
+    toData() {
+        let o = [];
+        this.doToData(o);
+        return o;
+    }
+}
+class CNotifyQueue extends CNotifyChangeKindObject {
+    constructor(limitConut = -1) {
+        super();
+        this._queue = new CQueue(limitConut);
+    }
+    static get CON_CHANGE_PUSH() { return "p"; }
+    static get CON_CHANGE_POP() { return "po"; }
+    static get CON_CHANGE_CLEAR() { return "c"; }
+    static get CON_CHANGE_LIMIT_COUNT() { return "l"; }
+    get limitCount() {
+        return this._queue.limitCount;
+    }
+    set limitCount(value) {
+        if (value != this._queue.limitCount) {
+            this._queue.limitCount = value;
+            this.doChange(CNotifyQueue.CON_CHANGE_LIMIT_COUNT);
+        }
+    }
+    get count() {
+        return this._queue.count;
+    }
+    doRemove() {
+        this._queue.clear();
+        super.doRemove();
+    }
+    push(value) {
+        let rt = this._queue.push(value);
+        this.doChange(CNotifyQueue.CON_CHANGE_PUSH);
+        return rt;
+    }
+    pop() {
+        let rt = this._queue.pop();
+        this.doChange(CNotifyQueue.CON_CHANGE_POP);
+        return rt;
+    }
+    view(index) {
+        let rt = this._queue.view(index);
+        return rt;
+    }
+    loopView(proc) {
+        for (let n = 0; n < this.count; n++) {
+            proc(this.view(n));
+        }
+    }
+    clear() {
+        this._queue.clear();
+        this.doChange(CNotifyQueue.CON_CHANGE_CLEAR);
+    }
+    toData() {
+        let o = [];
+        this.doToData(o);
+        return o;
+    }
+}
+class CStringSet extends CSet {
+    doToData(data) {
+        super.doToData(data);
+        this.forEach(function (value) {
+            data.push(value);
+        });
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.clear();
+        for (let n = 0; n < data.length; n++) {
+            this.add(data[n]);
+        }
+    }
+}
+class CVariable extends CNotifyChangeNotifyObject {
+    constructor(value) {
+        super();
+        if (value != undefined) {
+            this._data = value;
+        }
+    }
+    get type() {
+        return typeof this._data;
+    }
+    get asString() {
+        return this._data + "";
+    }
+    set asString(value) {
+        if (value != this._data) {
+            this._data = value;
+            this.doChange();
+        }
+    }
+    get asNumber() {
+        return this._data;
+    }
+    set asNumber(value) {
+        if (value != this._data) {
+            this._data = value;
+            this.doChange();
+        }
+    }
+    get asBoolean() {
+        return this._data;
+    }
+    set asBoolean(value) {
+        if (value != this._data) {
+            this._data = value;
+            this.doChange();
+        }
+    }
+    get asObject() {
+        return this._data;
+    }
+    set asObject(value) {
+        if (value != this._data) {
+            this._data = value;
+            this.doChange();
+        }
+    }
+    get value() {
+        return this._data;
+    }
+    doRemove() {
+        this._data = undefined;
+        super.doRemove();
+    }
+    asType() {
+        return this._data;
+    }
+    setType(value) {
+        if (value != this._data) {
+            this._data = value;
+            this.doChange();
+        }
+    }
+}
+class CRowData extends CNotifyChangeObject {
+    constructor(columnValues) {
+        super();
+        this._data = new Array();
+        let self = this;
+        if (columnValues != undefined) {
+            for (let n = 0; n < columnValues.length; n++) {
+                let v = new CVariable(columnValues[n]);
+                v["index"] = n;
+                v.onChange = function () {
+                    self.doChange(v["index"], v);
+                };
+                this._data.push(v);
+            }
+        }
+    }
+    get length() {
+        return this._data.length;
+    }
+    doToData(data) {
+        for (let n = 0; n < this._data.length; n++) {
+            if (typeof this._data[n].value == "object") {
+                if (this._data[n].value instanceof CDataClass) {
+                    data.push(this._data[n].value.toData());
+                }
+            }
+            else {
+                data.push(this._data[n].value);
+            }
+        }
+        console.log(data);
+    }
+    doFromData(data) {
+        this._data = [];
+        for (let n = 0; n < data.length; n++) {
+            let v = new CVariable(data[n]);
+            this._data.push(v);
+        }
+    }
+    doRemove() {
+        this._data = [];
+        super.doRemove();
+    }
+    doChange(index, column) {
+        if (this.useChangeEvent && this.onChange != undefined)
+            this.onChange(this, index, column);
+    }
+    get(index) {
+        return this._data[index];
+    }
+    getValues() {
+        let rt = [];
+        for (let n = 0; n < this._data.length; n++) {
+            rt.push(this._data[n].value);
+        }
+        return rt;
+    }
+    toData() {
+        let o = [];
+        this.doToData(o);
+        return o;
+    }
+}
+class CGridData extends CNotifyChangeObject {
+    constructor(columnCount, indexColumnIndexes, uniqueColumnIndexes) {
+        super();
+        this.__useIndex = false;
+        this._data = new CList();
+        this._indexes = new CMap();
+        let self = this;
+        this._columnCount = columnCount;
+        this._indexColumns = indexColumnIndexes;
+        this._uniqueColumns = uniqueColumnIndexes;
+        if (this._uniqueColumns != undefined) {
+            for (let n = 0; n < this._uniqueColumns.length; n++) {
+                let map = new CMap();
+                this._indexes.set(this._uniqueColumns[n], map);
+            }
+            if (this._uniqueColumns.length > 0)
+                this.__useIndex = true;
+        }
+        if (indexColumnIndexes != undefined) {
+            for (let n = 0; n < indexColumnIndexes.length; n++) {
+                let map = new CMap();
+                this._indexes.set(indexColumnIndexes[n], map);
+            }
+            if (indexColumnIndexes.length > 0)
+                this.__useIndex = true;
+        }
+        this._data.onChange = function (sender, kind) {
+            if (CList.CON_CHANGE_ADD == kind) {
+                self.doChange(CGridData.CON_CHANGE_ADD);
+            }
+            if (CList.CON_CHANGE_INSERT == kind) {
+                self.doChange(CGridData.CON_CHANGE_INSERT);
+            }
+            if (CList.CON_CHANGE_DELETE == kind) {
+                self.doChange(CGridData.CON_CHANGE_DELETE);
+            }
+            if (CList.CON_CHANGE_SET == kind) {
+                self.doChange(CGridData.CON_CHANGE_SET);
+            }
+        };
+    }
+    static get CON_CHANGE_ADD() { return "a"; }
+    static get CON_CHANGE_INSERT() { return "i"; }
+    static get CON_CHANGE_DELETE() { return "d"; }
+    static get CON_CHANGE_CLEAR() { return "c"; }
+    static get CON_CHANGE_SET() { return "s"; }
+    static get CON_CHANGE_DATA() { return "da"; }
+    get columnCount() {
+        return this._columnCount;
+    }
+    get data() {
+        return this._data;
+    }
+    get indexes() {
+        return this._indexes;
+    }
+    get length() {
+        return this._data.length;
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "columnCount", this._columnCount);
+        let dt = new Array();
+        for (let n = 0; n < this._data.length; n++) {
+            dt.push(this._data.get(n).toData());
+        }
+        CDataClass.putData(data, "data", dt, [], true);
+        CDataClass.putData(data, "indexColumns", this._indexColumns, undefined);
+        CDataClass.putData(data, "uniqueColumns", this._uniqueColumns, undefined);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.clear();
+        this.indexes.clear();
+        this._columnCount = CDataClass.getData(data, "columnCount", 0);
+        this._indexColumns = CDataClass.getData(data, "indexColumns", undefined);
+        this._uniqueColumns = CDataClass.getData(data, "uniqueColumns", undefined);
+        if (this._uniqueColumns != undefined) {
+            for (let n = 0; n < this._uniqueColumns.length; n++) {
+                let map = new CMap();
+                this._indexes.set(this._uniqueColumns[n], map);
+            }
+            if (this._uniqueColumns.length > 0)
+                this.__useIndex = true;
+        }
+        if (this._indexColumns != undefined) {
+            for (let n = 0; n < this._indexColumns.length; n++) {
+                let map = new CMap();
+                this._indexes.set(this._indexColumns[n], map);
+            }
+            if (this._indexColumns.length > 0)
+                this.__useIndex = true;
+        }
+        let dt = CDataClass.getData(data, "data", [], true);
+        for (let n = 0; n < dt.length; n++) {
+            this.add(dt[n]);
+        }
+    }
+    doRemove() {
+        this._data.remove();
+        this._indexes.remove();
+        this._indexColumns = undefined;
+        this._uniqueColumns = undefined;
+        super.doRemove();
+    }
+    doChange(kind, column, row) {
+        if (this.useChangeEvent && this.onChange != undefined) {
+            this.onChange(this, kind, column, row);
+        }
+    }
+    doAdd(value) {
+        let self = this;
+        if (this._uniqueColumns != undefined && this._uniqueColumns.length > 0) {
+            for (let n = 0; n < this._uniqueColumns.length; n++) {
+                let arr = this.findIndexRow(this._uniqueColumns[n], value[this._uniqueColumns[n]]);
+                if (arr.length > 0)
+                    throw new Error("column " + this._uniqueColumns[n] + " is duplicated");
+            }
+        }
+        let row = new CRowData(value);
+        row.onChange = function (sender, index, column) {
+            self.doChange(CGridData.CON_CHANGE_DATA, column, row);
+        };
+        if (this.__useIndex)
+            this.addIndex(this._data.length, row);
+        this._data.add(row);
+        if (this.useChangeEvent && this.onAdd != undefined) {
+            this.onAdd(this, row);
+        }
+        return row;
+    }
+    doInsert(index, value) {
+        let self = this;
+        if (this._uniqueColumns != undefined && this._uniqueColumns.length > 0) {
+            for (let n = 0; n < this._uniqueColumns.length; n++) {
+                let arr = this.findIndexRow(this._uniqueColumns[n], value[this._uniqueColumns[n]]);
+                if (arr.length > 0)
+                    throw new Error("column " + this._uniqueColumns[n] + " is duplicated");
+            }
+        }
+        let row = new CRowData(value);
+        row.onChange = function (sender, index, column) {
+            self.doChange(CGridData.CON_CHANGE_DATA, column, row);
+        };
+        if (this.__useIndex)
+            this.addIndex(index, row);
+        this._data.insert(index, row);
+        if (this.useChangeEvent && this.onInsert != undefined) {
+            this.onInsert(this, index, row);
+        }
+        return row;
+    }
+    doDelete(index) {
+        let b = this._data.delete(index);
+        if (this.__useIndex && b)
+            this.deleteIndex(index);
+        if (this.useChangeEvent && this.onDelete != undefined) {
+            this.onDelete(this);
+        }
+    }
+    doSet(index, value) {
+        let self = this;
+        if (this._uniqueColumns != undefined && this._uniqueColumns.length > 0) {
+            for (let n = 0; n < this._uniqueColumns.length; n++) {
+                let arr = this.findIndexRow(this._uniqueColumns[n], value[this._uniqueColumns[n]]);
+                if (arr.length > 0)
+                    throw new Error("column " + this._uniqueColumns[n] + " is duplicated");
+            }
+        }
+        let row = new CRowData(value);
+        row.onChange = function (sender, index, column) {
+            self.doChange(CGridData.CON_CHANGE_DATA, column, row);
+        };
+        if (this.__useIndex)
+            this.setIndex(index, row);
+        this._data.set(index, row);
+        if (this.useChangeEvent && this.onSet != undefined) {
+            this.onSet(this, index, row);
+        }
+        return row;
+    }
+    doClear() {
+        this._data.clear();
+        this._indexes.clear();
+        if (this.useChangeEvent && this.onClear != undefined) {
+            this.onClear(this);
+        }
+    }
+    addIndex(index, value) {
+        this._indexes.forEach(function (map, key) {
+            let v = value.get(key);
+            let set = map.get(v.value);
+            if (set == undefined) {
+                set = new Set();
+                map.set(v.value, set);
+            }
+            set.add({ index: index });
+        });
+    }
+    setIndex(index, value) {
+        this._indexes.forEach(function (map, key) {
+            map.forEach(function (set, key) {
+                set.delete({ index: index });
+            });
+        });
+        this.addIndex(index, value);
+    }
+    deleteIndex(index) {
+        this._indexes.forEach(function (map, key) {
+            let arr = new Array();
+            map.forEach(function (set, key) {
+                let v;
+                set.forEach(function (value) {
+                    if (value.index == index) {
+                        v = value;
+                    }
+                    if (value.index > index) {
+                        value.index--;
+                    }
+                });
+                set.delete(v);
+                if (set.size == 0) {
+                    arr.push(key);
+                }
+            });
+            for (let n = 0; n < arr.length; n++) {
+                map.delete(arr[n]);
+            }
+        });
+    }
+    add(value) {
+        return this.doAdd(value);
+    }
+    insert(index, value) {
+        return this.doInsert(index, value);
+    }
+    delete(index) {
+        if (typeof index == "number") {
+            this.doDelete(index);
+        }
+        else {
+            for (let n = 0; n < index.length; n++) {
+                this.doDelete(index[n]);
+            }
+        }
+    }
+    set(index, value) {
+        return this.doSet(index, value);
+    }
+    deleteAll() {
+        for (let n = this.length - 1; n >= 0; n--) {
+            this.delete(n);
+        }
+    }
+    clear() {
+        this.doClear();
+    }
+    getRow(index) {
+        return this._data.get(index);
+    }
+    getRowValues(index) {
+        let row = this._data.get(index);
+        return row.getValues();
+    }
+    getRowIndex(row) {
+        let rt = -1;
+        for (let n = 0; this._data.length; n++) {
+            if (this._data[n] == row) {
+                rt = n;
+                break;
+            }
+        }
+        return rt;
+    }
+    cell(column, row) {
+        if (row < this._data.length && column < this._data.get(row).length) {
+            return this._data.get(row).get(column);
+        }
+    }
+    setCell(column, row, value) {
+        if (row < this._data.length && column < this._data.get(row).length) {
+            if (typeof value == "boolean") {
+                this._data.get(row).get(column).asBoolean = value;
+            }
+            if (typeof value == "number") {
+                this._data.get(row).get(column).asNumber = value;
+            }
+            if (typeof value == "string") {
+                this._data.get(row).get(column).asString = value;
+            }
+            if (typeof value == "object") {
+                this._data.get(row).get(column).asObject = value;
+            }
+        }
+        else {
+            throw new Error("invalid column or row : " + column + "," + row);
+        }
+    }
+    findIndexRow(columnIndex, value) {
+        let rt = new Array();
+        let map = this._indexes.get(columnIndex);
+        if (map != undefined) {
+            let set = map.get(value);
+            if (set != undefined) {
+                set.forEach(function (value) {
+                    rt.push(value.index);
+                });
+            }
+        }
+        return rt;
+    }
+    findIndex(columnIndex, value) {
+        let arr = new Array();
+        let arridx = this.findIndexRow(columnIndex, value);
+        for (let n = 0; n < arridx.length; n++) {
+            arr.push(this._data.get(arridx[n]));
+        }
+        return arr;
+    }
+    sort(compareFn) {
+        return this._data.sort(compareFn);
+    }
+    sortColumn(columnIndex, isAsc = true) {
+        if (isAsc) {
+            return this.sort(function (a, b) {
+                let rt = 0;
+                if (a.get(columnIndex).value > b.get(columnIndex).value)
+                    rt = 1;
+                if (a.get(columnIndex).value < b.get(columnIndex).value)
+                    rt = -1;
+                return rt;
+            });
+        }
+        else {
+            return this.sort(function (a, b) {
+                let rt = 0;
+                if (a.get(columnIndex).value > b.get(columnIndex).value)
+                    rt = -1;
+                if (a.get(columnIndex).value < b.get(columnIndex).value)
+                    rt = 1;
+                return rt;
+            });
+        }
+    }
+    loopColumn(columnIndex, callback) {
+        for (let n = 0; n < this.length; n++) {
+            callback(this.getRow(n).get(columnIndex));
+        }
+    }
+}
+class CTableData extends CGridData {
+    constructor(columnNames, indexColumnNames, uniqueColumnNames) {
+        function getColumnIndex(name) {
+            let rt = -1;
+            for (let n = 0; n < columnNames.length; n++) {
+                if (columnNames[n] == name) {
+                    rt = n;
+                    break;
+                }
+            }
+            return rt;
+        }
+        let index;
+        if (indexColumnNames != undefined) {
+            index = new Array();
+            for (let n = 0; n < indexColumnNames.length; n++) {
+                let id = getColumnIndex(indexColumnNames[n]);
+                if (id != -1) {
+                    index.push(id);
+                }
+            }
+        }
+        let unique;
+        if (uniqueColumnNames != undefined) {
+            unique = new Array();
+            for (let n = 0; n < uniqueColumnNames.length; n++) {
+                let id = getColumnIndex(uniqueColumnNames[n]);
+                if (id != -1) {
+                    unique.push(id);
+                }
+            }
+        }
+        super(columnNames.length, index, unique);
+        this._columnNames = new Map();
+        for (let n = 0; n < columnNames.length; n++) {
+            this._columnNames.set(columnNames[n], n);
+        }
+        this._indexColumnNames = indexColumnNames;
+        this._uniqueColumnNames = uniqueColumnNames;
+    }
+    get columnNames() {
+        return this._columnNames;
+    }
+    get indexColumnNames() {
+        return this._indexColumnNames;
+    }
+    get uniqueColumnNames() {
+        return this._uniqueColumnNames;
+    }
+    doToData(data) {
+        super.doToData(data);
+        let arr = new Array();
+        this._columnNames.forEach(function (v, k) {
+            let item = { name: k, columnIndex: v };
+            arr.push(item);
+        });
+        CDataClass.putData(data, "columnNames", arr, [], true);
+        CDataClass.putData(data, "indexColumnNames", this._indexColumnNames, undefined);
+        CDataClass.putData(data, "uniqueColumnNames", this._uniqueColumnNames, undefined);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        let arr = CDataClass.getData(data, "columnNames", []);
+        this._columnNames.clear();
+        for (let n = 0; n < arr.length; n++) {
+            this._columnNames.set(arr[n].name, arr[n].columnIndex);
+        }
+        this._indexColumnNames = CDataClass.getData(data, "indexColumnNames", undefined);
+        this._uniqueColumnNames = CDataClass.getData(data, "uniqueColumnNames", undefined);
+    }
+    doRemove() {
+        this._columnNames.clear();
+        this._indexColumnNames = undefined;
+        this._uniqueColumnNames = undefined;
+        super.doRemove();
+    }
+    cell(columnNameOrIndex, row) {
+        if (typeof columnNameOrIndex == "string") {
+            let idx = this._columnNames.get(columnNameOrIndex);
+            if (idx != undefined) {
+                return this._data.get(row).get(idx);
+            }
+        }
+        else {
+            return this._data.get(row).get(columnNameOrIndex);
+        }
+    }
+    findIndexRow(columnNameOrIndex, value) {
+        let rt = new Array();
+        let columnIndex;
+        if (typeof columnNameOrIndex == "string") {
+            columnIndex = this._columnNames.get(columnNameOrIndex);
+        }
+        else {
+            columnIndex = columnNameOrIndex;
+        }
+        let map = this._indexes.get(columnIndex);
+        if (map != undefined) {
+            let set = map.get(value);
+            if (set != undefined) {
+                set.forEach(function (value) {
+                    rt.push(value.index);
+                });
+            }
+        }
+        return rt;
+    }
+    findIndex(columnNameOrIndex, value) {
+        let arr = new Array();
+        let columnIndex;
+        if (typeof columnNameOrIndex == "string") {
+            columnIndex = this._columnNames.get(columnNameOrIndex);
+        }
+        else {
+            columnIndex = columnNameOrIndex;
+        }
+        let arridx = this.findIndexRow(columnIndex, value);
+        for (let n = 0; n < arridx.length; n++) {
+            arr.push(this._data.get(arridx[n]));
+        }
+        return arr;
+    }
+    find(values) {
+        let arr;
+        for (let n = 0; n < values.length; n++) {
+            if (n > 0) {
+                if (arr.length == 0) {
+                    break;
+                }
+            }
+            let columnIndex = this._columnNames.get(values[n].columnName);
+            if (columnIndex != undefined) {
+                if (n == 0) {
+                    arr = this.findIndex(columnIndex, values[n].value);
+                }
+                else {
+                    for (let i = arr.length - 1; i >= 0; i--) {
+                        let rd = arr[i];
+                        if (rd.get(columnIndex).value != values[n].value) {
+                            arr.splice(i, 1);
+                        }
+                    }
+                }
+            }
+        }
+        return arr;
+    }
+}
+class CFlowItem extends CDataClass {
+    constructor(parent) {
+        super();
+        this._id = "";
+        this._object = undefined;
+        this._isFinish = false;
+        this._parent = parent;
+    }
+    get parent() {
+        return this._parent;
+    }
+    get id() {
+        return this._id;
+    }
+    set id(value) {
+        this._id = value;
+    }
+    get isFinish() {
+        return this._isFinish;
+    }
+    get object() {
+        return this._object;
+    }
+    set object(value) {
+        this._object = value;
+    }
+    doExecute() {
+        this._isFinish = false;
+        if (this.onExecute != undefined) {
+            this.onExecute(this);
+        }
+    }
+    doFinish() {
+        this._isFinish = true;
+        this.parent.doItemFinish(this);
+        if (this.onFinish != undefined) {
+            this.onFinish(this);
+        }
+    }
+    finish() {
+        this.doFinish();
+    }
+}
+class CFlowModel extends CDataClass {
+    constructor() {
+        super(...arguments);
+        this._items = new CSet();
+        this._idMap = new CMap();
+        this._previousItems = new CMap();
+        this._nextItems = new CMap();
+    }
+    get items() {
+        return this._items;
+    }
+    get previousItems() {
+        return this._previousItems;
+    }
+    get nextItems() {
+        return this._nextItems;
+    }
+    doCheckPrevious(item) {
+        if (this._previousItems.has(item)) {
+            let set = this._previousItems.get(item);
+            if (set != undefined) {
+                let re = true;
+                set.forEach(function (v) {
+                    if (v.isFinish == false) {
+                        re = false;
+                    }
+                });
+                if (re) {
+                    item.doExecute();
+                }
+            }
+        }
+    }
+    doItemFinish(item) {
+        if (this._nextItems.has(item)) {
+            let set = this._nextItems.get(item);
+            if (set != undefined) {
+                let self = this;
+                set.forEach(function (v) {
+                    self.doCheckPrevious(v);
+                });
+            }
+        }
+    }
+    doBeforeItemDelete(item) {
+        if (this.onBeforeItemDelete != undefined) {
+            this.onBeforeItemDelete(this, item);
+        }
+    }
+    getItem(id) {
+        return this._idMap.get(id);
+    }
+    addItem(id, exec = undefined) {
+        if (this._idMap.has(id)) {
+            return undefined;
+        }
+        else {
+            let fi = new CFlowItem(this);
+            fi.id = id;
+            if (exec != undefined) {
+                fi.onExecute = exec;
+            }
+            this._items.add(fi);
+            this._idMap.set(id, fi);
+            return fi;
+        }
+    }
+    deleteItem(id) {
+        let fi = this._idMap.get(id);
+        if (fi != undefined) {
+            this.doBeforeItemDelete(fi);
+            if (this._previousItems.has(fi)) {
+                this._previousItems.delete(fi);
+            }
+            if (this._nextItems.has(fi)) {
+                this._nextItems.delete(fi);
+            }
+            for (let v of this._previousItems.values()) {
+                if (v.has(fi)) {
+                    v.delete(fi);
+                }
+            }
+            for (let v of this._nextItems.values()) {
+                if (v.has(fi)) {
+                    v.delete(fi);
+                }
+            }
+            this._items.delete(fi);
+            this._idMap.delete(id);
+        }
+    }
+    addLink(preItem, nextItem) {
+        if (this._nextItems.get(preItem) == undefined) {
+            let set = new CSet();
+            set.add(nextItem);
+            this._nextItems.set(preItem, set);
+        }
+        else {
+            let set = this._nextItems.get(preItem);
+            if (set != undefined) {
+                set.add(nextItem);
+            }
+        }
+        if (this._previousItems.get(nextItem) == undefined) {
+            let set = new CSet();
+            set.add(preItem);
+            this._previousItems.set(nextItem, set);
+        }
+        else {
+            let set = this._previousItems.get(nextItem);
+            if (set != undefined) {
+                set.add(preItem);
+            }
+        }
+    }
+    deleteLink(preItem, nextItem) {
+        if (this._previousItems.has(nextItem)) {
+            let set = this._previousItems.get(nextItem);
+            if (set != undefined) {
+                if (set.has(preItem)) {
+                    set.delete(preItem);
+                }
+            }
+            this._previousItems.delete(nextItem);
+        }
+        if (this._nextItems.has(preItem)) {
+            let set = this._nextItems.get(preItem);
+            if (set != undefined) {
+                if (set.has(nextItem)) {
+                    set.delete(nextItem);
+                }
+            }
+            this._nextItems.delete(preItem);
+        }
+    }
+    startItems() {
+        let lst = new CList();
+        let self = this;
+        this._items.forEach(function (v) {
+            if (self._previousItems.has(v)) {
+                let set = self._previousItems.get(v);
+                if (set?.size == 0) {
+                    lst.add(v);
+                }
+            }
+            else {
+                lst.add(v);
+            }
+        });
+        return lst;
+    }
+    stopItems() {
+        let lst = new CList();
+        let self = this;
+        this._items.forEach(function (v) {
+            if (self._nextItems.has(v)) {
+                let set = self._nextItems.get(v);
+                if (set?.size == 0) {
+                    lst.add(v);
+                }
+            }
+            else {
+                lst.add(v);
+            }
+        });
+        return lst;
+    }
+    getFlowCount(item) {
+        let count = 0;
+        let self = this;
+        function path(it) {
+            if (self._nextItems.has(it)) {
+                let set = self._nextItems.get(it);
+                if (set != undefined) {
+                    set.forEach(function (v) {
+                        path(v);
+                    });
+                }
+            }
+            else {
+                count++;
+            }
+        }
+        path(item);
+        return count;
+    }
+    getFlow(item) {
+        let lst = new CList();
+        let self = this;
+        function path(it, str) {
+            if (self._nextItems.has(it)) {
+                let set = self._nextItems.get(it);
+                if (set != undefined) {
+                    set.forEach(function (v) {
+                        path(v, str + "," + v.id);
+                    });
+                }
+            }
+            else {
+                lst.add(str);
+            }
+        }
+        path(item, item.id);
+        return lst;
+    }
+    getAllFlow() {
+        let re = new CList();
+        let lst = this.startItems();
+        for (let n = 0; n < lst.length; n++) {
+            let l = this.getFlow(lst[n]);
+            for (let i = 0; i < l.length; i++) {
+                re.add(l.get(i));
+            }
+        }
+        return re;
+    }
+    getAllFlowCount() {
+        let count = 0;
+        let lst = this.startItems();
+        for (let n = 0; n < lst.length; n++) {
+            count += this.getFlowCount(lst[n]);
+        }
+        return count;
+    }
+}
+var ETreeItemState;
+(function (ETreeItemState) {
+    ETreeItemState[ETreeItemState["COLLAPSE"] = 0] = "COLLAPSE";
+    ETreeItemState[ETreeItemState["EXPAND"] = 1] = "EXPAND";
+})(ETreeItemState || (ETreeItemState = {}));
+class CTreeItem extends CNotifyChangeObject {
+    constructor(value) {
+        super();
+        this._value = new CVariable();
+        this._items = new CTreeData();
+        this._state = ETreeItemState.COLLAPSE;
+        let self = this;
+        this._value = new CVariable(value);
+        this._value.onChange = function () {
+            self.doChange(CTreeItem.CON_CHANGE_VALUE, undefined);
+        };
+        this._items.onChange = function (data, kind, item) {
+            self.doChange(CTreeItem.CON_CHANGE_ITEMS, self.items);
+        };
+    }
+    static get CON_CHANGE_STATE() { return "changeState"; }
+    static get CON_CHANGE_VALUE() { return "changeValue"; }
+    static get CON_CHANGE_ITEMS() { return "changeItems"; }
+    get value() {
+        return this._value;
+    }
+    get items() {
+        return this._items;
+    }
+    get state() {
+        return this._state;
+    }
+    set state(value) {
+        if (this._state != value) {
+            this._state = value;
+            this.doChange(CTreeItem.CON_CHANGE_STATE, undefined);
+        }
+    }
+    doRemove() {
+        this._value.remove();
+        this._items.remove();
+        super.doRemove();
+    }
+    doChange(kind, data) {
+        if (this.onChange != undefined)
+            this.onChange(this, kind, data);
+    }
+    doCollapse() {
+        this.state = ETreeItemState.COLLAPSE;
+    }
+    doExpand() {
+        this.state = ETreeItemState.EXPAND;
+    }
+    collapse() {
+        this.doCollapse();
+    }
+    expand() {
+        this.doExpand();
+    }
+    getState() {
+        if (this.items.length == 0) {
+            return "empty";
+        }
+        else {
+            return this.state;
+        }
+    }
+}
+class CTreeData extends CNotifyChangeObject {
+    constructor() {
+        super(...arguments);
+        this._items = new CList();
+    }
+    get items() {
+        return this._items;
+    }
+    get length() {
+        return this._items.length;
+    }
+    idx(item) {
+        let rt;
+        for (let n = 0; n < this._items.length; n++) {
+            if (item == this._items.get(n)) {
+                rt = n;
+                break;
+            }
+        }
+        return rt;
+    }
+    doToData(data) {
+        super.doToData(data);
+        function loop(dt, td) {
+            for (let n = 0; n < td.length; n++) {
+                let item = td.getItem(n);
+                if (item != undefined) {
+                    let arr = new Array();
+                    dt.push({ value: item.value.value, state: item.state, items: arr });
+                    loop(arr, item.items);
+                }
+            }
+        }
+        loop(data, this);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.clear();
+        function a(arr, dt) {
+            for (let n = 0; n < arr.length; n++) {
+                let d = arr[n];
+                let item = dt.addItem(d.value);
+                item.state = d.state;
+                a(d.items, item.items);
+            }
+        }
+        a(data, this);
+    }
+    doRemove() {
+        this._items.remove();
+        super.doRemove();
+    }
+    doChange(kind, data, value) {
+        if (this.onChange != undefined)
+            this.onChange(this, kind, data, value);
+    }
+    addItem(value) {
+        let item = new CTreeItem(value);
+        let self = this;
+        item.onChange = function (item, kind, data) {
+            self.doChange("update", data, item);
+        };
+        this._items.add(item);
+        this.doChange("add", this, item);
+        return item;
+    }
+    insertItem(index, value) {
+        let item = new CTreeItem(value);
+        let self = this;
+        item.onChange = function (item, kind, data) {
+            self.doChange("update", data, item);
+        };
+        this._items.insert(index, value);
+        this.doChange("insert", this, item);
+        return item;
+    }
+    deleteItem(indexOrItem) {
+        let idx;
+        if (typeof indexOrItem == "number") {
+            idx = indexOrItem;
+        }
+        else {
+            idx = this.idx(indexOrItem);
+        }
+        if (idx != undefined) {
+            this._items.delete(idx);
+            this.doChange("delete", this, undefined);
+        }
+    }
+    getItem(index) {
+        if (typeof index == "number") {
+            return this._items.get(index);
+        }
+        else {
+            let table = this.getIndexes();
+            let arr = table.findIndex("index", index);
+            if (arr.length > 0) {
+                return arr[0].get(2).asObject;
+            }
+        }
+    }
+    get(index) {
+        return this.items.get(index);
+    }
+    setItem(index, item) {
+        let self = this;
+        item.onChange = function (item, kind, data) {
+            self.doChange("update", data, item);
+        };
+        this._items.set(index, item);
+        this.doChange("update", this, item);
+    }
+    clear() {
+        this._items.clear();
+        this.doChange("clear", this, undefined);
+    }
+    getIndex(item) {
+        let table = this.getIndexes();
+        let arr = table.findIndex("treeitem", item);
+        if (arr.length > 0) {
+            return arr[0].get(0).asString;
+        }
+    }
+    getIndexes() {
+        let rt = new CTableData(["index", "treedata", "treeitem"], ["index", "treedata", "treeitem"]);
+        function setidx(idx, data) {
+            for (let n = 0; n < data.length; n++) {
+                let id = "";
+                if (idx == "") {
+                    id = n + "";
+                }
+                else {
+                    id = idx + "," + n;
+                }
+                let item = data.getItem(n);
+                rt.add([id, data, item]);
+                if (item != undefined) {
+                    setidx(id, item.items);
+                }
+            }
+        }
+        setidx("", this);
+        return rt;
+    }
+    toData() {
+        let o = [];
+        this.doToData(o);
+        return o;
+    }
+    getExpandedItems() {
+        let rt = new Array();
+        function set(level, parentIndex, arr, item) {
+            arr.push({ level: level, index: parentIndex, item: item });
+            if (item.state == ETreeItemState.EXPAND) {
+                for (let n = 0; n < item.items.length; n++) {
+                    set(level + 1, parentIndex + "," + n, arr, item.items.get(n));
+                }
+            }
+        }
+        for (let n = 0; n < this.items.length; n++) {
+            set(0, n + "", rt, this.items.get(n));
+        }
+        return rt;
+    }
+    expandAll() {
+        let data = this.getIndexes();
+        for (let n = 0; n < data.length; n++) {
+            let item = data.getRow(n).get(2).value;
+            item.expand();
+        }
+    }
+    collapseAll() {
+        let data = this.getIndexes();
+        for (let n = 0; n < data.length; n++) {
+            let item = data.getRow(n).get(2).value;
+            item.collapse();
+        }
+    }
+}

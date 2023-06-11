@@ -1,1 +1,106 @@
-﻿"use strict";class CTextEditorModel extends CPanel{constructor(t,a){super(t,a),this.toolbar=new CPanel(this),this.btnSave=new CButton(this.toolbar),this.btnOpen=new CButton(this.toolbar),this.btnJsonAlign=new CButton(this.toolbar),this.btnJsonNotAlign=new CButton(this.toolbar),this.textArea=new CTextArea(this);let e=this;this.btnSave.onClick=function(){},this.btnOpen.onClick=function(){},this.btnJsonAlign.onClick=function(){let t=JSON.parse(e.textArea.text);e.textArea.text=JSON.stringify(t,void 0,4)},this.btnJsonNotAlign.onClick=function(){let t=JSON.parse(e.textArea.text);e.textArea.text=JSON.stringify(t)}}doToData(t){super.doToData(t),CDataClass.putData(t,"toolbar",this.toolbar.toData(),{},!0),CDataClass.putData(t,"btnSave",this.btnSave.toData(),{},!0),CDataClass.putData(t,"btnOpen",this.btnOpen.toData(),{},!0),CDataClass.putData(t,"btnJsonAlign",this.btnJsonAlign.toData(),{},!0),CDataClass.putData(t,"btnJsonNotAlign",this.btnJsonNotAlign.toData(),{},!0),CDataClass.putData(t,"textArea",this.textArea.toData(),{},!0)}doFromData(t){super.doFromData(t),this.toolbar.fromData(CDataClass.getData(t,"toolbar",{},!0)),this.btnSave.fromData(CDataClass.getData(t,"btnSave",{},!0)),this.btnOpen.fromData(CDataClass.getData(t,"btnOpen",{},!0)),this.btnJsonAlign.fromData(CDataClass.getData(t,"btnJsonAlign",{},!0)),this.btnJsonNotAlign.fromData(CDataClass.getData(t,"btnJsonNotAlign",{},!0)),this.textArea.fromData(CDataClass.getData(t,"textArea",{},!0))}async loadFile(t){}async saveFile(t){}}class CTextEditorFrame extends CTextEditorModel{constructor(t,a){super(t,a),this.resource="textEditor.frame"}}class CTextEditor extends CWindowBlue{constructor(t,a){super(t,a),this.editor=new CTextEditorFrame(this.body),this.editor.position.align=EPositionAlign.CLIENT}}class CTextAreaFrameModel extends CPanel{constructor(){super(...arguments),this.btnOk=new CButton(this),this.textArea=new CTextArea(this)}doToData(t){super.doToData(t),CDataClass.putData(t,"btnOk",this.btnOk.toData(),{},!0),CDataClass.putData(t,"textArea",this.textArea.toData(),{},!0)}doFromData(t){super.doFromData(t),this.btnOk.fromData(CDataClass.getData(t,"btnOk",{},!0)),this.textArea.fromData(CDataClass.getData(t,"textArea",{},!0))}}class CTextAreaFrame extends CTextAreaFrameModel{constructor(t,a){super(t,a),this.resource="textArea.frame"}}class CAppTextEditor extends CWindowApplication{constructor(){super(),this.defaultWidth=1200,this.defaultHeight=600,this.appName="Text editor",this.editor=new CTextEditorFrame(this.mainWindow.body),this.editor.position.align=EPositionAlign.CLIENT}}
+"use strict";
+class CTextEditorModel extends CPanel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.toolbar = new CPanel(this);
+        this.btnSave = new CButton(this.toolbar);
+        this.btnOpen = new CButton(this.toolbar);
+        this.btnJsonAlign = new CButton(this.toolbar);
+        this.btnJsonNotAlign = new CButton(this.toolbar);
+        this.textArea = new CTextArea(this);
+        let self = this;
+        this.btnSave.onClick = function () {
+            self.saveFile();
+        };
+        this.btnOpen.onClick = function () {
+            self.loadFile();
+        };
+        this.btnJsonAlign.onClick = function () {
+            let o = JSON.parse(self.textArea.text);
+            self.textArea.text = JSON.stringify(o, undefined, 4);
+        };
+        this.btnJsonNotAlign.onClick = function () {
+            let o = JSON.parse(self.textArea.text);
+            self.textArea.text = JSON.stringify(o);
+        };
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "toolbar", this.toolbar.toData(), {}, true);
+        CDataClass.putData(data, "btnSave", this.btnSave.toData(), {}, true);
+        CDataClass.putData(data, "btnOpen", this.btnOpen.toData(), {}, true);
+        CDataClass.putData(data, "btnJsonAlign", this.btnJsonAlign.toData(), {}, true);
+        CDataClass.putData(data, "btnJsonNotAlign", this.btnJsonNotAlign.toData(), {}, true);
+        CDataClass.putData(data, "textArea", this.textArea.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.toolbar.fromData(CDataClass.getData(data, "toolbar", {}, true));
+        this.btnSave.fromData(CDataClass.getData(data, "btnSave", {}, true));
+        this.btnOpen.fromData(CDataClass.getData(data, "btnOpen", {}, true));
+        this.btnJsonAlign.fromData(CDataClass.getData(data, "btnJsonAlign", {}, true));
+        this.btnJsonNotAlign.fromData(CDataClass.getData(data, "btnJsonNotAlign", {}, true));
+        this.textArea.fromData(CDataClass.getData(data, "textArea", {}, true));
+    }
+    async loadFile() {
+        let self = this;
+        CSystem.loadFromFile(function (f) {
+            f.text().then(function (s) {
+                self.textArea.text = s;
+            });
+        });
+    }
+    async saveFile() {
+        let self = this;
+        CSystem.prompt("Save File", ["File name"], CSystem.browserCovers.get("cover"), function (arr) {
+            CSystem.saveAsFile(self.textArea.text, arr[0] + ".txt");
+        });
+    }
+}
+class CTextEditorFrame extends CTextEditorModel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.resource = "textEditor.frame";
+    }
+}
+class CTextEditor extends CWindowBlue {
+    constructor(parent, name) {
+        super(parent, name);
+        this.editor = new CTextEditorFrame(this.body);
+        this.editor.position.align = EPositionAlign.CLIENT;
+    }
+}
+class CTextAreaFrameModel extends CPanel {
+    constructor() {
+        super(...arguments);
+        this.btnOk = new CButton(this);
+        this.textArea = new CTextArea(this);
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "btnOk", this.btnOk.toData(), {}, true);
+        CDataClass.putData(data, "textArea", this.textArea.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.btnOk.fromData(CDataClass.getData(data, "btnOk", {}, true));
+        this.textArea.fromData(CDataClass.getData(data, "textArea", {}, true));
+    }
+}
+class CTextAreaFrame extends CTextAreaFrameModel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.resource = "textArea.frame";
+    }
+}
+class CAppTextEditor extends CWindowApplication {
+    constructor() {
+        super();
+        this.defaultWidth = 1200;
+        this.defaultHeight = 600;
+        this.appName = "Text editor";
+        //this.mainWindow.resource = "windowBlue.frame"
+        this.editor = new CTextEditorFrame(this.mainWindow.body);
+        this.editor.position.align = EPositionAlign.CLIENT;
+    }
+}

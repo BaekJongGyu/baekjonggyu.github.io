@@ -1,1 +1,3791 @@
-﻿"use strict";class CControl extends CNotifyChangeKindObject{constructor(t,e){super(),this._hasPointerEvent=!0,this._stopPropagation=new CStopPropagationInfo,this._tabIndex="",this._overflow="",this._opacity=1,this._enabled=!0,this._visible=!0,this._focused=!1,this._selected=!1,this._checked=!1,this._cursor="auto",this._initResource="",this._propertyName="",this._propertyDataKind="",this._focusedAnimatorResource="",this._enabledAnimatorResource="",this._visibleAnimatorResource="",this._resourceAnimatorResource="",this._selectAnimatorResource="",this._checkAnimatorResource="",this._removeAnimatorResource="";let i=this;this._id=CSequence.getSequence("control"),this._name=null!=e?e:CSequence.getSequence("unnamed");let o=!1;if(0!=CSystem.getControlsFromName(this.getNamPath()).length&&(o=!0),this._controlElement=document.createElement("control"),this._controlElement.setAttribute("className",this.className),this._controlElement.setAttribute("control-id",this.id),this._controlElement.setAttribute("control-name",this.name),this._controlElement.style.outline="none",this._controlElement.style.position="absolute",this._controlElement.style.margin="0px 0px 0px 0px",this._controlElement.style.padding="0px 0px 0px 0px",this._controlElement.style.border="none",this._controlElement.style.zIndex=CSystem.getZPlus()+"",this._controlElement.setAttribute("ondragstart","return false"),this._controlElement.setAttribute("onselectstart","return false"),this._controlElement.setAttribute("oncontextmenu","return false"),this._controlElement.setAttribute("class","scrollno"),this._controlElement.style.touchAction="auto",this._controlElement.style.userSelect="text",this._controlElement.style.pointerEvents="auto",this._controlElement.style.opacity=this._opacity+"",this._position=new CPosition,this._position.onChange=function(t,e){i.doChangePosition(e)},this._transform=new CTransform,this._transform.onChange=function(t,e){i.doChangeTrasform(e)},this._stopPropagation.onChange=function(){i.doChange(CControl.CON_CHANGE_STOP_PROPAGATION)},this._controlElement.addEventListener("focus",function(t){i.enabled&&(i.focused=!0)}),this._controlElement.addEventListener("blur",function(t){i.enabled&&(i.focused=!1)}),t instanceof CControl&&(this._parent=t,this._parent.controlElement.appendChild(this._controlElement)),t instanceof HTMLElement&&this.parentElement(t),this._filter=new CFilter(this._controlElement),o)throw this.remove(),new Error("invalid name : "+e);CSystem.controls.addControl(this),this.transform.setTransform(this._controlElement)}static get CON_CHANGE_NAME(){return"name"}static get CON_CHANGE_STOP_PROPAGATION(){return"changeStopPropagation"}static get CON_CHANGE_POSITION_PARENT(){return"changePositionParent"}static get CON_CHANGE_POSITION(){return"changePosition"}static get CON_CHANGE_HAS_POINTER(){return"changeHasPointer"}static get CON_CHANGE_TAB_INDEX(){return"changeTabIndex"}static get CON_CHANGE_OVER_FLOW(){return"changeOverFlow"}static get CON_CHANGE_OPACITY(){return"changeOpacity"}static get CON_CHANGE_ENABLED(){return"changeEnabled"}static get CON_CHANGE_VISIBLE(){return"changeVisible"}static get CON_CHANGE_FOCUS(){return"changeFocus"}static get CON_CHANGE_SELECTED(){return"changeSelect"}static get CON_CHANGE_CHECKED(){return"changeCheck"}static get CON_CHANGE_USE_DRAG(){return"changeUseDrag"}get focusedAnimatorResource(){return this._focusedAnimatorResource}set focusedAnimatorResource(t){this._focusedAnimatorResource=t,""!=t&&(this.focusedAnimationTrigger=CAnimator.animatorFromResource(this,t))}get enabledAnimatorResource(){return this._enabledAnimatorResource}set enabledAnimatorResource(t){this._enabledAnimatorResource=t,""!=t&&(this.enabledAnimationTrigger=CAnimator.animatorFromResource(this,t))}get visibleAnimatorResource(){return this._visibleAnimatorResource}set visibleAnimatorResource(t){this._visibleAnimatorResource=t,""!=t&&(this.visibleAnimationTrigger=CAnimator.animatorFromResource(this,t))}get resourceAnimatorResource(){return this._resourceAnimatorResource}set resourceAnimatorResource(t){this._resourceAnimatorResource=t,""!=t&&(this.resourceAnimationTrigger=CAnimator.animatorFromResource(this,t))}get selectAnimatorResource(){return this._selectAnimatorResource}set selectAnimatorResource(t){this._selectAnimatorResource=t,""!=t&&(this.selectAnimationTrigger=CAnimator.animatorFromResource(this,t))}get checkAnimatorResource(){return this._checkAnimatorResource}set checkAnimatorResource(t){this._checkAnimatorResource=t,""!=t&&(this.checkAnimationTrigger=CAnimator.animatorFromResource(this,t))}get removeAnimatorResource(){return this._removeAnimatorResource}set removeAnimatorResource(t){this._removeAnimatorResource=t,""!=t&&(this.removeAnimationTrigger=CAnimator.animatorFromResource(this,t))}get initResource(){return this._initResource}set initResource(t){this._initResource=t;let e=CSystem.resources.get(t);if(null!=e.init){new Function("control",e.init)(this)}}get propertyName(){return this._propertyName}set propertyName(t){this._propertyName!=t&&(this._propertyName=t,this.doChangePropertyName())}get propertyDataKind(){return this._propertyDataKind}set propertyDataKind(t){this._propertyDataKind!=t&&(this._propertyDataKind=t,this.doChangePropertyDataKind())}get parent(){return this._parent}set parent(t){null==t?(this._parent=t,null!=this.controlElement.parentElement&&this.controlElement.parentElement.removeChild(this.controlElement)):(t instanceof HTMLElement?t.appendChild(this.controlElement):(this._parent=t,null!=this.controlElement.parentElement&&this.controlElement.parentElement.removeChild(this.controlElement),t.controlElement.appendChild(this.controlElement)),this.doSetPosition())}get id(){return this._id}get name(){return this._name}get childs(){return CSystem.getChildControls(this)}get parents(){let t=new Array,e=this._parent;for(;null!=e;)t.unshift(e),e=e.parent;return t}get parentPositions(){let t=new Array,e=this._parent;for(;null!=e;)t.unshift(e._position),e=e.parent;return t}get brotherPositions(){let t=new Array,e=CSystem.getBroControls(this);for(let i=0;i<e.length;i++)e[i].visible&&t.push(e[i]._position);return t}get controlElement(){return this._controlElement}get elementBounds(){let t=new CRect,e=this._controlElement.getBoundingClientRect();return t.left=e.x,t.top=e.y,t.width=e.width,t.height=e.height,t}get position(){return this._position}set position(t){this._position=t;let e=this;this._position.onChange=function(t,i){e.doChangePosition(i)}}get transform(){return this._transform}get hasPointerEvent(){return this._hasPointerEvent}set hasPointerEvent(t){this._hasPointerEvent!=t&&(this._hasPointerEvent=t,this.doChange(CControl.CON_CHANGE_HAS_POINTER))}get cursor(){return this._cursor}set cursor(t){this._cursor!=t&&(this._cursor=t,this.controlElement.style.cursor=t)}get stopPropagation(){return this._stopPropagation}get tabIndex(){return this._tabIndex}set tabIndex(t){this._tabIndex!=t&&(this._tabIndex=t,this.doChange(CControl.CON_CHANGE_TAB_INDEX))}get overflow(){return this._overflow}set overflow(t){this._overflow!=t&&(this._overflow=t,this.doChange(CControl.CON_CHANGE_OVER_FLOW))}get opacity(){return this._opacity}set opacity(t){this._opacity!=t&&(this._opacity=t,this.doChange(CControl.CON_CHANGE_OPACITY))}get enabled(){return this._enabled}set enabled(t){this._enabled!=t&&(this._enabled=t,this.doChange(CControl.CON_CHANGE_ENABLED))}get visible(){return this._visible}set visible(t){this._visible!=t&&(this._visible=t,this.doChange(CControl.CON_CHANGE_VISIBLE,t))}get focused(){return this._focused}set focused(t){this._focused!=t&&(this._focused=t,t?this.controlElement.focus():this.controlElement.blur(),this.doChange(CControl.CON_CHANGE_FOCUS))}get hasFocus(){return""!=this.tabIndex}set hasFocus(t){t?this.hasFocus||(this.tabIndex=CSequence.getSequence("tabindex_").split("_")[1]):this.tabIndex=""}get selected(){return this._selected}set selected(t){this._selected!=t&&(this._selected=t,this.doChange(CControl.CON_CHANGE_SELECTED))}get checked(){return this._checked}set checked(t){this._checked!=t&&(this._checked=t,this.doChange(CControl.CON_CHANGE_CHECKED))}get filter(){return this._filter}doToData(t){super.doToData(t),CDataClass.putData(t,"className",this.className),CDataClass.putData(t,"position",this.position.toData(),{},!0),CDataClass.putData(t,"transform",this.transform.toData(),{},!0),CDataClass.putData(t,"hasPointerEvent",this.hasPointerEvent,!0),CDataClass.putData(t,"stopPropagation",this.stopPropagation.toData(),{},!0),CDataClass.putData(t,"tabIndex",this.tabIndex,""),CDataClass.putData(t,"overflow",this.overflow,""),CDataClass.putData(t,"opacity",this.opacity,1),CDataClass.putData(t,"filter",this.filter.toData(),{},!0),CDataClass.putData(t,"enabled",this.enabled,!0),CDataClass.putData(t,"visible",this.visible,!0),CDataClass.putData(t,"selected",this.selected,!1),CDataClass.putData(t,"checked",this.checked,!1),CDataClass.putData(t,"focusedAnimatorResource",this.focusedAnimatorResource,""),CDataClass.putData(t,"enabledAnimatorResource",this.enabledAnimatorResource,""),CDataClass.putData(t,"visibleAnimatorResource",this.visibleAnimatorResource,""),CDataClass.putData(t,"resourceAnimatorResource",this.resourceAnimatorResource,""),CDataClass.putData(t,"selectAnimatorResource",this.selectAnimatorResource,""),CDataClass.putData(t,"checkAnimatorResource",this.checkAnimatorResource,""),CDataClass.putData(t,"removeAnimatorResource",this.removeAnimatorResource,""),CDataClass.putData(t,"propertyName",this.propertyName,""),CDataClass.putData(t,"propertyDataKind",this.propertyDataKind,""),null!=this.focusedAnimationTrigger&&CDataClass.putData(t,"focusedAnimationTrigger",this.focusedAnimationTrigger.toData(),{},!0),null!=this.enabledAnimationTrigger&&CDataClass.putData(t,"enabledAnimationTrigger",this.enabledAnimationTrigger.toData(),{},!0),null!=this.visibleAnimationTrigger&&CDataClass.putData(t,"visibleAnimationTrigger",this.visibleAnimationTrigger.toData(),{},!0),null!=this.resourceAnimationTrigger&&CDataClass.putData(t,"resourceAnimationTrigger",this.resourceAnimationTrigger.toData(),{},!0),null!=this.selectAnimationTrigger&&CDataClass.putData(t,"selectAnimationTrigger",this.selectAnimationTrigger.toData(),{},!0),null!=this.checkAnimationTrigger&&CDataClass.putData(t,"checkAnimationTrigger",this.checkAnimationTrigger.toData(),{},!0)}doFromData(t){super.doFromData(t);let e=""!=this.propertyName,i=this.propertyName,o=this.propertyDataKind;this.position.fromData(CDataClass.getData(t,"position",{},!0)),this.transform.fromData(CDataClass.getData(t,"transform",{},!0)),this.hasPointerEvent=CDataClass.getData(t,"hasPointerEvent",!0),this.stopPropagation.fromData(CDataClass.getData(t,"stopPropagation",{},!0)),this.tabIndex=CDataClass.getData(t,"tabIndex",""),this.overflow=CDataClass.getData(t,"overflow",""),this.opacity=CDataClass.getData(t,"opacity",1),this.filter.fromData(CDataClass.getData(t,"filter",{},!0)),this.enabled=CDataClass.getData(t,"enabled",!0),this.visible=CDataClass.getData(t,"visible",!0),this.selected=CDataClass.getData(t,"selected",!1),this.checked=CDataClass.getData(t,"checked",!1),CAnimator.fromAnimatorData(t,this,"focusedAnimationTrigger"),CAnimator.fromAnimatorData(t,this,"enabledAnimationTrigger"),CAnimator.fromAnimatorData(t,this,"visibleAnimationTrigger"),CAnimator.fromAnimatorData(t,this,"resourceAnimationTrigger"),CAnimator.fromAnimatorData(t,this,"selectAnimationTrigger"),CAnimator.fromAnimatorData(t,this,"checkAnimationTrigger"),this.focusedAnimatorResource=CDataClass.getData(t,"focusedAnimatorResource",""),this.enabledAnimatorResource=CDataClass.getData(t,"enabledAnimatorResource",""),this.visibleAnimatorResource=CDataClass.getData(t,"visibleAnimatorResource",""),this.resourceAnimatorResource=CDataClass.getData(t,"resourceAnimatorResource",""),this.selectAnimatorResource=CDataClass.getData(t,"selectAnimatorResource",""),this.checkAnimatorResource=CDataClass.getData(t,"checkAnimatorResource",""),this.removeAnimatorResource=CDataClass.getData(t,"removeAnimatorResource",""),this.propertyName=CDataClass.getData(t,"propertyName",""),this.propertyDataKind=CDataClass.getData(t,"propertyDataKind",""),e&&(this.propertyName=i,this.propertyDataKind=o)}doResource(){let t=CSystem.resources.get(this._resource);if(null!=t){if(this.fromData(t),null!=t.init){new Function("control",t.init)(this)}if(null!=this.resourceAnimationTrigger){let t=this;this.resourceAnimationTrigger.onAfterAnimation=function(){null!=t.onResource&&t.onResource(this)},this.resourceAnimationTrigger.start()}else null!=this.onResource&&this.onResource(this)}}doSetPosition(){if(null!=this.parent){let t=CSystem.getBroVisiblePositions(this),e=CPosition.getAlignPixelBounds(this.parent.position,t,this.position);e.left==this.position.left&&e.top==this.position.top||(e.left!=this.position.left&&(this.position.leftNotNofity=e.left),e.top!=this.position.top&&(this.position.topNotNofity=e.top),this.doChangeOffset()),e.width==this.position.width&&e.height==this.position.height||(e.width!=this.position.width&&(this.position.widthNotNofity=e.width),e.height!=this.position.height&&(this.position.heightNotNofity=e.height),this.doChangeSize())}else this.doSetElementOffset(),this.doSetElementSize();null!=this.onSetPosition&&this.onSetPosition(this)}doSetElementOffset(){this.controlElement.style.left=this.position.left+"px",this.controlElement.style.top=this.position.top+"px",null!=this.onSetElementOffset&&this.onSetElementOffset(this)}doSetElementSize(){this.controlElement.style.width=this.position.width+"px",this.controlElement.style.height=this.position.height+"px",null!=this.onSetElementSize&&this.onSetElementSize(this)}doSetElementRotationCenter(){null!=this.onSetElementRotationCenter&&this.onSetElementRotationCenter(this)}doSetElementScale(){null!=this.onSetElementScale&&this.onSetElementScale(this)}doRemove(){null!=this.onBeforeRemove&&this.onBeforeRemove(this),this.controlElement.blur();let t=CSystem.getChildControls(this);for(let e=0;e<t.length;e++)t[e].remove();CSystem.controls.deleteControl(this),this.controlElement.remove(),null!=this.focusedAnimationTrigger&&this.focusedAnimationTrigger.remove(),this.focusedAnimationTrigger=void 0,null!=this.enabledAnimationTrigger&&this.enabledAnimationTrigger.remove(),this.enabledAnimationTrigger=void 0,null!=this.visibleAnimationTrigger&&this.visibleAnimationTrigger.remove(),this.visibleAnimationTrigger=void 0,null!=this.resourceAnimationTrigger&&this.resourceAnimationTrigger.remove(),this.resourceAnimationTrigger=void 0,null!=this.selectAnimationTrigger&&this.selectAnimationTrigger.remove(),this.selectAnimationTrigger=void 0,null!=this.checkAnimationTrigger&&this.checkAnimationTrigger.remove(),this.checkAnimationTrigger=void 0,null!=this.removeAnimationTrigger&&this.removeAnimationTrigger.remove(),this.removeAnimationTrigger=void 0,super.doRemove()}doChange(t,e){t==CControl.CON_CHANGE_POSITION&&this.doChangePosition(e),t==CControl.CON_CHANGE_HAS_POINTER&&this.doChangeHasPointer(),t==CControl.CON_CHANGE_TAB_INDEX&&this.controlElement.setAttribute("tabindex",this._tabIndex),t==CControl.CON_CHANGE_OVER_FLOW&&(this.controlElement.style.overflow=this._overflow),t==CControl.CON_CHANGE_OPACITY&&this.doChangeOpacity(),t==CControl.CON_CHANGE_ENABLED&&this.doChangeEnabled(),t==CControl.CON_CHANGE_VISIBLE&&this.doChangeVisible(e),t==CControl.CON_CHANGE_FOCUS&&this.doChangeFocus(),t==CControl.CON_CHANGE_CHECKED&&this.doChangeChecked(),t==CControl.CON_CHANGE_SELECTED&&this.doChangeSelected(),super.doChange(t)}doChangePosition(t,e){this.doChange(t,e);let i=!1,o=!1;if(null!=this.parent&&this.position.align!=EPositionAlign.NONE){let t=CSystem.getBroVisiblePositions(this),e=CPosition.getAlignPixelBounds(this.parent.position,t,this.position);e.left==this.position.left&&e.top==this.position.top||(e.left!=this.position.left&&(this.position.leftNotNofity=e.left,i=!0),e.top!=this.position.top&&(this.position.topNotNofity=e.top,i=!0),this.doChangeOffset()),e.width==this.position.width&&e.height==this.position.height||(e.width!=this.position.width&&(this.position.widthNotNofity=e.width,o=!0),e.height!=this.position.height&&(this.position.heightNotNofity=e.height,o=!0),this.doChangeSize())}t!=CPosition.CON_CHANGE_LEFT&&t!=CPosition.CON_CHANGE_TOP||i||this.doChangeOffset(),t!=CPosition.CON_CHANGE_WIDTH&&t!=CPosition.CON_CHANGE_HEIGHT||o||this.doChangeSize(),t==CPosition.CON_CHANGE_ALIGN&&this.doChangeAilgn(),t==CPosition.CON_CHANGE_ALIGN_INFO&&this.doChangeAlignInfo(t),t==CPosition.CON_CHANGE_PARENT_ALIGN_INFO&&this.doChangeParentAlignInfo(t),t==CPosition.CON_CHANGE_MARGINS&&this.doChangeMargins(),t==CPosition.CON_CHANGE_PADDING&&this.doChangePadding()}doChangeTrasform(t){this._transform.setTransform(this.controlElement),t!=CTransform.CON_CHANGE_PERSPECTIVE&&t!=CTransform.CON_CHANGE_PERSPECTIVE_Y&&t!=CTransform.CON_CHANGE_PERSPECTIVE_X||this.doChangePerspective(),t!=CTransform.CON_CHANGE_ROTATION_POINT_X&&t!=CTransform.CON_CHANGE_ROTATION_POINT_Y&&t!=CTransform.CON_CHANGE_ROTATION_POINT_Z||this.doChangeRotationCenter(),t!=CTransform.CON_CHANGE_SCALE_X&&t!=CTransform.CON_CHANGE_SCALE_Y&&t!=CTransform.CON_CHANGE_SCALE_Z||this.doChangeScale(),t!=CTransform.CON_CHANGE_ROTATE_X&&t!=CTransform.CON_CHANGE_ROTATE_Y&&t!=CTransform.CON_CHANGE_ROTATE_Z||this.doChangeRotate(),t!=CTransform.CON_CHANGE_TRANSLATE_X&&t!=CTransform.CON_CHANGE_TRANSLATE_Y&&t!=CTransform.CON_CHANGE_TRANSLATE_Z||this.doChangeTraslate(),null!=this.onChangeTrasform&&this.onChangeTrasform(this)}doChangeAilgn(){this.doSetElementOffset(),this.doSetElementSize(),this.childsPositionSet(),this.brothersPositionSet(),null!=this.onChangeAlign&&this.onChangeAlign(this)}doChangeAlignInfo(t,e){this.doSetElementOffset(),this.doSetElementSize(),this.childsPositionSet(),this.brothersPositionSet(),null!=this.onChangeAlignInfo&&this.onChangeAlignInfo(this)}doChangeParentAlignInfo(t){this.childsPositionSet(),null!=this.onChangeParentAlignInfo&&this.onChangeParentAlignInfo(this)}doChangeOpacity(){this._controlElement.style.opacity=this._opacity+"",null!=this.onChangeOpacity&&this.onChangeOpacity(this)}doChangeVisible(t){if(null!=this.visibleAnimationTrigger)if(t){let t=this;this.visibleAnimationTrigger.onAfterAnimation=function(){t.visible||(t._controlElement.style.display="none"),t.doShow(),t.brothersPositionSet()},this._controlElement.style.display="inline-block",this.triggerTrue(this.visibleAnimationTrigger)}else{let t=this;this.visibleAnimationTrigger.onAfterAnimation=function(){t.visible||(t._controlElement.style.display="none"),t.doHide(),t.brothersPositionSet()},this.triggerFalse(this.visibleAnimationTrigger)}else t?(this._controlElement.style.display="inline-block",this.doShow(),this.brothersPositionSet()):(this._controlElement.style.display="none",this.doHide(),this.brothersPositionSet());null!=this.onChangeVisible&&this.onChangeVisible(this)}doChangeEnabled(){this.enabled||this.focused&&(this.controlElement.blur(),this.focused=!1),null!=this.enabledAnimationTrigger&&(this.enabled?this.triggerTrue(this.enabledAnimationTrigger):this.triggerFalse(this.enabledAnimationTrigger)),null!=this.onChangeEnabled&&this.onChangeEnabled(this)}doChangeFocus(){null!=this.focusedAnimationTrigger&&(this.focused?this.triggerTrue(this.focusedAnimationTrigger):this.triggerFalse(this.focusedAnimationTrigger)),null!=this.onChangeFocus&&this.onChangeFocus(this)}doChangeSelected(){null!=this.selectAnimationTrigger&&(this.selected?this.triggerTrue(this.selectAnimationTrigger):this.triggerFalse(this.selectAnimationTrigger)),null!=this.onChangeSelected&&this.onChangeSelected(this)}doChangeChecked(){null!=this.checkAnimationTrigger&&(this.checked?this.triggerTrue(this.checkAnimationTrigger):this.triggerFalse(this.checkAnimationTrigger)),null!=this.onChangeChecked&&this.onChangeChecked(this)}doChangeOffset(){this.doSetElementOffset(),null!=this.onChangeOffset&&this.onChangeOffset(this)}doChangeSize(){if(this.doSetElementSize(),this.childsPositionSet(),this.brothersPositionSet(),this.position.align==EPositionAlign.RIGHT||this.position.align==EPositionAlign.BOTTOM){if(null!=this.parent){let t=CSystem.getBroVisiblePositions(this),e=CPosition.getAlignPixelBounds(this.parent.position,t,this.position);e.left==this.position.left&&e.top==this.position.top||(e.left!=this.position.left&&(this.position.leftNotNofity=e.left),e.top!=this.position.top&&(this.position.topNotNofity=e.top)),e.width==this.position.width&&e.height==this.position.height||(e.width!=this.position.width&&(this.position.widthNotNofity=e.width),e.height!=this.position.height&&(this.position.heightNotNofity=e.height))}this.doSetElementOffset(),this.doSetElementSize()}null!=this.onChangeSize&&this.onChangeSize(this)}doChangeRotationCenter(){this.doSetElementRotationCenter(),null!=this.onChangeRotationCenter&&this.onChangeRotationCenter(this)}doChangeRotate(){null!=this.onChangeRotate&&this.onChangeRotate(this)}doChangeScale(){null!=this.onChangeScale&&this.onChangeScale(this)}doChangeTraslate(){null!=this.onChangeTranslate&&this.onChangeTranslate(this)}doChangePerspective(){null!=this.onChangePerspective&&this.onChangePerspective(this)}doChangeMargins(){this.doSetElementOffset(),this.doSetElementSize(),this.brothersPositionSet(),this.childsPositionSet(),null!=this.onChangeMargins&&this.onChangeMargins(this)}doChangePadding(){this.childsPositionSet(),null!=this.onChangePadding&&this.onChangePadding(this)}doChangeHasPointer(){this._hasPointerEvent?this._controlElement.style.pointerEvents="auto":this._controlElement.style.pointerEvents="none",null!=this.onChangeHasPointer&&this.onChangeHasPointer(this)}doChangeCountry(t){null!=this.onChangeCountry&&this.onChangeCountry(this,t)}doChangePropertyName(){null!=this.onChangePropertyName&&this.onChangePropertyName(this)}doChangePropertyDataKind(){null!=this.onChangePropertyDataKind&&this.onChangePropertyDataKind(this)}doHide(){null!=this.onHide&&this.onHide(this)}doShow(){null!=this.onShow&&this.onShow(this)}triggerTrue(t){t.isAnimate()?t.reverse():t.start()}triggerFalse(t){t.isAnimate()?t.isLoop?t.cancel():t.reverse():t.invert()}childsPositionSet(){let t=CSystem.getChildControls(this);for(let e=0;e<t.length;e++)t[e].position.align!=EPositionAlign.NONE&&t[e].doSetPosition()}brothersPositionSet(){let t=CSystem.getBroControls(this);for(let e=0;e<t.length;e++)t[e].position.align!=EPositionAlign.NONE&&t[e].doSetPosition()}remove(){if(null!=this.removeAnimationTrigger){let t=this;this.removeAnimationTrigger.onAfterAnimation=function(){t.doRemove()},this.removeAnimationTrigger.start()}else this.doRemove()}parentElement(t){t.appendChild(this._controlElement)}getParents(){let t=new Array,e=this.parent;for(;null!=e;)t.unshift(e),e=e.parent;return t}getNamPath(){let t=this.getParents(),e="";for(let i=0;i<t.length;i++)e+=0==i?t[i].name:"."+t[i].name;return e+=""==e?this.name:"."+this.name,this.name}getElementBounds(){return this._controlElement.getBoundingClientRect()}bringToFront(){this.controlElement.style.zIndex=CSystem.getZPlus()+""}sendToBack(){this.controlElement.style.zIndex=CSystem.getZMinus()+""}addProperties(){let t=super.addProperties();return t.push({instance:this.focusedAnimationTrigger,propertyName:"focusedAnimationTrigger",readOnly:!1,enum:[]}),t.push({instance:this.enabledAnimationTrigger,propertyName:"enabledAnimationTrigger",readOnly:!1,enum:[]}),t.push({instance:this.visibleAnimationTrigger,propertyName:"visibleAnimationTrigger",readOnly:!1,enum:[]}),t.push({instance:this.resourceAnimationTrigger,propertyName:"resourceAnimationTrigger",readOnly:!1,enum:[]}),t.push({instance:this.selectAnimationTrigger,propertyName:"selectAnimationTrigger",readOnly:!1,enum:[]}),t.push({instance:this.checkAnimationTrigger,propertyName:"checkAnimationTrigger",readOnly:!1,enum:[]}),t.push({instance:this.removeAnimationTrigger,propertyName:"removeAnimationTrigger",readOnly:!1,enum:[]}),t}static createControl(t,e="",i=0,o=0,s=50,n=50){let r=new CControl(t,e);return r.position.left=i,r.position.top=o,r.position.width=s,r.position.height=n,r}static getControl(t,e=""){let i,o=new Array;i=""==e?CSystem.controls.findControls([{columnName:"name",value:t}]):CSystem.controls.findControls([{columnName:"name",value:t},{columnName:"className",value:e}]);for(let t=0;t<i.length;t++)o.push(i[t].control);return o}static controlFromResource(t,e){let i=CSystem.resources.get(t);if(null!=i&&null!=i.className){let o=new Function("return new "+i.className+"()")();return o.resource=t,o.parent=e,o}}static controlFromData(t,e){if(null!=t.className){let i=new Function("return new "+t.className+"()")();return i.fromData(t),i.parent=e,i}}}class CLayout extends CControl{constructor(t,e){super(t,e),this.hasPointerEvent=!1}doResource(){super.doResource(),this.hasPointerEvent=!1}}var EControlMoveKind;!function(t){t[t.NONE=0]="NONE",t[t.MOVE=1]="MOVE",t[t.RESIZE_LT=2]="RESIZE_LT",t[t.RESIZE_T=3]="RESIZE_T",t[t.RESIZE_RT=4]="RESIZE_RT",t[t.RESIZE_L=5]="RESIZE_L",t[t.RESIZE_R=6]="RESIZE_R",t[t.RESIZE_LB=7]="RESIZE_LB",t[t.RESIZE_B=8]="RESIZE_B",t[t.RESIZE_RB=9]="RESIZE_RB"}(EControlMoveKind||(EControlMoveKind={}));class CPointerEventControl extends CControl{constructor(t,e){super(t,e),this.__pressedThisPoints=new CList,this.__pressedBubblePoints=new CList,this.__thisDownPoint=new CPoint(0,0),this.__preMovePoint=new CPoint(0,0),this.__downMovePoint=new CPoint(0,0),this.__pressedThisDown=!1,this.__preClick={time:CTime.now,count:0},this.__maxCount=0,this.__moveKind=EControlMoveKind.NONE,this.__moveResizeDown={offsetx:0,offsety:0,pagex:0,pagey:0,left:0,top:0,width:0,height:0},this._isEnter=!1,this._isOver=!1,this._repeatClickTime=300,this._usePointerCapture=!1,this._useDragAndDrop=!1,this._useDragAndDropCancel=!1,this._dragCatchControlNames=new CStringSet,this._dragCatchControlPropertyNames=new CStringSet,this._dragIconResource="",this._hintResource="",this._hint="",this._useHint=!1,this._hintPosition="auto",this._hintFixOffset=new CPoint(0,0),this._useMove=!1,this.lockMoveX=!1,this.lockMoveY=!1,this.magneticPoints=new Array,this._magneticLength=0,this._useResize=!1,this._moveAreaLength=-1,this._resizeAreaLength=5,this._ignoreResizeKind=new Set,this.resizeMinWidth=50,this.resizeMinHeight=50,this._useFingerCursor=!1,this._fingerCursorLength=30,this._fingerCursors=new Array,this._fingerCursorResource="",this._thisPointerDownAnimatorResource="",this._thisPointerUpAnimatorResource="",this._overAnimatorResource="",this._enterAnimatorResource="",this._clickAnimatorResource="",this._doubleClickAnimatorResource="",this._dragStartAnimatorResource="",this._dragCancelAnimatorResource="",this._dragCatchAnimatorResource="",this._keyDownAnimatorResource="",this.useMoveClick=!1;let i=this;this._stopPropagation.onChange=function(){i.doChange(CControl.CON_CHANGE_STOP_PROPAGATION)},this._controlElement.addEventListener("keydown",function(t){i.enabled&&i.doKeyDown(t),i._stopPropagation.keyboard&&t.stopPropagation()}),this._controlElement.addEventListener("keypress",function(t){i.enabled&&i.doKeyPress(t),i._stopPropagation.keyboard&&t.stopPropagation()}),this._controlElement.addEventListener("keyup",function(t){i.enabled&&i.doKeyUp(t),i._stopPropagation.keyboard&&t.stopPropagation()}),this._controlElement.addEventListener("pointerdown",function(t){i.enabled&&(i.doPointerDown(t),i._stopPropagation.down&&t.stopPropagation())}),this._controlElement.addEventListener("pointermove",function(t){i.enabled&&(i.doPointerMove(t),i._stopPropagation.move&&t.stopPropagation())}),this._controlElement.addEventListener("pointerup",function(t){i.enabled&&(i.doPointerUp(t),i._stopPropagation.up&&t.stopPropagation())}),this._controlElement.addEventListener("pointercancel",function(t){i.enabled&&(i.doPointerCancel(t),i._stopPropagation.cancel&&t.stopPropagation())}),this._controlElement.addEventListener("pointerover",function(t){i.enabled&&(i._isOver=!0,i.doPointerOver(t),i._stopPropagation.over&&t.stopPropagation())}),this._controlElement.addEventListener("pointerout",function(t){i.enabled&&(i._isOver=!1,i.doPointerOut(t),i._stopPropagation.out&&t.stopPropagation())}),this._controlElement.addEventListener("pointerenter",function(t){i.enabled&&(i._isEnter=!0,i.doPointerEnter(t),i._stopPropagation.enter&&t.stopPropagation())}),this._controlElement.addEventListener("pointerleave",function(t){i.enabled&&(i._isEnter=!1,i.doPointerLeave(t),i._stopPropagation.leave&&t.stopPropagation())}),this._controlElement.addEventListener("wheel",function(t){i.enabled&&i.doWheel(t),i._stopPropagation.wheel&&t.stopPropagation()}),this.__pressedThisPoints.onChange=function(){i.enabled&&i.doChangeThisPressedPoints()},this.__pressedBubblePoints.onChange=function(){i.enabled&&i.doChangeBubblePressedPoints()}}static get CON_CHANGE_THIS_PRESSED_POINTS(){return"changeThisPressedPoints"}static get CON_CHANGE_BUBBLE_PRESSED_POINTS(){return"changeButtlePressedPoints"}static get CON_STOP_PROPAGATION_POINTER_DOWN(){return"stopPropagationPointerDown"}static get CON_STOP_PROPAGATION_POINTER_MOVE(){return"stopPropagationPointerMove"}static get CON_STOP_PROPAGATION_POINTER_UP(){return"stopPropagationPointerUp"}static get CON_STOP_PROPAGATION_POINTER_CANCEL(){return"stopPropagationPointerCancel"}static get CON_CHANGE_DRAG_ICON(){return"changeDragIcon"}static get CON_CHANGE_DRAG_CATCH_ICON(){return"changeDragCatchIcon"}static get CON_CHANGE_USE_HINT(){return"changeUseHint"}static get CON_CHANGE_HINT(){return"changeHint"}static get CON_CHANGE_HINT_RESOURCE(){return"changeHint"}static get CON_CHANGE_USE_MOVE(){return"changeUseMove"}static get CON_CHANGE_USE_RESIZE(){return"changeUseResize"}static get CON_CHANGE_MOVE_AREA_LENGTH(){return"changeMoveAreaLength"}static get CON_CHANGE_RESIZE_AREA_LENGTH(){return"changeResizeAreaLength"}static get CON_CHANGE_USE_POINTER_CAPTURE(){return"changeUsePointerCapture"}get magneticLength(){return this._magneticLength}set magneticLength(t){this._magneticLength=t}get moveKind(){return this.__moveKind}get thisPointerDownAnimatorResource(){return this._thisPointerDownAnimatorResource}set thisPointerDownAnimatorResource(t){this._thisPointerDownAnimatorResource=t,""!=t&&(this.thisPointerDownAnimationTrigger=CAnimator.animatorFromResource(this,t))}get thisPointerUpAnimatorResource(){return this._thisPointerUpAnimatorResource}set thisPointerUpAnimatorResource(t){this._thisPointerUpAnimatorResource=t,""!=t&&(this.thisPointerUpAnimationTrigger=CAnimator.animatorFromResource(this,t))}get overAnimatorResource(){return this._overAnimatorResource}set overAnimatorResource(t){this._overAnimatorResource=t,""!=t&&(this.overAnimationTrigger=CAnimator.animatorFromResource(this,t))}get enterAnimatorResource(){return this._enterAnimatorResource}set enterAnimatorResource(t){this._enterAnimatorResource=t,""!=t&&(this.enterAnimationTrigger=CAnimator.animatorFromResource(this,t))}get clickAnimatorResource(){return this._clickAnimatorResource}set clickAnimatorResource(t){this._clickAnimatorResource=t,""!=t&&(this.clickAnimationTrigger=CAnimator.animatorFromResource(this,t))}get doubleClickAnimatorResource(){return this._doubleClickAnimatorResource}set doubleClickAnimatorResource(t){this._doubleClickAnimatorResource=t,""!=t&&(this.doubleClickAnimationTrigger=CAnimator.animatorFromResource(this,t))}get dragStartAnimatorResource(){return this._dragStartAnimatorResource}set dragStartAnimatorResource(t){this._dragStartAnimatorResource=t,""!=t&&(this.dragStartAnimationTrigger=CAnimator.animatorFromResource(this,t))}get dragCancelAnimatorResource(){return this._dragCancelAnimatorResource}set dragCancelAnimatorResource(t){this._dragCancelAnimatorResource=t,""!=t&&(this.dragCancelAnimationTrigger=CAnimator.animatorFromResource(this,t))}get dragCatchAnimatorResource(){return this._dragCatchAnimatorResource}set dragCatchAnimatorResource(t){this._dragCatchAnimatorResource=t,""!=t&&(this.dragCatchAnimationTrigger=CAnimator.animatorFromResource(this,t))}get keyDownAnimatorResource(){return this._keyDownAnimatorResource}set keyDownAnimatorResource(t){this._keyDownAnimatorResource=t,""!=t&&(this.keyDownAnimationTrigger=CAnimator.animatorFromResource(this,t))}get pressedThisPoints(){return this.__pressedThisPoints}get pressedBubblePoints(){return this.__pressedBubblePoints}get repeatClickTime(){return this._repeatClickTime}set repeatClickTime(t){this._repeatClickTime=t}get isEnter(){return this._isEnter}get isOver(){return this._isOver}get isDrag(){return CSystem.dragControls.has(this)}get isPress(){return this.__pressedThisPoints.length>0}get dragCatchControlNames(){return this._dragCatchControlNames}get dragCatchControlPropertyNames(){return this._dragCatchControlPropertyNames}get useDragAndDrop(){return this._useDragAndDrop}set useDragAndDrop(t){this._useDragAndDrop!=t&&(this._useDragAndDrop=t,this.doChange(CControl.CON_CHANGE_USE_DRAG))}get useDragAndDropCancel(){return this._useDragAndDropCancel}set useDragAndDropCancel(t){this._useDragAndDropCancel!=t&&(this._useDragAndDropCancel=t,this.doChange("useDragAndDropCancel"))}get dragIconResource(){return this._dragIconResource}set dragIconResource(t){this._dragIconResource!=t&&(this._dragIconResource=t,this.doChange(CPointerEventControl.CON_CHANGE_DRAG_ICON))}get hintResource(){return this._hintResource}set hintResource(t){this._hintResource!=t&&(this._hintResource=t,this.doChange(CPointerEventControl.CON_CHANGE_HINT_RESOURCE))}get hint(){return this._hint}set hint(t){this._hint!=t&&(this._hint=t,this.doChange(CPointerEventControl.CON_CHANGE_HINT))}get useHint(){return this._useHint}set useHint(t){this._useHint!=t&&(this._useHint=t,this.doChange(CPointerEventControl.CON_CHANGE_USE_HINT))}get hintPosition(){return this._hintPosition}set hintPosition(t){this._hintPosition=t}get hintFixOffset(){return this._hintFixOffset}get useMove(){return this._useMove}set useMove(t){this._useMove!=t&&(this._useMove=t,this.doChange(CPointerEventControl.CON_CHANGE_USE_MOVE))}get useResize(){return this._useResize}set useResize(t){this._useResize!=t&&(this._useResize=t,this.doChange(CPointerEventControl.CON_CHANGE_USE_RESIZE))}get moveAreaLength(){return this._moveAreaLength}set moveAreaLength(t){this._moveAreaLength!=t&&(this._moveAreaLength=t,this.doChange(CPointerEventControl.CON_CHANGE_MOVE_AREA_LENGTH))}get resizeAreaLength(){return this._resizeAreaLength}set resizeAreaLength(t){this._resizeAreaLength!=t&&(this._resizeAreaLength=t,this.doChange(CPointerEventControl.CON_CHANGE_RESIZE_AREA_LENGTH))}get ignoreResizeKind(){return this._ignoreResizeKind}get usePointerCapture(){return this._usePointerCapture}set usePointerCapture(t){this._usePointerCapture!=t&&(this._usePointerCapture=t,this.doChange(CPointerEventControl.CON_CHANGE_USE_POINTER_CAPTURE))}get useFingerCursor(){return this._useFingerCursor}set useFingerCursor(t){this._useFingerCursor!=t&&(this._useFingerCursor=t)}get fingerCursorLength(){return this._fingerCursorLength}set fingerCursorLength(t){this._fingerCursorLength!=t&&(this._fingerCursorLength=t)}get fingerCursorResource(){return this._fingerCursorResource}set fingerCursorResource(t){this._fingerCursorResource!=t&&(this._fingerCursorResource=t)}doToData(t){super.doToData(t),CDataClass.putData(t,"repeatClickTime",this.repeatClickTime,300),CDataClass.putData(t,"useDragAndDrop",this.useDragAndDrop,!1),CDataClass.putData(t,"useDragAndDropCancel",this.useDragAndDropCancel,!1),CDataClass.putData(t,"dragCatchControlNames",this.dragCatchControlNames.toData(),[],!0),CDataClass.putData(t,"dragCatchControlPropertyNames",this.dragCatchControlPropertyNames.toData(),[],!0),CDataClass.putData(t,"dragIconResource",this.dragIconResource,""),CDataClass.putData(t,"hintResource",this.hintResource,""),CDataClass.putData(t,"hint",this.hint,""),CDataClass.putData(t,"useHint",this.useHint,!1),CDataClass.putData(t,"hintPosition",this.hintPosition,"auto"),CDataClass.putData(t,"hintFixOffset",this.hintFixOffset.toData(),{},!0),CDataClass.putData(t,"usePointerCapture",this.usePointerCapture,!1),CDataClass.putData(t,"useMove",this.useMove,!1),CDataClass.putData(t,"useResize",this.useResize,!1),CDataClass.putData(t,"moveAreaLength",this.moveAreaLength,-1),CDataClass.putData(t,"resizeAreaLength",this.resizeAreaLength,5),CDataClass.putData(t,"resizeMinWidth",this.resizeMinWidth,50),CDataClass.putData(t,"resizeMinHeight",this.resizeMinHeight,50),CDataClass.putData(t,"lockMoveX",this.lockMoveX,!1),CDataClass.putData(t,"lockMoveY",this.lockMoveY,!1),CDataClass.putData(t,"lockMaxX",this.lockMaxX,void 0),CDataClass.putData(t,"lockMinX",this.lockMinX,void 0),CDataClass.putData(t,"lockMaxY",this.lockMaxY,void 0),CDataClass.putData(t,"lockMinY",this.lockMinY,void 0),CDataClass.putData(t,"thisPointerDownAnimatorResource",this.thisPointerDownAnimatorResource,""),CDataClass.putData(t,"thisPointerUpAnimatorResource",this.thisPointerUpAnimatorResource,""),CDataClass.putData(t,"overAnimatorResource",this.overAnimatorResource,""),CDataClass.putData(t,"enterAnimatorResource",this.enterAnimatorResource,""),CDataClass.putData(t,"clickAnimatorResource",this.clickAnimatorResource,""),CDataClass.putData(t,"doubleClickAnimatorResource",this.doubleClickAnimatorResource,""),CDataClass.putData(t,"dragStartAnimatorResource",this.dragStartAnimatorResource,""),CDataClass.putData(t,"dragCancelAnimatorResource",this.dragCancelAnimatorResource,""),CDataClass.putData(t,"dragCatchAnimatorResource",this.dragCatchAnimatorResource,""),CDataClass.putData(t,"keyDownAnimatorResource",this.keyDownAnimatorResource,""),CDataClass.putData(t,"useMoveClick",this.useMoveClick,!1),null!=this.thisPointerDownAnimationTrigger&&CDataClass.putData(t,"thisPointerDownAnimationTrigger",this.thisPointerDownAnimationTrigger.toData(),{},!0),null!=this.thisPointerUpAnimationTrigger&&CDataClass.putData(t,"thisPointerUpAnimationTrigger",this.thisPointerUpAnimationTrigger.toData(),{},!0),null!=this.overAnimationTrigger&&CDataClass.putData(t,"overAnimationTrigger",this.overAnimationTrigger.toData(),{},!0),null!=this.enterAnimationTrigger&&CDataClass.putData(t,"enterAnimationTrigger",this.enterAnimationTrigger.toData(),{},!0),null!=this.clickAnimationTrigger&&CDataClass.putData(t,"clickAnimationTrigger",this.clickAnimationTrigger.toData(),{},!0),null!=this.doubleClickAnimationTrigger&&CDataClass.putData(t,"doubleClickAnimationTrigger",this.doubleClickAnimationTrigger.toData(),{},!0),null!=this.dragStartAnimationTrigger&&CDataClass.putData(t,"dragStartAnimationTrigger",this.dragStartAnimationTrigger.toData(),{},!0),null!=this.dragCancelAnimationTrigger&&CDataClass.putData(t,"dragCancelAnimationTrigger",this.dragCancelAnimationTrigger.toData(),{},!0),null!=this.dragCatchAnimationTrigger&&CDataClass.putData(t,"dragCatchAnimationTrigger",this.dragCatchAnimationTrigger.toData(),{},!0),null!=this.keyDownAnimationTrigger&&CDataClass.putData(t,"keyDownAnimationTrigger",this.keyDownAnimationTrigger.toData(),{},!0)}doFromData(t){super.doFromData(t),this.repeatClickTime=CDataClass.getData(t,"repeatClickTime",300),this.useDragAndDrop=CDataClass.getData(t,"useDragAndDrop",!1),this.useDragAndDropCancel=CDataClass.getData(t,"useDragAndDropCancel",!1),this.dragCatchControlNames.fromData(CDataClass.getData(t,"dragCatchControlNames",[],!0)),this.dragCatchControlPropertyNames.fromData(CDataClass.getData(t,"dragCatchControlPropertyNames",[],!0)),this.dragIconResource=CDataClass.getData(t,"dragIconResource",""),this.hintResource=CDataClass.getData(t,"hintResource",""),this.hint=CDataClass.getData(t,"hint",""),this.useHint=CDataClass.getData(t,"useHint",!1),this.hintPosition=CDataClass.getData(t,"hintPosition","auto"),this.hintFixOffset.fromData(CDataClass.getData(t,"hintFixOffset",{},!0)),this.usePointerCapture=CDataClass.getData(t,"usePointerCapture",!1),this.useMove=CDataClass.getData(t,"useMove",!1),this.useResize=CDataClass.getData(t,"useResize",!1),this.moveAreaLength=CDataClass.getData(t,"moveAreaLength",-1),this.resizeAreaLength=CDataClass.getData(t,"resizeAreaLength",5),this.resizeMinWidth=CDataClass.getData(t,"resizeMinWidth",50),this.resizeMinHeight=CDataClass.getData(t,"resizeMinHeight",50),this.lockMoveX=CDataClass.getData(t,"lockMoveX",!1),this.lockMoveY=CDataClass.getData(t,"lockMoveY",!1),this.lockMaxX=CDataClass.getData(t,"lockMaxX",void 0),this.lockMinX=CDataClass.getData(t,"lockMinX",void 0),this.lockMaxY=CDataClass.getData(t,"lockMaxY",void 0),this.lockMinY=CDataClass.getData(t,"lockMinY",void 0),this.useMoveClick=CDataClass.getData(t,"useMoveClick",!1),CAnimator.fromAnimatorData(t,this,"thisPointerDownAnimationTrigger"),CAnimator.fromAnimatorData(t,this,"thisPointerUpAnimationTrigger"),CAnimator.fromAnimatorData(t,this,"overAnimationTrigger"),CAnimator.fromAnimatorData(t,this,"enterAnimationTrigger"),CAnimator.fromAnimatorData(t,this,"clickAnimationTrigger"),CAnimator.fromAnimatorData(t,this,"doubleClickAnimationTrigger"),CAnimator.fromAnimatorData(t,this,"dragStartAnimationTrigger"),CAnimator.fromAnimatorData(t,this,"dragCancelAnimationTrigger"),CAnimator.fromAnimatorData(t,this,"dragCatchAnimationTrigger"),CAnimator.fromAnimatorData(t,this,"keyDownAnimationTrigger"),this.thisPointerDownAnimatorResource=CDataClass.getData(t,"thisPointerDownAnimatorResource",""),this.thisPointerUpAnimatorResource=CDataClass.getData(t,"thisPointerUpAnimatorResource",""),this.overAnimatorResource=CDataClass.getData(t,"overAnimatorResource",""),this.enterAnimatorResource=CDataClass.getData(t,"enterAnimatorResource",""),this.clickAnimatorResource=CDataClass.getData(t,"clickAnimatorResource",""),this.doubleClickAnimatorResource=CDataClass.getData(t,"doubleClickAnimatorResource",""),this.dragStartAnimatorResource=CDataClass.getData(t,"dragStartAnimatorResource",""),this.dragCancelAnimatorResource=CDataClass.getData(t,"dragCancelAnimatorResource",""),this.dragCatchAnimatorResource=CDataClass.getData(t,"dragCatchAnimatorResource",""),this.keyDownAnimatorResource=CDataClass.getData(t,"keyDownAnimatorResource","")}doRemove(){null!=this.thisPointerDownAnimationTrigger&&this.thisPointerDownAnimationTrigger.remove(),this.thisPointerDownAnimationTrigger=void 0,null!=this.thisPointerUpAnimationTrigger&&this.thisPointerUpAnimationTrigger.remove(),this.thisPointerUpAnimationTrigger=void 0,null!=this.overAnimationTrigger&&this.overAnimationTrigger.remove(),this.overAnimationTrigger=void 0,null!=this.enterAnimationTrigger&&this.enterAnimationTrigger.remove(),this.enterAnimationTrigger=void 0,null!=this.clickAnimationTrigger&&this.clickAnimationTrigger.remove(),this.clickAnimationTrigger=void 0,null!=this.doubleClickAnimationTrigger&&this.doubleClickAnimationTrigger.remove(),this.doubleClickAnimationTrigger=void 0,null!=this.dragStartAnimationTrigger&&this.dragStartAnimationTrigger.remove(),this.dragStartAnimationTrigger=void 0,null!=this.dragCatchAnimationTrigger&&this.dragCatchAnimationTrigger.remove(),this.dragCatchAnimationTrigger=void 0,null!=this.keyDownAnimationTrigger&&this.keyDownAnimationTrigger.remove(),this.keyDownAnimationTrigger=void 0,super.doRemove()}doChange(t,e){super.doChange(t,e),t==CPointerEventControl.CON_CHANGE_THIS_PRESSED_POINTS&&this.doChangeThisPressedPoints(),t==CPointerEventControl.CON_CHANGE_BUBBLE_PRESSED_POINTS&&this.doChangeBubblePressedPoints(),t==CPointerEventControl.CON_CHANGE_USE_POINTER_CAPTURE&&this.doSetTouchAction(),t==CPointerEventControl.CON_CHANGE_USE_MOVE&&this.doSetTouchAction(),t==CPointerEventControl.CON_CHANGE_USE_RESIZE&&this.doSetTouchAction(),t==CPointerEventControl.CON_CHANGE_USE_DRAG&&this.doSetTouchAction()}doSetTouchAction(){this._usePointerCapture||this._useDragAndDrop||this._useMove||this._useResize?this.controlElement.style.touchAction="none":this.controlElement.style.touchAction="auto"}doChangeThisPressedPoints(){null!=this.onThisPressedPointsChange&&this.onThisPressedPointsChange(this,this.pressedThisPoints)}doChangeBubblePressedPoints(){null!=this.onBubblePressedPointsChange&&this.onBubblePressedPointsChange(this,this.pressedBubblePoints)}doKeyDown(t){this.keyDownAnimationTrigger instanceof CAnimator&&this.keyDownAnimationTrigger.start(),this.keyDownAnimationTrigger instanceof CGraphAnimationInfo&&this.keyDownAnimationTrigger.startAnimation(),null!=this.onKeyDown&&this.onKeyDown(this,t)}doKeyPress(t){null!=this.onKeyPress&&this.onKeyPress(this,t)}doKeyUp(t){null!=this.onKeyUp&&this.onKeyUp(this,t)}doPointerDown(t){if(t.target==this.controlElement)this.__pressedThisPoints.add({downTime:(new Date).getTime(),point:t}),this.isMove(t)&&this.bringToFront(),"none"==this.controlElement.style.touchAction&&this.controlElement.setPointerCapture(t.pointerId),this.doThisPointerDown(t,this.__pressedThisPoints);else{let e=CSystem.getControl(t.target);null!=e&&(this.__pressedBubblePoints.add({downTime:(new Date).getTime(),target:e,point:t}),this.doBubblePointerDown(e,t,this.__pressedBubblePoints))}null!=this.onPointerDown&&this.onPointerDown(this,t)}doPointerMove(t){if(t.target==this._controlElement)this.doThisPointerMove(t,this.__pressedThisPoints);else{let e=CSystem.getControl(t.target);null!=e&&this.doBubblePointerMove(e,t,this.__pressedBubblePoints)}null!=this.onPointerMove&&this.onPointerMove(this,t)}doPointerUp(t){if(t.target==this.controlElement){for(let e=this.__pressedThisPoints.length-1;e>=0;e--)this.__pressedThisPoints.get(e).point.pointerId==t.pointerId&&this.__pressedThisPoints.delete(e);"none"==this.controlElement.style.touchAction&&this._controlElement.releasePointerCapture(t.pointerId),this.doThisPointerUp(t,this.__pressedThisPoints)}else{for(let e=this.__pressedBubblePoints.length-1;e>=0;e--)this.__pressedBubblePoints.get(e).point.pointerId==t.pointerId&&this.__pressedBubblePoints.delete(e);let e=CSystem.getControl(t.target);null!=e&&this.doBubblePointerUp(e,t,this.__pressedBubblePoints)}this.__moveKind=EControlMoveKind.NONE,null!=this.onPointerUp&&this.onPointerUp(this,t)}doPointerCancel(t){if(t.target==this._controlElement){for(let e=this.__pressedThisPoints.length-1;e>=0;e--)this.__pressedThisPoints.get(e).point.pointerId==t.pointerId&&this.__pressedThisPoints.delete(e);this.doThisPointerCancel(t,this.__pressedThisPoints)}else{for(let e=this.__pressedBubblePoints.length-1;e>=0;e--)this.__pressedBubblePoints.get(e).point.pointerId==t.pointerId&&this.__pressedBubblePoints.delete(e);let e=CSystem.getControl(t.target);null!=e&&this.doBubblePointerCancel(e,t,this.__pressedBubblePoints)}this.__moveKind=EControlMoveKind.NONE,null!=this.onPointerCancel&&this.onPointerCancel(this,t)}doPointerEnter(t){if(this._isEnter=!0,null!=this.enterAnimationTrigger&&this.triggerTrue(this.enterAnimationTrigger),t.target==this.controlElement)this.doThisPointerEnter(t,this.__pressedThisPoints);else{let e=CSystem.getControl(t.target);null!=e&&this.doBubblePointerEnter(e,t,this.__pressedBubblePoints)}null!=this.onPointerEnter&&this.onPointerEnter(this,t)}doPointerLeave(t){if(this._isEnter=!1,null!=this.enterAnimationTrigger&&this.triggerFalse(this.enterAnimationTrigger),t.target==this.controlElement){if(!this.usePointerCapture)for(let e=this.__pressedThisPoints.length-1;e>=0;e--)this.__pressedThisPoints.get(e).point.pointerId==t.pointerId&&this.__pressedThisPoints.delete(e);this.doThisPointerLeave(t,this.__pressedThisPoints)}else{if(!this.usePointerCapture)for(let e=this.__pressedBubblePoints.length-1;e>=0;e--)this.__pressedBubblePoints.get(e).point.pointerId==t.pointerId&&this.__pressedBubblePoints.delete(e);let e=CSystem.getControl(t.target);null!=e&&this.doBubblePointerLeave(e,t,this.__pressedBubblePoints)}null!=this.onPointerLeave&&this.onPointerLeave(this,t)}doPointerOver(t){if(this._isOver=!0,null!=this.overAnimationTrigger&&this.triggerTrue(this.overAnimationTrigger),t.target==this.controlElement)this.doThisPointerOver(t,this.__pressedThisPoints);else{let e=CSystem.getControl(t.target);null!=e&&this.doBubblePointerOver(e,t,this.__pressedBubblePoints)}null!=this.onPointerOver&&this.onPointerOver(this,t)}doPointerOut(t){if(this._isOver=!1,null!=this.overAnimationTrigger&&this.triggerFalse(this.overAnimationTrigger),t.target==this.controlElement){if(!this.usePointerCapture)for(let e=this.__pressedThisPoints.length-1;e>=0;e--)this.__pressedThisPoints.get(e).point.pointerId==t.pointerId&&this.__pressedThisPoints.delete(e);this.doThisPointerOut(t,this.__pressedThisPoints)}else{if(!this.usePointerCapture)for(let e=this.__pressedBubblePoints.length-1;e>=0;e--)this.__pressedBubblePoints.get(e).point.pointerId==t.pointerId&&this.__pressedBubblePoints.delete(e);let e=CSystem.getControl(t.target);null!=e&&this.doBubblePointerOut(e,t,this.__pressedBubblePoints)}null!=this.onPointerOut&&this.onPointerOut(this,t)}doWheel(t){if(t.target==this.controlElement)this.doThisWheel(t);else{let e=CSystem.getControl(t.target);null!=e&&this.doBubbleWheel(e,t)}null!=this.onWheel&&this.onWheel(this,t)}isResize(t){return this.useResize?t.offsetX<=this.resizeAreaLength&&t.offsetY<=this.resizeAreaLength&&!this._ignoreResizeKind.has(EControlMoveKind.RESIZE_LT)?{result:!0,kind:EControlMoveKind.RESIZE_LT}:t.offsetX>this.position.width-this.resizeAreaLength&&t.offsetY<=this.resizeAreaLength&&!this._ignoreResizeKind.has(EControlMoveKind.RESIZE_RT)?{result:!0,kind:EControlMoveKind.RESIZE_RT}:t.offsetX<=this.resizeAreaLength&&t.offsetY>this.position.height-this.resizeAreaLength&&!this._ignoreResizeKind.has(EControlMoveKind.RESIZE_LB)?{result:!0,kind:EControlMoveKind.RESIZE_LB}:t.offsetX>this.position.width-this.resizeAreaLength&&t.offsetY>this.position.height-this.resizeAreaLength&&!this._ignoreResizeKind.has(EControlMoveKind.RESIZE_RB)?{result:!0,kind:EControlMoveKind.RESIZE_RB}:t.offsetX<=this.resizeAreaLength&&!this._ignoreResizeKind.has(EControlMoveKind.RESIZE_L)?{result:!0,kind:EControlMoveKind.RESIZE_L}:t.offsetY<=this.resizeAreaLength&&!this._ignoreResizeKind.has(EControlMoveKind.RESIZE_T)?{result:!0,kind:EControlMoveKind.RESIZE_T}:t.offsetX>this.position.width-this.resizeAreaLength&&!this._ignoreResizeKind.has(EControlMoveKind.RESIZE_R)?{result:!0,kind:EControlMoveKind.RESIZE_R}:t.offsetY>this.position.height-this.resizeAreaLength&&!this._ignoreResizeKind.has(EControlMoveKind.RESIZE_B)?{result:!0,kind:EControlMoveKind.RESIZE_B}:{result:!1,kind:EControlMoveKind.NONE}:{result:!1,kind:EControlMoveKind.NONE}}isMove(t){return!!this.useMove&&(this.useResize?this.moveAreaLength>=0?t.offsetX>this.resizeAreaLength&&t.offsetX<=this.position.width-this.resizeAreaLength&&t.offsetY>this.resizeAreaLength&&t.offsetY<=this.resizeAreaLength+this.moveAreaLength:t.offsetX>this.resizeAreaLength&&t.offsetX<=this.position.width-this.resizeAreaLength&&t.offsetY>this.resizeAreaLength&&t.offsetY<=this.position.height-this.resizeAreaLength:!(this.moveAreaLength>=0)||this.moveAreaLength>=t.offsetY&&this.position.align==EPositionAlign.NONE)}setDown(t){this.__moveResizeDown.offsetx=t.offsetX,this.__moveResizeDown.offsety=t.offsetY,this.__moveResizeDown.pagex=t.pageX,this.__moveResizeDown.pagey=t.pageY,this.__moveResizeDown.left=this.position.left,this.__moveResizeDown.top=this.position.top,this.__moveResizeDown.width=this.position.width,this.__moveResizeDown.height=this.position.height}doThisPointerDown(t,e){null!=this.thisPointerDownAnimationTrigger&&this.thisPointerDownAnimationTrigger.start(),this.pressedThisPoints.length>this.__maxCount&&(this.__maxCount=this.pressedThisPoints.length),this.__pressedThisDown=!0,this.__thisDownPoint=new CPoint(t.offsetX,t.offsetY);let i=this.isResize(t);i.result?(this.__moveKind=i.kind,this.setDown(t)):this.isMove(t)?(this.__moveKind=EControlMoveKind.MOVE,this.setDown(t),this.__preMovePoint=new CPoint(this.position.left,this.position.top),this.__downMovePoint=new CPoint(this.position.left,this.position.top)):(this.__moveKind=EControlMoveKind.NONE,this.setDown(t)),null!=this.onThisPointerDown&&this.onThisPointerDown(this,t,e)}doThisPointerMove(t,e){if(null!=this.thisPointerUpAnimationTrigger&&this.thisPointerUpAnimationTrigger.start(),this.__moveKind==EControlMoveKind.MOVE&&(this.doMove(t),this.__preMovePoint=new CPoint(this.position.left,this.position.top)),this.__moveKind!=EControlMoveKind.RESIZE_L&&this.__moveKind!=EControlMoveKind.RESIZE_T&&this.__moveKind!=EControlMoveKind.RESIZE_R&&this.__moveKind!=EControlMoveKind.RESIZE_B&&this.__moveKind!=EControlMoveKind.RESIZE_LT&&this.__moveKind!=EControlMoveKind.RESIZE_LB&&this.__moveKind!=EControlMoveKind.RESIZE_RT&&this.__moveKind!=EControlMoveKind.RESIZE_RB||this.doResize(t,t.pageX,t.pageY,this.__moveKind),this.useDragAndDrop&&!CSystem.dragControls.has(this)&&this.__pressedThisDown&&CPoint.getDistancePoints(this.__thisDownPoint,new CPoint(t.offsetX,t.offsetY))>5&&(CSystem.dragControls.add(this),this.__dragId=t.pointerId,this.doDragStart(t)),CSystem.dragControls.has(this)&&this.__dragId==t.pointerId&&this.__pressedThisDown){let i=CSystem.getOverControls(t,e),o=new Array;for(let t=0;t<i.length;t++)if(this!=i[t].control&&i[t].control instanceof CPointerEventControl){let e=i[t].control;(this.dragCatchControlNames.has(e.name)||this.dragCatchControlPropertyNames.has(e.propertyName))&&o.push(e)}this.doDragging(o,t)}this.useHint&&null!=this.__hint&&this.doMoveHint(t),null!=this.onThisPointerMove&&this.onThisPointerMove(this,t,e)}doThisPointerUp(t,e){if(this.useDragAndDrop&&0==e.length&&CSystem.dragControls.has(this)){CSystem.dragControls.delete(this);let i=CSystem.getOverControls(t,e),o=new Array;for(let t=0;t<i.length;t++)if(this!=i[t].control&&i[t].control instanceof CPointerEventControl){let e=i[t].control;(this.dragCatchControlNames.has(e.name)||this.dragCatchControlPropertyNames.has(e.propertyName))&&(o.push(e),e.doDropCatch(this,i[t].x,i[t].y,this.dragData))}this.useDragAndDropCancel&&0==o.length?this.doDragCancel():this.doDrop(o,t),this.__dragId=void 0}let i=this.useMoveClick&&this.__moveKind==EControlMoveKind.MOVE&&Math.abs(this.__downMovePoint.x-this.position.left)<5&&Math.abs(this.__downMovePoint.y-this.position.top)<5;(this.__moveKind==EControlMoveKind.NONE||i)&&(t.offsetX<=this.position.width&&t.offsetX>=0&&t.offsetY<=this.position.height&&t.offsetY>=0&&this.__pressedThisDown&&("mouse"==t.pointerType?0==t.button&&this.doClick(t):this.doClick(t)),0==this.__pressedThisPoints.length&&this.__maxCount>1&&(this.doMultiTouchClick(this.__maxCount),this.__maxCount=0),null!=this.onThisPointerUp&&this.onThisPointerUp(this,t,e)),this.__pressedThisDown=!1}doThisPointerCancel(t,e){0==this.__pressedThisPoints.length&&this.__maxCount>1&&(this.doMultiTouchClick(this.__maxCount),this.__maxCount=0),null!=this.onThisPointerCancel&&this.onThisPointerCancel(this,t,e)}doThisPointerEnter(t,e){null!=this.onThisPointerEnter&&this.onThisPointerEnter(this,t,e)}doThisPointerLeave(t,e){null!=this.onThisPointerLeave&&this.onThisPointerLeave(this,t,e)}doThisPointerOver(t,e){this.useHint&&"mouse"==t.pointerType&&this.doShowHint(),null!=this.onThisPointerOver&&this.onThisPointerOver(this,t,e)}doThisPointerOut(t,e){this.useHint&&"mouse"==t.pointerType&&this.doHideHint(),null!=this.onThisPointerOut&&this.onThisPointerOut(this,t,e)}doThisWheel(t){null!=this.onThisWheel&&this.onThisWheel(this,t)}doBubblePointerDown(t,e,i){null!=this.onBubblePointerDown&&this.onBubblePointerDown(this,t,e,i)}doBubblePointerMove(t,e,i){null!=this.onBubblePointerMove&&this.onBubblePointerMove(this,t,e,i)}doBubblePointerUp(t,e,i){e.offsetX<=t.position.width&&e.offsetY<=t.position.height&&e.offsetX>=0&&e.offsetY>=0&&this.doBubbleClick(e),null!=this.onBubblePointerUp&&this.onBubblePointerUp(this,t,e,i)}doBubblePointerCancel(t,e,i){null!=this.onBubblePointerCancel&&this.onBubblePointerCancel(this,t,e,i)}doBubblePointerEnter(t,e,i){null!=this.onBubblePointerEnter&&this.onBubblePointerEnter(this,t,e,i)}doBubblePointerLeave(t,e,i){null!=this.onBubblePointerLeave&&this.onBubblePointerLeave(this,t,e,i)}doBubblePointerOver(t,e,i){null!=this.onBubblePointerOver&&this.onBubblePointerOver(this,t,e,i)}doBubblePointerOut(t,e,i){null!=this.onBubblePointerOut&&this.onBubblePointerOut(this,t,e,i)}doBubbleWheel(t,e){null!=this.onBubbleWheel&&this.onBubbleWheel(this,t,e)}doClick(t){null!=this.clickAnimationTrigger&&this.clickAnimationTrigger.start();let e=CTime.now;e-this.__preClick.time<this._repeatClickTime?this.__preClick.count++:this.__preClick.count=1,this.__preClick.time=e,null!=this.onClick&&this.onClick(this,t),this.__preClick.count>1&&this.doRepeatClick(this.__preClick.count,t)}doBubbleClick(t){null!=this.onBubbleClick&&this.onBubbleClick(this,t)}doDoubleClick(t){null!=this.doubleClickAnimationTrigger&&this.doubleClickAnimationTrigger.start(),null!=this.onDoubleClick&&this.onDoubleClick(this,t)}doPenDraw(t){}doRepeatClick(t,e){null!=this.onRepeatClick&&this.onRepeatClick(this,t,e),2==t&&this.doDoubleClick(e)}doMultiTouchClick(t){3==t&&this._useFingerCursor&&(0==this._fingerCursors.length?this.doShowFingerCursor():this.doHideFingerCursor()),null!=this.onMultiTouchClick&&this.onMultiTouchClick(this,t)}doDragStart(t){""!=this.dragIconResource&&(this.__dragIcon=CControl.controlFromResource(this.dragIconResource,document.body),this.__dragIcon.hasPointerEvent=!1,this.__dragIcon.position.left=t.pageX-this.__dragIcon.position.width/2,this.__dragIcon.position.top=t.pageY-this.__dragIcon.position.height/2,this.__dragIcon.dragStartPosition.x=this.__dragIcon.position.left,this.__dragIcon.dragStartPosition.y=this.__dragIcon.position.top),null!=this.dragStartAnimationTrigger&&this.dragStartAnimationTrigger.start(),null!=this.onDragStart&&this.onDragStart(this,t)}doDragging(t,e){null!=this.__dragIcon&&(this.__dragIcon.isOverCatchControl=t.length>0,this.__dragIcon.position.left=e.pageX-this.__dragIcon.position.width/2,this.__dragIcon.position.top=e.pageY-this.__dragIcon.position.height/2),null!=this.onDragging&&this.onDragging(this,e)}doDrop(t,e){this.dragData=void 0,null!=this.__dragIcon&&this.__dragIcon.doDrop(),null!=this.onDrop&&this.onDrop(this,t,e)}doDragCancel(){null!=this.dragCancelAnimationTrigger&&this.dragCancelAnimationTrigger.start(),this.dragData=void 0,null!=this.__dragIcon&&this.__dragIcon.doCancel(),null!=this.onDragCancel&&this.onDragCancel(this)}doDropCatch(t,e,i,o){null!=this.dragCatchAnimationTrigger&&this.dragCatchAnimationTrigger.start(),null!=this.onDropCatch&&this.onDropCatch(this,t,e,i,o)}doShowHint(){this.__hint=CControl.controlFromResource(this.hintResource,document.body),this.__hint.showHint(this.hint)}doHideHint(){null!=this.__hint&&(this.__hint.hideHint(),this.__hint=void 0)}doMoveHint(t){null!=this.__hint&&("auto"==this.hintPosition?(this.__hint.position.left=t.pageX,this.__hint.position.top=t.pageY+20):(this.__hint.position.left=this.hintFixOffset.x,this.__hint.position.top=this.hintFixOffset.y))}doBeforeMove(t,e,i){let o=new CPoint(e,i);return 0!=this.magneticLength?(o.x=Math.floor(o.x/this.magneticLength)*this.magneticLength,o.y=Math.floor(o.y/this.magneticLength)*this.magneticLength):t.shiftKey&&(o.x=5*Math.floor(o.x/5),o.y=5*Math.floor(o.y/5)),o}doMove(t){let e=this.position.left,i=this.position.top;this.lockMoveX||(e=this.__moveResizeDown.left+(t.pageX-this.__moveResizeDown.pagex),null!=this.lockMinX&&this.lockMinX>e&&(e=this.lockMinX),null!=this.lockMaxX&&this.lockMaxX<e&&(e=this.lockMaxX)),this.lockMoveY||(i=this.__moveResizeDown.top+(t.pageY-this.__moveResizeDown.pagey),null!=this.lockMinY&&this.lockMinY>i&&(i=this.lockMinY),null!=this.lockMaxY&&this.lockMaxY<i&&(i=this.lockMaxY));let o=this.doBeforeMove(t,e,i);this.position.left=o.x,this.position.top=o.y,null!=this.onMove&&this.onMove(this,t)}doResize(t,e,i,o){if(o==EControlMoveKind.RESIZE_L){this.__moveResizeDown.width-(e-this.__moveResizeDown.pagex)>=this.resizeMinWidth?(this.position.left=this.__moveResizeDown.left+(e-this.__moveResizeDown.pagex),this.position.width=this.__moveResizeDown.width-(e-this.__moveResizeDown.pagex)):(this.position.left=this.__moveResizeDown.left+(this.__moveResizeDown.width-this.resizeMinWidth),this.position.width=this.resizeMinWidth)}if(o==EControlMoveKind.RESIZE_T){this.__moveResizeDown.height-(i-this.__moveResizeDown.pagey)>=this.resizeMinHeight?(this.position.top=this.__moveResizeDown.top+(i-this.__moveResizeDown.pagey),this.position.height=this.__moveResizeDown.height-(i-this.__moveResizeDown.pagey)):(this.position.top=this.__moveResizeDown.top+(this.__moveResizeDown.height-this.resizeMinHeight),this.position.height=this.resizeMinHeight)}if(o==EControlMoveKind.RESIZE_R&&(this.__moveResizeDown.width+(e-this.__moveResizeDown.pagex)>=this.resizeMinWidth?this.position.width=this.__moveResizeDown.width+(e-this.__moveResizeDown.pagex):this.position.width=this.resizeMinWidth),o==EControlMoveKind.RESIZE_B&&(this.__moveResizeDown.height+(i-this.__moveResizeDown.pagey)>=this.resizeMinHeight?this.position.height=this.__moveResizeDown.height+(i-this.__moveResizeDown.pagey):this.position.height=this.resizeMinHeight),o==EControlMoveKind.RESIZE_LT){this.__moveResizeDown.width-(e-this.__moveResizeDown.pagex)>=this.resizeMinWidth?(this.position.left=this.__moveResizeDown.left+(e-this.__moveResizeDown.pagex),this.position.width=this.__moveResizeDown.width-(e-this.__moveResizeDown.pagex)):(this.position.left=this.__moveResizeDown.left+(this.__moveResizeDown.width-this.resizeMinWidth),this.position.width=this.resizeMinWidth),this.__moveResizeDown.height-(i-this.__moveResizeDown.pagey)>=this.resizeMinHeight?(this.position.top=this.__moveResizeDown.top+(i-this.__moveResizeDown.pagey),this.position.height=this.__moveResizeDown.height-(i-this.__moveResizeDown.pagey)):(this.position.top=this.__moveResizeDown.top+(this.__moveResizeDown.height-this.resizeMinHeight),this.position.height=this.resizeMinHeight)}if(o==EControlMoveKind.RESIZE_RT){this.__moveResizeDown.width+(e-this.__moveResizeDown.pagex)>=this.resizeMinWidth?this.position.width=this.__moveResizeDown.width+(e-this.__moveResizeDown.pagex):this.position.width=this.resizeMinWidth,this.__moveResizeDown.height-(i-this.__moveResizeDown.pagey)>=this.resizeMinHeight?(this.position.top=this.__moveResizeDown.top+(i-this.__moveResizeDown.pagey),this.position.height=this.__moveResizeDown.height-(i-this.__moveResizeDown.pagey)):(this.position.top=this.__moveResizeDown.top+(this.__moveResizeDown.height-this.resizeMinHeight),this.position.height=this.resizeMinHeight)}if(o==EControlMoveKind.RESIZE_LB){this.__moveResizeDown.width-(e-this.__moveResizeDown.pagex)>=this.resizeMinWidth?(this.position.left=this.__moveResizeDown.left+(e-this.__moveResizeDown.pagex),this.position.width=this.__moveResizeDown.width-(e-this.__moveResizeDown.pagex)):(this.position.left=this.__moveResizeDown.left+(this.__moveResizeDown.width-this.resizeMinWidth),this.position.width=this.resizeMinWidth),this.__moveResizeDown.height+(i-this.__moveResizeDown.pagey)>=this.resizeMinHeight?this.position.height=this.__moveResizeDown.height+(i-this.__moveResizeDown.pagey):this.position.height=this.resizeMinHeight}o==EControlMoveKind.RESIZE_RB&&(this.__moveResizeDown.width+(e-this.__moveResizeDown.pagex)>=this.resizeMinWidth?this.position.width=this.__moveResizeDown.width+(e-this.__moveResizeDown.pagex):this.position.width=this.resizeMinWidth,this.__moveResizeDown.height+(i-this.__moveResizeDown.pagey)>=this.resizeMinHeight?this.position.height=this.__moveResizeDown.height+(i-this.__moveResizeDown.pagey):this.position.height=this.resizeMinHeight),0!=this.magneticLength?(this.position.left=Math.floor(this.position.left/this.magneticLength)*this.magneticLength,this.position.top=Math.floor(this.position.top/this.magneticLength)*this.magneticLength,this.position.width=Math.floor(this.position.width/this.magneticLength)*this.magneticLength,this.position.height=Math.floor(this.position.height/this.magneticLength)*this.magneticLength):t.shiftKey&&(this.position.left=5*Math.floor(this.position.left/5),this.position.top=5*Math.floor(this.position.top/5),this.position.width=5*Math.floor(this.position.width/5),this.position.height=5*Math.floor(this.position.height/5))}doShowFingerCursor(){if(!this.useFingerCursor)return;let t=this,e=new CMoveControl(this);e.resource=this._fingerCursorResource,this._fingerCursors.push(e),e.text="LT";let i=new CMoveControl(this);i.resource=this._fingerCursorResource,this._fingerCursors.push(i),i.text="T";let o=new CMoveControl(this);o.resource=this._fingerCursorResource,this._fingerCursors.push(o),o.text="RT";let s=new CMoveControl(this);s.resource=this._fingerCursorResource,this._fingerCursors.push(s),s.text="L";let n=new CMoveControl(this);n.resource=this._fingerCursorResource,this._fingerCursors.push(n),n.text="R";let r=new CMoveControl(this);r.resource=this._fingerCursorResource,this._fingerCursors.push(r),r.text="LB";let a=new CMoveControl(this);a.resource=this._fingerCursorResource,this._fingerCursors.push(a),a.text="B";let h=new CMoveControl(this);h.resource=this._fingerCursorResource,this._fingerCursors.push(h),h.text="RB";let l=new CMoveControl(this);l.resource=this._fingerCursorResource,this._fingerCursors.push(l);let g=new CMoveControl(this);g.resource=this._fingerCursorResource,this._fingerCursors.push(g),g.text="RX";let C=new CMoveControl(this);C.resource=this._fingerCursorResource,this._fingerCursors.push(C),C.text="RY";let u=new CMoveControl(this);function c(){e.position.width=t._fingerCursorLength,e.position.height=t._fingerCursorLength,e.position.left=-t._fingerCursorLength/2,e.position.top=-t._fingerCursorLength/2,i.position.width=t._fingerCursorLength,i.position.height=t._fingerCursorLength,i.position.left=(t.position.width-t._fingerCursorLength)/2,i.position.top=-t._fingerCursorLength/2,o.position.width=t._fingerCursorLength,o.position.height=t._fingerCursorLength,o.position.left=t.position.width-t._fingerCursorLength/2,o.position.top=-t._fingerCursorLength/2,s.position.width=t._fingerCursorLength,s.position.height=t._fingerCursorLength,s.position.left=-t._fingerCursorLength/2,s.position.top=(t.position.height-t._fingerCursorLength)/2,n.position.width=t._fingerCursorLength,n.position.height=t._fingerCursorLength,n.position.left=t.position.width-t._fingerCursorLength/2,n.position.top=(t.position.height-t._fingerCursorLength)/2,r.position.width=t._fingerCursorLength,r.position.height=t._fingerCursorLength,r.position.left=-t._fingerCursorLength/2,r.position.top=t.position.height-t._fingerCursorLength/2,a.position.width=t._fingerCursorLength,a.position.height=t._fingerCursorLength,a.position.left=(t.position.width-t._fingerCursorLength)/2,a.position.top=t.position.height-t._fingerCursorLength/2,h.position.width=t._fingerCursorLength,h.position.height=t._fingerCursorLength,h.position.left=t.position.width-t._fingerCursorLength/2,h.position.top=t.position.height-t._fingerCursorLength/2,u.position.width=t._fingerCursorLength,u.position.height=t._fingerCursorLength,u.position.left=(t.position.width-t._fingerCursorLength)/2+t._fingerCursorLength+5,u.position.top=(t.position.height-t._fingerCursorLength)/2,g.position.width=t._fingerCursorLength,g.position.height=t._fingerCursorLength,g.position.left=(t.position.width-t._fingerCursorLength)/2-t._fingerCursorLength-5,g.position.top=(t.position.height-t._fingerCursorLength)/2,C.position.width=t._fingerCursorLength,C.position.height=t._fingerCursorLength,C.position.left=(t.position.width-t._fingerCursorLength)/2,C.position.top=(t.position.height-t._fingerCursorLength)/2,l.position.width=t.position.width-t._fingerCursorLength,l.position.height=t.position.height-t._fingerCursorLength,l.position.left=t._fingerCursorLength/2,l.position.top=t._fingerCursorLength/2}u.resource=this._fingerCursorResource,this._fingerCursors.push(u),u.text="RZ",c(),e.onPointerDown=function(e,i){t.setDown(i)},e.onMove=function(e,i){t.doResize(i,i.pageX,i.pageY,EControlMoveKind.RESIZE_LT),c()},i.onPointerDown=function(e,i){t.setDown(i)},i.onMove=function(e,i){t.doResize(i,i.pageX,i.pageY,EControlMoveKind.RESIZE_T),c()},o.onPointerDown=function(e,i){t.setDown(i)},o.onMove=function(e,i){t.doResize(i,i.pageX,i.pageY,EControlMoveKind.RESIZE_RT),c()},s.onPointerDown=function(e,i){t.setDown(i)},s.onMove=function(e,i){t.doResize(i,i.pageX,i.pageY,EControlMoveKind.RESIZE_L),c()},n.onPointerDown=function(e,i){t.setDown(i)},n.onMove=function(e,i){t.doResize(i,i.pageX,i.pageY,EControlMoveKind.RESIZE_R),c()},r.onPointerDown=function(e,i){t.setDown(i)},r.onMove=function(e,i){t.doResize(i,i.pageX,i.pageY,EControlMoveKind.RESIZE_LB),c()},a.onPointerDown=function(e,i){t.setDown(i)},a.onMove=function(e,i){t.doResize(i,i.pageX,i.pageY,EControlMoveKind.RESIZE_B),c()},h.onPointerDown=function(e,i){t.setDown(i)},h.onMove=function(e,i){t.doResize(i,i.pageX,i.pageY,EControlMoveKind.RESIZE_RB),c()};let p=0,d=0;g.onPointerDown=function(t,e){p=e.pageX,d=e.pageY},g.onMove=function(e,i){t.transform.rotateX=CPoint.getAngleFromTwoPoint(new CPoint(p,d),new CPoint(i.pageX,i.pageY)),c()},C.onPointerDown=function(t,e){p=e.pageX,d=e.pageY},C.onMove=function(e,i){t.transform.rotateY=CPoint.getAngleFromTwoPoint(new CPoint(p,d),new CPoint(i.pageX,i.pageY)),c()},u.onPointerDown=function(t,e){p=e.pageX,d=e.pageY},u.onMove=function(e,i){t.transform.rotateZ=CPoint.getAngleFromTwoPoint(new CPoint(p,d),new CPoint(i.pageX,i.pageY)),c()},l.onPointerDown=function(e,i){t.setDown(i)},l.onMove=function(e,i){t.position.left=t.__moveResizeDown.left+(i.pageX-t.__moveResizeDown.pagex),t.position.top=t.__moveResizeDown.top+(i.pageY-t.__moveResizeDown.pagey),c()}}doHideFingerCursor(){for(let t=0;t<this._fingerCursors.length;t++)this._fingerCursors[t].remove();this._fingerCursors=[]}click(){this.doClick(new PointerEvent(""))}deleteProperties(){return(new Set).add("isOver").add("isEnter")}readOnlyProperties(){return(new Set).add("id").add("name")}addProperties(){let t=super.addProperties();return t.push({instance:this.overAnimationTrigger,propertyName:"overAnimationTrigger",readOnly:!1,enum:[]}),t.push({instance:this.thisPointerDownAnimationTrigger,propertyName:"thisPointerDownAnimationTrigger",readOnly:!1,enum:[]}),t.push({instance:this.thisPointerUpAnimationTrigger,propertyName:"thisPointerUpAnimationTrigger",readOnly:!1,enum:[]}),t.push({instance:this.enterAnimationTrigger,propertyName:"enterAnimationTrigger",readOnly:!1,enum:[]}),t.push({instance:this.clickAnimationTrigger,propertyName:"clickAnimationTrigger",readOnly:!1,enum:[]}),t.push({instance:this.doubleClickAnimationTrigger,propertyName:"doubleClickAnimationTrigger",readOnly:!1,enum:[]}),t.push({instance:this.dragStartAnimationTrigger,propertyName:"dragStartAnimationTrigger",readOnly:!1,enum:[]}),t.push({instance:this.dragStartAnimationTrigger,propertyName:"dragCancelAnimationTrigger",readOnly:!1,enum:[]}),t.push({instance:this.dragCatchAnimationTrigger,propertyName:"dragCatchAnimationTrigger",readOnly:!1,enum:[]}),t.push({instance:this.keyDownAnimationTrigger,propertyName:"keyDownAnimationTrigger",readOnly:!1,enum:[]}),t}}class CCanvasLayerControl extends CPointerEventControl{constructor(t,e){super(t,e),this._expandedLayers=new CNotifyRect(0,0,0,0),this._layersResource="",this._pathItemsResource="";let i=this;this._layers=new CCanvasLayers(this),this._layers.onChangeLayer=function(t,e,o){e==CCanvasLayers.CON_CHANGE_ADD_LAYER&&o.setCanvasElementPosition(-i.expandedLayers.left,-i.expandedLayers.top,i.position.width+i.expandedLayers.left+i.expandedLayers.right,i.position.height+i.expandedLayers.top+i.expandedLayers.bottom)},this.layers.onChange=function(){let t=CSystem.getChildControls(i);for(let e=0;e<t.length;e++)t[e].bringToFront();i.doChangeLayerCount()},this._expandedLayers.onChange=function(){i.setLayers()}}get layers(){return this._layers}get expandedLayers(){return this._expandedLayers}get layersResource(){return this._layersResource}set layersResource(t){this.layersResource!=t&&(this._layersResource=t,this.layers.resource=t)}get pathItemsResource(){return this._pathItemsResource}set pathItemsResource(t){if(this._pathItemsResource!=t){this._pathItemsResource=t;let e=CSystem.resources.get(t);if(null!=e){let t=new CPathItems;t.fromData(e);let i=0,o=0;i=parseFloat(e.width),o=parseFloat(e.height),this.layers.clear();for(let e=0;e<t.length;e++){this.layers.addLayer().items.fromData(t.get(e).toCanvasItems(i,o).toData())}}}}doToData(t){super.doToData(t),CDataClass.putData(t,"layers",this.layers.toData(),[],!0),CDataClass.putData(t,"expandedLayers",this.expandedLayers.toData(),{},!0),CDataClass.putData(t,"layersResource",this.layersResource,"")}doFromData(t){super.doFromData(t),this.layers.fromData(CDataClass.getData(t,"layers",[],!0)),this.expandedLayers.fromData(CDataClass.getData(t,"expandedLayers",{},!0)),this.layersResource=CDataClass.getData(t,"layersResource","")}doRemove(){this._layers.remove(),super.doRemove()}doSetElementSize(){super.doSetElementSize(),this.doSetLayers()}doSetLayers(){this._layers.setLayersPosition(-this.expandedLayers.left,-this.expandedLayers.top,this.position.width+this.expandedLayers.left+this.expandedLayers.right,this.position.height+this.expandedLayers.top+this.expandedLayers.bottom),null!=this.onSetLayers&&this.onSetLayers(this)}doChangeLayerCount(){null!=this.onChangeLayerCount&&this.onChangeLayerCount(this)}doDraw(){this._layers.draw()}doLayerDraw(t,e,i){null!=this.onLayerDraw&&this.onLayerDraw(this,t,e,i)}setLayers(){this.doSetLayers()}addLayer(){return this._layers.addLayer()}draw(){this.doDraw()}getCanvasItems(t){return this.layers.getCanvasItems(t)}static createControl(t,e="",i=0,o=0,s=50,n=50){let r=new CCanvasLayerControl(t,e);return r.position.left=i,r.position.top=o,r.position.width=s,r.position.height=n,r}}class CPanel extends CCanvasLayerControl{constructor(t,e){super(t,e),this._textSet=new CTextSet,this._text="",this._useAutoSize=!1;let i=this;this.textSet.onChange=function(){i.doChange(CPanel.CON_CHANGE_TEXTSET)}}static get CON_CHANGE_USE_AUTO_SIZE(){return"changeUseAutoSize"}static get CON_CHANGE_TEXT(){return"changeText"}static get CON_CHANGE_TEXTSET(){return"changeTextSet"}get textSet(){return this._textSet}get text(){if(""!=this.textSet.languageKey){let t=CLanguage.getText(this.textSet.languageKey);return null!=t?t:this._text}return this._text}set text(t){this._text!=t&&(this._text=t,this.doChange(CPanel.CON_CHANGE_TEXT))}get useAutoSize(){return this._useAutoSize}set useAutoSize(t){this._useAutoSize!=t&&(this._useAutoSize=t,this.doChange(CPanel.CON_CHANGE_USE_AUTO_SIZE))}doToData(t){super.doToData(t),CDataClass.putData(t,"textSet",this.textSet.toData(),{},!0),CDataClass.putData(t,"text",this.text,""),CDataClass.putData(t,"useAutoSize",this.useAutoSize,!1)}doFromData(t){super.doFromData(t),this.textSet.fromData(CDataClass.getData(t,"textSet",{},!0)),this.text=CDataClass.getData(t,"text",""),this.useAutoSize=CDataClass.getData(t,"useAutoSize",!1)}doChange(t,e){super.doChange(t,e),t==CPanel.CON_CHANGE_TEXT&&(this.doChangeText(),this.doSetAutoSize()),t==CPanel.CON_CHANGE_TEXTSET&&(this.doChangeTextSet(),this.doSetAutoSize()),t==CPanel.CON_CHANGE_USE_AUTO_SIZE&&this.doSetAutoSize()}doSetAutoSize(){this._useAutoSize&&(this.position.width=Math.round(CStringUtil.getTextWidth(this.textSet,this.text))+20)}doChangeTextSet(){for(let t=0;t<this.layers.length;t++){let e=this.layers.get(t).items.getItem("text");for(let t=0;t<e.length;t++)e[t].textSet.fromData(this.textSet.toData())}this.draw(),null!=this.onChangeTextSet&&this.onChangeTextSet(this)}doChangeText(){for(let t=0;t<this.layers.length;t++){let e=this.layers.get(t).items.getItem("text");for(let t=0;t<e.length;t++)e[t].text=this.text}this.draw(),null!=this.onChangeText&&this.onChangeText(this)}doThisPointerUp(t,e){if(super.doThisPointerUp(t,e),"mouse"==t.pointerType&&2==t.button&&null!=this.popup){this.popup.resource=this.popup.popupResource,t.pageX+this.popup.popupWidth<=window.innerWidth?this.popup.position.left=t.pageX:this.popup.position.left=t.pageX-this.popup.popupWidth;let e=30*this.popup.items.length+10;t.pageY+e<=window.innerHeight?this.popup.position.top=t.pageY:this.popup.position.top=t.pageY-e,this.popup.position.width=this.popup.popupWidth,this.popup.popupCaller=this,this.popup.show()}}canvasItemText(t,e){for(let i=0;i<this.layers.length;i++){let o=this.layers.get(i).items.getItem(t);for(let t=0;t<o.length;t++)o[t].text=e}}}class CCover extends CPanel{constructor(t,e){super(t,e),this.isClickHide=!0,this.isHideClear=!1,this._showAnimatorResource="",this._hideAnimatorResource="",this.visible=!1}get showAnimatorResource(){return this._showAnimatorResource}set showAnimatorResource(t){this._showAnimatorResource=t,""!=t&&(this.showAnimationTrigger=CAnimator.animatorFromResource(this,t))}get hideAnimatorResource(){return this._hideAnimatorResource}set hideAnimatorResource(t){this._hideAnimatorResource=t,""!=t&&(this.hideAnimationTrigger=CAnimator.animatorFromResource(this,t))}doClick(t){super.doClick(t),this.isClickHide&&this.hideCover()}doToData(t){super.doToData(t),CDataClass.putData(t,"showAnimatorResource",this.showAnimatorResource,""),CDataClass.putData(t,"hideAnimatorResource",this.hideAnimatorResource,""),null!=this.showAnimationTrigger&&CDataClass.putData(t,"showAnimationTrigger",this.showAnimationTrigger.toData(),{},!0),null!=this.hideAnimationTrigger&&CDataClass.putData(t,"hideAnimationTrigger",this.hideAnimationTrigger.toData(),{},!0)}doFromData(t){super.doFromData(t),CAnimator.fromAnimatorData(t,this,"showAnimationTrigger"),CAnimator.fromAnimatorData(t,this,"hideAnimationTrigger"),this.showAnimatorResource=CDataClass.getData(t,"showAnimatorResource",""),this.hideAnimatorResource=CDataClass.getData(t,"hideAnimatorResource","")}doShowCover(){if(this.bringToFront(),null!=this.parent&&(this.position.left=0,this.position.top=0,this.position.width=this.parent.position.width,this.position.height=this.parent.position.height),null!=this.onBeforeShow&&this.onBeforeShow(this),this.visible=!0,null!=this.showAnimationTrigger){let t=this;this.showAnimationTrigger.onAfterAnimation=function(){null!=t.onShow&&t.onShow(t)},this.showAnimationTrigger.start()}else null!=this.onShow&&this.onShow(this)}doHideCover(){null!=this.onBeforeHide&&this.onBeforeHide(this);let t=this;function e(){if(t.isHideClear){let e=CSystem.getChildControls(t);for(let t=e.length-1;t>=0;t--)e[t].remove()}}null!=this.hideAnimationTrigger?(this.hideAnimationTrigger.onAfterAnimation=function(){t.visible=!1,e(),null!=t.onHide&&t.onHide(t)},this.hideAnimationTrigger.start()):(this.visible=!1,e(),null!=this.onHide&&this.onHide(this))}showCover(t=!0){this.isClickHide=t,this.doShowCover()}hideCover(){this.doHideCover()}addProperties(){let t=super.addProperties();return t.push({instance:this.showAnimationTrigger,propertyName:"showAnimationTrigger",readOnly:!1,enum:[]}),t.push({instance:this.hideAnimationTrigger,propertyName:"hideAnimationTrigger",readOnly:!1,enum:[]}),t}}class CDragIcon extends CPanel{constructor(){super(...arguments),this._isOverCatchControl=!1,this.dragStartPosition=new CPoint,this._dropAnimatorResource="",this._cancelAnimatorResource="",this._changeOverCatchControlAnimatorResource=""}get dropAnimatorResource(){return this._dropAnimatorResource}set dropAnimatorResource(t){this._dropAnimatorResource=t,""!=t&&(this.dropAnimationTrigger=CAnimator.animatorFromResource(this,t))}get cancelAnimatorResource(){return this._cancelAnimatorResource}set cancelAnimatorResource(t){this._cancelAnimatorResource=t,""!=t&&(this.cancelAnimationTrigger=CAnimator.animatorFromResource(this,t))}get changeOverCatchControlAnimatorResource(){return this._changeOverCatchControlAnimatorResource}set changeOverCatchControlAnimatorResource(t){this._changeOverCatchControlAnimatorResource=t,""!=t&&(this.changeOverCatchControlAnimationTrigger=CAnimator.animatorFromResource(this,t))}get isOverCatchControl(){return this._isOverCatchControl}set isOverCatchControl(t){this._isOverCatchControl!=t&&(this._isOverCatchControl=t,this.doChangeOverCatchControl())}doToData(t){super.doToData(t),CDataClass.putData(t,"dropAnimatorResource",this.dropAnimatorResource,""),CDataClass.putData(t,"cancelAnimatorResource",this.cancelAnimatorResource,""),CDataClass.putData(t,"changeOverCatchControlAnimatorResource",this.changeOverCatchControlAnimatorResource,""),null!=this.dropAnimationTrigger&&CDataClass.putData(t,"dropAnimationTrigger",this.dropAnimationTrigger.toData(),{},!0),null!=this.cancelAnimationTrigger&&CDataClass.putData(t,"cancelAnimationTrigger",this.cancelAnimationTrigger.toData(),{},!0),null!=this.changeOverCatchControlAnimationTrigger&&CDataClass.putData(t,"changeOverCatchControlAnimationTrigger",this.changeOverCatchControlAnimationTrigger.toData(),{},!0)}doFromData(t){super.doFromData(t),CAnimator.fromAnimatorData(t,this,"dropAnimationTrigger"),CAnimator.fromAnimatorData(t,this,"cancelAnimationTrigger"),CAnimator.fromAnimatorData(t,this,"changeOverCatchControlAnimationTrigger"),this.dropAnimatorResource=CDataClass.getData(t,"dropAnimatorResource",""),this.cancelAnimatorResource=CDataClass.getData(t,"cancelAnimatorResource",""),this.changeOverCatchControlAnimatorResource=CDataClass.getData(t,"changeOverCatchControlAnimatorResource","")}doChangeOverCatchControl(){null!=this.changeOverCatchControlAnimationTrigger&&(this.isOverCatchControl?this.triggerTrue(this.changeOverCatchControlAnimationTrigger):this.triggerFalse(this.changeOverCatchControlAnimationTrigger))}doDrop(){if(null!=this.dropAnimationTrigger){let t=this;this.dropAnimationTrigger.onAfterAnimation=function(){t.remove()},this.dropAnimationTrigger.start()}else this.remove()}doCancel(){if(console.log("do cancel",this.cancelAnimationTrigger),null!=this.cancelAnimationTrigger){let t=this;this.cancelAnimationTrigger.onAfterAnimation=function(){t.remove()},this.cancelAnimationTrigger.start()}else this.remove()}addProperties(){let t=super.addProperties();return t.push({instance:this.dropAnimationTrigger,propertyName:"dropAnimationTrigger",readOnly:!1,enum:[]}),t.push({instance:this.cancelAnimationTrigger,propertyName:"cancelAnimationTrigger",readOnly:!1,enum:[]}),t}}class CHint extends CPanel{constructor(){super(...arguments),this._hintAnimatorResource=""}get hintAnimatorResource(){return this._hintAnimatorResource}set hintAnimatorResource(t){this._hintAnimatorResource=t,""!=t&&(this.hideAnimationTrigger=CAnimator.animatorFromResource(this,t))}doToData(t){super.doToData(t),CDataClass.putData(t,"hintAnimatorResource",this.hintAnimatorResource,""),null!=this.hideAnimationTrigger&&CDataClass.putData(t,"hideAnimationTrigger",this.hideAnimationTrigger.toData(),{},!0)}doFromData(t){super.doFromData(t),CAnimator.fromAnimatorData(t,this,"hideAnimationTrigger"),this.hintAnimatorResource=CDataClass.getData(t,"hintAnimatorResource","")}doShowh(t){this.hasPointerEvent=!1,this.text=t}doHideh(){this.visible=!1}doHide(){super.doHide(),this.remove()}showHint(t){this.doShowh(t)}hideHint(){this.doHideh()}addProperties(){let t=super.addProperties();return t.push({instance:this.hideAnimationTrigger,propertyName:"hideAnimationTrigger",readOnly:!1,enum:[]}),t}}class CGraphicInfo extends CResourceClass{constructor(){super(...arguments),this.opacity=1,this.position=new CPosition,this.transform=new CTransform,this.filter=new CFilter,this.layers=new CCanvasLayers(void 0)}doToData(t){super.doToData(t),CDataClass.putData(t,"opacity",this.opacity,1),CDataClass.putData(t,"position",this.position.toData(),{},!0),CDataClass.putData(t,"transform",this.transform.toData(),{},!0),CDataClass.putData(t,"filter",this.filter.toData(),{},!0),CDataClass.putData(t,"layers",this.layers.toData(),{},!0)}doFromData(t){super.doFromData(t),this.opacity=CDataClass.getData(t,"opacity",1),this.position.fromData(CDataClass.getData(t,"position",{},!0)),this.transform.fromData(CDataClass.getData(t,"transform",{},!0)),this.filter.fromData(CDataClass.getData(t,"filter",{},!0)),this.layers.fromData(CDataClass.getData(t,"layers",{},!0))}doRemove(){this.layers.remove(),super.doRemove()}static controlGraphicInfo(t,e){let i=new CGraphicInfo;return i.opacity=t.opacity,null==e?i.position.fromData(t.position.toData()):i.position.fromData(e),i.transform.fromData(t.transform.toData()),i.filter.fromData(t.filter.toData()),i.layers.fromData(t.layers.toData()),i}static setControlGraphicInfo(t,e){e.opacity=t.opacity,e.position.fromData(t.position.toData()),e.transform.fromData(t.transform.toData()),e.filter.fromData(t.filter.toData()),e.layers.fromData(t.layers.toData())}}class CAnimationControlSceneSection extends CResourceClass{constructor(){super(...arguments),this.controlName="",this.property="",this.script="",this._graphData="",this.graphPath=new CPathPointList,this.positionPoints=new Array,this.positionPath=new CPathPointList,this.timeTag=new Array,this.objectData=new CList,this.startTime=0,this.duration=100,this.startValue=0,this.stopValue=0,this.isLoop=!1}get graphData(){return this._graphData}set graphData(t){if("string"==typeof t){let e=CSystem.resources.get(t);null!=e&&(this._graphData=e)}else this._graphData=t}doToData(t){super.doToData(t),CDataClass.putData(t,"controlName",this.controlName,""),CDataClass.putData(t,"property",this.property,""),CDataClass.putData(t,"script",this.script,""),"string"==typeof this.graphData?CDataClass.putData(t,"graphData",this.graphData,""):CDataClass.putData(t,"graphData",this.graphData,[],!0),CDataClass.putData(t,"graphPath",this.graphPath.toData(),{},!0);let e=new Array;for(let t=0;t<this.objectData.length;t++)e.push({duration:this.objectData.get(t).sectionT,centerX:this.objectData.get(t).centerX,centerY:this.objectData.get(t).centerY,info:this.objectData.get(t).info.toData()});CDataClass.putData(t,"objectData",e,[],!0);let i=new Array;for(let t=0;t<this.positionPoints.length;t++)i.push({x:this.positionPoints[t].x,y:this.positionPoints[t].y});CDataClass.putData(t,"positionPoints",i,[],!0),CDataClass.putData(t,"positionPath",this.positionPath.toData(),{},!0),CDataClass.putData(t,"timeTag",this.timeTag,[],!0),CDataClass.putData(t,"startTime",this.startTime,0),CDataClass.putData(t,"duration",this.duration,100),CDataClass.putData(t,"startValue",CGraphAnimationValue.graphValueToData(this.startValue)),CDataClass.putData(t,"stopValue",CGraphAnimationValue.graphValueToData(this.stopValue)),CDataClass.putData(t,"isLoop",this.isLoop,!1)}doFromData(t){super.doFromData(t),this.controlName=CDataClass.getData(t,"controlName",""),this.property=CDataClass.getData(t,"property",""),this.script=CDataClass.getData(t,"script",""),this.graphData=CDataClass.getData(t,"graphData"),this.graphPath.fromData(CDataClass.getData(t,"graphPath",{},!0)),this.clearObjectData();let e=CDataClass.getData(t,"objectData",[],!0);for(let t=0;t<e.length;t++){let i=new CGraphicInfo;i.fromData(e[t].info);let o={sectionT:e[t].duration,centerX:e[t].centerX,centerY:e[t].centerY,info:i};this.objectData.add(o)}let i=CDataClass.getData(t,"positionPoints",[],!0);this.positionPoints=[];for(let t=0;t<i.length;t++){let e=new CPoint(i[t].x,i[t].y);this.positionPoints.push(e)}this.positionPath.fromData(CDataClass.getData(t,"positionPath",{},!0)),this.timeTag=CDataClass.getData(t,"timeTag",[],!0),this.startTime=CDataClass.getData(t,"startTime",0),this.duration=CDataClass.getData(t,"duration",100),this.startValue=CGraphAnimationValue.graphValueFromData(CDataClass.getData(t,"startValue")),this.stopValue=CGraphAnimationValue.graphValueFromData(CDataClass.getData(t,"stopValue")),this.isLoop=CDataClass.getData(t,"isLoop",!1)}doRemove(){this.clearObjectData(),super.doRemove()}clearObjectData(){for(let t=0;t<this.objectData.length;t++)this.objectData.get(t).info.remove();this.objectData.clear()}graphDataCopy(){let t=new Array;if("string"!=typeof this.graphData)for(let e=0;e<this.graphData.length;e++)t.push(this.graphData[e]);return t}graphDataFromData(t){this.graphData=[];for(let e=0;e<t.length;e++)this.graphData.push(t[e])}timeTagCopy(){let t=new Array;for(let e=0;e<this.timeTag.length;e++)t.push({tagName:this.timeTag[e].tagName,tagColor:this.timeTag[e].tagColor,duration:this.timeTag[e].duration});return t}timeTagFromData(t){this.timeTag=[];for(let e=0;e<t.length;e++)this.timeTag.push({tagName:t[e].tagName,tagColor:t[e].tagColor,duration:t[e].duration})}}class CAnimationControlScene extends CResourceClass{constructor(){super(...arguments),this.sections=new CList,this.startTime=0,this.duration=1e3,this.speedStartValue=1,this.speedStopValue=1}doToData(t){super.doToData(t);let e=new Array;for(let t=0;t<this.sections.length;t++)e.push(this.sections.get(t).toData());CDataClass.putData(t,"sections",e,[],!0),CDataClass.putData(t,"startTime",this.startTime,0),CDataClass.putData(t,"duration",this.duration,1e3),CDataClass.putData(t,"speedStopValue",this.speedStopValue,0),CDataClass.putData(t,"speedStartValue",this.speedStartValue,0),CDataClass.putData(t,"speedGraphData",this.speedGraphData,void 0)}doFromData(t){super.doFromData(t),this.clearSections();let e=CDataClass.getData(t,"sections",[],!0);for(let t=0;t<e.length;t++){let i=new CAnimationControlSceneSection;i.fromData(e[t]),this.sections.add(i)}this.startTime=CDataClass.getData(t,"startTime",0),this.duration=CDataClass.getData(t,"duration",1e3),this.speedStartValue=CDataClass.getData(t,"speedStartValue",0),this.speedStopValue=CDataClass.getData(t,"speedStopValue",0),this.speedGraphData=CDataClass.getData(t,"speedGraphData",void 0)}doRemove(){this.clearSections(),super.doRemove()}clearSections(){for(let t=0;t<this.sections.length;t++)this.sections.get(t).remove();this.sections.clear()}}class CAnimationControl extends CPanel{constructor(t,e){super(t,e),this.__isScene=!1,this.__objectsIndex=new Map,this.__orgBounds=new CRect,this._objectsCount=0,this._transformerPoints=new CTransformerPoints,this._sceneData=new CAnimationControlScene,this.orgTransfrom=new CTransform,this.orgPosition=new CPosition,this.objects=new CList;let i=this;this.objects.onChange=function(){i.setObjectIndex()}}get transformerPoints(){return this._transformerPoints}get sceneData(){return this._sceneData}get isScene(){return this.__isScene}get objectsCount(){return this._objectsCount}set objectsCount(t){if(this._objectsCount=t,this.objects.length<t){let e=t-this.objects.length;for(let t=0;t<e;t++){let t=new CAnimationControl(this);this.objects.add(t)}}else if(this.objects.length>t){let e=this.objects.length-t;for(let t=0;t<e;t++)this.objects.get(this.objects.length-1).remove(),this.objects.delete(this.objects.length-1)}}doToData(t){super.doToData(t);let e=new Array;for(let t=0;t<this.objects.length;t++)e.push(this.objects.get(t).toData());CDataClass.putData(t,"objects",e,[],!0),CDataClass.putData(t,"objectsCount",this.objectsCount,0),CDataClass.putData(t,"orgPosition",this.position.toData(),{},!0),CDataClass.putData(t,"orgTransfrom",this.transform.toData(),{},!0),CDataClass.putData(t,"sceneData",this.sceneData.toData(),{},!0)}doFromData(t){super.doFromData(t),this.clear(),this.objectsCount=CDataClass.getData(t,"objectsCount",0);let e=CDataClass.getData(t,"objects",[],!0);for(let t=0;t<e.length;t++)this.objects.get(t).fromData(e[t]);this.orgPosition.fromData(CDataClass.getData(t,"orgPosition",{},!0)),this.orgTransfrom.fromData(CDataClass.getData(t,"orgTransfrom",{},!0)),this.sceneData.fromData(CDataClass.getData(t,"sceneData",{},!0)),this.setObjectIndex();for(let t=0;t<this.sceneData.sections.length;t++)this.sceneData.sections.get(t).control=this.getObject(this.sceneData.sections.get(t).controlName);this.orgData=t}doRemove(){null!=this.orgPathData&&this.orgPathData.remove(),this.clear(),super.doRemove()}doChangeSize(){super.doChangeSize();let t=this.position.width/this.orgPosition.width,e=this.position.height/this.orgPosition.height;this.objectsScale(t,e)}doScene(){let t=this;if(!this.__isScene){let e=new CSceneAnimator;e.animationControl=this,e.duration=this.sceneData.duration,e.onFinish=function(){t.__isScene=!1,e.remove()},this.__isScene=!0,e.start(),null!=this.onScene&&this.onScene(this)}}doSetStart(){this.doSetTime(0)}doSetTime(t){let e=this.getSceneAnimation();e.doBeforeStart(),e.moveTime(t),e.remove()}addAnimationObject(){let t=new CAnimationControl(this);return this.objects.add(t),t}clear(){for(let t=0;t<this.objects.length;t++)this.objects.get(t).remove();this.objects.clear()}objectsScale(t,e){for(let i=0;i<this.objects.length;i++)this.objects.get(i).position.left=this.objects.get(i).orgPosition.left*t,this.objects.get(i).position.top=this.objects.get(i).orgPosition.top*e,this.objects.get(i).position.width=this.objects.get(i).orgPosition.width*t,this.objects.get(i).position.height=this.objects.get(i).orgPosition.height*e}orgPathdataSet(){null!=this.orgPathData&&this.orgPathData.remove();let t=new CCanvasLayers(void 0);t.fromData(this.layers.toData()),this.orgPathData=t,this.__orgBounds=new CRect(0,0,this.position.width,this.position.height)}scene(){this.doScene()}getObject(t){return this.__objectsIndex.get(t)}setObjectIndex(){this.__objectsIndex.clear();for(let t=0;t<this.objects.length;t++)this.__objectsIndex.set(this.objects.get(t).propertyName,this.objects.get(t))}copyTo(){let t=new CAnimationControl;return t.fromData(this.toData()),t}getSceneAnimation(){let t=new CSceneAnimator,e=0;for(let t=0;t<this.sceneData.sections.length;t++)e=CCalc.max(e,this.sceneData.sections.get(t).startTime+this.sceneData.sections.get(t).duration);return t.duration=e,t.animationControl=this,t}setOriginalData(){null!=this.orgData&&this.fromData(this.orgData)}}
+"use strict";
+class CControl extends CNotifyChangeKindObject {
+    constructor(parent, name) {
+        super();
+        this._hasPointerEvent = true;
+        this._stopPropagation = new CStopPropagationInfo();
+        this._tabIndex = "";
+        this._overflow = "";
+        this._opacity = 1;
+        this._enabled = true;
+        this._visible = true;
+        this._focused = false;
+        this._selected = false;
+        this._checked = false;
+        this._cursor = "auto";
+        this._initResource = "";
+        this._propertyName = "";
+        this._propertyDataKind = "";
+        this._focusedAnimatorResource = "";
+        this._enabledAnimatorResource = "";
+        this._visibleAnimatorResource = "";
+        this._resourceAnimatorResource = "";
+        this._selectAnimatorResource = "";
+        this._checkAnimatorResource = "";
+        this._removeAnimatorResource = "";
+        let self = this;
+        this._id = CSequence.getSequence("control");
+        if (name != undefined) {
+            this._name = name;
+        }
+        else {
+            this._name = CSequence.getSequence("unnamed");
+        }
+        let arr = CSystem.getControlsFromName(this.getNamPath());
+        let isDup = false;
+        if (arr.length != 0) {
+            isDup = true;
+        }
+        this._controlElement = document.createElement("control");
+        this._controlElement.setAttribute("className", this.className);
+        this._controlElement.setAttribute("control-id", this.id);
+        this._controlElement.setAttribute("control-name", this.name);
+        this._controlElement.style.outline = "none";
+        this._controlElement.style.position = "absolute";
+        this._controlElement.style.margin = "0px 0px 0px 0px";
+        this._controlElement.style.padding = "0px 0px 0px 0px";
+        this._controlElement.style.border = "none";
+        this._controlElement.style.zIndex = CSystem.getZPlus() + "";
+        this._controlElement.setAttribute("ondragstart", "return false");
+        this._controlElement.setAttribute("onselectstart", "return false");
+        this._controlElement.setAttribute("oncontextmenu", "return false");
+        this._controlElement.setAttribute("class", "scrollno");
+        this._controlElement.style.touchAction = "auto";
+        this._controlElement.style.userSelect = "text";
+        this._controlElement.style.pointerEvents = "auto";
+        this._controlElement.style.opacity = this._opacity + "";
+        this._position = new CPosition();
+        this._position.onChange = function (ps, kind) {
+            self.doChangePosition(kind);
+        };
+        this._transform = new CTransform();
+        this._transform.onChange = function (sender, kind) {
+            self.doChangeTrasform(kind);
+        };
+        this._stopPropagation.onChange = function () {
+            self.doChange(CControl.CON_CHANGE_STOP_PROPAGATION);
+        };
+        this._controlElement.addEventListener("focus", function (ev) {
+            if (self.enabled)
+                self.focused = true;
+        });
+        this._controlElement.addEventListener("blur", function (ev) {
+            if (self.enabled)
+                self.focused = false;
+        });
+        if (parent instanceof CControl) {
+            this._parent = parent;
+            this._parent.controlElement.appendChild(this._controlElement);
+        }
+        if (parent instanceof HTMLElement) {
+            this.parentElement(parent);
+        }
+        this._filter = new CFilter(this._controlElement);
+        if (isDup) {
+            this.remove();
+            throw new Error("invalid name : " + name);
+        }
+        else {
+            CSystem.controls.addControl(this);
+        }
+        this.transform.setTransform(this._controlElement);
+    }
+    static get CON_CHANGE_NAME() { return "name"; }
+    static get CON_CHANGE_STOP_PROPAGATION() { return "changeStopPropagation"; }
+    static get CON_CHANGE_POSITION_PARENT() { return "changePositionParent"; }
+    static get CON_CHANGE_POSITION() { return "changePosition"; }
+    static get CON_CHANGE_HAS_POINTER() { return "changeHasPointer"; }
+    static get CON_CHANGE_TAB_INDEX() { return "changeTabIndex"; }
+    static get CON_CHANGE_OVER_FLOW() { return "changeOverFlow"; }
+    static get CON_CHANGE_OPACITY() { return "changeOpacity"; }
+    static get CON_CHANGE_ENABLED() { return "changeEnabled"; }
+    static get CON_CHANGE_VISIBLE() { return "changeVisible"; }
+    static get CON_CHANGE_FOCUS() { return "changeFocus"; }
+    static get CON_CHANGE_SELECTED() { return "changeSelect"; }
+    static get CON_CHANGE_CHECKED() { return "changeCheck"; }
+    static get CON_CHANGE_USE_DRAG() { return "changeUseDrag"; }
+    get focusedAnimatorResource() {
+        return this._focusedAnimatorResource;
+    }
+    set focusedAnimatorResource(value) {
+        this._focusedAnimatorResource = value;
+        if (value != "")
+            this.focusedAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get enabledAnimatorResource() {
+        return this._enabledAnimatorResource;
+    }
+    set enabledAnimatorResource(value) {
+        this._enabledAnimatorResource = value;
+        if (value != "")
+            this.enabledAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get visibleAnimatorResource() {
+        return this._visibleAnimatorResource;
+    }
+    set visibleAnimatorResource(value) {
+        this._visibleAnimatorResource = value;
+        if (value != "")
+            this.visibleAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get resourceAnimatorResource() {
+        return this._resourceAnimatorResource;
+    }
+    set resourceAnimatorResource(value) {
+        this._resourceAnimatorResource = value;
+        if (value != "")
+            this.resourceAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get selectAnimatorResource() {
+        return this._selectAnimatorResource;
+    }
+    set selectAnimatorResource(value) {
+        this._selectAnimatorResource = value;
+        if (value != "")
+            this.selectAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get checkAnimatorResource() {
+        return this._checkAnimatorResource;
+    }
+    set checkAnimatorResource(value) {
+        this._checkAnimatorResource = value;
+        if (value != "")
+            this.checkAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get removeAnimatorResource() {
+        return this._removeAnimatorResource;
+    }
+    set removeAnimatorResource(value) {
+        this._removeAnimatorResource = value;
+        if (value != "")
+            this.removeAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get initResource() {
+        return this._initResource;
+    }
+    set initResource(value) {
+        this._initResource = value;
+        let data = CSystem.resources.get(value);
+        if (data.init != undefined) {
+            let fn = new Function("control", data.init);
+            fn(this);
+        }
+    }
+    get propertyName() {
+        return this._propertyName;
+    }
+    set propertyName(value) {
+        if (this._propertyName != value) {
+            this._propertyName = value;
+            this.doChangePropertyName();
+        }
+    }
+    get propertyDataKind() {
+        return this._propertyDataKind;
+    }
+    set propertyDataKind(value) {
+        if (this._propertyDataKind != value) {
+            this._propertyDataKind = value;
+            this.doChangePropertyDataKind();
+        }
+    }
+    get parent() {
+        return this._parent;
+    }
+    set parent(value) {
+        if (value == undefined) {
+            this._parent = value;
+            if (this.controlElement.parentElement != null) {
+                this.controlElement.parentElement.removeChild(this.controlElement);
+            }
+        }
+        else {
+            if (value instanceof HTMLElement) {
+                value.appendChild(this.controlElement);
+            }
+            else {
+                this._parent = value;
+                if (this.controlElement.parentElement != null) {
+                    this.controlElement.parentElement.removeChild(this.controlElement);
+                }
+                value.controlElement.appendChild(this.controlElement);
+            }
+            this.doSetPosition();
+        }
+    }
+    get id() {
+        return this._id;
+    }
+    get name() {
+        return this._name;
+    }
+    /*set name(value: string) {
+        if(value.indexOf(".") != -1) throw new Error("invalid name : " + value)
+        if(this._name != value) {
+            this._name = value
+            this.doChange(CControl.CON_CHANGE_NAME)
+        }
+    }*/
+    get childs() {
+        return CSystem.getChildControls(this);
+    }
+    get parents() {
+        let arr = new Array();
+        let p = this._parent;
+        while (p != undefined) {
+            arr.unshift(p);
+            p = p.parent;
+        }
+        return arr;
+    }
+    get parentPositions() {
+        let arr = new Array();
+        let p = this._parent;
+        while (p != undefined) {
+            arr.unshift(p._position);
+            p = p.parent;
+        }
+        return arr;
+    }
+    get brotherPositions() {
+        let arr = new Array();
+        let bros = CSystem.getBroControls(this);
+        for (let n = 0; n < bros.length; n++) {
+            if (bros[n].visible)
+                arr.push(bros[n]._position);
+        }
+        return arr;
+    }
+    get controlElement() {
+        return this._controlElement;
+    }
+    get elementBounds() {
+        let r = new CRect();
+        let rt = this._controlElement.getBoundingClientRect();
+        r.left = rt.x;
+        r.top = rt.y;
+        r.width = rt.width;
+        r.height = rt.height;
+        return r;
+    }
+    get position() {
+        return this._position;
+    }
+    set position(value) {
+        this._position = value;
+        let self = this;
+        this._position.onChange = function (ps, kind) {
+            self.doChangePosition(kind);
+        };
+    }
+    get transform() {
+        return this._transform;
+    }
+    get hasPointerEvent() {
+        return this._hasPointerEvent;
+    }
+    set hasPointerEvent(value) {
+        if (this._hasPointerEvent != value) {
+            this._hasPointerEvent = value;
+            this.doChange(CControl.CON_CHANGE_HAS_POINTER);
+        }
+    }
+    get cursor() {
+        return this._cursor;
+    }
+    set cursor(value) {
+        if (this._cursor != value) {
+            this._cursor = value;
+            this.controlElement.style.cursor = value;
+        }
+    }
+    get stopPropagation() {
+        return this._stopPropagation;
+    }
+    get tabIndex() {
+        return this._tabIndex;
+    }
+    set tabIndex(value) {
+        if (this._tabIndex != value) {
+            this._tabIndex = value;
+            this.doChange(CControl.CON_CHANGE_TAB_INDEX);
+        }
+    }
+    get overflow() {
+        return this._overflow;
+    }
+    set overflow(value) {
+        if (this._overflow != value) {
+            this._overflow = value;
+            this.doChange(CControl.CON_CHANGE_OVER_FLOW);
+        }
+    }
+    get opacity() {
+        return this._opacity;
+    }
+    set opacity(value) {
+        if (this._opacity != value) {
+            this._opacity = value;
+            this.doChange(CControl.CON_CHANGE_OPACITY);
+        }
+    }
+    get enabled() {
+        return this._enabled;
+    }
+    set enabled(value) {
+        if (this._enabled != value) {
+            this._enabled = value;
+            this.doChange(CControl.CON_CHANGE_ENABLED);
+        }
+    }
+    get visible() {
+        return this._visible;
+    }
+    set visible(value) {
+        if (this._visible != value) {
+            this._visible = value;
+            this.doChange(CControl.CON_CHANGE_VISIBLE, value);
+        }
+    }
+    get focused() {
+        return this._focused;
+    }
+    set focused(value) {
+        if (this._focused != value) {
+            this._focused = value;
+            if (value) {
+                this.controlElement.focus();
+            }
+            else {
+                this.controlElement.blur();
+            }
+            this.doChange(CControl.CON_CHANGE_FOCUS);
+        }
+    }
+    get hasFocus() {
+        return this.tabIndex != "";
+    }
+    set hasFocus(value) {
+        if (value) {
+            if (!this.hasFocus) {
+                this.tabIndex = CSequence.getSequence("tabindex_").split("_")[1];
+            }
+        }
+        else {
+            this.tabIndex = "";
+        }
+    }
+    get selected() {
+        return this._selected;
+    }
+    set selected(value) {
+        if (this._selected != value) {
+            this._selected = value;
+            this.doChange(CControl.CON_CHANGE_SELECTED);
+        }
+    }
+    get checked() {
+        return this._checked;
+    }
+    set checked(value) {
+        if (this._checked != value) {
+            this._checked = value;
+            this.doChange(CControl.CON_CHANGE_CHECKED);
+        }
+    }
+    get filter() {
+        return this._filter;
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "className", this.className);
+        CDataClass.putData(data, "position", this.position.toData(), {}, true);
+        CDataClass.putData(data, "transform", this.transform.toData(), {}, true);
+        CDataClass.putData(data, "hasPointerEvent", this.hasPointerEvent, true);
+        CDataClass.putData(data, "stopPropagation", this.stopPropagation.toData(), {}, true);
+        CDataClass.putData(data, "tabIndex", this.tabIndex, "");
+        CDataClass.putData(data, "overflow", this.overflow, "");
+        CDataClass.putData(data, "opacity", this.opacity, 1);
+        CDataClass.putData(data, "filter", this.filter.toData(), {}, true);
+        CDataClass.putData(data, "enabled", this.enabled, true);
+        CDataClass.putData(data, "visible", this.visible, true);
+        CDataClass.putData(data, "selected", this.selected, false);
+        CDataClass.putData(data, "checked", this.checked, false);
+        CDataClass.putData(data, "focusedAnimatorResource", this.focusedAnimatorResource, "");
+        CDataClass.putData(data, "enabledAnimatorResource", this.enabledAnimatorResource, "");
+        CDataClass.putData(data, "visibleAnimatorResource", this.visibleAnimatorResource, "");
+        CDataClass.putData(data, "resourceAnimatorResource", this.resourceAnimatorResource, "");
+        CDataClass.putData(data, "selectAnimatorResource", this.selectAnimatorResource, "");
+        CDataClass.putData(data, "checkAnimatorResource", this.checkAnimatorResource, "");
+        CDataClass.putData(data, "removeAnimatorResource", this.removeAnimatorResource, "");
+        CDataClass.putData(data, "propertyName", this.propertyName, "");
+        CDataClass.putData(data, "propertyDataKind", this.propertyDataKind, "");
+        if (this.focusedAnimationTrigger != undefined)
+            CDataClass.putData(data, "focusedAnimationTrigger", this.focusedAnimationTrigger.toData(), {}, true);
+        if (this.enabledAnimationTrigger != undefined)
+            CDataClass.putData(data, "enabledAnimationTrigger", this.enabledAnimationTrigger.toData(), {}, true);
+        if (this.visibleAnimationTrigger != undefined)
+            CDataClass.putData(data, "visibleAnimationTrigger", this.visibleAnimationTrigger.toData(), {}, true);
+        if (this.resourceAnimationTrigger != undefined)
+            CDataClass.putData(data, "resourceAnimationTrigger", this.resourceAnimationTrigger.toData(), {}, true);
+        if (this.selectAnimationTrigger != undefined)
+            CDataClass.putData(data, "selectAnimationTrigger", this.selectAnimationTrigger.toData(), {}, true);
+        if (this.checkAnimationTrigger != undefined)
+            CDataClass.putData(data, "checkAnimationTrigger", this.checkAnimationTrigger.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        let b = this.propertyName != "";
+        let pn = this.propertyName;
+        let pdk = this.propertyDataKind;
+        this.position.fromData(CDataClass.getData(data, "position", {}, true));
+        this.transform.fromData(CDataClass.getData(data, "transform", {}, true));
+        this.hasPointerEvent = CDataClass.getData(data, "hasPointerEvent", true);
+        this.stopPropagation.fromData(CDataClass.getData(data, "stopPropagation", {}, true));
+        this.tabIndex = CDataClass.getData(data, "tabIndex", "");
+        this.overflow = CDataClass.getData(data, "overflow", "");
+        this.opacity = CDataClass.getData(data, "opacity", 1);
+        this.filter.fromData(CDataClass.getData(data, "filter", {}, true));
+        this.enabled = CDataClass.getData(data, "enabled", true);
+        this.visible = CDataClass.getData(data, "visible", true);
+        this.selected = CDataClass.getData(data, "selected", false);
+        this.checked = CDataClass.getData(data, "checked", false);
+        CAnimator.fromAnimatorData(data, this, "focusedAnimationTrigger");
+        CAnimator.fromAnimatorData(data, this, "enabledAnimationTrigger");
+        CAnimator.fromAnimatorData(data, this, "visibleAnimationTrigger");
+        CAnimator.fromAnimatorData(data, this, "resourceAnimationTrigger");
+        CAnimator.fromAnimatorData(data, this, "selectAnimationTrigger");
+        CAnimator.fromAnimatorData(data, this, "checkAnimationTrigger");
+        this.focusedAnimatorResource = CDataClass.getData(data, "focusedAnimatorResource", "");
+        this.enabledAnimatorResource = CDataClass.getData(data, "enabledAnimatorResource", "");
+        this.visibleAnimatorResource = CDataClass.getData(data, "visibleAnimatorResource", "");
+        this.resourceAnimatorResource = CDataClass.getData(data, "resourceAnimatorResource", "");
+        this.selectAnimatorResource = CDataClass.getData(data, "selectAnimatorResource", "");
+        this.checkAnimatorResource = CDataClass.getData(data, "checkAnimatorResource", "");
+        this.removeAnimatorResource = CDataClass.getData(data, "removeAnimatorResource", "");
+        this.propertyName = CDataClass.getData(data, "propertyName", "");
+        this.propertyDataKind = CDataClass.getData(data, "propertyDataKind", "");
+        if (b) {
+            this.propertyName = pn;
+            this.propertyDataKind = pdk;
+        }
+    }
+    doResource() {
+        let data = CSystem.resources.get(this._resource);
+        if (data != undefined) {
+            this.fromData(data);
+            if (data.init != undefined) {
+                let fn = new Function("control", data.init);
+                fn(this);
+            }
+            if (this.resourceAnimationTrigger != undefined) {
+                let self = this;
+                this.resourceAnimationTrigger.onAfterAnimation = function () {
+                    if (self.onResource != undefined) {
+                        self.onResource(this);
+                    }
+                };
+                this.resourceAnimationTrigger.start();
+            }
+            else {
+                if (this.onResource != undefined) {
+                    this.onResource(this);
+                }
+            }
+        }
+    }
+    doSetPosition() {
+        if (this.parent != undefined) {
+            let bros = CSystem.getBroVisiblePositions(this);
+            let ps = CPosition.getAlignPixelBounds(this.parent.position, bros, this.position);
+            if (ps.left != this.position.left || ps.top != this.position.top) {
+                if (ps.left != this.position.left) {
+                    this.position.leftNotNofity = ps.left;
+                }
+                if (ps.top != this.position.top) {
+                    this.position.topNotNofity = ps.top;
+                }
+                this.doChangeOffset();
+            }
+            if (ps.width != this.position.width || ps.height != this.position.height) {
+                if (ps.width != this.position.width) {
+                    this.position.widthNotNofity = ps.width;
+                }
+                if (ps.height != this.position.height) {
+                    this.position.heightNotNofity = ps.height;
+                }
+                this.doChangeSize();
+            }
+        }
+        else {
+            this.doSetElementOffset();
+            this.doSetElementSize();
+        }
+        if (this.onSetPosition != undefined) {
+            this.onSetPosition(this);
+        }
+    }
+    doSetElementOffset() {
+        this.controlElement.style.left = this.position.left + "px";
+        this.controlElement.style.top = this.position.top + "px";
+        if (this.onSetElementOffset != undefined) {
+            this.onSetElementOffset(this);
+        }
+    }
+    doSetElementSize() {
+        this.controlElement.style.width = this.position.width + "px";
+        this.controlElement.style.height = this.position.height + "px";
+        if (this.onSetElementSize != undefined) {
+            this.onSetElementSize(this);
+        }
+    }
+    doSetElementRotationCenter() {
+        if (this.onSetElementRotationCenter != undefined) {
+            this.onSetElementRotationCenter(this);
+        }
+    }
+    doSetElementScale() {
+        if (this.onSetElementScale != undefined) {
+            this.onSetElementScale(this);
+        }
+    }
+    doRemove() {
+        if (this.onBeforeRemove != undefined) {
+            this.onBeforeRemove(this);
+        }
+        this.controlElement.blur();
+        let arr = CSystem.getChildControls(this);
+        for (let n = 0; n < arr.length; n++) {
+            arr[n].remove();
+        }
+        CSystem.controls.deleteControl(this);
+        this.controlElement.remove();
+        if (this.focusedAnimationTrigger != undefined)
+            this.focusedAnimationTrigger.remove();
+        this.focusedAnimationTrigger = undefined;
+        if (this.enabledAnimationTrigger != undefined)
+            this.enabledAnimationTrigger.remove();
+        this.enabledAnimationTrigger = undefined;
+        if (this.visibleAnimationTrigger != undefined)
+            this.visibleAnimationTrigger.remove();
+        this.visibleAnimationTrigger = undefined;
+        if (this.resourceAnimationTrigger != undefined)
+            this.resourceAnimationTrigger.remove();
+        this.resourceAnimationTrigger = undefined;
+        if (this.selectAnimationTrigger != undefined)
+            this.selectAnimationTrigger.remove();
+        this.selectAnimationTrigger = undefined;
+        if (this.checkAnimationTrigger != undefined)
+            this.checkAnimationTrigger.remove();
+        this.checkAnimationTrigger = undefined;
+        if (this.removeAnimationTrigger != undefined)
+            this.removeAnimationTrigger.remove();
+        this.removeAnimationTrigger = undefined;
+        super.doRemove();
+    }
+    doChange(kind, data) {
+        if (kind == CControl.CON_CHANGE_POSITION) {
+            this.doChangePosition(data);
+        }
+        if (kind == CControl.CON_CHANGE_HAS_POINTER) {
+            this.doChangeHasPointer();
+        }
+        if (kind == CControl.CON_CHANGE_TAB_INDEX) {
+            this.controlElement.setAttribute("tabindex", this._tabIndex);
+        }
+        if (kind == CControl.CON_CHANGE_OVER_FLOW) {
+            this.controlElement.style.overflow = this._overflow;
+        }
+        if (kind == CControl.CON_CHANGE_OPACITY) {
+            this.doChangeOpacity();
+        }
+        if (kind == CControl.CON_CHANGE_ENABLED) {
+            this.doChangeEnabled();
+        }
+        if (kind == CControl.CON_CHANGE_VISIBLE) {
+            this.doChangeVisible(data);
+        }
+        if (kind == CControl.CON_CHANGE_FOCUS) {
+            this.doChangeFocus();
+        }
+        if (kind == CControl.CON_CHANGE_CHECKED) {
+            this.doChangeChecked();
+        }
+        if (kind == CControl.CON_CHANGE_SELECTED) {
+            this.doChangeSelected();
+        }
+        /*let arrBro = CMainThread.getBroControls(this)
+        for(let n = 0; n < arrBro.length; n++) {
+            if(arrBro[n] != this) arrBro[n].doNotifyChangeBrother(this, kind)
+        }
+        let arrChild = CMainThread.getChildControls(this)
+        for(let n = 0; n < arrChild.length; n++) {
+            arrChild[n].doNotifyChangeParent(this, kind)
+        }
+        if(this.parent != undefined) {
+            this.parent.doNotifyChangeChild(this, kind)
+        }*/
+        super.doChange(kind);
+    }
+    doChangePosition(kind, data) {
+        this.doChange(kind, data);
+        let boff = false;
+        let bsize = false;
+        if (this.parent != undefined && this.position.align != EPositionAlign.NONE) {
+            let bros = CSystem.getBroVisiblePositions(this);
+            let ps = CPosition.getAlignPixelBounds(this.parent.position, bros, this.position);
+            if (ps.left != this.position.left || ps.top != this.position.top) {
+                if (ps.left != this.position.left) {
+                    this.position.leftNotNofity = ps.left;
+                    boff = true;
+                }
+                if (ps.top != this.position.top) {
+                    this.position.topNotNofity = ps.top;
+                    boff = true;
+                }
+                this.doChangeOffset();
+            }
+            //if(b) this.doSetElementOffset()
+            //b = false
+            if (ps.width != this.position.width || ps.height != this.position.height) {
+                if (ps.width != this.position.width) {
+                    this.position.widthNotNofity = ps.width;
+                    bsize = true;
+                }
+                if (ps.height != this.position.height) {
+                    this.position.heightNotNofity = ps.height;
+                    bsize = true;
+                }
+                this.doChangeSize();
+            }
+            //if(b) this.doSetElementSize()
+        }
+        if ((kind == CPosition.CON_CHANGE_LEFT || kind == CPosition.CON_CHANGE_TOP) && !boff) {
+            this.doChangeOffset();
+        }
+        if ((kind == CPosition.CON_CHANGE_WIDTH || kind == CPosition.CON_CHANGE_HEIGHT) && !bsize) {
+            this.doChangeSize();
+        }
+        if (kind == CPosition.CON_CHANGE_ALIGN) {
+            this.doChangeAilgn();
+        }
+        if (kind == CPosition.CON_CHANGE_ALIGN_INFO) {
+            this.doChangeAlignInfo(kind);
+        }
+        if (kind == CPosition.CON_CHANGE_PARENT_ALIGN_INFO) {
+            this.doChangeParentAlignInfo(kind);
+        }
+        if (kind == CPosition.CON_CHANGE_MARGINS) {
+            this.doChangeMargins();
+        }
+        if (kind == CPosition.CON_CHANGE_PADDING) {
+            this.doChangePadding();
+        }
+    }
+    doChangeTrasform(kind) {
+        this._transform.setTransform(this.controlElement);
+        if (kind == CTransform.CON_CHANGE_PERSPECTIVE || kind == CTransform.CON_CHANGE_PERSPECTIVE_Y || kind == CTransform.CON_CHANGE_PERSPECTIVE_X) {
+            this.doChangePerspective();
+        }
+        if (kind == CTransform.CON_CHANGE_ROTATION_POINT_X || kind == CTransform.CON_CHANGE_ROTATION_POINT_Y || kind == CTransform.CON_CHANGE_ROTATION_POINT_Z) {
+            this.doChangeRotationCenter();
+        }
+        if (kind == CTransform.CON_CHANGE_SCALE_X || kind == CTransform.CON_CHANGE_SCALE_Y || kind == CTransform.CON_CHANGE_SCALE_Z) {
+            this.doChangeScale();
+        }
+        if (kind == CTransform.CON_CHANGE_ROTATE_X || kind == CTransform.CON_CHANGE_ROTATE_Y || kind == CTransform.CON_CHANGE_ROTATE_Z) {
+            this.doChangeRotate();
+        }
+        if (kind == CTransform.CON_CHANGE_TRANSLATE_X || kind == CTransform.CON_CHANGE_TRANSLATE_Y || kind == CTransform.CON_CHANGE_TRANSLATE_Z) {
+            this.doChangeTraslate();
+        }
+        if (this.onChangeTrasform != undefined) {
+            this.onChangeTrasform(this);
+        }
+    }
+    doChangeAilgn() {
+        this.doSetElementOffset();
+        this.doSetElementSize();
+        this.childsPositionSet();
+        this.brothersPositionSet();
+        if (this.onChangeAlign != undefined) {
+            this.onChangeAlign(this);
+        }
+    }
+    doChangeAlignInfo(kind, data) {
+        this.doSetElementOffset();
+        this.doSetElementSize();
+        this.childsPositionSet();
+        this.brothersPositionSet();
+        if (this.onChangeAlignInfo != undefined) {
+            this.onChangeAlignInfo(this);
+        }
+    }
+    doChangeParentAlignInfo(kind) {
+        this.childsPositionSet();
+        if (this.onChangeParentAlignInfo != undefined) {
+            this.onChangeParentAlignInfo(this);
+        }
+    }
+    doChangeOpacity() {
+        this._controlElement.style.opacity = this._opacity + "";
+        if (this.onChangeOpacity != undefined) {
+            this.onChangeOpacity(this);
+        }
+    }
+    doChangeVisible(value) {
+        if (this.visibleAnimationTrigger != undefined) {
+            if (value) {
+                let self = this;
+                this.visibleAnimationTrigger.onAfterAnimation = function () {
+                    if (!self.visible)
+                        self._controlElement.style.display = "none";
+                    self.doShow();
+                    self.brothersPositionSet();
+                };
+                this._controlElement.style.display = "inline-block";
+                this.triggerTrue(this.visibleAnimationTrigger);
+            }
+            else {
+                let self = this;
+                this.visibleAnimationTrigger.onAfterAnimation = function () {
+                    if (!self.visible)
+                        self._controlElement.style.display = "none";
+                    self.doHide();
+                    self.brothersPositionSet();
+                };
+                this.triggerFalse(this.visibleAnimationTrigger);
+            }
+        }
+        else {
+            if (value) {
+                this._controlElement.style.display = "inline-block";
+                this.doShow();
+                this.brothersPositionSet();
+            }
+            else {
+                this._controlElement.style.display = "none";
+                this.doHide();
+                this.brothersPositionSet();
+            }
+            //this._visible = value
+        }
+        if (this.onChangeVisible != undefined) {
+            this.onChangeVisible(this);
+        }
+    }
+    doChangeEnabled() {
+        if (!this.enabled) {
+            if (this.focused) {
+                this.controlElement.blur();
+                this.focused = false;
+            }
+        }
+        if (this.enabledAnimationTrigger != undefined) {
+            if (this.enabled) {
+                this.triggerTrue(this.enabledAnimationTrigger);
+            }
+            else {
+                this.triggerFalse(this.enabledAnimationTrigger);
+            }
+        }
+        if (this.onChangeEnabled != undefined) {
+            this.onChangeEnabled(this);
+        }
+    }
+    doChangeFocus() {
+        if (this.focusedAnimationTrigger != undefined) {
+            if (this.focused) {
+                this.triggerTrue(this.focusedAnimationTrigger);
+            }
+            else {
+                this.triggerFalse(this.focusedAnimationTrigger);
+            }
+        }
+        if (this.onChangeFocus != undefined) {
+            this.onChangeFocus(this);
+        }
+    }
+    doChangeSelected() {
+        if (this.selectAnimationTrigger != undefined) {
+            if (this.selected) {
+                this.triggerTrue(this.selectAnimationTrigger);
+            }
+            else {
+                this.triggerFalse(this.selectAnimationTrigger);
+            }
+        }
+        if (this.onChangeSelected != undefined) {
+            this.onChangeSelected(this);
+        }
+    }
+    doChangeChecked() {
+        if (this.checkAnimationTrigger != undefined) {
+            if (this.checked) {
+                this.triggerTrue(this.checkAnimationTrigger);
+            }
+            else {
+                this.triggerFalse(this.checkAnimationTrigger);
+            }
+        }
+        if (this.onChangeChecked != undefined) {
+            this.onChangeChecked(this);
+        }
+    }
+    doChangeOffset() {
+        this.doSetElementOffset();
+        if (this.onChangeOffset != undefined) {
+            this.onChangeOffset(this);
+        }
+    }
+    doChangeSize() {
+        this.doSetElementSize();
+        this.childsPositionSet();
+        this.brothersPositionSet();
+        if (this.position.align == EPositionAlign.RIGHT || this.position.align == EPositionAlign.BOTTOM) {
+            if (this.parent != undefined) {
+                let bros = CSystem.getBroVisiblePositions(this);
+                let ps = CPosition.getAlignPixelBounds(this.parent.position, bros, this.position);
+                if (ps.left != this.position.left || ps.top != this.position.top) {
+                    if (ps.left != this.position.left) {
+                        this.position.leftNotNofity = ps.left;
+                    }
+                    if (ps.top != this.position.top) {
+                        this.position.topNotNofity = ps.top;
+                    }
+                }
+                if (ps.width != this.position.width || ps.height != this.position.height) {
+                    if (ps.width != this.position.width) {
+                        this.position.widthNotNofity = ps.width;
+                    }
+                    if (ps.height != this.position.height) {
+                        this.position.heightNotNofity = ps.height;
+                    }
+                }
+            }
+            this.doSetElementOffset();
+            this.doSetElementSize();
+        }
+        if (this.onChangeSize != undefined) {
+            this.onChangeSize(this);
+        }
+    }
+    doChangeRotationCenter() {
+        this.doSetElementRotationCenter();
+        if (this.onChangeRotationCenter != undefined) {
+            this.onChangeRotationCenter(this);
+        }
+    }
+    doChangeRotate() {
+        if (this.onChangeRotate != undefined) {
+            this.onChangeRotate(this);
+        }
+    }
+    doChangeScale() {
+        if (this.onChangeScale != undefined) {
+            this.onChangeScale(this);
+        }
+    }
+    doChangeTraslate() {
+        if (this.onChangeTranslate != undefined) {
+            this.onChangeTranslate(this);
+        }
+    }
+    doChangePerspective() {
+        if (this.onChangePerspective != undefined) {
+            this.onChangePerspective(this);
+        }
+    }
+    doChangeMargins() {
+        this.doSetElementOffset();
+        this.doSetElementSize();
+        this.brothersPositionSet();
+        this.childsPositionSet();
+        if (this.onChangeMargins != undefined) {
+            this.onChangeMargins(this);
+        }
+    }
+    doChangePadding() {
+        this.childsPositionSet();
+        if (this.onChangePadding != undefined) {
+            this.onChangePadding(this);
+        }
+    }
+    doChangeHasPointer() {
+        if (this._hasPointerEvent) {
+            this._controlElement.style.pointerEvents = "auto";
+        }
+        else {
+            this._controlElement.style.pointerEvents = "none";
+        }
+        if (this.onChangeHasPointer != undefined) {
+            this.onChangeHasPointer(this);
+        }
+    }
+    doChangeCountry(code) {
+        if (this.onChangeCountry != undefined) {
+            this.onChangeCountry(this, code);
+        }
+    }
+    doChangePropertyName() {
+        if (this.onChangePropertyName != undefined) {
+            this.onChangePropertyName(this);
+        }
+    }
+    doChangePropertyDataKind() {
+        if (this.onChangePropertyDataKind != undefined) {
+            this.onChangePropertyDataKind(this);
+        }
+    }
+    /*doNotifyChangeChild(child: CControl, kind: string, data?:any) {
+        if(this.onNotifyChildChange != undefined) {
+            this.onNotifyChildChange(this, child, kind, data)
+        }
+    }
+    doNotifyChangeBrother(brother: CControl, kind: string, data?:any) {
+        this.doSetElementSize()
+        if(this.bounds.isRelativeAlign() &&
+            brother.bounds.isRelativeAlign() && (
+                kind == CControl.CON_CHANGE_WIDTH || kind == CControl.CON_CHANGE_HEIGHT || kind == CControl.CON_CHANGE_VISIBLE
+            )) {
+            this.doSetElementSize()
+        }
+        if(kind == CArea.CON_CHANGE_ALIGN) {
+            this.doSetElementSize()
+        }
+        if(this.onNotifyBrotherChange != undefined) {
+            this.onNotifyBrotherChange(this, brother, kind, data)
+        }
+    }
+    doNotifyChangeParent(parent: CControl, kind: string, data?:any) {
+        this.doSetElementSize()
+        if(kind == CControl.CON_CHANGE_SCALE_X || kind == CControl.CON_CHANGE_SCALE_Y) {
+            this.setAlignBounds()
+        }
+        if(kind == CArea.CON_CHANGE_ALIGN_CHILDS_FLOW_MARGIN) {
+            if(this.position.align != EAreaAlign.NONE) {
+                this.setAlignBounds()
+            }
+        }
+        if(kind == CControl.CON_CHANGE_WIDTH || kind == CControl.CON_CHANGE_HEIGHT) {
+            if(this.position.align != EAreaAlign.NONE) {
+                this.setAlignBounds()
+            }
+        }
+        if(this.onNotifyParentChange != undefined) {
+            this.onNotifyParentChange(this, parent, kind, data)
+        }
+    }*/
+    doHide() {
+        if (this.onHide != undefined) {
+            this.onHide(this);
+        }
+    }
+    doShow() {
+        if (this.onShow != undefined) {
+            this.onShow(this);
+        }
+    }
+    triggerTrue(trigger) {
+        if (trigger.isAnimate()) {
+            trigger.reverse();
+        }
+        else {
+            trigger.start();
+        }
+    }
+    triggerFalse(trigger) {
+        if (trigger.isAnimate()) {
+            if (trigger.isLoop) {
+                trigger.cancel();
+            }
+            else {
+                trigger.reverse();
+            }
+        }
+        else {
+            trigger.invert();
+        }
+    }
+    childsPositionSet() {
+        let arr = CSystem.getChildControls(this);
+        for (let n = 0; n < arr.length; n++) {
+            if (arr[n].position.align != EPositionAlign.NONE)
+                arr[n].doSetPosition();
+        }
+    }
+    brothersPositionSet() {
+        let arr = CSystem.getBroControls(this);
+        for (let n = 0; n < arr.length; n++) {
+            if (arr[n].position.align != EPositionAlign.NONE)
+                arr[n].doSetPosition();
+        }
+    }
+    remove() {
+        if (this.removeAnimationTrigger != undefined) {
+            let self = this;
+            this.removeAnimationTrigger.onAfterAnimation = function () {
+                self.doRemove();
+            };
+            this.removeAnimationTrigger.start();
+        }
+        else {
+            this.doRemove();
+        }
+    }
+    parentElement(element) {
+        element.appendChild(this._controlElement);
+    }
+    getParents() {
+        let rt = new Array();
+        let pr = this.parent;
+        while (pr != undefined) {
+            rt.unshift(pr);
+            pr = pr.parent;
+        }
+        return rt;
+    }
+    getNamPath() {
+        let arr = this.getParents();
+        let rt = "";
+        for (let n = 0; n < arr.length; n++) {
+            if (n == 0) {
+                rt += arr[n].name;
+            }
+            else {
+                rt += "." + arr[n].name;
+            }
+        }
+        if (rt == "") {
+            rt += this.name;
+        }
+        else {
+            rt += "." + this.name;
+        }
+        return this.name;
+    }
+    getElementBounds() {
+        return this._controlElement.getBoundingClientRect();
+    }
+    bringToFront() {
+        /*if(this.controlElement.parentElement != null) {
+            let e = this.controlElement.parentElement
+            this.controlElement.parentElement.removeChild(this.controlElement)
+            e.appendChild(this.controlElement)
+        }*/
+        this.controlElement.style.zIndex = CSystem.getZPlus() + "";
+    }
+    sendToBack() {
+        /*if(this.controlElement.parentElement != null) {
+            let e = this.controlElement.parentElement
+            this.controlElement.parentElement.removeChild(this.controlElement)
+            e.appendChild(this.controlElement)
+            e.prepend(this.controlElement)
+        }*/
+        this.controlElement.style.zIndex = CSystem.getZMinus() + "";
+    }
+    addProperties() {
+        let arr = super.addProperties();
+        arr.push({ instance: this.focusedAnimationTrigger, propertyName: "focusedAnimationTrigger", readOnly: false, enum: [] });
+        arr.push({ instance: this.enabledAnimationTrigger, propertyName: "enabledAnimationTrigger", readOnly: false, enum: [] });
+        arr.push({ instance: this.visibleAnimationTrigger, propertyName: "visibleAnimationTrigger", readOnly: false, enum: [] });
+        arr.push({ instance: this.resourceAnimationTrigger, propertyName: "resourceAnimationTrigger", readOnly: false, enum: [] });
+        arr.push({ instance: this.selectAnimationTrigger, propertyName: "selectAnimationTrigger", readOnly: false, enum: [] });
+        arr.push({ instance: this.checkAnimationTrigger, propertyName: "checkAnimationTrigger", readOnly: false, enum: [] });
+        arr.push({ instance: this.removeAnimationTrigger, propertyName: "removeAnimationTrigger", readOnly: false, enum: [] });
+        return arr;
+    }
+    static createControl(parent, name = "", left = 0, top = 0, width = 50, height = 50) {
+        let c = new CControl(parent, name);
+        c.position.left = left;
+        c.position.top = top;
+        c.position.width = width;
+        c.position.height = height;
+        return c;
+    }
+    static getControl(name, className = "") {
+        let rt = new Array();
+        let arr;
+        if (className == "") {
+            arr = CSystem.controls.findControls([{ columnName: "name", value: name }]);
+        }
+        else {
+            arr = CSystem.controls.findControls([{ columnName: "name", value: name }, { columnName: "className", value: className }]);
+        }
+        for (let n = 0; n < arr.length; n++) {
+            rt.push(arr[n].control);
+        }
+        return rt;
+    }
+    static controlFromResource(resource, parent) {
+        let rc = CSystem.resources.get(resource);
+        if (rc != undefined) {
+            if (rc.className != undefined) {
+                let fn = new Function("return new " + rc.className + "()");
+                let con = fn();
+                //con.fromData(rc)
+                con.resource = resource;
+                con.parent = parent;
+                return con;
+            }
+        }
+        else {
+            return undefined;
+        }
+    }
+    static controlFromData(data, parent) {
+        if (data.className != undefined) {
+            let fn = new Function("return new " + data.className + "()");
+            let con = fn();
+            //con.fromData(rc)
+            con.fromData(data);
+            con.parent = parent;
+            return con;
+        }
+    }
+}
+class CLayout extends CControl {
+    constructor(parent, name) {
+        super(parent, name);
+        this.hasPointerEvent = false;
+    }
+    doResource() {
+        super.doResource();
+        this.hasPointerEvent = false;
+    }
+}
+var EControlMoveKind;
+(function (EControlMoveKind) {
+    EControlMoveKind[EControlMoveKind["NONE"] = 0] = "NONE";
+    EControlMoveKind[EControlMoveKind["MOVE"] = 1] = "MOVE";
+    EControlMoveKind[EControlMoveKind["RESIZE_LT"] = 2] = "RESIZE_LT";
+    EControlMoveKind[EControlMoveKind["RESIZE_T"] = 3] = "RESIZE_T";
+    EControlMoveKind[EControlMoveKind["RESIZE_RT"] = 4] = "RESIZE_RT";
+    EControlMoveKind[EControlMoveKind["RESIZE_L"] = 5] = "RESIZE_L";
+    EControlMoveKind[EControlMoveKind["RESIZE_R"] = 6] = "RESIZE_R";
+    EControlMoveKind[EControlMoveKind["RESIZE_LB"] = 7] = "RESIZE_LB";
+    EControlMoveKind[EControlMoveKind["RESIZE_B"] = 8] = "RESIZE_B";
+    EControlMoveKind[EControlMoveKind["RESIZE_RB"] = 9] = "RESIZE_RB";
+})(EControlMoveKind || (EControlMoveKind = {}));
+class CPointerEventControl extends CControl {
+    constructor(parent, name) {
+        super(parent, name);
+        this.__pressedThisPoints = new CList();
+        this.__pressedBubblePoints = new CList();
+        this.__thisDownPoint = new CPoint(0, 0);
+        this.__preMovePoint = new CPoint(0, 0);
+        this.__downMovePoint = new CPoint(0, 0);
+        this.__pressedThisDown = false;
+        this.__preClick = { time: CTime.now, count: 0 };
+        this.__maxCount = 0;
+        this.__moveKind = EControlMoveKind.NONE;
+        this.__moveResizeDown = {
+            offsetx: 0,
+            offsety: 0,
+            pagex: 0,
+            pagey: 0,
+            left: 0,
+            top: 0,
+            width: 0,
+            height: 0
+        };
+        this._isEnter = false;
+        this._isOver = false;
+        this._repeatClickTime = 300;
+        this._usePointerCapture = false;
+        this._useDragAndDrop = false;
+        this._useDragAndDropCancel = false;
+        this._dragCatchControlNames = new CStringSet();
+        this._dragCatchControlPropertyNames = new CStringSet();
+        this._dragIconResource = "";
+        this._hintResource = "";
+        this._hint = "";
+        this._useHint = false;
+        this._hintPosition = "auto";
+        this._hintFixOffset = new CPoint(0, 0);
+        this._useMove = false;
+        this.lockMoveX = false;
+        this.lockMoveY = false;
+        this.magneticPoints = new Array();
+        this._magneticLength = 0;
+        this._useResize = false;
+        this._moveAreaLength = -1;
+        this._resizeAreaLength = 5;
+        this._ignoreResizeKind = new Set();
+        this.resizeMinWidth = 50;
+        this.resizeMinHeight = 50;
+        this._useFingerCursor = false;
+        this._fingerCursorLength = 30;
+        this._fingerCursors = new Array();
+        this._fingerCursorResource = "";
+        this._thisPointerDownAnimatorResource = "";
+        this._thisPointerUpAnimatorResource = "";
+        this._overAnimatorResource = "";
+        this._enterAnimatorResource = "";
+        this._clickAnimatorResource = "";
+        this._doubleClickAnimatorResource = "";
+        this._dragStartAnimatorResource = "";
+        this._dragCancelAnimatorResource = "";
+        this._dragCatchAnimatorResource = "";
+        this._keyDownAnimatorResource = "";
+        this.useMoveClick = false;
+        let self = this;
+        this._stopPropagation.onChange = function () {
+            self.doChange(CControl.CON_CHANGE_STOP_PROPAGATION);
+        };
+        this._controlElement.addEventListener("keydown", function (e) {
+            if (self.enabled)
+                self.doKeyDown(e);
+            if (self._stopPropagation.keyboard)
+                e.stopPropagation();
+        });
+        this._controlElement.addEventListener("keypress", function (e) {
+            if (self.enabled)
+                self.doKeyPress(e);
+            if (self._stopPropagation.keyboard)
+                e.stopPropagation();
+        });
+        this._controlElement.addEventListener("keyup", function (e) {
+            if (self.enabled)
+                self.doKeyUp(e);
+            if (self._stopPropagation.keyboard)
+                e.stopPropagation();
+        });
+        this._controlElement.addEventListener("pointerdown", function (e) {
+            if (self.enabled) {
+                self.doPointerDown(e);
+                if (self._stopPropagation.down)
+                    e.stopPropagation();
+            }
+        });
+        this._controlElement.addEventListener("pointermove", function (e) {
+            if (self.enabled) {
+                self.doPointerMove(e);
+                if (self._stopPropagation.move)
+                    e.stopPropagation();
+            }
+        });
+        this._controlElement.addEventListener("pointerup", function (e) {
+            if (self.enabled) {
+                self.doPointerUp(e);
+                if (self._stopPropagation.up)
+                    e.stopPropagation();
+            }
+        });
+        this._controlElement.addEventListener("pointercancel", function (e) {
+            if (self.enabled) {
+                self.doPointerCancel(e);
+                if (self._stopPropagation.cancel)
+                    e.stopPropagation();
+            }
+        });
+        this._controlElement.addEventListener("pointerover", function (e) {
+            if (self.enabled) {
+                self._isOver = true;
+                self.doPointerOver(e);
+                if (self._stopPropagation.over)
+                    e.stopPropagation();
+            }
+        });
+        this._controlElement.addEventListener("pointerout", function (e) {
+            if (self.enabled) {
+                self._isOver = false;
+                self.doPointerOut(e);
+                if (self._stopPropagation.out)
+                    e.stopPropagation();
+            }
+        });
+        this._controlElement.addEventListener("pointerenter", function (e) {
+            if (self.enabled) {
+                self._isEnter = true;
+                self.doPointerEnter(e);
+                if (self._stopPropagation.enter)
+                    e.stopPropagation();
+            }
+        });
+        this._controlElement.addEventListener("pointerleave", function (e) {
+            if (self.enabled) {
+                self._isEnter = false;
+                self.doPointerLeave(e);
+                if (self._stopPropagation.leave)
+                    e.stopPropagation();
+            }
+        });
+        this._controlElement.addEventListener("wheel", function (e) {
+            if (self.enabled)
+                self.doWheel(e);
+            if (self._stopPropagation.wheel)
+                e.stopPropagation();
+        });
+        this.__pressedThisPoints.onChange = function () {
+            if (self.enabled)
+                self.doChangeThisPressedPoints();
+        };
+        this.__pressedBubblePoints.onChange = function () {
+            if (self.enabled)
+                self.doChangeBubblePressedPoints();
+        };
+    }
+    static get CON_CHANGE_THIS_PRESSED_POINTS() { return "changeThisPressedPoints"; }
+    static get CON_CHANGE_BUBBLE_PRESSED_POINTS() { return "changeButtlePressedPoints"; }
+    static get CON_STOP_PROPAGATION_POINTER_DOWN() { return "stopPropagationPointerDown"; }
+    static get CON_STOP_PROPAGATION_POINTER_MOVE() { return "stopPropagationPointerMove"; }
+    static get CON_STOP_PROPAGATION_POINTER_UP() { return "stopPropagationPointerUp"; }
+    static get CON_STOP_PROPAGATION_POINTER_CANCEL() { return "stopPropagationPointerCancel"; }
+    static get CON_CHANGE_DRAG_ICON() { return "changeDragIcon"; }
+    static get CON_CHANGE_DRAG_CATCH_ICON() { return "changeDragCatchIcon"; }
+    static get CON_CHANGE_USE_HINT() { return "changeUseHint"; }
+    static get CON_CHANGE_HINT() { return "changeHint"; }
+    static get CON_CHANGE_HINT_RESOURCE() { return "changeHint"; }
+    static get CON_CHANGE_USE_MOVE() { return "changeUseMove"; }
+    static get CON_CHANGE_USE_RESIZE() { return "changeUseResize"; }
+    static get CON_CHANGE_MOVE_AREA_LENGTH() { return "changeMoveAreaLength"; }
+    static get CON_CHANGE_RESIZE_AREA_LENGTH() { return "changeResizeAreaLength"; }
+    static get CON_CHANGE_USE_POINTER_CAPTURE() { return "changeUsePointerCapture"; }
+    get magneticLength() {
+        return this._magneticLength;
+    }
+    set magneticLength(value) {
+        this._magneticLength = value;
+    }
+    get moveKind() {
+        return this.__moveKind;
+    }
+    get thisPointerDownAnimatorResource() {
+        return this._thisPointerDownAnimatorResource;
+    }
+    set thisPointerDownAnimatorResource(value) {
+        this._thisPointerDownAnimatorResource = value;
+        if (value != "")
+            this.thisPointerDownAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get thisPointerUpAnimatorResource() {
+        return this._thisPointerUpAnimatorResource;
+    }
+    set thisPointerUpAnimatorResource(value) {
+        this._thisPointerUpAnimatorResource = value;
+        if (value != "")
+            this.thisPointerUpAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get overAnimatorResource() {
+        return this._overAnimatorResource;
+    }
+    set overAnimatorResource(value) {
+        this._overAnimatorResource = value;
+        if (value != "")
+            this.overAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get enterAnimatorResource() {
+        return this._enterAnimatorResource;
+    }
+    set enterAnimatorResource(value) {
+        this._enterAnimatorResource = value;
+        if (value != "")
+            this.enterAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get clickAnimatorResource() {
+        return this._clickAnimatorResource;
+    }
+    set clickAnimatorResource(value) {
+        this._clickAnimatorResource = value;
+        if (value != "")
+            this.clickAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get doubleClickAnimatorResource() {
+        return this._doubleClickAnimatorResource;
+    }
+    set doubleClickAnimatorResource(value) {
+        this._doubleClickAnimatorResource = value;
+        if (value != "")
+            this.doubleClickAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get dragStartAnimatorResource() {
+        return this._dragStartAnimatorResource;
+    }
+    set dragStartAnimatorResource(value) {
+        this._dragStartAnimatorResource = value;
+        if (value != "")
+            this.dragStartAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get dragCancelAnimatorResource() {
+        return this._dragCancelAnimatorResource;
+    }
+    set dragCancelAnimatorResource(value) {
+        this._dragCancelAnimatorResource = value;
+        if (value != "")
+            this.dragCancelAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get dragCatchAnimatorResource() {
+        return this._dragCatchAnimatorResource;
+    }
+    set dragCatchAnimatorResource(value) {
+        this._dragCatchAnimatorResource = value;
+        if (value != "")
+            this.dragCatchAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get keyDownAnimatorResource() {
+        return this._keyDownAnimatorResource;
+    }
+    set keyDownAnimatorResource(value) {
+        this._keyDownAnimatorResource = value;
+        if (value != "")
+            this.keyDownAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get pressedThisPoints() {
+        return this.__pressedThisPoints;
+    }
+    get pressedBubblePoints() {
+        return this.__pressedBubblePoints;
+    }
+    get repeatClickTime() {
+        return this._repeatClickTime;
+    }
+    set repeatClickTime(value) {
+        this._repeatClickTime = value;
+    }
+    get isEnter() {
+        return this._isEnter;
+    }
+    get isOver() {
+        return this._isOver;
+    }
+    get isDrag() {
+        return CSystem.dragControls.has(this);
+    }
+    get isPress() {
+        return this.__pressedThisPoints.length > 0;
+    }
+    get dragCatchControlNames() {
+        return this._dragCatchControlNames;
+    }
+    get dragCatchControlPropertyNames() {
+        return this._dragCatchControlPropertyNames;
+    }
+    get useDragAndDrop() {
+        return this._useDragAndDrop;
+    }
+    set useDragAndDrop(value) {
+        if (this._useDragAndDrop != value) {
+            this._useDragAndDrop = value;
+            this.doChange(CControl.CON_CHANGE_USE_DRAG);
+        }
+    }
+    get useDragAndDropCancel() {
+        return this._useDragAndDropCancel;
+    }
+    set useDragAndDropCancel(value) {
+        if (this._useDragAndDropCancel != value) {
+            this._useDragAndDropCancel = value;
+            this.doChange("useDragAndDropCancel");
+        }
+    }
+    get dragIconResource() {
+        return this._dragIconResource;
+    }
+    set dragIconResource(value) {
+        if (this._dragIconResource != value) {
+            this._dragIconResource = value;
+            this.doChange(CPointerEventControl.CON_CHANGE_DRAG_ICON);
+        }
+    }
+    get hintResource() {
+        return this._hintResource;
+    }
+    set hintResource(value) {
+        if (this._hintResource != value) {
+            this._hintResource = value;
+            this.doChange(CPointerEventControl.CON_CHANGE_HINT_RESOURCE);
+        }
+    }
+    get hint() {
+        return this._hint;
+    }
+    set hint(value) {
+        if (this._hint != value) {
+            this._hint = value;
+            this.doChange(CPointerEventControl.CON_CHANGE_HINT);
+        }
+    }
+    get useHint() {
+        return this._useHint;
+    }
+    set useHint(value) {
+        if (this._useHint != value) {
+            this._useHint = value;
+            this.doChange(CPointerEventControl.CON_CHANGE_USE_HINT);
+        }
+    }
+    get hintPosition() {
+        return this._hintPosition;
+    }
+    set hintPosition(value) {
+        this._hintPosition = value;
+    }
+    get hintFixOffset() {
+        return this._hintFixOffset;
+    }
+    get useMove() {
+        return this._useMove;
+    }
+    set useMove(value) {
+        if (this._useMove != value) {
+            this._useMove = value;
+            this.doChange(CPointerEventControl.CON_CHANGE_USE_MOVE);
+        }
+    }
+    get useResize() {
+        return this._useResize;
+    }
+    set useResize(value) {
+        if (this._useResize != value) {
+            this._useResize = value;
+            this.doChange(CPointerEventControl.CON_CHANGE_USE_RESIZE);
+        }
+    }
+    get moveAreaLength() {
+        return this._moveAreaLength;
+    }
+    set moveAreaLength(value) {
+        if (this._moveAreaLength != value) {
+            this._moveAreaLength = value;
+            this.doChange(CPointerEventControl.CON_CHANGE_MOVE_AREA_LENGTH);
+        }
+    }
+    get resizeAreaLength() {
+        return this._resizeAreaLength;
+    }
+    set resizeAreaLength(value) {
+        if (this._resizeAreaLength != value) {
+            this._resizeAreaLength = value;
+            this.doChange(CPointerEventControl.CON_CHANGE_RESIZE_AREA_LENGTH);
+        }
+    }
+    get ignoreResizeKind() {
+        return this._ignoreResizeKind;
+    }
+    get usePointerCapture() {
+        return this._usePointerCapture;
+    }
+    set usePointerCapture(value) {
+        if (this._usePointerCapture != value) {
+            this._usePointerCapture = value;
+            this.doChange(CPointerEventControl.CON_CHANGE_USE_POINTER_CAPTURE);
+        }
+    }
+    get useFingerCursor() {
+        return this._useFingerCursor;
+    }
+    set useFingerCursor(value) {
+        if (this._useFingerCursor != value) {
+            this._useFingerCursor = value;
+        }
+    }
+    get fingerCursorLength() {
+        return this._fingerCursorLength;
+    }
+    set fingerCursorLength(value) {
+        if (this._fingerCursorLength != value) {
+            this._fingerCursorLength = value;
+        }
+    }
+    get fingerCursorResource() {
+        return this._fingerCursorResource;
+    }
+    set fingerCursorResource(value) {
+        if (this._fingerCursorResource != value) {
+            this._fingerCursorResource = value;
+        }
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "repeatClickTime", this.repeatClickTime, 300);
+        CDataClass.putData(data, "useDragAndDrop", this.useDragAndDrop, false);
+        CDataClass.putData(data, "useDragAndDropCancel", this.useDragAndDropCancel, false);
+        CDataClass.putData(data, "dragCatchControlNames", this.dragCatchControlNames.toData(), [], true);
+        CDataClass.putData(data, "dragCatchControlPropertyNames", this.dragCatchControlPropertyNames.toData(), [], true);
+        CDataClass.putData(data, "dragIconResource", this.dragIconResource, "");
+        CDataClass.putData(data, "hintResource", this.hintResource, "");
+        CDataClass.putData(data, "hint", this.hint, "");
+        CDataClass.putData(data, "useHint", this.useHint, false);
+        CDataClass.putData(data, "hintPosition", this.hintPosition, "auto");
+        CDataClass.putData(data, "hintFixOffset", this.hintFixOffset.toData(), {}, true);
+        CDataClass.putData(data, "usePointerCapture", this.usePointerCapture, false);
+        CDataClass.putData(data, "useMove", this.useMove, false);
+        CDataClass.putData(data, "useResize", this.useResize, false);
+        CDataClass.putData(data, "moveAreaLength", this.moveAreaLength, -1);
+        CDataClass.putData(data, "resizeAreaLength", this.resizeAreaLength, 5);
+        CDataClass.putData(data, "resizeMinWidth", this.resizeMinWidth, 50);
+        CDataClass.putData(data, "resizeMinHeight", this.resizeMinHeight, 50);
+        CDataClass.putData(data, "lockMoveX", this.lockMoveX, false);
+        CDataClass.putData(data, "lockMoveY", this.lockMoveY, false);
+        CDataClass.putData(data, "lockMaxX", this.lockMaxX, undefined);
+        CDataClass.putData(data, "lockMinX", this.lockMinX, undefined);
+        CDataClass.putData(data, "lockMaxY", this.lockMaxY, undefined);
+        CDataClass.putData(data, "lockMinY", this.lockMinY, undefined);
+        CDataClass.putData(data, "thisPointerDownAnimatorResource", this.thisPointerDownAnimatorResource, "");
+        CDataClass.putData(data, "thisPointerUpAnimatorResource", this.thisPointerUpAnimatorResource, "");
+        CDataClass.putData(data, "overAnimatorResource", this.overAnimatorResource, "");
+        CDataClass.putData(data, "enterAnimatorResource", this.enterAnimatorResource, "");
+        CDataClass.putData(data, "clickAnimatorResource", this.clickAnimatorResource, "");
+        CDataClass.putData(data, "doubleClickAnimatorResource", this.doubleClickAnimatorResource, "");
+        CDataClass.putData(data, "dragStartAnimatorResource", this.dragStartAnimatorResource, "");
+        CDataClass.putData(data, "dragCancelAnimatorResource", this.dragCancelAnimatorResource, "");
+        CDataClass.putData(data, "dragCatchAnimatorResource", this.dragCatchAnimatorResource, "");
+        CDataClass.putData(data, "keyDownAnimatorResource", this.keyDownAnimatorResource, "");
+        CDataClass.putData(data, "useMoveClick", this.useMoveClick, false);
+        if (this.thisPointerDownAnimationTrigger != undefined)
+            CDataClass.putData(data, "thisPointerDownAnimationTrigger", this.thisPointerDownAnimationTrigger.toData(), {}, true);
+        if (this.thisPointerUpAnimationTrigger != undefined)
+            CDataClass.putData(data, "thisPointerUpAnimationTrigger", this.thisPointerUpAnimationTrigger.toData(), {}, true);
+        if (this.overAnimationTrigger != undefined)
+            CDataClass.putData(data, "overAnimationTrigger", this.overAnimationTrigger.toData(), {}, true);
+        if (this.enterAnimationTrigger != undefined)
+            CDataClass.putData(data, "enterAnimationTrigger", this.enterAnimationTrigger.toData(), {}, true);
+        if (this.clickAnimationTrigger != undefined)
+            CDataClass.putData(data, "clickAnimationTrigger", this.clickAnimationTrigger.toData(), {}, true);
+        if (this.doubleClickAnimationTrigger != undefined)
+            CDataClass.putData(data, "doubleClickAnimationTrigger", this.doubleClickAnimationTrigger.toData(), {}, true);
+        if (this.dragStartAnimationTrigger != undefined)
+            CDataClass.putData(data, "dragStartAnimationTrigger", this.dragStartAnimationTrigger.toData(), {}, true);
+        if (this.dragCancelAnimationTrigger != undefined)
+            CDataClass.putData(data, "dragCancelAnimationTrigger", this.dragCancelAnimationTrigger.toData(), {}, true);
+        if (this.dragCatchAnimationTrigger != undefined)
+            CDataClass.putData(data, "dragCatchAnimationTrigger", this.dragCatchAnimationTrigger.toData(), {}, true);
+        if (this.keyDownAnimationTrigger != undefined)
+            CDataClass.putData(data, "keyDownAnimationTrigger", this.keyDownAnimationTrigger.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.repeatClickTime = CDataClass.getData(data, "repeatClickTime", 300);
+        this.useDragAndDrop = CDataClass.getData(data, "useDragAndDrop", false);
+        this.useDragAndDropCancel = CDataClass.getData(data, "useDragAndDropCancel", false);
+        this.dragCatchControlNames.fromData(CDataClass.getData(data, "dragCatchControlNames", [], true));
+        this.dragCatchControlPropertyNames.fromData(CDataClass.getData(data, "dragCatchControlPropertyNames", [], true));
+        this.dragIconResource = CDataClass.getData(data, "dragIconResource", "");
+        this.hintResource = CDataClass.getData(data, "hintResource", "");
+        this.hint = CDataClass.getData(data, "hint", "");
+        this.useHint = CDataClass.getData(data, "useHint", false);
+        this.hintPosition = CDataClass.getData(data, "hintPosition", "auto");
+        this.hintFixOffset.fromData(CDataClass.getData(data, "hintFixOffset", {}, true));
+        this.usePointerCapture = CDataClass.getData(data, "usePointerCapture", false);
+        this.useMove = CDataClass.getData(data, "useMove", false);
+        this.useResize = CDataClass.getData(data, "useResize", false);
+        this.moveAreaLength = CDataClass.getData(data, "moveAreaLength", -1);
+        this.resizeAreaLength = CDataClass.getData(data, "resizeAreaLength", 5);
+        this.resizeMinWidth = CDataClass.getData(data, "resizeMinWidth", 50);
+        this.resizeMinHeight = CDataClass.getData(data, "resizeMinHeight", 50);
+        this.lockMoveX = CDataClass.getData(data, "lockMoveX", false);
+        this.lockMoveY = CDataClass.getData(data, "lockMoveY", false);
+        this.lockMaxX = CDataClass.getData(data, "lockMaxX", undefined);
+        this.lockMinX = CDataClass.getData(data, "lockMinX", undefined);
+        this.lockMaxY = CDataClass.getData(data, "lockMaxY", undefined);
+        this.lockMinY = CDataClass.getData(data, "lockMinY", undefined);
+        this.useMoveClick = CDataClass.getData(data, "useMoveClick", false);
+        CAnimator.fromAnimatorData(data, this, "thisPointerDownAnimationTrigger");
+        CAnimator.fromAnimatorData(data, this, "thisPointerUpAnimationTrigger");
+        CAnimator.fromAnimatorData(data, this, "overAnimationTrigger");
+        CAnimator.fromAnimatorData(data, this, "enterAnimationTrigger");
+        CAnimator.fromAnimatorData(data, this, "clickAnimationTrigger");
+        CAnimator.fromAnimatorData(data, this, "doubleClickAnimationTrigger");
+        CAnimator.fromAnimatorData(data, this, "dragStartAnimationTrigger");
+        CAnimator.fromAnimatorData(data, this, "dragCancelAnimationTrigger");
+        CAnimator.fromAnimatorData(data, this, "dragCatchAnimationTrigger");
+        CAnimator.fromAnimatorData(data, this, "keyDownAnimationTrigger");
+        this.thisPointerDownAnimatorResource = CDataClass.getData(data, "thisPointerDownAnimatorResource", "");
+        this.thisPointerUpAnimatorResource = CDataClass.getData(data, "thisPointerUpAnimatorResource", "");
+        this.overAnimatorResource = CDataClass.getData(data, "overAnimatorResource", "");
+        this.enterAnimatorResource = CDataClass.getData(data, "enterAnimatorResource", "");
+        this.clickAnimatorResource = CDataClass.getData(data, "clickAnimatorResource", "");
+        this.doubleClickAnimatorResource = CDataClass.getData(data, "doubleClickAnimatorResource", "");
+        this.dragStartAnimatorResource = CDataClass.getData(data, "dragStartAnimatorResource", "");
+        this.dragCancelAnimatorResource = CDataClass.getData(data, "dragCancelAnimatorResource", "");
+        this.dragCatchAnimatorResource = CDataClass.getData(data, "dragCatchAnimatorResource", "");
+        this.keyDownAnimatorResource = CDataClass.getData(data, "keyDownAnimatorResource", "");
+    }
+    doRemove() {
+        if (this.thisPointerDownAnimationTrigger != undefined)
+            this.thisPointerDownAnimationTrigger.remove();
+        this.thisPointerDownAnimationTrigger = undefined;
+        if (this.thisPointerUpAnimationTrigger != undefined)
+            this.thisPointerUpAnimationTrigger.remove();
+        this.thisPointerUpAnimationTrigger = undefined;
+        if (this.overAnimationTrigger != undefined)
+            this.overAnimationTrigger.remove();
+        this.overAnimationTrigger = undefined;
+        if (this.enterAnimationTrigger != undefined)
+            this.enterAnimationTrigger.remove();
+        this.enterAnimationTrigger = undefined;
+        if (this.clickAnimationTrigger != undefined)
+            this.clickAnimationTrigger.remove();
+        this.clickAnimationTrigger = undefined;
+        if (this.doubleClickAnimationTrigger != undefined)
+            this.doubleClickAnimationTrigger.remove();
+        this.doubleClickAnimationTrigger = undefined;
+        if (this.dragStartAnimationTrigger != undefined)
+            this.dragStartAnimationTrigger.remove();
+        this.dragStartAnimationTrigger = undefined;
+        if (this.dragCatchAnimationTrigger != undefined)
+            this.dragCatchAnimationTrigger.remove();
+        this.dragCatchAnimationTrigger = undefined;
+        if (this.keyDownAnimationTrigger != undefined)
+            this.keyDownAnimationTrigger.remove();
+        this.keyDownAnimationTrigger = undefined;
+        super.doRemove();
+    }
+    doChange(kind, data) {
+        super.doChange(kind, data);
+        if (kind == CPointerEventControl.CON_CHANGE_THIS_PRESSED_POINTS) {
+            this.doChangeThisPressedPoints();
+        }
+        if (kind == CPointerEventControl.CON_CHANGE_BUBBLE_PRESSED_POINTS) {
+            this.doChangeBubblePressedPoints();
+        }
+        if (kind == CPointerEventControl.CON_CHANGE_USE_POINTER_CAPTURE) {
+            this.doSetTouchAction();
+        }
+        if (kind == CPointerEventControl.CON_CHANGE_USE_MOVE) {
+            this.doSetTouchAction();
+        }
+        if (kind == CPointerEventControl.CON_CHANGE_USE_RESIZE) {
+            this.doSetTouchAction();
+        }
+        if (kind == CPointerEventControl.CON_CHANGE_USE_DRAG) {
+            this.doSetTouchAction();
+        }
+    }
+    doSetTouchAction() {
+        if (this._usePointerCapture || this._useDragAndDrop || this._useMove || this._useResize) {
+            this.controlElement.style.touchAction = "none";
+        }
+        else {
+            this.controlElement.style.touchAction = "auto";
+        }
+    }
+    doChangeThisPressedPoints() {
+        if (this.onThisPressedPointsChange != undefined) {
+            this.onThisPressedPointsChange(this, this.pressedThisPoints);
+        }
+    }
+    doChangeBubblePressedPoints() {
+        if (this.onBubblePressedPointsChange != undefined) {
+            this.onBubblePressedPointsChange(this, this.pressedBubblePoints);
+        }
+    }
+    doKeyDown(e) {
+        if (this.keyDownAnimationTrigger instanceof CAnimator) {
+            this.keyDownAnimationTrigger.start();
+        }
+        if (this.keyDownAnimationTrigger instanceof CGraphAnimationInfo) {
+            this.keyDownAnimationTrigger.startAnimation();
+        }
+        if (this.onKeyDown != undefined) {
+            this.onKeyDown(this, e);
+        }
+    }
+    doKeyPress(e) {
+        if (this.onKeyPress != undefined) {
+            this.onKeyPress(this, e);
+        }
+    }
+    doKeyUp(e) {
+        if (this.onKeyUp != undefined) {
+            this.onKeyUp(this, e);
+        }
+    }
+    doPointerDown(e) {
+        if (e.target == this.controlElement) {
+            this.__pressedThisPoints.add({ downTime: new Date().getTime(), point: e });
+            if (this.isMove(e))
+                this.bringToFront();
+            if (this.controlElement.style.touchAction == "none")
+                this.controlElement.setPointerCapture(e.pointerId);
+            this.doThisPointerDown(e, this.__pressedThisPoints);
+        }
+        else {
+            let con = CSystem.getControl(e.target);
+            if (con != undefined) {
+                this.__pressedBubblePoints.add({ downTime: new Date().getTime(), target: con, point: e });
+                this.doBubblePointerDown(con, e, this.__pressedBubblePoints);
+            }
+        }
+        if (this.onPointerDown != undefined) {
+            this.onPointerDown(this, e);
+        }
+    }
+    doPointerMove(e) {
+        if (e.target == this._controlElement) {
+            this.doThisPointerMove(e, this.__pressedThisPoints);
+        }
+        else {
+            let con = CSystem.getControl(e.target);
+            if (con != undefined) {
+                this.doBubblePointerMove(con, e, this.__pressedBubblePoints);
+            }
+        }
+        if (this.onPointerMove != undefined) {
+            this.onPointerMove(this, e);
+        }
+    }
+    doPointerUp(e) {
+        if (e.target == this.controlElement) {
+            for (let n = this.__pressedThisPoints.length - 1; n >= 0; n--) {
+                if (this.__pressedThisPoints.get(n).point.pointerId == e.pointerId) {
+                    this.__pressedThisPoints.delete(n);
+                }
+            }
+            if (this.controlElement.style.touchAction == "none")
+                this._controlElement.releasePointerCapture(e.pointerId);
+            this.doThisPointerUp(e, this.__pressedThisPoints);
+        }
+        else {
+            for (let n = this.__pressedBubblePoints.length - 1; n >= 0; n--) {
+                if (this.__pressedBubblePoints.get(n).point.pointerId == e.pointerId) {
+                    this.__pressedBubblePoints.delete(n);
+                }
+            }
+            let con = CSystem.getControl(e.target);
+            if (con != undefined) {
+                this.doBubblePointerUp(con, e, this.__pressedBubblePoints);
+            }
+        }
+        this.__moveKind = EControlMoveKind.NONE;
+        if (this.onPointerUp != undefined) {
+            this.onPointerUp(this, e);
+        }
+    }
+    doPointerCancel(e) {
+        if (e.target == this._controlElement) {
+            for (let n = this.__pressedThisPoints.length - 1; n >= 0; n--) {
+                if (this.__pressedThisPoints.get(n).point.pointerId == e.pointerId) {
+                    this.__pressedThisPoints.delete(n);
+                }
+            }
+            this.doThisPointerCancel(e, this.__pressedThisPoints);
+        }
+        else {
+            for (let n = this.__pressedBubblePoints.length - 1; n >= 0; n--) {
+                if (this.__pressedBubblePoints.get(n).point.pointerId == e.pointerId) {
+                    this.__pressedBubblePoints.delete(n);
+                }
+            }
+            let con = CSystem.getControl(e.target);
+            if (con != undefined) {
+                this.doBubblePointerCancel(con, e, this.__pressedBubblePoints);
+            }
+        }
+        this.__moveKind = EControlMoveKind.NONE;
+        if (this.onPointerCancel != undefined) {
+            this.onPointerCancel(this, e);
+        }
+    }
+    doPointerEnter(e) {
+        this._isEnter = true;
+        if (this.enterAnimationTrigger != undefined)
+            this.triggerTrue(this.enterAnimationTrigger);
+        if (e.target == this.controlElement) {
+            this.doThisPointerEnter(e, this.__pressedThisPoints);
+        }
+        else {
+            let con = CSystem.getControl(e.target);
+            if (con != undefined) {
+                this.doBubblePointerEnter(con, e, this.__pressedBubblePoints);
+            }
+        }
+        if (this.onPointerEnter != undefined) {
+            this.onPointerEnter(this, e);
+        }
+    }
+    doPointerLeave(e) {
+        this._isEnter = false;
+        if (this.enterAnimationTrigger != undefined)
+            this.triggerFalse(this.enterAnimationTrigger);
+        if (e.target == this.controlElement) {
+            if (!this.usePointerCapture) {
+                for (let n = this.__pressedThisPoints.length - 1; n >= 0; n--) {
+                    if (this.__pressedThisPoints.get(n).point.pointerId == e.pointerId) {
+                        this.__pressedThisPoints.delete(n);
+                    }
+                }
+            }
+            this.doThisPointerLeave(e, this.__pressedThisPoints);
+        }
+        else {
+            if (!this.usePointerCapture) {
+                for (let n = this.__pressedBubblePoints.length - 1; n >= 0; n--) {
+                    if (this.__pressedBubblePoints.get(n).point.pointerId == e.pointerId) {
+                        this.__pressedBubblePoints.delete(n);
+                    }
+                }
+            }
+            let con = CSystem.getControl(e.target);
+            if (con != undefined) {
+                this.doBubblePointerLeave(con, e, this.__pressedBubblePoints);
+            }
+        }
+        if (this.onPointerLeave != undefined) {
+            this.onPointerLeave(this, e);
+        }
+    }
+    doPointerOver(e) {
+        this._isOver = true;
+        if (this.overAnimationTrigger != undefined)
+            this.triggerTrue(this.overAnimationTrigger);
+        if (e.target == this.controlElement) {
+            this.doThisPointerOver(e, this.__pressedThisPoints);
+        }
+        else {
+            let con = CSystem.getControl(e.target);
+            if (con != undefined) {
+                this.doBubblePointerOver(con, e, this.__pressedBubblePoints);
+            }
+        }
+        if (this.onPointerOver != undefined) {
+            this.onPointerOver(this, e);
+        }
+    }
+    doPointerOut(e) {
+        this._isOver = false;
+        if (this.overAnimationTrigger != undefined)
+            this.triggerFalse(this.overAnimationTrigger);
+        if (e.target == this.controlElement) {
+            if (!this.usePointerCapture) {
+                for (let n = this.__pressedThisPoints.length - 1; n >= 0; n--) {
+                    if (this.__pressedThisPoints.get(n).point.pointerId == e.pointerId) {
+                        this.__pressedThisPoints.delete(n);
+                    }
+                }
+            }
+            this.doThisPointerOut(e, this.__pressedThisPoints);
+        }
+        else {
+            if (!this.usePointerCapture) {
+                for (let n = this.__pressedBubblePoints.length - 1; n >= 0; n--) {
+                    if (this.__pressedBubblePoints.get(n).point.pointerId == e.pointerId) {
+                        this.__pressedBubblePoints.delete(n);
+                    }
+                }
+            }
+            let con = CSystem.getControl(e.target);
+            if (con != undefined) {
+                this.doBubblePointerOut(con, e, this.__pressedBubblePoints);
+            }
+        }
+        if (this.onPointerOut != undefined) {
+            this.onPointerOut(this, e);
+        }
+    }
+    doWheel(e) {
+        if (e.target == this.controlElement) {
+            this.doThisWheel(e);
+        }
+        else {
+            let con = CSystem.getControl(e.target);
+            if (con != undefined) {
+                this.doBubbleWheel(con, e);
+            }
+        }
+        if (this.onWheel != undefined) {
+            this.onWheel(this, e);
+        }
+    }
+    isResize(e) {
+        if (this.useResize) {
+            if (e.offsetX <= this.resizeAreaLength &&
+                e.offsetY <= this.resizeAreaLength &&
+                !this._ignoreResizeKind.has(EControlMoveKind.RESIZE_LT)) {
+                return { result: true, kind: EControlMoveKind.RESIZE_LT };
+            }
+            else if (e.offsetX > this.position.width - this.resizeAreaLength &&
+                e.offsetY <= this.resizeAreaLength &&
+                !this._ignoreResizeKind.has(EControlMoveKind.RESIZE_RT)) {
+                return { result: true, kind: EControlMoveKind.RESIZE_RT };
+            }
+            else if (e.offsetX <= this.resizeAreaLength &&
+                e.offsetY > this.position.height - this.resizeAreaLength &&
+                !this._ignoreResizeKind.has(EControlMoveKind.RESIZE_LB)) {
+                return { result: true, kind: EControlMoveKind.RESIZE_LB };
+            }
+            else if (e.offsetX > this.position.width - this.resizeAreaLength &&
+                e.offsetY > this.position.height - this.resizeAreaLength &&
+                !this._ignoreResizeKind.has(EControlMoveKind.RESIZE_RB)) {
+                return { result: true, kind: EControlMoveKind.RESIZE_RB };
+            }
+            else if (e.offsetX <= this.resizeAreaLength &&
+                !this._ignoreResizeKind.has(EControlMoveKind.RESIZE_L)) {
+                return { result: true, kind: EControlMoveKind.RESIZE_L };
+            }
+            else if (e.offsetY <= this.resizeAreaLength &&
+                !this._ignoreResizeKind.has(EControlMoveKind.RESIZE_T)) {
+                return { result: true, kind: EControlMoveKind.RESIZE_T };
+            }
+            else if (e.offsetX > this.position.width - this.resizeAreaLength &&
+                !this._ignoreResizeKind.has(EControlMoveKind.RESIZE_R)) {
+                return { result: true, kind: EControlMoveKind.RESIZE_R };
+            }
+            else if (e.offsetY > this.position.height - this.resizeAreaLength &&
+                !this._ignoreResizeKind.has(EControlMoveKind.RESIZE_B)) {
+                return { result: true, kind: EControlMoveKind.RESIZE_B };
+            }
+            else {
+                return { result: false, kind: EControlMoveKind.NONE };
+            }
+        }
+        else {
+            return { result: false, kind: EControlMoveKind.NONE };
+        }
+    }
+    isMove(e) {
+        if (this.useMove) {
+            if (this.useResize) {
+                if (this.moveAreaLength >= 0) {
+                    if (e.offsetX > this.resizeAreaLength &&
+                        e.offsetX <= this.position.width - this.resizeAreaLength &&
+                        e.offsetY > this.resizeAreaLength &&
+                        e.offsetY <= this.resizeAreaLength + this.moveAreaLength) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    if (e.offsetX > this.resizeAreaLength &&
+                        e.offsetX <= this.position.width - this.resizeAreaLength &&
+                        e.offsetY > this.resizeAreaLength &&
+                        e.offsetY <= this.position.height - this.resizeAreaLength) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+            }
+            else {
+                if (this.moveAreaLength >= 0) {
+                    if (this.moveAreaLength >= e.offsetY && this.position.align == EPositionAlign.NONE) {
+                        return true;
+                    }
+                    else {
+                        return false;
+                    }
+                }
+                else {
+                    return true;
+                }
+            }
+        }
+        else {
+            return false;
+        }
+    }
+    setDown(e) {
+        this.__moveResizeDown.offsetx = e.offsetX;
+        this.__moveResizeDown.offsety = e.offsetY;
+        this.__moveResizeDown.pagex = e.pageX;
+        this.__moveResizeDown.pagey = e.pageY;
+        this.__moveResizeDown.left = this.position.left;
+        this.__moveResizeDown.top = this.position.top;
+        this.__moveResizeDown.width = this.position.width;
+        this.__moveResizeDown.height = this.position.height;
+    }
+    doThisPointerDown(e, points) {
+        if (this.thisPointerDownAnimationTrigger != undefined)
+            this.thisPointerDownAnimationTrigger.start();
+        if (this.pressedThisPoints.length > this.__maxCount)
+            this.__maxCount = this.pressedThisPoints.length;
+        this.__pressedThisDown = true;
+        this.__thisDownPoint = new CPoint(e.offsetX, e.offsetY);
+        /*if(e.pointerType == "mouse" && e.altKey && e.ctrlKey && this._useFingerCursor) {
+            if(this._fingerCursors.length == 0) {
+                this.doShowFingerCursor()
+            } else {
+                this.doHideFingerCursor()
+            }
+        }*/
+        let re = this.isResize(e);
+        if (re.result) {
+            this.__moveKind = re.kind;
+            this.setDown(e);
+        }
+        else if (this.isMove(e)) {
+            this.__moveKind = EControlMoveKind.MOVE;
+            this.setDown(e);
+            this.__preMovePoint = new CPoint(this.position.left, this.position.top);
+            this.__downMovePoint = new CPoint(this.position.left, this.position.top);
+        }
+        else {
+            this.__moveKind = EControlMoveKind.NONE;
+            this.setDown(e);
+        }
+        //drag
+        /*if(this.useDragAndDrop && !CSystem.dragControls.has(this)) {
+            this.__
+            CSystem.dragControls.add(this)
+            this.doDragStart(e)
+        }*/
+        if (this.onThisPointerDown != undefined) {
+            this.onThisPointerDown(this, e, points);
+        }
+    }
+    doThisPointerMove(e, points) {
+        if (this.thisPointerUpAnimationTrigger != undefined)
+            this.thisPointerUpAnimationTrigger.start();
+        if (this.__moveKind == EControlMoveKind.MOVE) {
+            this.doMove(e);
+            this.__preMovePoint = new CPoint(this.position.left, this.position.top);
+        }
+        if (this.__moveKind == EControlMoveKind.RESIZE_L ||
+            this.__moveKind == EControlMoveKind.RESIZE_T ||
+            this.__moveKind == EControlMoveKind.RESIZE_R ||
+            this.__moveKind == EControlMoveKind.RESIZE_B ||
+            this.__moveKind == EControlMoveKind.RESIZE_LT ||
+            this.__moveKind == EControlMoveKind.RESIZE_LB ||
+            this.__moveKind == EControlMoveKind.RESIZE_RT ||
+            this.__moveKind == EControlMoveKind.RESIZE_RB) {
+            this.doResize(e, e.pageX, e.pageY, this.__moveKind);
+        }
+        //drag start
+        if (this.useDragAndDrop && !CSystem.dragControls.has(this) && this.__pressedThisDown) {
+            if (CPoint.getDistancePoints(this.__thisDownPoint, new CPoint(e.offsetX, e.offsetY)) > 5) {
+                CSystem.dragControls.add(this);
+                this.__dragId = e.pointerId;
+                this.doDragStart(e);
+            }
+        }
+        //drag
+        if (CSystem.dragControls.has(this) && this.__dragId == e.pointerId && this.__pressedThisDown) {
+            let ar = CSystem.getOverControls(e, points);
+            let arr = new Array();
+            for (let n = 0; n < ar.length; n++) {
+                if (this != ar[n].control && ar[n].control instanceof CPointerEventControl) {
+                    let con = ar[n].control;
+                    if (this.dragCatchControlNames.has(con.name) || this.dragCatchControlPropertyNames.has(con.propertyName)) {
+                        arr.push(con);
+                    }
+                }
+            }
+            this.doDragging(arr, e);
+        }
+        //hint
+        if (this.useHint && this.__hint != undefined) {
+            this.doMoveHint(e);
+        }
+        if (this.onThisPointerMove != undefined) {
+            this.onThisPointerMove(this, e, points);
+        }
+    }
+    doThisPointerUp(e, points) {
+        //drop
+        if (this.useDragAndDrop && points.length == 0 && CSystem.dragControls.has(this)) {
+            CSystem.dragControls.delete(this);
+            let ar = CSystem.getOverControls(e, points);
+            let arr = new Array();
+            for (let n = 0; n < ar.length; n++) {
+                if (this != ar[n].control && ar[n].control instanceof CPointerEventControl) {
+                    let con = ar[n].control;
+                    if (this.dragCatchControlNames.has(con.name) || this.dragCatchControlPropertyNames.has(con.propertyName)) {
+                        arr.push(con);
+                        con.doDropCatch(this, ar[n].x, ar[n].y, this.dragData);
+                    }
+                }
+            }
+            if (this.useDragAndDropCancel && arr.length == 0) {
+                this.doDragCancel();
+            }
+            else {
+                this.doDrop(arr, e);
+            }
+            this.__dragId = undefined;
+        }
+        let isClick = this.useMoveClick &&
+            this.__moveKind == EControlMoveKind.MOVE &&
+            Math.abs(this.__downMovePoint.x - this.position.left) < 5 &&
+            Math.abs(this.__downMovePoint.y - this.position.top) < 5;
+        //click
+        if (this.__moveKind == EControlMoveKind.NONE || isClick) {
+            if (e.offsetX <= this.position.width && e.offsetX >= 0 && e.offsetY <= this.position.height && e.offsetY >= 0 && this.__pressedThisDown) {
+                if (e.pointerType == "mouse") {
+                    if (e.button == 0) {
+                        this.doClick(e);
+                    }
+                }
+                else {
+                    this.doClick(e);
+                }
+            }
+            //multiTouchClick
+            if (this.__pressedThisPoints.length == 0 && this.__maxCount > 1) {
+                this.doMultiTouchClick(this.__maxCount);
+                this.__maxCount = 0;
+            }
+            if (this.onThisPointerUp != undefined) {
+                this.onThisPointerUp(this, e, points);
+            }
+        }
+        this.__pressedThisDown = false;
+    }
+    doThisPointerCancel(e, points) {
+        //multiTouchClick
+        if (this.__pressedThisPoints.length == 0 && this.__maxCount > 1) {
+            this.doMultiTouchClick(this.__maxCount);
+            this.__maxCount = 0;
+        }
+        if (this.onThisPointerCancel != undefined) {
+            this.onThisPointerCancel(this, e, points);
+        }
+    }
+    doThisPointerEnter(e, points) {
+        if (this.onThisPointerEnter != undefined) {
+            this.onThisPointerEnter(this, e, points);
+        }
+    }
+    doThisPointerLeave(e, points) {
+        if (this.onThisPointerLeave != undefined) {
+            this.onThisPointerLeave(this, e, points);
+        }
+    }
+    doThisPointerOver(e, points) {
+        if (this.useHint && e.pointerType == "mouse") {
+            this.doShowHint();
+        }
+        if (this.onThisPointerOver != undefined) {
+            this.onThisPointerOver(this, e, points);
+        }
+    }
+    doThisPointerOut(e, points) {
+        if (this.useHint && e.pointerType == "mouse") {
+            this.doHideHint();
+        }
+        if (this.onThisPointerOut != undefined) {
+            this.onThisPointerOut(this, e, points);
+        }
+    }
+    doThisWheel(e) {
+        if (this.onThisWheel != undefined) {
+            this.onThisWheel(this, e);
+        }
+    }
+    doBubblePointerDown(target, e, points) {
+        if (this.onBubblePointerDown != undefined) {
+            this.onBubblePointerDown(this, target, e, points);
+        }
+    }
+    doBubblePointerMove(target, e, points) {
+        if (this.onBubblePointerMove != undefined) {
+            this.onBubblePointerMove(this, target, e, points);
+        }
+    }
+    doBubblePointerUp(target, e, points) {
+        if (e.offsetX <= target.position.width && e.offsetY <= target.position.height && e.offsetX >= 0 && e.offsetY >= 0) {
+            this.doBubbleClick(e);
+        }
+        if (this.onBubblePointerUp != undefined) {
+            this.onBubblePointerUp(this, target, e, points);
+        }
+    }
+    doBubblePointerCancel(target, e, points) {
+        if (this.onBubblePointerCancel != undefined) {
+            this.onBubblePointerCancel(this, target, e, points);
+        }
+    }
+    doBubblePointerEnter(target, e, points) {
+        if (this.onBubblePointerEnter != undefined) {
+            this.onBubblePointerEnter(this, target, e, points);
+        }
+    }
+    doBubblePointerLeave(target, e, points) {
+        if (this.onBubblePointerLeave != undefined) {
+            this.onBubblePointerLeave(this, target, e, points);
+        }
+    }
+    doBubblePointerOver(target, e, points) {
+        if (this.onBubblePointerOver != undefined) {
+            this.onBubblePointerOver(this, target, e, points);
+        }
+    }
+    doBubblePointerOut(target, e, points) {
+        if (this.onBubblePointerOut != undefined) {
+            this.onBubblePointerOut(this, target, e, points);
+        }
+    }
+    doBubbleWheel(target, e) {
+        if (this.onBubbleWheel != undefined) {
+            this.onBubbleWheel(this, target, e);
+        }
+    }
+    doClick(e) {
+        if (this.clickAnimationTrigger != undefined) {
+            this.clickAnimationTrigger.start();
+        }
+        let now = CTime.now;
+        if (now - this.__preClick.time < this._repeatClickTime) {
+            this.__preClick.count++;
+        }
+        else {
+            this.__preClick.count = 1;
+        }
+        this.__preClick.time = now;
+        if (this.onClick != undefined) {
+            this.onClick(this, e);
+        }
+        if (this.__preClick.count > 1) {
+            this.doRepeatClick(this.__preClick.count, e);
+        }
+    }
+    doBubbleClick(e) {
+        if (this.onBubbleClick != undefined) {
+            this.onBubbleClick(this, e);
+        }
+    }
+    doDoubleClick(e) {
+        if (this.doubleClickAnimationTrigger != undefined)
+            this.doubleClickAnimationTrigger.start();
+        if (this.onDoubleClick != undefined) {
+            this.onDoubleClick(this, e);
+        }
+    }
+    doPenDraw(e) {
+    }
+    doRepeatClick(clickCount, e) {
+        if (this.onRepeatClick != undefined) {
+            this.onRepeatClick(this, clickCount, e);
+        }
+        if (clickCount == 2) {
+            this.doDoubleClick(e);
+        }
+    }
+    doMultiTouchClick(touchCount) {
+        if (touchCount == 3 && this._useFingerCursor) {
+            if (this._fingerCursors.length == 0) {
+                this.doShowFingerCursor();
+            }
+            else {
+                this.doHideFingerCursor();
+            }
+        }
+        if (this.onMultiTouchClick != undefined) {
+            this.onMultiTouchClick(this, touchCount);
+        }
+    }
+    doDragStart(e) {
+        if (this.dragIconResource != "") {
+            this.__dragIcon = CControl.controlFromResource(this.dragIconResource, document.body);
+            this.__dragIcon.hasPointerEvent = false;
+            this.__dragIcon.position.left = e.pageX - (this.__dragIcon.position.width / 2);
+            this.__dragIcon.position.top = e.pageY - (this.__dragIcon.position.height / 2);
+            this.__dragIcon.dragStartPosition.x = this.__dragIcon.position.left;
+            this.__dragIcon.dragStartPosition.y = this.__dragIcon.position.top;
+        }
+        if (this.dragStartAnimationTrigger != undefined)
+            this.dragStartAnimationTrigger.start();
+        if (this.onDragStart != undefined)
+            this.onDragStart(this, e);
+    }
+    doDragging(catchControls, e) {
+        if (this.__dragIcon != undefined) {
+            this.__dragIcon.isOverCatchControl = catchControls.length > 0;
+            this.__dragIcon.position.left = e.pageX - (this.__dragIcon.position.width / 2);
+            this.__dragIcon.position.top = e.pageY - (this.__dragIcon.position.height / 2);
+        }
+        if (this.onDragging != undefined)
+            this.onDragging(this, e);
+    }
+    doDrop(catchControls, e) {
+        this.dragData = undefined;
+        if (this.__dragIcon != undefined) {
+            this.__dragIcon.doDrop();
+        }
+        if (this.onDrop != undefined)
+            this.onDrop(this, catchControls, e);
+    }
+    doDragCancel() {
+        if (this.dragCancelAnimationTrigger != undefined)
+            this.dragCancelAnimationTrigger.start();
+        this.dragData = undefined;
+        if (this.__dragIcon != undefined) {
+            this.__dragIcon.doCancel();
+        }
+        if (this.onDragCancel != undefined) {
+            this.onDragCancel(this);
+        }
+    }
+    doDropCatch(dragControl, x, y, data) {
+        if (this.dragCatchAnimationTrigger != undefined)
+            this.dragCatchAnimationTrigger.start();
+        if (this.onDropCatch != undefined)
+            this.onDropCatch(this, dragControl, x, y, data);
+    }
+    doShowHint() {
+        this.__hint = CControl.controlFromResource(this.hintResource, document.body);
+        this.__hint.showHint(this.hint);
+    }
+    doHideHint() {
+        if (this.__hint != undefined) {
+            this.__hint.hideHint();
+            this.__hint = undefined;
+        }
+    }
+    doMoveHint(e) {
+        if (this.__hint != undefined) {
+            if (this.hintPosition == "auto") {
+                this.__hint.position.left = e.pageX;
+                this.__hint.position.top = e.pageY + 20;
+            }
+            else {
+                this.__hint.position.left = this.hintFixOffset.x;
+                this.__hint.position.top = this.hintFixOffset.y;
+            }
+        }
+    }
+    doBeforeMove(e, x, y) {
+        let rt = new CPoint(x, y);
+        if (this.magneticLength != 0) {
+            rt.x = Math.floor(rt.x / this.magneticLength) * this.magneticLength;
+            rt.y = Math.floor(rt.y / this.magneticLength) * this.magneticLength;
+        }
+        else if (e.shiftKey) {
+            rt.x = Math.floor(rt.x / 5) * 5;
+            rt.y = Math.floor(rt.y / 5) * 5;
+        }
+        return rt;
+    }
+    doMove(e) {
+        let x = this.position.left;
+        let y = this.position.top;
+        if (!this.lockMoveX) {
+            x = this.__moveResizeDown.left + (e.pageX - this.__moveResizeDown.pagex);
+            if (this.lockMinX != undefined && this.lockMinX > x)
+                x = this.lockMinX;
+            if (this.lockMaxX != undefined && this.lockMaxX < x)
+                x = this.lockMaxX;
+        }
+        if (!this.lockMoveY) {
+            y = this.__moveResizeDown.top + (e.pageY - this.__moveResizeDown.pagey);
+            if (this.lockMinY != undefined && this.lockMinY > y)
+                y = this.lockMinY;
+            if (this.lockMaxY != undefined && this.lockMaxY < y)
+                y = this.lockMaxY;
+        }
+        let pt = this.doBeforeMove(e, x, y);
+        this.position.left = pt.x;
+        this.position.top = pt.y;
+        if (this.onMove != undefined) {
+            this.onMove(this, e);
+        }
+    }
+    doResize(e, pageX, pageY, moveKind) {
+        if (moveKind == EControlMoveKind.RESIZE_L) {
+            let w = this.__moveResizeDown.width - (pageX - this.__moveResizeDown.pagex);
+            if (w >= this.resizeMinWidth) {
+                this.position.left = this.__moveResizeDown.left + (pageX - this.__moveResizeDown.pagex);
+                this.position.width = this.__moveResizeDown.width - (pageX - this.__moveResizeDown.pagex);
+            }
+            else {
+                this.position.left = this.__moveResizeDown.left + (this.__moveResizeDown.width - this.resizeMinWidth);
+                this.position.width = this.resizeMinWidth;
+            }
+        }
+        if (moveKind == EControlMoveKind.RESIZE_T) {
+            let h = this.__moveResizeDown.height - (pageY - this.__moveResizeDown.pagey);
+            if (h >= this.resizeMinHeight) {
+                this.position.top = this.__moveResizeDown.top + (pageY - this.__moveResizeDown.pagey);
+                this.position.height = this.__moveResizeDown.height - (pageY - this.__moveResizeDown.pagey);
+            }
+            else {
+                this.position.top = this.__moveResizeDown.top + (this.__moveResizeDown.height - this.resizeMinHeight);
+                this.position.height = this.resizeMinHeight;
+            }
+        }
+        if (moveKind == EControlMoveKind.RESIZE_R) {
+            if (this.__moveResizeDown.width + (pageX - this.__moveResizeDown.pagex) >= this.resizeMinWidth) {
+                this.position.width = this.__moveResizeDown.width + (pageX - this.__moveResizeDown.pagex);
+            }
+            else {
+                this.position.width = this.resizeMinWidth;
+            }
+        }
+        if (moveKind == EControlMoveKind.RESIZE_B) {
+            if (this.__moveResizeDown.height + (pageY - this.__moveResizeDown.pagey) >= this.resizeMinHeight) {
+                this.position.height = this.__moveResizeDown.height + (pageY - this.__moveResizeDown.pagey);
+            }
+            else {
+                this.position.height = this.resizeMinHeight;
+            }
+        }
+        if (moveKind == EControlMoveKind.RESIZE_LT) {
+            let w = this.__moveResizeDown.width - (pageX - this.__moveResizeDown.pagex);
+            if (w >= this.resizeMinWidth) {
+                this.position.left = this.__moveResizeDown.left + (pageX - this.__moveResizeDown.pagex);
+                this.position.width = this.__moveResizeDown.width - (pageX - this.__moveResizeDown.pagex);
+            }
+            else {
+                this.position.left = this.__moveResizeDown.left + (this.__moveResizeDown.width - this.resizeMinWidth);
+                this.position.width = this.resizeMinWidth;
+            }
+            let h = this.__moveResizeDown.height - (pageY - this.__moveResizeDown.pagey);
+            if (h >= this.resizeMinHeight) {
+                this.position.top = this.__moveResizeDown.top + (pageY - this.__moveResizeDown.pagey);
+                this.position.height = this.__moveResizeDown.height - (pageY - this.__moveResizeDown.pagey);
+            }
+            else {
+                this.position.top = this.__moveResizeDown.top + (this.__moveResizeDown.height - this.resizeMinHeight);
+                this.position.height = this.resizeMinHeight;
+            }
+        }
+        if (moveKind == EControlMoveKind.RESIZE_RT) {
+            if (this.__moveResizeDown.width + (pageX - this.__moveResizeDown.pagex) >= this.resizeMinWidth) {
+                this.position.width = this.__moveResizeDown.width + (pageX - this.__moveResizeDown.pagex);
+            }
+            else {
+                this.position.width = this.resizeMinWidth;
+            }
+            let h = this.__moveResizeDown.height - (pageY - this.__moveResizeDown.pagey);
+            if (h >= this.resizeMinHeight) {
+                this.position.top = this.__moveResizeDown.top + (pageY - this.__moveResizeDown.pagey);
+                this.position.height = this.__moveResizeDown.height - (pageY - this.__moveResizeDown.pagey);
+            }
+            else {
+                this.position.top = this.__moveResizeDown.top + (this.__moveResizeDown.height - this.resizeMinHeight);
+                this.position.height = this.resizeMinHeight;
+            }
+        }
+        if (moveKind == EControlMoveKind.RESIZE_LB) {
+            let w = this.__moveResizeDown.width - (pageX - this.__moveResizeDown.pagex);
+            if (w >= this.resizeMinWidth) {
+                this.position.left = this.__moveResizeDown.left + (pageX - this.__moveResizeDown.pagex);
+                this.position.width = this.__moveResizeDown.width - (pageX - this.__moveResizeDown.pagex);
+            }
+            else {
+                this.position.left = this.__moveResizeDown.left + (this.__moveResizeDown.width - this.resizeMinWidth);
+                this.position.width = this.resizeMinWidth;
+            }
+            if (this.__moveResizeDown.height + (pageY - this.__moveResizeDown.pagey) >= this.resizeMinHeight) {
+                this.position.height = this.__moveResizeDown.height + (pageY - this.__moveResizeDown.pagey);
+            }
+            else {
+                this.position.height = this.resizeMinHeight;
+            }
+        }
+        if (moveKind == EControlMoveKind.RESIZE_RB) {
+            if (this.__moveResizeDown.width + (pageX - this.__moveResizeDown.pagex) >= this.resizeMinWidth) {
+                this.position.width = this.__moveResizeDown.width + (pageX - this.__moveResizeDown.pagex);
+            }
+            else {
+                this.position.width = this.resizeMinWidth;
+            }
+            if (this.__moveResizeDown.height + (pageY - this.__moveResizeDown.pagey) >= this.resizeMinHeight) {
+                this.position.height = this.__moveResizeDown.height + (pageY - this.__moveResizeDown.pagey);
+            }
+            else {
+                this.position.height = this.resizeMinHeight;
+            }
+        }
+        if (this.magneticLength != 0) {
+            this.position.left = Math.floor(this.position.left / this.magneticLength) * this.magneticLength;
+            this.position.top = Math.floor(this.position.top / this.magneticLength) * this.magneticLength;
+            this.position.width = Math.floor(this.position.width / this.magneticLength) * this.magneticLength;
+            this.position.height = Math.floor(this.position.height / this.magneticLength) * this.magneticLength;
+        }
+        else if (e.shiftKey) {
+            this.position.left = Math.floor(this.position.left / 5) * 5;
+            this.position.top = Math.floor(this.position.top / 5) * 5;
+            this.position.width = Math.floor(this.position.width / 5) * 5;
+            this.position.height = Math.floor(this.position.height / 5) * 5;
+        }
+    }
+    doShowFingerCursor() {
+        if (!this.useFingerCursor)
+            return;
+        let self = this;
+        let lt = new CMoveControl(this);
+        lt.resource = this._fingerCursorResource;
+        function setlt() {
+            lt.position.width = self._fingerCursorLength;
+            lt.position.height = self._fingerCursorLength;
+            lt.position.left = -(self._fingerCursorLength / 2);
+            lt.position.top = -(self._fingerCursorLength / 2);
+        }
+        this._fingerCursors.push(lt);
+        lt.text = "LT";
+        let t = new CMoveControl(this);
+        t.resource = this._fingerCursorResource;
+        function sett() {
+            t.position.width = self._fingerCursorLength;
+            t.position.height = self._fingerCursorLength;
+            t.position.left = (self.position.width - self._fingerCursorLength) / 2;
+            t.position.top = -(self._fingerCursorLength / 2);
+        }
+        this._fingerCursors.push(t);
+        t.text = "T";
+        let rt = new CMoveControl(this);
+        rt.resource = this._fingerCursorResource;
+        function setrt() {
+            rt.position.width = self._fingerCursorLength;
+            rt.position.height = self._fingerCursorLength;
+            rt.position.left = self.position.width - (self._fingerCursorLength / 2);
+            rt.position.top = -(self._fingerCursorLength / 2);
+        }
+        this._fingerCursors.push(rt);
+        rt.text = "RT";
+        let l = new CMoveControl(this);
+        l.resource = this._fingerCursorResource;
+        function setl() {
+            l.position.width = self._fingerCursorLength;
+            l.position.height = self._fingerCursorLength;
+            l.position.left = -(self._fingerCursorLength / 2);
+            l.position.top = (self.position.height - self._fingerCursorLength) / 2;
+        }
+        this._fingerCursors.push(l);
+        l.text = "L";
+        let r = new CMoveControl(this);
+        r.resource = this._fingerCursorResource;
+        function setr() {
+            r.position.width = self._fingerCursorLength;
+            r.position.height = self._fingerCursorLength;
+            r.position.left = self.position.width - (self._fingerCursorLength / 2);
+            r.position.top = (self.position.height - self._fingerCursorLength) / 2;
+        }
+        this._fingerCursors.push(r);
+        r.text = "R";
+        let lb = new CMoveControl(this);
+        lb.resource = this._fingerCursorResource;
+        function setlb() {
+            lb.position.width = self._fingerCursorLength;
+            lb.position.height = self._fingerCursorLength;
+            lb.position.left = -(self._fingerCursorLength / 2);
+            lb.position.top = self.position.height - (self._fingerCursorLength / 2);
+        }
+        this._fingerCursors.push(lb);
+        lb.text = "LB";
+        let b = new CMoveControl(this);
+        b.resource = this._fingerCursorResource;
+        function setb() {
+            b.position.width = self._fingerCursorLength;
+            b.position.height = self._fingerCursorLength;
+            b.position.left = (self.position.width - self._fingerCursorLength) / 2;
+            b.position.top = self.position.height - (self._fingerCursorLength / 2);
+        }
+        this._fingerCursors.push(b);
+        b.text = "B";
+        let rb = new CMoveControl(this);
+        rb.resource = this._fingerCursorResource;
+        function setrb() {
+            rb.position.width = self._fingerCursorLength;
+            rb.position.height = self._fingerCursorLength;
+            rb.position.left = self.position.width - (self._fingerCursorLength / 2);
+            rb.position.top = self.position.height - (self._fingerCursorLength / 2);
+        }
+        this._fingerCursors.push(rb);
+        rb.text = "RB";
+        let mv = new CMoveControl(this);
+        mv.resource = this._fingerCursorResource;
+        function setmv() {
+            //mv.position.width = self._fingerCursorLength
+            //mv.position.height = self._fingerCursorLength
+            mv.position.width = self.position.width - self._fingerCursorLength;
+            mv.position.height = self.position.height - self._fingerCursorLength;
+            mv.position.left = (self._fingerCursorLength / 2);
+            mv.position.top = (self._fingerCursorLength / 2);
+        }
+        this._fingerCursors.push(mv);
+        //mv.text = "MV"
+        let rx = new CMoveControl(this);
+        rx.resource = this._fingerCursorResource;
+        function setrx() {
+            rx.position.width = self._fingerCursorLength;
+            rx.position.height = self._fingerCursorLength;
+            rx.position.left = (self.position.width - self._fingerCursorLength) / 2 - self._fingerCursorLength - 5;
+            rx.position.top = (self.position.height - self._fingerCursorLength) / 2;
+        }
+        this._fingerCursors.push(rx);
+        rx.text = "RX";
+        let ry = new CMoveControl(this);
+        ry.resource = this._fingerCursorResource;
+        function setry() {
+            ry.position.width = self._fingerCursorLength;
+            ry.position.height = self._fingerCursorLength;
+            ry.position.left = (self.position.width - self._fingerCursorLength) / 2;
+            ry.position.top = (self.position.height - self._fingerCursorLength) / 2;
+        }
+        this._fingerCursors.push(ry);
+        ry.text = "RY";
+        let rz = new CMoveControl(this);
+        rz.resource = this._fingerCursorResource;
+        function setrz() {
+            rz.position.width = self._fingerCursorLength;
+            rz.position.height = self._fingerCursorLength;
+            rz.position.left = (self.position.width - self._fingerCursorLength) / 2 + self._fingerCursorLength + 5;
+            rz.position.top = (self.position.height - self._fingerCursorLength) / 2;
+        }
+        this._fingerCursors.push(rz);
+        rz.text = "RZ";
+        function setall() {
+            setlt();
+            sett();
+            setrt();
+            setl();
+            setr();
+            setlb();
+            setb();
+            setrb();
+            setrz();
+            setrx();
+            setry();
+            setmv();
+        }
+        setall();
+        lt.onPointerDown = function (sender, e) {
+            self.setDown(e);
+        };
+        lt.onMove = function (sender, e) {
+            self.doResize(e, e.pageX, e.pageY, EControlMoveKind.RESIZE_LT);
+            setall();
+        };
+        t.onPointerDown = function (sender, e) {
+            self.setDown(e);
+        };
+        t.onMove = function (sender, e) {
+            self.doResize(e, e.pageX, e.pageY, EControlMoveKind.RESIZE_T);
+            setall();
+        };
+        rt.onPointerDown = function (sender, e) {
+            self.setDown(e);
+        };
+        rt.onMove = function (sender, e) {
+            self.doResize(e, e.pageX, e.pageY, EControlMoveKind.RESIZE_RT);
+            setall();
+        };
+        l.onPointerDown = function (sender, e) {
+            self.setDown(e);
+        };
+        l.onMove = function (sender, e) {
+            self.doResize(e, e.pageX, e.pageY, EControlMoveKind.RESIZE_L);
+            setall();
+        };
+        r.onPointerDown = function (sender, e) {
+            self.setDown(e);
+        };
+        r.onMove = function (sender, e) {
+            self.doResize(e, e.pageX, e.pageY, EControlMoveKind.RESIZE_R);
+            setall();
+        };
+        lb.onPointerDown = function (sender, e) {
+            self.setDown(e);
+        };
+        lb.onMove = function (sender, e) {
+            self.doResize(e, e.pageX, e.pageY, EControlMoveKind.RESIZE_LB);
+            setall();
+        };
+        b.onPointerDown = function (sender, e) {
+            self.setDown(e);
+        };
+        b.onMove = function (sender, e) {
+            self.doResize(e, e.pageX, e.pageY, EControlMoveKind.RESIZE_B);
+            setall();
+        };
+        rb.onPointerDown = function (sender, e) {
+            self.setDown(e);
+        };
+        rb.onMove = function (sender, e) {
+            self.doResize(e, e.pageX, e.pageY, EControlMoveKind.RESIZE_RB);
+            setall();
+        };
+        let px = 0;
+        let py = 0;
+        rx.onPointerDown = function (sender, e) {
+            px = e.pageX;
+            py = e.pageY;
+        };
+        rx.onMove = function (sender, e) {
+            self.transform.rotateX = CPoint.getAngleFromTwoPoint(new CPoint(px, py), new CPoint(e.pageX, e.pageY));
+            setall();
+        };
+        ry.onPointerDown = function (sender, e) {
+            px = e.pageX;
+            py = e.pageY;
+        };
+        ry.onMove = function (sender, e) {
+            self.transform.rotateY = CPoint.getAngleFromTwoPoint(new CPoint(px, py), new CPoint(e.pageX, e.pageY));
+            setall();
+        };
+        rz.onPointerDown = function (sender, e) {
+            px = e.pageX;
+            py = e.pageY;
+        };
+        rz.onMove = function (sender, e) {
+            self.transform.rotateZ = CPoint.getAngleFromTwoPoint(new CPoint(px, py), new CPoint(e.pageX, e.pageY));
+            setall();
+        };
+        mv.onPointerDown = function (sender, e) {
+            self.setDown(e);
+        };
+        mv.onMove = function (sender, e) {
+            self.position.left = self.__moveResizeDown.left + (e.pageX - self.__moveResizeDown.pagex);
+            self.position.top = self.__moveResizeDown.top + (e.pageY - self.__moveResizeDown.pagey);
+            setall();
+        };
+    }
+    doHideFingerCursor() {
+        for (let n = 0; n < this._fingerCursors.length; n++) {
+            this._fingerCursors[n].remove();
+        }
+        this._fingerCursors = [];
+    }
+    click() {
+        this.doClick(new PointerEvent(""));
+    }
+    deleteProperties() {
+        return new Set().add("isOver").add("isEnter");
+    }
+    readOnlyProperties() {
+        return new Set().add("id").add("name");
+    }
+    addProperties() {
+        let arr = super.addProperties();
+        arr.push({ instance: this.overAnimationTrigger, propertyName: "overAnimationTrigger", readOnly: false, enum: [] });
+        arr.push({ instance: this.thisPointerDownAnimationTrigger, propertyName: "thisPointerDownAnimationTrigger", readOnly: false, enum: [] });
+        arr.push({ instance: this.thisPointerUpAnimationTrigger, propertyName: "thisPointerUpAnimationTrigger", readOnly: false, enum: [] });
+        arr.push({ instance: this.enterAnimationTrigger, propertyName: "enterAnimationTrigger", readOnly: false, enum: [] });
+        arr.push({ instance: this.clickAnimationTrigger, propertyName: "clickAnimationTrigger", readOnly: false, enum: [] });
+        arr.push({ instance: this.doubleClickAnimationTrigger, propertyName: "doubleClickAnimationTrigger", readOnly: false, enum: [] });
+        arr.push({ instance: this.dragStartAnimationTrigger, propertyName: "dragStartAnimationTrigger", readOnly: false, enum: [] });
+        arr.push({ instance: this.dragStartAnimationTrigger, propertyName: "dragCancelAnimationTrigger", readOnly: false, enum: [] });
+        arr.push({ instance: this.dragCatchAnimationTrigger, propertyName: "dragCatchAnimationTrigger", readOnly: false, enum: [] });
+        arr.push({ instance: this.keyDownAnimationTrigger, propertyName: "keyDownAnimationTrigger", readOnly: false, enum: [] });
+        /*arr.push({instance:this.lockMinX, propertyName: "lockMinX", readOnly:false, enum:[]})
+        arr.push({instance:this.lockMaxX, propertyName: "lockMaxX", readOnly:false, enum:[]})
+        arr.push({instance:this.lockMinY, propertyName: "lockMinY", readOnly:false, enum:[]})
+        arr.push({instance:this.lockMaxY, propertyName: "lockMaxY", readOnly:false, enum:[]})*/
+        return arr;
+    }
+}
+class CCanvasLayerControl extends CPointerEventControl {
+    constructor(parent, name) {
+        super(parent, name);
+        this._expandedLayers = new CNotifyRect(0, 0, 0, 0);
+        this._layersResource = "";
+        this._pathItemsResource = "";
+        let self = this;
+        this._layers = new CCanvasLayers(this);
+        this._layers.onChangeLayer = function (sender, kind, layer) {
+            if (kind == CCanvasLayers.CON_CHANGE_ADD_LAYER) {
+                layer.setCanvasElementPosition(-self.expandedLayers.left, -self.expandedLayers.top, self.position.width + self.expandedLayers.left + self.expandedLayers.right, self.position.height + self.expandedLayers.top + self.expandedLayers.bottom);
+            }
+        };
+        this.layers.onChange = function () {
+            let arr = CSystem.getChildControls(self);
+            for (let n = 0; n < arr.length; n++) {
+                arr[n].bringToFront();
+            }
+            self.doChangeLayerCount();
+        };
+        this._expandedLayers.onChange = function () {
+            self.setLayers();
+        };
+    }
+    get layers() {
+        return this._layers;
+    }
+    get expandedLayers() {
+        return this._expandedLayers;
+    }
+    get layersResource() {
+        return this._layersResource;
+    }
+    set layersResource(value) {
+        if (this.layersResource != value) {
+            this._layersResource = value;
+            this.layers.resource = value;
+        }
+    }
+    get pathItemsResource() {
+        return this._pathItemsResource;
+    }
+    set pathItemsResource(value) {
+        if (this._pathItemsResource != value) {
+            this._pathItemsResource = value;
+            let pd = CSystem.resources.get(value);
+            if (pd != undefined) {
+                let pt = new CPathItems();
+                pt.fromData(pd);
+                let w = 0;
+                let h = 0;
+                w = parseFloat(pd.width);
+                h = parseFloat(pd.height);
+                this.layers.clear();
+                for (let n = 0; n < pt.length; n++) {
+                    let l = this.layers.addLayer();
+                    l.items.fromData(pt.get(n).toCanvasItems(w, h).toData());
+                }
+            }
+        }
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "layers", this.layers.toData(), [], true);
+        CDataClass.putData(data, "expandedLayers", this.expandedLayers.toData(), {}, true);
+        CDataClass.putData(data, "layersResource", this.layersResource, "");
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.layers.fromData(CDataClass.getData(data, "layers", [], true));
+        this.expandedLayers.fromData(CDataClass.getData(data, "expandedLayers", {}, true));
+        this.layersResource = CDataClass.getData(data, "layersResource", "");
+    }
+    doRemove() {
+        this._layers.remove();
+        super.doRemove();
+    }
+    doSetElementSize() {
+        super.doSetElementSize();
+        this.doSetLayers();
+    }
+    doSetLayers() {
+        this._layers.setLayersPosition(-this.expandedLayers.left, -this.expandedLayers.top, this.position.width + this.expandedLayers.left + this.expandedLayers.right, this.position.height + this.expandedLayers.top + this.expandedLayers.bottom);
+        if (this.onSetLayers != undefined) {
+            this.onSetLayers(this);
+        }
+    }
+    doChangeLayerCount() {
+        if (this.onChangeLayerCount != undefined) {
+            this.onChangeLayerCount(this);
+        }
+    }
+    doDraw() {
+        this._layers.draw();
+    }
+    doLayerDraw(layerIndex, layer, context) {
+        if (this.onLayerDraw != undefined) {
+            this.onLayerDraw(this, layerIndex, layer, context);
+        }
+    }
+    setLayers() {
+        this.doSetLayers();
+    }
+    addLayer() {
+        return this._layers.addLayer();
+    }
+    draw() {
+        this.doDraw();
+    }
+    getCanvasItems(canvasItemName) {
+        return this.layers.getCanvasItems(canvasItemName);
+    }
+    static createControl(parent, name = "", left = 0, top = 0, width = 50, height = 50) {
+        let c = new CCanvasLayerControl(parent, name);
+        c.position.left = left;
+        c.position.top = top;
+        c.position.width = width;
+        c.position.height = height;
+        return c;
+    }
+}
+class CPanel extends CCanvasLayerControl {
+    constructor(parent, name) {
+        super(parent, name);
+        this._textSet = new CTextSet();
+        this._text = "";
+        this._useAutoSize = false;
+        let self = this;
+        this.textSet.onChange = function () {
+            self.doChange(CPanel.CON_CHANGE_TEXTSET);
+        };
+    }
+    static get CON_CHANGE_USE_AUTO_SIZE() { return "changeUseAutoSize"; }
+    static get CON_CHANGE_TEXT() { return "changeText"; }
+    static get CON_CHANGE_TEXTSET() { return "changeTextSet"; }
+    get textSet() {
+        return this._textSet;
+    }
+    get text() {
+        if (this.textSet.languageKey != "") {
+            let t = CLanguage.getText(this.textSet.languageKey);
+            if (t != undefined) {
+                return t;
+            }
+            else {
+                return this._text;
+            }
+        }
+        else {
+            return this._text;
+        }
+    }
+    set text(value) {
+        if (this._text != value) {
+            this._text = value;
+            this.doChange(CPanel.CON_CHANGE_TEXT);
+        }
+    }
+    get useAutoSize() {
+        return this._useAutoSize;
+    }
+    set useAutoSize(value) {
+        if (this._useAutoSize != value) {
+            this._useAutoSize = value;
+            this.doChange(CPanel.CON_CHANGE_USE_AUTO_SIZE);
+        }
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "textSet", this.textSet.toData(), {}, true);
+        CDataClass.putData(data, "text", this.text, "");
+        CDataClass.putData(data, "useAutoSize", this.useAutoSize, false);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.textSet.fromData(CDataClass.getData(data, "textSet", {}, true));
+        this.text = CDataClass.getData(data, "text", "");
+        this.useAutoSize = CDataClass.getData(data, "useAutoSize", false);
+    }
+    doChange(kind, data) {
+        super.doChange(kind, data);
+        if (kind == CPanel.CON_CHANGE_TEXT) {
+            this.doChangeText();
+            this.doSetAutoSize();
+        }
+        if (kind == CPanel.CON_CHANGE_TEXTSET) {
+            this.doChangeTextSet();
+            this.doSetAutoSize();
+        }
+        if (kind == CPanel.CON_CHANGE_USE_AUTO_SIZE) {
+            this.doSetAutoSize();
+        }
+    }
+    doSetAutoSize() {
+        if (this._useAutoSize) {
+            this.position.width = Math.round(CStringUtil.getTextWidth(this.textSet, this.text)) + 20;
+        }
+    }
+    doChangeTextSet() {
+        for (let n = 0; n < this.layers.length; n++) {
+            let arr = this.layers.get(n).items.getItem("text");
+            for (let i = 0; i < arr.length; i++) {
+                arr[i].textSet.fromData(this.textSet.toData());
+            }
+        }
+        this.draw();
+        if (this.onChangeTextSet != undefined) {
+            this.onChangeTextSet(this);
+        }
+    }
+    doChangeText() {
+        for (let n = 0; n < this.layers.length; n++) {
+            let arr = this.layers.get(n).items.getItem("text");
+            for (let i = 0; i < arr.length; i++) {
+                arr[i].text = this.text;
+            }
+        }
+        this.draw();
+        if (this.onChangeText != undefined) {
+            this.onChangeText(this);
+        }
+    }
+    doThisPointerUp(e, points) {
+        super.doThisPointerUp(e, points);
+        if (e.pointerType == "mouse" && e.button == 2 && this.popup != undefined) {
+            this.popup.resource = this.popup.popupResource;
+            if (e.pageX + this.popup.popupWidth <= window.innerWidth) {
+                this.popup.position.left = e.pageX;
+            }
+            else {
+                this.popup.position.left = e.pageX - this.popup.popupWidth;
+            }
+            let h = (this.popup.items.length * 30) + 10;
+            if (e.pageY + h <= window.innerHeight) {
+                this.popup.position.top = e.pageY;
+            }
+            else {
+                this.popup.position.top = e.pageY - h;
+            }
+            this.popup.position.width = this.popup.popupWidth;
+            this.popup.popupCaller = this;
+            this.popup.show();
+        }
+    }
+    canvasItemText(itemName, text) {
+        for (let n = 0; n < this.layers.length; n++) {
+            let items = this.layers.get(n).items.getItem(itemName);
+            for (let i = 0; i < items.length; i++) {
+                items[i].text = text;
+            }
+        }
+    }
+}
+class CCover extends CPanel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.isClickHide = true;
+        this.isHideClear = false;
+        this._showAnimatorResource = "";
+        this._hideAnimatorResource = "";
+        this.visible = false;
+    }
+    get showAnimatorResource() {
+        return this._showAnimatorResource;
+    }
+    set showAnimatorResource(value) {
+        this._showAnimatorResource = value;
+        if (value != "")
+            this.showAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get hideAnimatorResource() {
+        return this._hideAnimatorResource;
+    }
+    set hideAnimatorResource(value) {
+        this._hideAnimatorResource = value;
+        if (value != "")
+            this.hideAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    doClick(e) {
+        super.doClick(e);
+        if (this.isClickHide) {
+            this.hideCover();
+        }
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "showAnimatorResource", this.showAnimatorResource, "");
+        CDataClass.putData(data, "hideAnimatorResource", this.hideAnimatorResource, "");
+        if (this.showAnimationTrigger != undefined)
+            CDataClass.putData(data, "showAnimationTrigger", this.showAnimationTrigger.toData(), {}, true);
+        if (this.hideAnimationTrigger != undefined)
+            CDataClass.putData(data, "hideAnimationTrigger", this.hideAnimationTrigger.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        CAnimator.fromAnimatorData(data, this, "showAnimationTrigger");
+        CAnimator.fromAnimatorData(data, this, "hideAnimationTrigger");
+        this.showAnimatorResource = CDataClass.getData(data, "showAnimatorResource", "");
+        this.hideAnimatorResource = CDataClass.getData(data, "hideAnimatorResource", "");
+    }
+    doShowCover() {
+        this.bringToFront();
+        if (this.parent != undefined) {
+            this.position.left = 0;
+            this.position.top = 0;
+            this.position.width = this.parent.position.width;
+            this.position.height = this.parent.position.height;
+        }
+        if (this.onBeforeShow != undefined) {
+            this.onBeforeShow(this);
+        }
+        this.visible = true;
+        if (this.showAnimationTrigger != undefined) {
+            let self = this;
+            this.showAnimationTrigger.onAfterAnimation = function () {
+                if (self.onShow != undefined) {
+                    self.onShow(self);
+                }
+            };
+            this.showAnimationTrigger.start();
+        }
+        else {
+            if (this.onShow != undefined) {
+                this.onShow(this);
+            }
+        }
+    }
+    doHideCover() {
+        if (this.onBeforeHide != undefined) {
+            this.onBeforeHide(this);
+        }
+        let self = this;
+        function clear() {
+            if (self.isHideClear) {
+                let arr = CSystem.getChildControls(self);
+                for (let n = arr.length - 1; n >= 0; n--) {
+                    arr[n].remove();
+                }
+            }
+        }
+        if (this.hideAnimationTrigger != undefined) {
+            this.hideAnimationTrigger.onAfterAnimation = function () {
+                self.visible = false;
+                clear();
+                if (self.onHide != undefined) {
+                    self.onHide(self);
+                }
+            };
+            this.hideAnimationTrigger.start();
+        }
+        else {
+            this.visible = false;
+            clear();
+            if (this.onHide != undefined) {
+                this.onHide(this);
+            }
+        }
+    }
+    showCover(isClickHide = true) {
+        this.isClickHide = isClickHide;
+        this.doShowCover();
+    }
+    hideCover() {
+        this.doHideCover();
+    }
+    addProperties() {
+        let arr = super.addProperties();
+        arr.push({ instance: this.showAnimationTrigger, propertyName: "showAnimationTrigger", readOnly: false, enum: [] });
+        arr.push({ instance: this.hideAnimationTrigger, propertyName: "hideAnimationTrigger", readOnly: false, enum: [] });
+        return arr;
+    }
+}
+class CDragIcon extends CPanel {
+    constructor() {
+        super(...arguments);
+        this._isOverCatchControl = false;
+        this.dragStartPosition = new CPoint();
+        this._dropAnimatorResource = "";
+        this._cancelAnimatorResource = "";
+        this._changeOverCatchControlAnimatorResource = "";
+    }
+    get dropAnimatorResource() {
+        return this._dropAnimatorResource;
+    }
+    set dropAnimatorResource(value) {
+        this._dropAnimatorResource = value;
+        if (value != "")
+            this.dropAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get cancelAnimatorResource() {
+        return this._cancelAnimatorResource;
+    }
+    set cancelAnimatorResource(value) {
+        this._cancelAnimatorResource = value;
+        if (value != "")
+            this.cancelAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get changeOverCatchControlAnimatorResource() {
+        return this._changeOverCatchControlAnimatorResource;
+    }
+    set changeOverCatchControlAnimatorResource(value) {
+        this._changeOverCatchControlAnimatorResource = value;
+        if (value != "")
+            this.changeOverCatchControlAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    get isOverCatchControl() {
+        return this._isOverCatchControl;
+    }
+    set isOverCatchControl(value) {
+        if (this._isOverCatchControl != value) {
+            this._isOverCatchControl = value;
+            this.doChangeOverCatchControl();
+        }
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "dropAnimatorResource", this.dropAnimatorResource, "");
+        CDataClass.putData(data, "cancelAnimatorResource", this.cancelAnimatorResource, "");
+        CDataClass.putData(data, "changeOverCatchControlAnimatorResource", this.changeOverCatchControlAnimatorResource, "");
+        if (this.dropAnimationTrigger != undefined)
+            CDataClass.putData(data, "dropAnimationTrigger", this.dropAnimationTrigger.toData(), {}, true);
+        if (this.cancelAnimationTrigger != undefined)
+            CDataClass.putData(data, "cancelAnimationTrigger", this.cancelAnimationTrigger.toData(), {}, true);
+        if (this.changeOverCatchControlAnimationTrigger != undefined)
+            CDataClass.putData(data, "changeOverCatchControlAnimationTrigger", this.changeOverCatchControlAnimationTrigger.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        CAnimator.fromAnimatorData(data, this, "dropAnimationTrigger");
+        CAnimator.fromAnimatorData(data, this, "cancelAnimationTrigger");
+        CAnimator.fromAnimatorData(data, this, "changeOverCatchControlAnimationTrigger");
+        this.dropAnimatorResource = CDataClass.getData(data, "dropAnimatorResource", "");
+        this.cancelAnimatorResource = CDataClass.getData(data, "cancelAnimatorResource", "");
+        this.changeOverCatchControlAnimatorResource = CDataClass.getData(data, "changeOverCatchControlAnimatorResource", "");
+    }
+    doChangeOverCatchControl() {
+        if (this.changeOverCatchControlAnimationTrigger != undefined) {
+            if (this.isOverCatchControl) {
+                this.triggerTrue(this.changeOverCatchControlAnimationTrigger);
+            }
+            else {
+                this.triggerFalse(this.changeOverCatchControlAnimationTrigger);
+            }
+        }
+    }
+    doDrop() {
+        if (this.dropAnimationTrigger != undefined) {
+            let self = this;
+            this.dropAnimationTrigger.onAfterAnimation = function () {
+                self.remove();
+            };
+            this.dropAnimationTrigger.start();
+        }
+        else {
+            this.remove();
+        }
+    }
+    doCancel() {
+        console.log("do cancel", this.cancelAnimationTrigger);
+        if (this.cancelAnimationTrigger != undefined) {
+            let self = this;
+            this.cancelAnimationTrigger.onAfterAnimation = function () {
+                self.remove();
+            };
+            this.cancelAnimationTrigger.start();
+        }
+        else {
+            this.remove();
+        }
+    }
+    addProperties() {
+        let arr = super.addProperties();
+        arr.push({ instance: this.dropAnimationTrigger, propertyName: "dropAnimationTrigger", readOnly: false, enum: [] });
+        arr.push({ instance: this.cancelAnimationTrigger, propertyName: "cancelAnimationTrigger", readOnly: false, enum: [] });
+        return arr;
+    }
+}
+class CHint extends CPanel {
+    constructor() {
+        super(...arguments);
+        this._hintAnimatorResource = "";
+    }
+    get hintAnimatorResource() {
+        return this._hintAnimatorResource;
+    }
+    set hintAnimatorResource(value) {
+        this._hintAnimatorResource = value;
+        if (value != "")
+            this.hideAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "hintAnimatorResource", this.hintAnimatorResource, "");
+        if (this.hideAnimationTrigger != undefined)
+            CDataClass.putData(data, "hideAnimationTrigger", this.hideAnimationTrigger.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        CAnimator.fromAnimatorData(data, this, "hideAnimationTrigger");
+        this.hintAnimatorResource = CDataClass.getData(data, "hintAnimatorResource", "");
+    }
+    doShowh(hint) {
+        this.hasPointerEvent = false;
+        this.text = hint;
+    }
+    doHideh() {
+        this.visible = false;
+    }
+    doHide() {
+        super.doHide();
+        this.remove();
+    }
+    showHint(hint) {
+        this.doShowh(hint);
+    }
+    hideHint() {
+        this.doHideh();
+    }
+    addProperties() {
+        let arr = super.addProperties();
+        arr.push({ instance: this.hideAnimationTrigger, propertyName: "hideAnimationTrigger", readOnly: false, enum: [] });
+        return arr;
+    }
+}
+class CGraphicInfo extends CResourceClass {
+    constructor() {
+        super(...arguments);
+        this.opacity = 1;
+        this.position = new CPosition();
+        this.transform = new CTransform();
+        this.filter = new CFilter();
+        this.layers = new CCanvasLayers(undefined);
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "opacity", this.opacity, 1);
+        CDataClass.putData(data, "position", this.position.toData(), {}, true);
+        CDataClass.putData(data, "transform", this.transform.toData(), {}, true);
+        CDataClass.putData(data, "filter", this.filter.toData(), {}, true);
+        CDataClass.putData(data, "layers", this.layers.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.opacity = CDataClass.getData(data, "opacity", 1);
+        this.position.fromData(CDataClass.getData(data, "position", {}, true));
+        this.transform.fromData(CDataClass.getData(data, "transform", {}, true));
+        this.filter.fromData(CDataClass.getData(data, "filter", {}, true));
+        this.layers.fromData(CDataClass.getData(data, "layers", {}, true));
+    }
+    doRemove() {
+        this.layers.remove();
+        super.doRemove();
+    }
+    static controlGraphicInfo(control, positionData) {
+        let rt = new CGraphicInfo();
+        rt.opacity = control.opacity;
+        if (positionData == undefined) {
+            rt.position.fromData(control.position.toData());
+        }
+        else {
+            rt.position.fromData(positionData);
+        }
+        rt.transform.fromData(control.transform.toData());
+        rt.filter.fromData(control.filter.toData());
+        rt.layers.fromData(control.layers.toData());
+        return rt;
+    }
+    static setControlGraphicInfo(graphicInfo, control) {
+        control.opacity = graphicInfo.opacity;
+        control.position.fromData(graphicInfo.position.toData());
+        control.transform.fromData(graphicInfo.transform.toData());
+        control.filter.fromData(graphicInfo.filter.toData());
+        control.layers.fromData(graphicInfo.layers.toData());
+    }
+}
+class CAnimationControlSceneSection extends CResourceClass {
+    constructor() {
+        super(...arguments);
+        this.controlName = "";
+        this.property = "";
+        this.script = "";
+        this._graphData = "";
+        this.graphPath = new CPathPointList();
+        this.positionPoints = new Array();
+        this.positionPath = new CPathPointList();
+        this.timeTag = new Array();
+        this.objectData = new CList();
+        this.startTime = 0;
+        this.duration = 100;
+        this.startValue = 0;
+        this.stopValue = 0;
+        this.isLoop = false;
+    }
+    get graphData() {
+        return this._graphData;
+    }
+    set graphData(value) {
+        if (typeof value == "string") {
+            let rc = CSystem.resources.get(value);
+            if (rc != undefined) {
+                this._graphData = rc;
+            }
+        }
+        else {
+            this._graphData = value;
+        }
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "controlName", this.controlName, "");
+        CDataClass.putData(data, "property", this.property, "");
+        CDataClass.putData(data, "script", this.script, "");
+        if (typeof this.graphData == "string") {
+            CDataClass.putData(data, "graphData", this.graphData, "");
+        }
+        else {
+            CDataClass.putData(data, "graphData", this.graphData, [], true);
+        }
+        CDataClass.putData(data, "graphPath", this.graphPath.toData(), {}, true);
+        let arr = new Array();
+        for (let n = 0; n < this.objectData.length; n++) {
+            arr.push({ duration: this.objectData.get(n).sectionT, centerX: this.objectData.get(n).centerX, centerY: this.objectData.get(n).centerY, info: this.objectData.get(n).info.toData() });
+        }
+        CDataClass.putData(data, "objectData", arr, [], true);
+        let arr2 = new Array();
+        for (let n = 0; n < this.positionPoints.length; n++) {
+            arr2.push({ x: this.positionPoints[n].x, y: this.positionPoints[n].y });
+        }
+        CDataClass.putData(data, "positionPoints", arr2, [], true);
+        CDataClass.putData(data, "positionPath", this.positionPath.toData(), {}, true);
+        CDataClass.putData(data, "timeTag", this.timeTag, [], true);
+        CDataClass.putData(data, "startTime", this.startTime, 0);
+        CDataClass.putData(data, "duration", this.duration, 100);
+        CDataClass.putData(data, "startValue", CGraphAnimationValue.graphValueToData(this.startValue));
+        CDataClass.putData(data, "stopValue", CGraphAnimationValue.graphValueToData(this.stopValue));
+        CDataClass.putData(data, "isLoop", this.isLoop, false);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.controlName = CDataClass.getData(data, "controlName", "");
+        this.property = CDataClass.getData(data, "property", "");
+        this.script = CDataClass.getData(data, "script", "");
+        this.graphData = CDataClass.getData(data, "graphData");
+        this.graphPath.fromData(CDataClass.getData(data, "graphPath", {}, true));
+        this.clearObjectData();
+        let arr = CDataClass.getData(data, "objectData", [], true);
+        for (let n = 0; n < arr.length; n++) {
+            let info = new CGraphicInfo();
+            info.fromData(arr[n].info);
+            let item = { sectionT: arr[n].duration, centerX: arr[n].centerX, centerY: arr[n].centerY, info: info };
+            this.objectData.add(item);
+        }
+        let arr2 = CDataClass.getData(data, "positionPoints", [], true);
+        this.positionPoints = [];
+        for (let n = 0; n < arr2.length; n++) {
+            let pt = new CPoint(arr2[n].x, arr2[n].y);
+            this.positionPoints.push(pt);
+        }
+        this.positionPath.fromData(CDataClass.getData(data, "positionPath", {}, true));
+        this.timeTag = CDataClass.getData(data, "timeTag", [], true);
+        this.startTime = CDataClass.getData(data, "startTime", 0);
+        this.duration = CDataClass.getData(data, "duration", 100);
+        this.startValue = CGraphAnimationValue.graphValueFromData(CDataClass.getData(data, "startValue"));
+        this.stopValue = CGraphAnimationValue.graphValueFromData(CDataClass.getData(data, "stopValue"));
+        this.isLoop = CDataClass.getData(data, "isLoop", false);
+    }
+    doRemove() {
+        this.clearObjectData();
+        super.doRemove();
+    }
+    clearObjectData() {
+        for (let n = 0; n < this.objectData.length; n++) {
+            this.objectData.get(n).info.remove();
+        }
+        this.objectData.clear();
+    }
+    graphDataCopy() {
+        let arr = new Array();
+        if (typeof this.graphData != "string") {
+            for (let n = 0; n < this.graphData.length; n++) {
+                arr.push(this.graphData[n]);
+            }
+        }
+        return arr;
+    }
+    graphDataFromData(data) {
+        this.graphData = [];
+        for (let n = 0; n < data.length; n++) {
+            this.graphData.push(data[n]);
+        }
+    }
+    timeTagCopy() {
+        let arr = new Array();
+        for (let n = 0; n < this.timeTag.length; n++) {
+            arr.push({ tagName: this.timeTag[n].tagName, tagColor: this.timeTag[n].tagColor, duration: this.timeTag[n].duration });
+        }
+        return arr;
+    }
+    timeTagFromData(data) {
+        this.timeTag = [];
+        for (let n = 0; n < data.length; n++) {
+            this.timeTag.push({ tagName: data[n].tagName, tagColor: data[n].tagColor, duration: data[n].duration });
+        }
+    }
+}
+class CAnimationControlScene extends CResourceClass {
+    constructor() {
+        super(...arguments);
+        this.sections = new CList();
+        this.startTime = 0;
+        this.duration = 1000;
+        this.speedStartValue = 1;
+        this.speedStopValue = 1;
+    }
+    doToData(data) {
+        super.doToData(data);
+        let arr = new Array();
+        for (let n = 0; n < this.sections.length; n++) {
+            arr.push(this.sections.get(n).toData());
+        }
+        CDataClass.putData(data, "sections", arr, [], true);
+        CDataClass.putData(data, "startTime", this.startTime, 0);
+        CDataClass.putData(data, "duration", this.duration, 1000);
+        CDataClass.putData(data, "speedStopValue", this.speedStopValue, 0);
+        CDataClass.putData(data, "speedStartValue", this.speedStartValue, 0);
+        CDataClass.putData(data, "speedGraphData", this.speedGraphData, undefined);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.clearSections();
+        let arr = CDataClass.getData(data, "sections", [], true);
+        for (let n = 0; n < arr.length; n++) {
+            let ss = new CAnimationControlSceneSection();
+            ss.fromData(arr[n]);
+            this.sections.add(ss);
+        }
+        this.startTime = CDataClass.getData(data, "startTime", 0);
+        this.duration = CDataClass.getData(data, "duration", 1000);
+        this.speedStartValue = CDataClass.getData(data, "speedStartValue", 0);
+        this.speedStopValue = CDataClass.getData(data, "speedStopValue", 0);
+        this.speedGraphData = CDataClass.getData(data, "speedGraphData", undefined);
+    }
+    doRemove() {
+        this.clearSections();
+        super.doRemove();
+    }
+    clearSections() {
+        for (let n = 0; n < this.sections.length; n++) {
+            this.sections.get(n).remove();
+        }
+        this.sections.clear();
+    }
+}
+class CAnimationControl extends CPanel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.__isScene = false;
+        this.__objectsIndex = new Map();
+        this.__orgBounds = new CRect();
+        this._objectsCount = 0;
+        this._transformerPoints = new CTransformerPoints();
+        this._sceneData = new CAnimationControlScene();
+        this.orgTransfrom = new CTransform();
+        this.orgPosition = new CPosition();
+        this.objects = new CList();
+        let self = this;
+        this.objects.onChange = function () {
+            self.setObjectIndex();
+        };
+    }
+    get transformerPoints() {
+        return this._transformerPoints;
+    }
+    get sceneData() {
+        return this._sceneData;
+    }
+    get isScene() {
+        return this.__isScene;
+    }
+    get objectsCount() {
+        return this._objectsCount;
+    }
+    set objectsCount(value) {
+        this._objectsCount = value;
+        if (this.objects.length < value) {
+            let cnt = value - this.objects.length;
+            for (let n = 0; n < cnt; n++) {
+                let p = new CAnimationControl(this);
+                this.objects.add(p);
+            }
+        }
+        else if (this.objects.length > value) {
+            let cnt = this.objects.length - value;
+            for (let n = 0; n < cnt; n++) {
+                this.objects.get(this.objects.length - 1).remove();
+                this.objects.delete(this.objects.length - 1);
+            }
+        }
+    }
+    doToData(data) {
+        super.doToData(data);
+        let arr = new Array();
+        for (let n = 0; n < this.objects.length; n++) {
+            arr.push(this.objects.get(n).toData());
+        }
+        CDataClass.putData(data, "objects", arr, [], true);
+        CDataClass.putData(data, "objectsCount", this.objectsCount, 0);
+        CDataClass.putData(data, "orgPosition", this.position.toData(), {}, true);
+        CDataClass.putData(data, "orgTransfrom", this.transform.toData(), {}, true);
+        CDataClass.putData(data, "sceneData", this.sceneData.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.clear();
+        this.objectsCount = CDataClass.getData(data, "objectsCount", 0);
+        let arr = CDataClass.getData(data, "objects", [], true);
+        for (let n = 0; n < arr.length; n++) {
+            this.objects.get(n).fromData(arr[n]);
+        }
+        this.orgPosition.fromData(CDataClass.getData(data, "orgPosition", {}, true));
+        this.orgTransfrom.fromData(CDataClass.getData(data, "orgTransfrom", {}, true));
+        this.sceneData.fromData(CDataClass.getData(data, "sceneData", {}, true));
+        this.setObjectIndex();
+        for (let n = 0; n < this.sceneData.sections.length; n++) {
+            this.sceneData.sections.get(n).control = this.getObject(this.sceneData.sections.get(n).controlName);
+        }
+        this.orgData = data;
+    }
+    doRemove() {
+        if (this.orgPathData != undefined) {
+            this.orgPathData.remove();
+        }
+        this.clear();
+        super.doRemove();
+    }
+    doChangeSize() {
+        super.doChangeSize();
+        let sx = this.position.width / this.orgPosition.width;
+        let sy = this.position.height / this.orgPosition.height;
+        this.objectsScale(sx, sy);
+    }
+    doScene() {
+        let self = this;
+        if (!this.__isScene) {
+            //this.fromData(this.orgData)
+            let ani = new CSceneAnimator();
+            ani.animationControl = this;
+            ani.duration = this.sceneData.duration;
+            ani.onFinish = function () {
+                self.__isScene = false;
+                ani.remove();
+            };
+            this.__isScene = true;
+            ani.start();
+            if (this.onScene != undefined) {
+                this.onScene(this);
+            }
+        }
+    }
+    doSetStart() {
+        this.doSetTime(0);
+    }
+    doSetTime(duration) {
+        let ani = this.getSceneAnimation();
+        ani.doBeforeStart();
+        ani.moveTime(duration);
+        ani.remove();
+    }
+    addAnimationObject() {
+        let con = new CAnimationControl(this);
+        this.objects.add(con);
+        return con;
+    }
+    clear() {
+        for (let n = 0; n < this.objects.length; n++) {
+            this.objects.get(n).remove();
+        }
+        this.objects.clear();
+    }
+    objectsScale(scaleX, scaleY) {
+        for (let n = 0; n < this.objects.length; n++) {
+            this.objects.get(n).position.left = this.objects.get(n).orgPosition.left * scaleX;
+            this.objects.get(n).position.top = this.objects.get(n).orgPosition.top * scaleY;
+            this.objects.get(n).position.width = this.objects.get(n).orgPosition.width * scaleX;
+            this.objects.get(n).position.height = this.objects.get(n).orgPosition.height * scaleY;
+        }
+    }
+    orgPathdataSet() {
+        if (this.orgPathData != undefined)
+            this.orgPathData.remove();
+        let ls = new CCanvasLayers(undefined);
+        ls.fromData(this.layers.toData());
+        this.orgPathData = ls;
+        this.__orgBounds = new CRect(0, 0, this.position.width, this.position.height);
+    }
+    scene() {
+        this.doScene();
+    }
+    getObject(name) {
+        return this.__objectsIndex.get(name);
+    }
+    setObjectIndex() {
+        this.__objectsIndex.clear();
+        for (let n = 0; n < this.objects.length; n++) {
+            this.__objectsIndex.set(this.objects.get(n).propertyName, this.objects.get(n));
+        }
+    }
+    copyTo() {
+        let con = new CAnimationControl();
+        con.fromData(this.toData());
+        return con;
+    }
+    getSceneAnimation() {
+        let ani = new CSceneAnimator();
+        let d = 0;
+        for (let n = 0; n < this.sceneData.sections.length; n++) {
+            d = CCalc.max(d, this.sceneData.sections.get(n).startTime + this.sceneData.sections.get(n).duration);
+        }
+        ani.duration = d;
+        ani.animationControl = this;
+        //ani.timeSpeedGraphData = this.graphData
+        //ani.startTimeSpeed = this.timeSpeedStart
+        //ani.stopTimeSpeed = this.timeSpeedStop
+        return ani;
+    }
+    setOriginalData() {
+        if (this.orgData != undefined)
+            this.fromData(this.orgData);
+    }
+}

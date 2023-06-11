@@ -1,1 +1,261 @@
-﻿"use strict";class CStickersModel extends CWindowModel{constructor(){super(...arguments),this.list=new CListBox(this.body)}doToData(t){super.doToData(t),CDataClass.putData(t,"list",this.list.toData(),{},!0)}doFromData(t){super.doFromData(t),this.list.fromData(CDataClass.getData(t,"list",{},!0))}}class CStickerModel extends CWindowModel{constructor(t,e){super(t,e),this._title="",this._desc="",this._stickerResource="",this.txtTitle=new CTextBox(this.caption),this.txtDesc=new CTextArea(this.body),this.btnSetting=new CButton(this.caption),this.btnAddSticker=new CButton(this.caption),this.btnWrap=new CSelectBox(this.caption),this.stickerId=-1,this.isStickerSet=!1,this.orgWidth=0,this.orgHeight=0,this.orgLeft=0,this.orgTop=0,this.stickerIndex=-1;let i=this;this.txtTitle.visible=!1,this.txtTitle.onChangeFocus=function(){i.txtTitle.focused||(i.title=i.txtTitle.text,i.txtTitle.visible=!1)},this.txtTitle.onKeyDown=function(t,e){"Enter"==e.key&&(i.title=i.txtTitle.text,i.txtTitle.focused=!1)},this.txtDesc.onChangeText=function(){i.desc=i.txtDesc.text},this.txtDesc.onChangeFocus=function(){i.txtDesc.focused&&90==i.transform.rotateY&&CAnimation.animate(200,function(t,e,s){i.opacity=.5+.5*e,i.transform.rotateY=90-90*e})},this.btnWrap.onChangeSelected=function(){i.isStickerSet&&(i.txtDesc.wrap=i.btnWrap.selected,i.txtDesc.useHScrollbar=!i.btnWrap.selected)},this.btnSetting.onClick=function(){i.isStickerSet&&CSystem.prompt("스티커 리소스",["Resource"],CSystem.browserCovers.get("cover"),function(t){""==t[0]?i.stickerResource="sticker_base.frame":i.stickerResource=t[0]})},this.btnAddSticker.onClick=function(){i.doStickerAdd()},CStickerModel.stickers.add(this)}get title(){return this._title}set title(t){this._title!=t&&(this._title=t,this.caption.text=t)}get desc(){return this._desc}set desc(t){this._desc=t,this.txtDesc.text=t}get stickerResource(){return this._stickerResource}set stickerResource(t){this._stickerResource!=t&&(this._stickerResource=t,this.doStickerResourceSet())}doToData(t){super.doToData(t),CDataClass.putData(t,"txtTitle",this.txtTitle.toData(),{},!0),CDataClass.putData(t,"txtDesc",this.txtDesc.toData(),{},!0),CDataClass.putData(t,"btnSetting",this.btnSetting.toData(),{},!0),CDataClass.putData(t,"btnAddSticker",this.btnAddSticker.toData(),{},!0),CDataClass.putData(t,"btnWrap",this.btnWrap.toData(),{},!0)}doFromData(t){super.doFromData(t),this.txtTitle.fromData(CDataClass.getData(t,"txtTitle",{},!0)),this.txtDesc.fromData(CDataClass.getData(t,"txtDesc",{},!0)),this.btnSetting.fromData(CDataClass.getData(t,"btnSetting",{},!0)),this.btnAddSticker.fromData(CDataClass.getData(t,"btnAddSticker",{},!0)),this.btnWrap.fromData(CDataClass.getData(t,"btnWrap",{},!0)),this.txtTitle.visible=!1}doRemove(){CStickerModel.stickers.delete(this),super.doRemove()}doDoubleClick(t){super.doDoubleClick(t),this.txtTitle.visible=!0,this.txtTitle.text=this.caption.text,this.txtTitle.focused=!0}doStickerResourceSet(){this.isStickerSet=!1;let t=this.title,e=this.desc,i=this.btnWrap.selected,s=this.position.left,o=this.position.top,a=this.position.width,r=this.position.height;this.resource=this.stickerResource,this.title=t,this.desc=e,this.caption.text=t,this.btnWrap.selected=i,this.position.left=s,this.position.top=o,this.position.width=a,this.position.height=r,this.isStickerSet=!0}doStickerAdd(){}static showStickers(t){this.stickers.forEach(function(t){t.remove()}),this.stickers.clear();let e=JSON.parse(t);for(let t=0;t<e.length;t++){let i=new CStickerModel(CSystem.desktopList.get(0).applicationLayer);null!=e[t].RESOURCE_NAME&&""!=e[t].RESOURCE_NAME?i.stickerResource=e[t].RESOURCE_NAME:i.stickerResource="sticker_base.frame",i.isStickerSet=!1,i.show(e[t].STICKER_LEFT,e[t].STICKER_TOP,e[t].STICKER_WIDTH,e[t].STICKER_HEIGHT,"","remove"),i.stickerId=e[t].ID,i.title=e[t].TITLE,i.desc=e[t].STICKER_DESC,"Y"==e[t].WRAP_YN&&(i.txtDesc.wrap=!0,i.txtDesc.useHScrollbar=!1,i.btnWrap.selected=!0),i.isStickerSet=!0}}static stickerPreviewOn(t,e){let i=0,s=(CSystem.desktopList.get(0).applicationLayer.position.height-e)/2,o=CSystem.desktopList.get(0).applicationLayer.position.width/CStickerModel.stickers.size;CStickerModel.stickers.forEach(function(a){a.orgLeft=a.position.left,a.orgTop=a.position.top,a.orgWidth=a.position.width,a.orgHeight=a.position.height,a.stickerIndex=i,i++,CAnimation.animate(200,function(i,r,c){a.position.top=CCalc.crRange2Value(0,1,r,a.orgTop,s),a.position.width=CCalc.crRange2Value(0,1,r,a.orgWidth,t),a.position.height=CCalc.crRange2Value(0,1,r,a.orgHeight,e),a.position.left=CCalc.crRange2Value(0,1,r,a.orgLeft,a.stickerIndex*o),a.transform.rotateY=90*r,a.opacity=CCalc.crRange2Value(0,1,r,1,.5)})}),this.isPreview=!0}static stickerPreviewOff(){CStickerModel.stickers.forEach(function(t){let e=t.position.left,i=t.position.top,s=t.position.width,o=t.position.height;CAnimation.animate(200,function(a,r,c){t.position.top=CCalc.crRange2Value(0,1,r,i,t.orgTop),t.position.width=CCalc.crRange2Value(0,1,r,s,t.orgWidth),t.position.height=CCalc.crRange2Value(0,1,r,o,t.orgHeight),t.position.left=CCalc.crRange2Value(0,1,r,e,t.orgLeft),t.transform.rotateY=90-90*r,t.opacity=CCalc.crRange2Value(0,1,r,.5,1)})}),this.isPreview=!1}}CStickerModel.stickers=new Set,CStickerModel.isPreview=!1;
+"use strict";
+class CStickersModel extends CWindowModel {
+    constructor() {
+        super(...arguments);
+        this.list = new CListBox(this.body);
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "list", this.list.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.list.fromData(CDataClass.getData(data, "list", {}, true));
+    }
+}
+class CStickerModel extends CWindowModel {
+    constructor(parent, name) {
+        super(parent, name);
+        this._title = "";
+        this._desc = "";
+        this._stickerResource = "";
+        this.txtTitle = new CTextBox(this.caption);
+        this.txtDesc = new CTextArea(this.body);
+        this.btnSetting = new CButton(this.caption);
+        this.btnAddSticker = new CButton(this.caption);
+        this.btnWrap = new CSelectBox(this.caption);
+        this.stickerId = -1;
+        this.isStickerSet = false;
+        this.orgWidth = 0;
+        this.orgHeight = 0;
+        this.orgLeft = 0;
+        this.orgTop = 0;
+        this.stickerIndex = -1;
+        let self = this;
+        this.txtTitle.visible = false;
+        this.txtTitle.onChangeFocus = function () {
+            if (!self.txtTitle.focused) {
+                self.title = self.txtTitle.text;
+                self.txtTitle.visible = false;
+                //self.doChangeSticker()
+            }
+        };
+        this.txtTitle.onKeyDown = function (s, e) {
+            if (e.key == "Enter") {
+                self.title = self.txtTitle.text;
+                self.txtTitle.focused = false;
+            }
+        };
+        this.txtDesc.onChangeText = function () {
+            self.desc = self.txtDesc.text;
+            //self.doChangeSticker()
+        };
+        this.txtDesc.onChangeFocus = function () {
+            if (self.txtDesc.focused && self.transform.rotateY == 90) {
+                CAnimation.animate(200, function (t, v, ct) {
+                    self.opacity = 0.5 + (v * 0.5);
+                    self.transform.rotateY = 90 - (90 * v);
+                });
+            }
+        };
+        this.btnWrap.onChangeSelected = function () {
+            if (self.isStickerSet) {
+                self.txtDesc.wrap = self.btnWrap.selected;
+                self.txtDesc.useHScrollbar = !self.btnWrap.selected;
+                //self.doStickerSetting()
+            }
+        };
+        this.btnSetting.onClick = function () {
+            if (self.isStickerSet) {
+                CSystem.prompt("스티커 리소스", ["Resource"], CSystem.browserCovers.get("cover"), function (arr) {
+                    if (arr[0] == "") {
+                        self.stickerResource = "sticker_base.frame";
+                    }
+                    else {
+                        self.stickerResource = arr[0];
+                    }
+                    //self.doStickerSetting()
+                });
+            }
+        };
+        this.btnAddSticker.onClick = function () {
+            self.doStickerAdd();
+        };
+        CStickerModel.stickers.add(this);
+    }
+    get title() {
+        return this._title;
+    }
+    set title(value) {
+        if (this._title != value) {
+            this._title = value;
+            this.caption.text = value;
+        }
+    }
+    get desc() {
+        return this._desc;
+    }
+    set desc(value) {
+        this._desc = value;
+        this.txtDesc.text = value;
+    }
+    get stickerResource() {
+        return this._stickerResource;
+    }
+    set stickerResource(value) {
+        if (this._stickerResource != value) {
+            this._stickerResource = value;
+            this.doStickerResourceSet();
+        }
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "txtTitle", this.txtTitle.toData(), {}, true);
+        CDataClass.putData(data, "txtDesc", this.txtDesc.toData(), {}, true);
+        CDataClass.putData(data, "btnSetting", this.btnSetting.toData(), {}, true);
+        CDataClass.putData(data, "btnAddSticker", this.btnAddSticker.toData(), {}, true);
+        CDataClass.putData(data, "btnWrap", this.btnWrap.toData(), {}, true);
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.txtTitle.fromData(CDataClass.getData(data, "txtTitle", {}, true));
+        this.txtDesc.fromData(CDataClass.getData(data, "txtDesc", {}, true));
+        this.btnSetting.fromData(CDataClass.getData(data, "btnSetting", {}, true));
+        this.btnAddSticker.fromData(CDataClass.getData(data, "btnAddSticker", {}, true));
+        this.btnWrap.fromData(CDataClass.getData(data, "btnWrap", {}, true));
+        this.txtTitle.visible = false;
+    }
+    doRemove() {
+        CStickerModel.stickers.delete(this);
+        super.doRemove();
+    }
+    doDoubleClick(e) {
+        super.doDoubleClick(e);
+        this.txtTitle.visible = true;
+        this.txtTitle.text = this.caption.text;
+        this.txtTitle.focused = true;
+    }
+    doStickerResourceSet() {
+        this.isStickerSet = false;
+        let t = this.title;
+        let d = this.desc;
+        let s = this.btnWrap.selected;
+        let l = this.position.left;
+        let to = this.position.top;
+        let w = this.position.width;
+        let h = this.position.height;
+        this.resource = this.stickerResource;
+        this.title = t;
+        this.desc = d;
+        this.caption.text = t;
+        this.btnWrap.selected = s;
+        this.position.left = l;
+        this.position.top = to;
+        this.position.width = w;
+        this.position.height = h;
+        this.isStickerSet = true;
+    }
+    doStickerAdd() {
+        /**TITLE, STICKER_DESC, STICKER_LEFT, STICKER_TOP, STICKER_WIDTH, STICKER_HEIGHT */
+        /*if(CGlobal.userInfo != undefined && CGlobal.userInfo.ws != undefined && this.isStickerSet) {
+            if(this.parent != undefined) {
+                let strm = new CStream()
+                let l = (this.parent.position.width - 200) / 2
+                let t = (this.parent.position.height - 200) / 2
+                strm.putString("")
+                strm.putString("")
+                strm.putNumber(l)
+                strm.putNumber(t)
+                strm.putNumber(200)
+                strm.putNumber(200)
+                CGlobal.userInfo.sendSocketData("insertsticker", strm, function(data) {
+                    data.getString()
+                    data.getString()
+                    if(data.getString() == "success") {
+                        let o = JSON.parse(data.getString())
+                        let id = o[0].NEXT_ID
+                        let frm = new CStickerModel(CSystem.desktopList.get(0).applicationLayer)
+                        frm.stickerResource = "sticker_base.frame"
+                        frm.isStickerSet = false
+                        frm.show(l, t, 200, 200, "", "remove")
+                        frm.stickerId = id
+                        frm.title = ""
+                        frm.desc = ""
+                        frm.txtDesc.wrap = true
+                        frm.txtDesc.useHScrollbar = false
+                        frm.btnWrap.selected = true
+                        frm.isStickerSet = true
+                    }
+                })
+            }
+        }*/
+    }
+    static showStickers(json) {
+        this.stickers.forEach(function (v) {
+            v.remove();
+        });
+        this.stickers.clear();
+        let o = JSON.parse(json);
+        for (let n = 0; n < o.length; n++) {
+            let frm = new CStickerModel(CSystem.desktopList.get(0).applicationLayer);
+            if (o[n].RESOURCE_NAME != undefined && o[n].RESOURCE_NAME != "") {
+                frm.stickerResource = o[n].RESOURCE_NAME;
+            }
+            else {
+                frm.stickerResource = "sticker_base.frame";
+            }
+            frm.isStickerSet = false;
+            frm.show(o[n].STICKER_LEFT, o[n].STICKER_TOP, o[n].STICKER_WIDTH, o[n].STICKER_HEIGHT, "", "remove");
+            frm.stickerId = o[n].ID;
+            frm.title = o[n].TITLE;
+            frm.desc = o[n].STICKER_DESC;
+            if (o[n].WRAP_YN == "Y") {
+                frm.txtDesc.wrap = true;
+                frm.txtDesc.useHScrollbar = false;
+                frm.btnWrap.selected = true;
+            }
+            frm.isStickerSet = true;
+        }
+    }
+    static stickerPreviewOn(pWidth, pHeight) {
+        let cnt = 0;
+        let pt = (CSystem.desktopList.get(0).applicationLayer.position.height - pHeight) / 2;
+        let dw = CSystem.desktopList.get(0).applicationLayer.position.width / (CStickerModel.stickers.size);
+        CStickerModel.stickers.forEach(function (vv) {
+            vv.orgLeft = vv.position.left;
+            vv.orgTop = vv.position.top;
+            vv.orgWidth = vv.position.width;
+            vv.orgHeight = vv.position.height;
+            vv.stickerIndex = cnt;
+            cnt++;
+            CAnimation.animate(200, function (t, v, ct) {
+                vv.position.top = CCalc.crRange2Value(0, 1, v, vv.orgTop, pt);
+                vv.position.width = CCalc.crRange2Value(0, 1, v, vv.orgWidth, pWidth);
+                vv.position.height = CCalc.crRange2Value(0, 1, v, vv.orgHeight, pHeight);
+                vv.position.left = CCalc.crRange2Value(0, 1, v, vv.orgLeft, vv.stickerIndex * dw);
+                vv.transform.rotateY = 90 * v;
+                vv.opacity = CCalc.crRange2Value(0, 1, v, 1, 0.5);
+            });
+        });
+        this.isPreview = true;
+    }
+    static stickerPreviewOff() {
+        CStickerModel.stickers.forEach(function (vv) {
+            let l = vv.position.left;
+            let t = vv.position.top;
+            let w = vv.position.width;
+            let h = vv.position.height;
+            CAnimation.animate(200, function (tt, v, ct) {
+                vv.position.top = CCalc.crRange2Value(0, 1, v, t, vv.orgTop);
+                vv.position.width = CCalc.crRange2Value(0, 1, v, w, vv.orgWidth);
+                vv.position.height = CCalc.crRange2Value(0, 1, v, h, vv.orgHeight);
+                vv.position.left = CCalc.crRange2Value(0, 1, v, l, vv.orgLeft);
+                vv.transform.rotateY = 90 - (90 * v);
+                vv.opacity = CCalc.crRange2Value(0, 1, v, 0.5, 1);
+            });
+        });
+        this.isPreview = false;
+    }
+}
+CStickerModel.stickers = new Set();
+CStickerModel.isPreview = false;

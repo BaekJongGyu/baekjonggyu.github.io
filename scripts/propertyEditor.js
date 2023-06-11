@@ -1,1 +1,1113 @@
-﻿"use strict";class CPropertyEditor extends CDataGrid{constructor(t,e){super(t,e),this.__expandProperty=new Set,this._expandPropertyCellCanvasItemsResource1="",this._expandPropertyCellCanvasItemsResource2="",this.editorButtonCanvasItemsResource="",this.enumListBoxResource="",this.enumListItemResource=[],this.propertyData=new Array,this.onlyShowProperty=new Array,this.gridInfo.useResizeColumn=!0,this.gridInfo.useIndicator=!1,this.headers.add("name"),this.headers.add("value"),this.headerText.set("0,0","프로퍼티명"),this.headerText.set("1,0","값"),this.editable=!0,this.editorShowSet.add(EEditorShowKind.CLICK),this.editorShowSet.add(EEditorShowKind.F2_KEY),this.gridInfo.useFitWidth=!0,this.readOnlyColumn.add(0),this.addCellControl(EPointerAreaKind.HEADER_CLIENT,1,0,ECellControlAlign.RIGHT,15,[1,1,1,1],this.editorButtonCanvasItemsResource,"-")}get classInstance(){return this._classInstrance}set classInstance(t){this._classInstrance!=t&&(this._classInstrance=t,this.doSetProperties())}get expandPropertyCellCanvasItemsResource1(){return this._expandPropertyCellCanvasItemsResource1}set expandPropertyCellCanvasItemsResource1(t){this._expandPropertyCellCanvasItemsResource1!=t&&(this._expandPropertyCellCanvasItemsResource1=t,this.addSpecificCellCanvasItemsResource(t))}get expandPropertyCellCanvasItemsResource2(){return this._expandPropertyCellCanvasItemsResource2}set expandPropertyCellCanvasItemsResource2(t){this._expandPropertyCellCanvasItemsResource2!=t&&(this._expandPropertyCellCanvasItemsResource2=t,this.addSpecificCellCanvasItemsResource(t))}doToData(t){super.doToData(t),CDataClass.putData(t,"expandPropertyCellCanvasItemsResource1",this.expandPropertyCellCanvasItemsResource1,""),CDataClass.putData(t,"expandPropertyCellCanvasItemsResource2",this.expandPropertyCellCanvasItemsResource2,""),CDataClass.putData(t,"editorButtonCanvasItemsResource",this.editorButtonCanvasItemsResource,""),CDataClass.putData(t,"enumListBoxResource",this.enumListBoxResource,"")}doFromData(t){super.doFromData(t),this.expandPropertyCellCanvasItemsResource1=CDataClass.getData(t,"expandPropertyCellCanvasItemsResource1",""),this.expandPropertyCellCanvasItemsResource2=CDataClass.getData(t,"expandPropertyCellCanvasItemsResource2",""),this.editorButtonCanvasItemsResource=CDataClass.getData(t,"editorButtonCanvasItemsResource",""),this.enumListBoxResource=CDataClass.getData(t,"enumListBoxResource",""),this.gridInfo.useResizeColumn=!0,this.gridInfo.useIndicator=!1,this.headerText.clear(),this.headers.clear(),this.headers.add("name"),this.headers.add("value"),this.headerText.set("0,0","프로퍼티명"),this.headerText.set("1,0","값"),this.editable=!0,this.editorShowSet.add(EEditorShowKind.CLICK),this.editorShowSet.add(EEditorShowKind.F2_KEY),this.gridInfo.useFitWidth=!0,this.readOnlyColumn.add(0)}doCellControlClick(t,e,r,s,o,i,a,n,p,l,h){super.doCellControlClick(t,e,r,s,o,i,a,n,p,l,h);let d=this;function c(){let t=d.cell(1,r),e=new Function("parent","return new "+t+"(parent)")();if(e instanceof CWindowModel){e.parent=CSystem.clientBody;let s=e;s.showCenter(s.defalutWidth,s.defalutHeight,t.substring(1),"remove");let o=d.propertyData[r].propertyName.split(".");s.property=o[o.length-1],s.instance=d.propertyData[r].classInstance}else if(null!=d.editorCover){e.parent=d.editorCover;let t=e;t.position.align=EPositionAlign.CENTER,t.position.width=t.defalutWidth,t.position.height=t.defalutHeight;let s=d.propertyData[r].propertyName.split(".");t.property=s[s.length-1],t.instance=d.propertyData[r].classInstance,d.editorCover.isHideClear=!0,d.editorCover.showCover()}}if(t==EPointerAreaKind.CLIENT){if(null==CPropertyEditor.classEditor.get(this.propertyData[r].className))if(0==s){if("object"==o.data&&this.doObjectEditorButtonClick(t,e,r,s,o,i,a,n,p,l,h),"boolean"==o.data&&null!=this.classInstance){let t=!this.classInstance.getProperty(this.propertyData[r].propertyName)+"";this.classInstance.setProperty(this.propertyData[r].propertyName,t),o.text=this.classInstance.getProperty(this.propertyData[r].propertyName)+""}if("exception"==o.data&&c(),"enum"==o.data){let t=this.getCellBounds(e,r),s=this.getBackgroundClientBounds();t.offset(s.left,s.top);let h=new CListBox;h.resource=this.enumListBoxResource,h.listItemResource=this.enumListItemResource,h.scrollBox.useVScrollbar=!1,h.filter.filterSet.shadow=!0,h.filter.shadowX=0,h.filter.shadowY=0,h.onChangeItemIndex=function(){null!=d.classInstance&&d.classInstance.setProperty(d.propertyData[r].propertyName,h.itemIndex+""),o.text=d.propertyData[r].enum[h.itemIndex],y.hide()};for(let t=0;t<this.propertyData[r].enum.length;t++)h.items.add(this.propertyData[r].enum[t]);let c=h.items.length*h.rowHeight+(h.items.length-1)*h.itemMargin;c>200&&(c=200);let C=l.pageY-a+o.margins.top+d.gridInfo.cellMargin+p;C+c>window.innerHeight&&(C=C-p-c-5);let y=CPickupControl.showPickup("",CSystem.clientBody,l.pageX-i+o.margins.left+d.gridInfo.cellMargin,C,n,c,function(t){h.parent=t,h.position.align=EPositionAlign.CLIENT},void 0,function(t){h.remove()})}}else if("+"==o.text){let t=CClassProperty.getProperties(this.propertyData[r].instance),e=this.propertyData[r].propertyName;if(this.propertyData.length-1>r+1)for(let s=t.length-1;s>=0;s--)this.propertyData.splice(r+1,0,{instance:t[s].instance,classInstance:t[s].classInstance,propertyName:e+"."+t[s].propertyName,className:t[s].className,expandName:e,readOnly:t[s].readOnly,enum:t[s].enum});else for(let r=0;r<t.length;r++)this.propertyData.push({instance:t[r].instance,classInstance:t[r].classInstance,propertyName:e+t[r].propertyName,className:t[r].className,expandName:e,readOnly:t[r].readOnly,enum:t[r].enum});this.__expandProperty.add(e),this.refreshData()}else{let t=this.propertyData[r].propertyName;for(let e=this.propertyData.length-1;e>=0;e--)0==this.propertyData[e].expandName.indexOf(t)&&this.propertyData.splice(e,1);let e=[];this.__expandProperty.forEach(function(r){0==r.indexOf(t)&&e.push(r)});for(let t=0;t<e.length;t++)this.__expandProperty.delete(e[t]);this.refreshData()}else c()}else{for(let t=this.propertyData.length-1;t>=0;t--)""!=this.propertyData[t].expandName&&this.propertyData.splice(t,1);this.__expandProperty.clear(),this.refreshData(),this.scrollY=0}}doSetProperties(){if(null!=this._classInstrance){let t=CClassProperty.getProperties(this._classInstrance);this.clear(),this.clearCellControl(),this.propertyData=[];for(let e=0;e<t.length;e++){if(this.onlyShowProperty.length>0){let r=!1;for(let s=0;s<this.onlyShowProperty.length;s++)t[e].propertyName.indexOf(this.onlyShowProperty[s])>=0&&(r=!0);if(!r)continue}this.propertyData.push({instance:t[e].instance,classInstance:t[e].classInstance,propertyName:t[e].propertyName,className:t[e].className,expandName:"",readOnly:t[e].readOnly,enum:t[e].enum})}this.refreshData()}}doEditorApply(t,e,r){super.doEditorApply(t,e,r),null!=this.classInstance&&this.classInstance.setProperty(this.propertyData[e].propertyName,r)}doObjectEditorButtonClick(t,e,r,s,o,i,a,n,p,l,h){null!=this.onObjectEditorButtonClick&&this.onObjectEditorButtonClick(this,t,e,r,s,o,i,a,n,p,l,h)}refreshData(){this.clear(),this.readOnlyCell.clear(),this.clearCellControl(),this.addCellControl(EPointerAreaKind.HEADER_CLIENT,1,0,ECellControlAlign.RIGHT,15,[1,1,1,1],this.editorButtonCanvasItemsResource,"-"),this.specificRow.clear();for(let t=0;t<this.propertyData.length;t++){let e=!1,r="";for(let s=0;s<CPropertyEditor.exceptionPropertyEditor.length;s++){let o=new Function("obj","return obj instanceof "+CPropertyEditor.exceptionPropertyEditor[s].className)(this.propertyData[t].classInstance),i=this.propertyData[t].propertyName.split(".");if(o&&CPropertyEditor.exceptionPropertyEditor[s].propertyName==i[i.length-1]){e=!0,r=CPropertyEditor.exceptionPropertyEditor[s].editorClassName;break}}if(!e&&"object"==typeof this.propertyData[t].instance){let s=CPropertyEditor.classEditor.get(this.propertyData[t].instance.constructor.name);null!=s&&(e=!0,r=s)}if(e){this.readOnlyCell.add("1,"+t),this.add([this.propertyData[t].propertyName,r]),this.addCellControl(EPointerAreaKind.CLIENT,1,t,ECellControlAlign.RIGHT,15,[1,1,1,1],this.editorButtonCanvasItemsResource,"..").data="exception"}else if("object"==typeof this.propertyData[t].instance){this.readOnlyCell.add("1,"+t),this.add([this.propertyData[t].propertyName,this.propertyData[t].className]);let e=this.addCellControl(EPointerAreaKind.CLIENT,1,t,ECellControlAlign.RIGHT,15,[1,1,17,1],this.editorButtonCanvasItemsResource,"..");e.data="object",this.__expandProperty.has(this.propertyData[t].propertyName)?(e=this.addCellControl(EPointerAreaKind.CLIENT,1,t,ECellControlAlign.RIGHT,15,[1,1,1,1],this.editorButtonCanvasItemsResource,"-")).data="object":(e=this.addCellControl(EPointerAreaKind.CLIENT,1,t,ECellControlAlign.RIGHT,15,[1,1,1,1],this.editorButtonCanvasItemsResource,"+")).data="object"}else if("boolean"==typeof this.propertyData[t].instance){this.readOnlyCell.add("1,"+t),this.add([this.propertyData[t].propertyName,this.propertyData[t].instance]),this.addCellControl(EPointerAreaKind.CLIENT,1,t,ECellControlAlign.CLIENT,15,[1,1,1,1],this.editorButtonCanvasItemsResource,this.propertyData[t].instance+"").data="boolean"}else if(this.propertyData[t].enum.length>0){this.readOnlyCell.add("1,"+t),this.add([this.propertyData[t].propertyName,this.propertyData[t].instance]),this.addCellControl(EPointerAreaKind.CLIENT,1,t,ECellControlAlign.CLIENT,15,[1,1,1,1],this.editorButtonCanvasItemsResource,this.propertyData[t].enum[this.propertyData[t].instance]).data="enum"}else this.propertyData[t].readOnly&&this.readOnlyCell.add("1,"+t),this.add([this.propertyData[t].propertyName,this.propertyData[t].instance]);if(""!=this.propertyData[t].expandName){this.propertyData[t].expandName.split(".").length%2==1?this.addSpecificRow(this.expandPropertyCellCanvasItemsResource1,EPointerAreaKind.CLIENT,t):this.addSpecificRow(this.expandPropertyCellCanvasItemsResource2,EPointerAreaKind.CLIENT,t)}}}}CPropertyEditor.classEditor=new Map,CPropertyEditor.ignoreProperty=new Set,CPropertyEditor.exceptionPropertyEditor=new Array;class CTabPropertyEditor extends CTab{constructor(t,e){super(t,e),this._propertyEditors=new CList,this._scrollbarLength=10,this._scrollbarResource="",this._headerResource=[],this._cellResource=[],this._expandPropertyCellCanvasItemsResource1="",this._expandPropertyCellCanvasItemsResource2="",this._editorButtonCanvasItemsResource="",this._enumListBoxResource="",this._enumListItemResource=[],this._propertyEditorResource="",this.onlyShowProperty=new Array,this.useAddButton=!1,this.useArrowButton=!0,this.useDeleteButton=!0}get propertyEditors(){return this._propertyEditors}get scrollbarLength(){return this._scrollbarLength}set scrollbarLength(t){if(this._scrollbarLength!=t){this._scrollbarLength=t;for(let e=0;e<this.propertyEditors.length;e++)this.propertyEditors.get(e).scrollBox.scrollbarLength=t}}get scrollbarResource(){return this._scrollbarResource}set scrollbarResource(t){if(this._scrollbarResource!=t){this._scrollbarResource=t;for(let e=0;e<this.propertyEditors.length;e++)this.propertyEditors.get(e).scrollBox.scrollbarResource=t}}get headerResource(){return this._headerResource}set headerResource(t){if(this._headerResource!=t){this._headerResource=t;for(let e=0;e<this.propertyEditors.length;e++)this.propertyEditors.get(e).headerResource=t}}get propertyEditorResource(){return this._propertyEditorResource}set propertyEditorResource(t){if(this._propertyEditorResource!=t&&(this._propertyEditorResource=t,""!=t))for(let e=0;e<this.propertyEditors.length;e++)this.propertyEditors.get(e).resource=t}get cellResource(){return this._cellResource}set cellResource(t){if(this._cellResource!=t){this._cellResource=t;for(let e=0;e<this.propertyEditors.length;e++)this.propertyEditors.get(e).cellResource=t}}get expandPropertyCellCanvasItemsResource1(){return this._expandPropertyCellCanvasItemsResource1}set expandPropertyCellCanvasItemsResource1(t){if(this._expandPropertyCellCanvasItemsResource1!=t){this._expandPropertyCellCanvasItemsResource1=t;for(let e=0;e<this.propertyEditors.length;e++)this.propertyEditors.get(e).expandPropertyCellCanvasItemsResource1=t}}get expandPropertyCellCanvasItemsResource2(){return this._expandPropertyCellCanvasItemsResource2}set expandPropertyCellCanvasItemsResource2(t){if(this._expandPropertyCellCanvasItemsResource2!=t){this._expandPropertyCellCanvasItemsResource2=t;for(let e=0;e<this.propertyEditors.length;e++)this.propertyEditors.get(e).expandPropertyCellCanvasItemsResource2=t}}get editorButtonCanvasItemsResource(){return this._editorButtonCanvasItemsResource}set editorButtonCanvasItemsResource(t){if(this._editorButtonCanvasItemsResource!=t){this._editorButtonCanvasItemsResource=t;for(let e=0;e<this.propertyEditors.length;e++)this.propertyEditors.get(e).editorButtonCanvasItemsResource=t}}get enumListBoxResource(){return this._enumListBoxResource}set enumListBoxResource(t){if(this._enumListBoxResource!=t){this._enumListBoxResource=t;for(let e=0;e<this.propertyEditors.length;e++)this.propertyEditors.get(e).enumListBoxResource=t}}get enumListItemResource(){return this._enumListItemResource}set enumListItemResource(t){if(this._enumListItemResource!=t){this._enumListItemResource=t;for(let e=0;e<this.propertyEditors.length;e++)this.propertyEditors.get(e).enumListItemResource=t}}doToData(t){super.doToData(t),CDataClass.putData(t,"scrollbarLength",this.scrollbarLength,10),CDataClass.putData(t,"scrollbarResource",this.scrollbarResource,""),CDataClass.putData(t,"headerResource",this.headerResource,[],!0),CDataClass.putData(t,"cellResource",this.cellResource,[],!0),CDataClass.putData(t,"expandPropertyCellCanvasItemsResource1",this.expandPropertyCellCanvasItemsResource1,""),CDataClass.putData(t,"expandPropertyCellCanvasItemsResource2",this.expandPropertyCellCanvasItemsResource2,""),CDataClass.putData(t,"editorButtonCanvasItemsResource",this.editorButtonCanvasItemsResource,""),CDataClass.putData(t,"enumListBoxResource",this.enumListBoxResource,""),CDataClass.putData(t,"enumListItemResource",this.enumListItemResource,[],!0),CDataClass.putData(t,"propertyEditorResource",this.propertyEditorResource,"")}doFromData(t){super.doFromData(t),this.scrollbarLength=CDataClass.getData(t,"scrollbarLength",10),this.scrollbarResource=CDataClass.getData(t,"scrollbarResource",""),this.headerResource=CDataClass.getData(t,"headerResource",[],!0),this.cellResource=CDataClass.getData(t,"cellResource",[],!0),this.expandPropertyCellCanvasItemsResource1=CDataClass.getData(t,"expandPropertyCellCanvasItemsResource1",""),this.expandPropertyCellCanvasItemsResource2=CDataClass.getData(t,"expandPropertyCellCanvasItemsResource2",""),this.editorButtonCanvasItemsResource=CDataClass.getData(t,"editorButtonCanvasItemsResource",""),this.enumListBoxResource=CDataClass.getData(t,"enumListBoxResource",""),this.enumListItemResource=CDataClass.getData(t,"enumListItemResource",[],!0),this.propertyEditorResource=CDataClass.getData(t,"propertyEditorResource","")}doResource(){super.doResource(),this.useAddButton=!1,this.useArrowButton=!0,this.useDeleteButton=!0}doDeleteTab(){super.doDeleteTab(),this.setPropertyEditors()}doCreateSheet(t,e){super.doCreateSheet(t,e);let r=new CPropertyEditor(e);r.editorCover=this.editorCover,r.onlyShowProperty=this.onlyShowProperty,r.resource=this.propertyEditorResource,r.position.align=EPositionAlign.CLIENT,r.scrollBox.scrollbarLength=this.scrollbarLength,r.scrollBox.scrollbarResource=this.scrollbarResource,r.headerResource=this.headerResource,r.cellResource=this.cellResource,r.expandPropertyCellCanvasItemsResource1=this.expandPropertyCellCanvasItemsResource1,r.expandPropertyCellCanvasItemsResource2=this.expandPropertyCellCanvasItemsResource2,r.editorButtonCanvasItemsResource=this.editorButtonCanvasItemsResource,r.enumListBoxResource=this.enumListBoxResource,r.enumListItemResource=this.enumListItemResource,r.onBeforeCellDraw=function(t,e,s,o,i,a){if("layers"==r.cell(s,o)||"position"==r.cell(s,o)||"transform"==r.cell(s,o)||"filter"==r.cell(s,o)||"fill"==r.cell(s,o)||"stroke"==r.cell(s,o)||"resource"==r.cell(s,o)){let t=new CCanvasItems;t.fromData(i.toData());let e=t.getItem("text");for(let t=0;t<e.length;t++)e[t].textSet.fill.solidColor="#ffffFF";return t}},this.managementButtonLength=25,this.setPropertyEditors();let s=this;r.onObjectEditorButtonClick=function(t,e,o,i,a,n,p,l,h,d,c,C){s.addInstance(r.propertyData[i].instance)}}setPropertyEditors(){this._propertyEditors.clear();for(let t=0;t<this.tabSheets.length;t++){let e=CSystem.getChildControls(this.tabSheets.get(t));this._propertyEditors.add(e[0])}}addInstance(t,e){null!=e?this.addTab(e):this.addTab(t.constructor.name),this.propertyEditors.get(this.index).classInstance=t}deleteInstance(t){for(let e=0;e<this.propertyEditors.length;e++)if(this.propertyEditors.get(e).classInstance==t){this.deleteTab(e);break}}}class CClassProperty{static getProperties(t){let e=Object.keys(t),r=new Array;for(let s=0;s<e.length;s++){let o,i,a;if(null!=t.readOnlyProperties&&"function"==typeof t.readOnlyProperties&&(o=t.readOnlyProperties()),null!=t.deleteProperties&&"function"==typeof t.deleteProperties&&(i=t.deleteProperties()),null!=t.enumProperties&&"function"==typeof t.enumProperties&&(a=t.enumProperties()),0!=e[s].indexOf("__")){let n=e[s];0==e[s].indexOf("_")&&(n=e[s].substring(1));let p=new Function("obj","return obj."+n)(t);if(!(CPropertyEditor.ignoreProperty.has(t.constructor.name+"."+n)||CPropertyEditor.ignoreProperty.has("all."+n)||null!=i&&i.has(n))){let e=[];if(null!=a){let t=a.get(n);null!=t&&(e=t)}"object"==typeof p?r.push({instance:p,classInstance:t,className:p.constructor.name,propertyName:n,readOnly:null!=o&&o.has(n),enum:e}):"function"==typeof p||r.push({instance:p,classInstance:t,className:"",propertyName:n,readOnly:null!=o&&o.has(n),enum:e})}}}if(null!=t.addProperties&&"function"==typeof t.addProperties){let e=t.addProperties();for(let s=0;s<e.length;s++)null==t[e[s].propertyName]?"object"==typeof e[s]?null==e[s].instance?r.push({instance:void 0,classInstance:t,className:"",propertyName:e[s].propertyName,readOnly:e[s].readOnly,enum:e[s].enum}):r.push({instance:e[s].instance,classInstance:t,className:e[s].instance.constructor.name,propertyName:e[s].propertyName,readOnly:e[s].readOnly,enum:e[s].enum}):"function"==typeof e[s]||r.push({instance:e[s].instance,classInstance:t,className:"",propertyName:e[s].propertyName,readOnly:e[s].readOnly,enum:e[s].enum}):r.push({instance:e[s].instance,classInstance:t,className:e[s].instance.constructor.name,propertyName:e[s].propertyName,readOnly:e[s].readOnly,enum:e[s].enum})}return r.sort(function(t,e){let r=0;return t.propertyName>e.propertyName&&(r=1),t.propertyName<e.propertyName&&(r=-1),r}),r}}class CCustomPropertyEditor extends CWindowBlue{constructor(){super(...arguments),this.contentInitResource="",this.property="",this.defalutWidth=800,this.defalutHeight=400}get instance(){return this._instance}set instance(t){this._instance!=t&&(this._instance=t,this.doChangeInstance())}doChangeInstance(){null!=this.onChangeInstance&&this.onChangeInstance(this)}doApply(t){this._instance[this.property]=t}}class CCustomPropertyEditorControl extends CPanel{constructor(t,e){super(t,e),this.contentInitResource="",this.property="",this.defalutWidth=400,this.defalutHeight=400,this.filter.filterSet.shadow=!0,this.filter.shadowX=0,this.filter.shadowY=0,this.filter.shadowBlur=20,this.useResize=!0,this.resizeAreaLength=10,this.position.padding.all=10;let r=this.layers.addLayer().items.addItem();r.fill.styleKind=EStyleKind.SOLID,r.fill.solidColor="#202020",r.radiusX=5,r.radiusY=5}get instance(){return this._instance}set instance(t){this._instance!=t&&(this._instance=t,this.doChangeInstance())}doChangeInstance(){null!=this.onChangeInstance&&this.onChangeInstance(this)}doApply(t){this._instance[this.property]=t}}class CBasePropertyEditor extends CCustomPropertyEditor{constructor(t,e){super(t,e),this.frame=new CTabPropertyEditor(this.body),this.frame.resource="tab_property_editor.control",this.frame.position.align=EPositionAlign.CLIENT,this.frame.tabButtons.position.height=0,this.frame.editorCover=CSystem.browserCovers.get("cover")}doChangeInstance(){this.frame.addInstance(this.instance),super.doChangeInstance()}}class CFillPropertyEditor extends CCustomPropertyEditor{constructor(t,e){super(t,e),this.frame=new CFillEditorFrame(this.body),this.defalutWidth=481,this.defalutHeight=500,this.frame.position.align=EPositionAlign.CLIENT}doChangeInstance(){this.frame.fill=this.instance[this.property],super.doChangeInstance()}}class CFillPropertyEditorCover extends CCustomPropertyEditorControl{constructor(t,e){super(t,e),this.frame=new CFillEditorFrame(this),this.defalutWidth=481,this.defalutHeight=500,this.frame.position.align=EPositionAlign.CLIENT}doChangeInstance(){this.frame.fill=this.instance[this.property],super.doChangeInstance()}}class CStrokePropertyEditor extends CCustomPropertyEditor{constructor(t,e){super(t,e),this.frame=new CStrokeEditorFrame(this.body),this.defalutWidth=481,this.defalutHeight=500,this.frame.position.align=EPositionAlign.CLIENT}doChangeInstance(){this.frame.stroke=this.instance[this.property],super.doChangeInstance()}}class CStrokePropertyEditorCover extends CCustomPropertyEditorControl{constructor(t,e){super(t,e),this.frame=new CStrokeEditorFrame(this),this.defalutWidth=481,this.defalutHeight=500,this.frame.position.align=EPositionAlign.CLIENT}doChangeInstance(){this.frame.stroke=this.instance[this.property],super.doChangeInstance()}}class CPathPropertyEditor extends CCustomPropertyEditor{constructor(t,e){super(t,e),this.frame=new CPathEditorFrame(this.body),this.defalutWidth=800,this.defalutHeight=550,this.frame.position.align=EPositionAlign.CLIENT}doChangeInstance(){this.frame.pathData=this.instance[this.property],null!=this.frame.pathData&&this.frame.item.pathData.copyFrom(this.frame.pathData),this.frame.lblWidth.value=this.frame.item.pathData.width+"",this.frame.lblheight.value=this.frame.item.pathData.height+"",this.frame.btnSize.click(),this.frame.refresh(),super.doChangeInstance()}}class CPathPropertyEditorCover extends CCustomPropertyEditorControl{constructor(t,e){super(t,e),this.frame=new CPathEditorFrame(this),this.defalutWidth=800,this.defalutHeight=550,this.frame.position.align=EPositionAlign.CLIENT}doChangeInstance(){this.frame.pathData=this.instance[this.property],null!=this.frame.pathData&&this.frame.item.pathData.copyFrom(this.frame.pathData),this.frame.lblWidth.value=this.frame.item.pathData.width+"",this.frame.lblheight.value=this.frame.item.pathData.height+"",this.frame.btnSize.click(),this.frame.refresh(),super.doChangeInstance()}}class CStringListPropertyEditor extends CCustomPropertyEditor{constructor(t,e){super(t,e),this.editor=new CTextAreaFrame(this.body);let r=this;this.editor.position.align=EPositionAlign.CLIENT,this.editor.btnOk.onClick=function(){r.doApply("")}}doChangeInstance(){if("string"==typeof this.instance[this.property]&&(this.editor.textArea.text=this.instance[this.property]),"object"==typeof this.instance[this.property]){if(this.instance[this.property]instanceof CList){let t=this.instance[this.property],e="";for(let r=0;r<t.length;r++)e+=0==r?t.get(r):"\n"+t.get(r);this.editor.textArea.text=e}if(this.instance[this.property]instanceof Array&&(this.editor.textArea.text=JSON.stringify(this.instance[this.property])),this.instance[this.property]instanceof CStringSet){let t=this.instance[this.property],e="";t.forEach(function(t){e+=""==e?t:"\n"+t}),this.editor.textArea.text=e}if(this.instance[this.property]instanceof CNNMap||this.instance[this.property]instanceof CSSMap){let t=this.instance[this.property];this.editor.textArea.text=JSON.stringify(t.toData(),void 0,2)}if(this.instance[this.property]instanceof Set){let t=[];this.instance[this.property].forEach(function(e){t.push(e)}),this.editor.textArea.text=JSON.stringify(t)}if(this.instance[this.property]instanceof Map){let t=[];this.instance[this.property].forEach(function(e,r){t.push({key:r,value:e})}),this.editor.textArea.text=JSON.stringify(t)}}super.doChangeInstance()}doApply(t){if("string"==typeof this.instance[this.property]&&(this.instance[this.property]=this.editor.textArea.text),"object"==typeof this.instance[this.property]){if(this.instance[this.property]instanceof CList){let t=this.instance[this.property];t.clear();let e=this.editor.textArea.text.split("\n");for(let r=0;r<e.length;r++)t.add(e[r])}if(this.instance[this.property]instanceof Array&&(this.instance[this.property]=JSON.parse(this.editor.textArea.text)),this.instance[this.property]instanceof CStringSet){let t=this.instance[this.property];t.clear();let e=this.editor.textArea.text.split("\n");for(let r=0;r<e.length;r++)t.add(e[r])}if((this.instance[this.property]instanceof CNNMap||this.instance[this.property]instanceof CSSMap)&&this.instance[this.property].fromData(JSON.parse(this.editor.textArea.text)),this.instance[this.property]instanceof Set){let t=JSON.parse(this.editor.textArea.text),e=new Set;for(let r=0;r<t.length;r++)e.add(t[r]);this.instance[this.property]=e}if(this.instance[this.property]instanceof Map){let t=JSON.parse(this.editor.textArea.text),e=new Map;for(let r=0;r<t.length;r++)e.set(t[r].key,t[r].value);this.instance[this.property]=e}}}}class CStringListPropertyEditorCover extends CCustomPropertyEditorControl{constructor(t,e){super(t,e),this.editor=new CTextAreaFrame(this);let r=this;this.editor.position.align=EPositionAlign.CLIENT,this.editor.btnOk.onClick=function(){r.doApply("")}}doChangeInstance(){if("string"==typeof this.instance[this.property]&&(this.editor.textArea.text=this.instance[this.property]),"object"==typeof this.instance[this.property]){if(this.instance[this.property]instanceof CList){let t=this.instance[this.property],e="";for(let r=0;r<t.length;r++)e+=0==r?t.get(r):"\n"+t.get(r);this.editor.textArea.text=e}if(this.instance[this.property]instanceof Array&&(this.editor.textArea.text=JSON.stringify(this.instance[this.property])),this.instance[this.property]instanceof CStringSet){let t=this.instance[this.property],e="";t.forEach(function(t){e+=""==e?t:"\n"+t}),this.editor.textArea.text=e}if(this.instance[this.property]instanceof CNNMap||this.instance[this.property]instanceof CSSMap){let t=this.instance[this.property];this.editor.textArea.text=JSON.stringify(t.toData(),void 0,2)}if(this.instance[this.property]instanceof Set){let t=[];this.instance[this.property].forEach(function(e){t.push(e)}),this.editor.textArea.text=JSON.stringify(t)}if(this.instance[this.property]instanceof Map){let t=[];this.instance[this.property].forEach(function(e,r){t.push({key:r,value:e})}),this.editor.textArea.text=JSON.stringify(t)}}super.doChangeInstance()}doApply(t){if("string"==typeof this.instance[this.property]&&(this.instance[this.property]=this.editor.textArea.text),"object"==typeof this.instance[this.property]){if(this.instance[this.property]instanceof CList){let t=this.instance[this.property];t.clear();let e=this.editor.textArea.text.split("\n");for(let r=0;r<e.length;r++)t.add(e[r])}if(this.instance[this.property]instanceof Array&&(this.instance[this.property]=JSON.parse(this.editor.textArea.text)),this.instance[this.property]instanceof CStringSet){let t=this.instance[this.property];t.clear();let e=this.editor.textArea.text.split("\n");for(let r=0;r<e.length;r++)t.add(e[r])}if((this.instance[this.property]instanceof CNNMap||this.instance[this.property]instanceof CSSMap)&&this.instance[this.property].fromData(JSON.parse(this.editor.textArea.text)),this.instance[this.property]instanceof Set){let t=JSON.parse(this.editor.textArea.text),e=new Set;for(let r=0;r<t.length;r++)e.add(t[r]);this.instance[this.property]=e}if(this.instance[this.property]instanceof Map){let t=JSON.parse(this.editor.textArea.text),e=new Map;for(let r=0;r<t.length;r++)e.set(t[r].key,t[r].value);this.instance[this.property]=e}}}}CPropertyEditor.classEditor.set("CFillSet","CFillPropertyEditorCover"),CPropertyEditor.classEditor.set("CStrokeSet","CStrokePropertyEditorCover"),CPropertyEditor.classEditor.set("CCanvasLayers","CCanvasLayersPropertyEditorCover"),CPropertyEditor.classEditor.set("CNNMap","CStringListPropertyEditorCover"),CPropertyEditor.classEditor.set("CSSMap","CStringListPropertyEditorCover"),CPropertyEditor.classEditor.set("CNumberList","CStringListPropertyEditorCover"),CPropertyEditor.classEditor.set("CStringList","CStringListPropertyEditorCover"),CPropertyEditor.classEditor.set("Array","CStringListPropertyEditorCover"),CPropertyEditor.classEditor.set("ArrayString","CStringListPropertyEditorCover"),CPropertyEditor.classEditor.set("Set","CStringListPropertyEditorCover"),CPropertyEditor.classEditor.set("Map","CStringListPropertyEditorCover"),CPropertyEditor.classEditor.set("CPathPointList","CPathPropertyEditorCover"),CPropertyEditor.classEditor.set("CStringSet","CStringListPropertyEditorCover"),CPropertyEditor.exceptionPropertyEditor.push({className:"CPanel",propertyName:"text",editorClassName:"CStringListPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CCanvasItem",propertyName:"text",editorClassName:"CStringListPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CTab",propertyName:"tabs",editorClassName:"CStringListPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CCanvasItem",propertyName:"disableRoundSet",editorClassName:"CStringListPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CCanvasItem",propertyName:"disableLineSet",editorClassName:"CStringListPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CListBox",propertyName:"items",editorClassName:"CStringListPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CListBox",propertyName:"listItemResource",editorClassName:"CStringListPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CControl",propertyName:"focusedAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CControl",propertyName:"enabledAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CControl",propertyName:"visibleAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CControl",propertyName:"resourceAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CControl",propertyName:"selectAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CControl",propertyName:"checkAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CControl",propertyName:"removeAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CPointerEventControl",propertyName:"overAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CPointerEventControl",propertyName:"thisPointerDownAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CPointerEventControl",propertyName:"thisPointerUpAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CPointerEventControl",propertyName:"enterAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CPointerEventControl",propertyName:"clickAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CPointerEventControl",propertyName:"doubleClickAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CPointerEventControl",propertyName:"dragStartAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CPointerEventControl",propertyName:"dragCancelAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CPointerEventControl",propertyName:"dragCatchAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CPointerEventControl",propertyName:"keyDownAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CCover",propertyName:"showAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CCover",propertyName:"hideAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CDragIcon",propertyName:"dropAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CDragIcon",propertyName:"cancelAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CHint",propertyName:"hideAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CWindowModel",propertyName:"showAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CWindowModel",propertyName:"hideAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CWindowModel",propertyName:"activateAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CWindowModel",propertyName:"maximizeAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CWindowModel",propertyName:"minimizeAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CWindowModel",propertyName:"customAlignAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.exceptionPropertyEditor.push({className:"CFold",propertyName:"foldAnimationTrigger",editorClassName:"CAnimatorPropertyEditorCover"}),CPropertyEditor.ignoreProperty.add("all.useChangeEvent"),CPropertyEditor.ignoreProperty.add("all.element"),CPropertyEditor.ignoreProperty.add("all.controlElement"),CPropertyEditor.ignoreProperty.add("CNotifyRect.resource"),CPropertyEditor.ignoreProperty.add("CClock.hourAngle"),CPropertyEditor.ignoreProperty.add("CClock.minuteAngle"),CPropertyEditor.ignoreProperty.add("CClock.secondAngle"),CPropertyEditor.ignoreProperty.add("CDataGrid.cellPressed");
+"use strict";
+class CPropertyEditor extends CDataGrid {
+    constructor(parent, name) {
+        super(parent, name);
+        this.__expandProperty = new Set();
+        this._expandPropertyCellCanvasItemsResource1 = "";
+        this._expandPropertyCellCanvasItemsResource2 = "";
+        this.editorButtonCanvasItemsResource = "";
+        this.enumListBoxResource = "";
+        this.enumListItemResource = [];
+        this.propertyData = new Array();
+        this.onlyShowProperty = new Array();
+        this.gridInfo.useResizeColumn = true;
+        this.gridInfo.useIndicator = false;
+        this.headers.add("name");
+        this.headers.add("value");
+        this.headerText.set("0,0", "프로퍼티명");
+        this.headerText.set("1,0", "값");
+        this.editable = true;
+        this.editorShowSet.add(EEditorShowKind.CLICK);
+        this.editorShowSet.add(EEditorShowKind.F2_KEY);
+        this.gridInfo.useFitWidth = true;
+        this.readOnlyColumn.add(0);
+        this.addCellControl(EPointerAreaKind.HEADER_CLIENT, 1, 0, ECellControlAlign.RIGHT, 15, [1, 1, 1, 1], this.editorButtonCanvasItemsResource, "-");
+    }
+    get classInstance() {
+        return this._classInstrance;
+    }
+    set classInstance(value) {
+        if (this._classInstrance != value) {
+            this._classInstrance = value;
+            this.doSetProperties();
+        }
+    }
+    get expandPropertyCellCanvasItemsResource1() {
+        return this._expandPropertyCellCanvasItemsResource1;
+    }
+    set expandPropertyCellCanvasItemsResource1(value) {
+        if (this._expandPropertyCellCanvasItemsResource1 != value) {
+            this._expandPropertyCellCanvasItemsResource1 = value;
+            this.addSpecificCellCanvasItemsResource(value);
+        }
+    }
+    get expandPropertyCellCanvasItemsResource2() {
+        return this._expandPropertyCellCanvasItemsResource2;
+    }
+    set expandPropertyCellCanvasItemsResource2(value) {
+        if (this._expandPropertyCellCanvasItemsResource2 != value) {
+            this._expandPropertyCellCanvasItemsResource2 = value;
+            this.addSpecificCellCanvasItemsResource(value);
+        }
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "expandPropertyCellCanvasItemsResource1", this.expandPropertyCellCanvasItemsResource1, "");
+        CDataClass.putData(data, "expandPropertyCellCanvasItemsResource2", this.expandPropertyCellCanvasItemsResource2, "");
+        CDataClass.putData(data, "editorButtonCanvasItemsResource", this.editorButtonCanvasItemsResource, "");
+        CDataClass.putData(data, "enumListBoxResource", this.enumListBoxResource, "");
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.expandPropertyCellCanvasItemsResource1 = CDataClass.getData(data, "expandPropertyCellCanvasItemsResource1", "");
+        this.expandPropertyCellCanvasItemsResource2 = CDataClass.getData(data, "expandPropertyCellCanvasItemsResource2", "");
+        this.editorButtonCanvasItemsResource = CDataClass.getData(data, "editorButtonCanvasItemsResource", "");
+        this.enumListBoxResource = CDataClass.getData(data, "enumListBoxResource", "");
+        this.gridInfo.useResizeColumn = true;
+        this.gridInfo.useIndicator = false;
+        this.headerText.clear();
+        this.headers.clear();
+        this.headers.add("name");
+        this.headers.add("value");
+        this.headerText.set("0,0", "프로퍼티명");
+        this.headerText.set("1,0", "값");
+        this.editable = true;
+        this.editorShowSet.add(EEditorShowKind.CLICK);
+        this.editorShowSet.add(EEditorShowKind.F2_KEY);
+        this.gridInfo.useFitWidth = true;
+        this.readOnlyColumn.add(0);
+    }
+    doCellControlClick(kind, column, row, cellControlIndex, cellControl, x, y, width, height, e, points) {
+        super.doCellControlClick(kind, column, row, cellControlIndex, cellControl, x, y, width, height, e, points);
+        let self = this;
+        function execPropertyEditor() {
+            let cls = self.cell(1, row);
+            let f = new Function("parent", "return new " + cls + "(parent)");
+            let obj = f();
+            if (obj instanceof CWindowModel) {
+                obj.parent = CSystem.clientBody;
+                let frm = obj;
+                frm.showCenter(frm.defalutWidth, frm.defalutHeight, cls.substring(1), "remove");
+                let arr = self.propertyData[row].propertyName.split(".");
+                frm.property = arr[arr.length - 1];
+                frm.instance = self.propertyData[row].classInstance;
+            }
+            else {
+                if (self.editorCover != undefined) {
+                    obj.parent = self.editorCover;
+                    let editor = obj;
+                    editor.position.align = EPositionAlign.CENTER;
+                    editor.position.width = editor.defalutWidth;
+                    editor.position.height = editor.defalutHeight;
+                    let arr = self.propertyData[row].propertyName.split(".");
+                    editor.property = arr[arr.length - 1];
+                    editor.instance = self.propertyData[row].classInstance;
+                    self.editorCover.isHideClear = true;
+                    self.editorCover.showCover();
+                }
+            }
+        }
+        if (kind == EPointerAreaKind.CLIENT) {
+            let rc = CPropertyEditor.classEditor.get(this.propertyData[row].className);
+            if (rc == undefined) {
+                if (cellControlIndex == 0) {
+                    if (cellControl.data == "object") {
+                        this.doObjectEditorButtonClick(kind, column, row, cellControlIndex, cellControl, x, y, width, height, e, points);
+                    }
+                    if (cellControl.data == "boolean") {
+                        if (this.classInstance != undefined) {
+                            let v = !this.classInstance.getProperty(this.propertyData[row].propertyName) + "";
+                            this.classInstance.setProperty(this.propertyData[row].propertyName, v);
+                            cellControl.text = this.classInstance.getProperty(this.propertyData[row].propertyName) + "";
+                        }
+                    }
+                    if (cellControl.data == "exception") {
+                        execPropertyEditor();
+                    }
+                    if (cellControl.data == "enum") {
+                        let bounds = this.getCellBounds(column, row);
+                        let cb = this.getBackgroundClientBounds();
+                        bounds.offset(cb.left, cb.top);
+                        let lst = new CListBox();
+                        lst.resource = this.enumListBoxResource;
+                        lst.listItemResource = this.enumListItemResource;
+                        lst.scrollBox.useVScrollbar = false;
+                        lst.filter.filterSet.shadow = true;
+                        lst.filter.shadowX = 0;
+                        lst.filter.shadowY = 0;
+                        lst.onChangeItemIndex = function () {
+                            if (self.classInstance != undefined)
+                                self.classInstance.setProperty(self.propertyData[row].propertyName, lst.itemIndex + "");
+                            cellControl.text = self.propertyData[row].enum[lst.itemIndex];
+                            pick.hide();
+                        };
+                        for (let n = 0; n < this.propertyData[row].enum.length; n++) {
+                            lst.items.add(this.propertyData[row].enum[n]);
+                        }
+                        let h = (lst.items.length * lst.rowHeight) + ((lst.items.length - 1) * lst.itemMargin);
+                        if (h > 200)
+                            h = 200;
+                        let yy = e.pageY - y + cellControl.margins.top + self.gridInfo.cellMargin + height;
+                        if (yy + h > window.innerHeight)
+                            yy = yy - height - h - 5;
+                        let pick = CPickupControl.showPickup("", CSystem.clientBody, e.pageX - x + cellControl.margins.left + self.gridInfo.cellMargin, yy, width, h, function (pickup) {
+                            lst.parent = pickup;
+                            lst.position.align = EPositionAlign.CLIENT;
+                        }, undefined, function (pickup) {
+                            lst.remove();
+                        });
+                    }
+                }
+                else {
+                    if (cellControl.text == "+") {
+                        let arr = CClassProperty.getProperties(this.propertyData[row].instance);
+                        let pn = this.propertyData[row].propertyName;
+                        if (this.propertyData.length - 1 > row + 1) {
+                            for (let n = arr.length - 1; n >= 0; n--) {
+                                this.propertyData.splice(row + 1, 0, {
+                                    instance: arr[n].instance,
+                                    classInstance: arr[n].classInstance,
+                                    propertyName: pn + "." + arr[n].propertyName,
+                                    className: arr[n].className,
+                                    expandName: pn,
+                                    readOnly: arr[n].readOnly,
+                                    enum: arr[n].enum
+                                });
+                            }
+                        }
+                        else {
+                            for (let n = 0; n < arr.length; n++) {
+                                this.propertyData.push({
+                                    instance: arr[n].instance,
+                                    classInstance: arr[n].classInstance,
+                                    propertyName: pn + arr[n].propertyName,
+                                    className: arr[n].className,
+                                    expandName: pn,
+                                    readOnly: arr[n].readOnly,
+                                    enum: arr[n].enum
+                                });
+                            }
+                        }
+                        this.__expandProperty.add(pn);
+                        this.refreshData();
+                    }
+                    else {
+                        let pn = this.propertyData[row].propertyName;
+                        for (let n = this.propertyData.length - 1; n >= 0; n--) {
+                            if (this.propertyData[n].expandName.indexOf(pn) == 0) {
+                                this.propertyData.splice(n, 1);
+                            }
+                        }
+                        let delArr = [];
+                        this.__expandProperty.forEach(function (v) {
+                            if (v.indexOf(pn) == 0) {
+                                delArr.push(v);
+                            }
+                        });
+                        for (let n = 0; n < delArr.length; n++) {
+                            this.__expandProperty.delete(delArr[n]);
+                        }
+                        this.refreshData();
+                    }
+                }
+            }
+            else {
+                execPropertyEditor();
+            }
+        }
+        else {
+            for (let n = this.propertyData.length - 1; n >= 0; n--) {
+                if (this.propertyData[n].expandName != "") {
+                    this.propertyData.splice(n, 1);
+                }
+            }
+            this.__expandProperty.clear();
+            this.refreshData();
+            this.scrollY = 0;
+        }
+    }
+    doSetProperties() {
+        if (this._classInstrance != undefined) {
+            let arr = CClassProperty.getProperties(this._classInstrance);
+            this.clear();
+            this.clearCellControl();
+            this.propertyData = [];
+            for (let n = 0; n < arr.length; n++) {
+                if (this.onlyShowProperty.length > 0) {
+                    let b = false;
+                    for (let i = 0; i < this.onlyShowProperty.length; i++) {
+                        if (arr[n].propertyName.indexOf(this.onlyShowProperty[i]) >= 0) {
+                            b = true;
+                        }
+                    }
+                    if (!b)
+                        continue;
+                }
+                this.propertyData.push({
+                    instance: arr[n].instance,
+                    classInstance: arr[n].classInstance,
+                    propertyName: arr[n].propertyName,
+                    className: arr[n].className,
+                    expandName: "",
+                    readOnly: arr[n].readOnly,
+                    enum: arr[n].enum
+                });
+            }
+            this.refreshData();
+        }
+    }
+    doEditorApply(column, row, text) {
+        super.doEditorApply(column, row, text);
+        if (this.classInstance != undefined) {
+            this.classInstance.setProperty(this.propertyData[row].propertyName, text);
+        }
+    }
+    doObjectEditorButtonClick(kind, column, row, cellControlIndex, cellControl, x, y, width, height, e, points) {
+        if (this.onObjectEditorButtonClick != undefined) {
+            this.onObjectEditorButtonClick(this, kind, column, row, cellControlIndex, cellControl, x, y, width, height, e, points);
+        }
+    }
+    refreshData() {
+        this.clear();
+        this.readOnlyCell.clear();
+        this.clearCellControl();
+        this.addCellControl(EPointerAreaKind.HEADER_CLIENT, 1, 0, ECellControlAlign.RIGHT, 15, [1, 1, 1, 1], this.editorButtonCanvasItemsResource, "-");
+        this.specificRow.clear();
+        for (let n = 0; n < this.propertyData.length; n++) {
+            let isExceptionEditor = false;
+            let exceptionEditorClassName = "";
+            for (let i = 0; i < CPropertyEditor.exceptionPropertyEditor.length; i++) {
+                let f = new Function("obj", "return obj instanceof " + CPropertyEditor.exceptionPropertyEditor[i].className);
+                let b = f(this.propertyData[n].classInstance);
+                let arr = this.propertyData[n].propertyName.split(".");
+                //if(b && CPropertyEditor.exceptionPropertyEditor[i].propertyName == this.propertyData[n].propertyName) {
+                if (b && CPropertyEditor.exceptionPropertyEditor[i].propertyName == arr[arr.length - 1]) {
+                    isExceptionEditor = true;
+                    exceptionEditorClassName = CPropertyEditor.exceptionPropertyEditor[i].editorClassName;
+                    break;
+                }
+            }
+            if (!isExceptionEditor && typeof this.propertyData[n].instance == "object") {
+                let o = CPropertyEditor.classEditor.get(this.propertyData[n].instance.constructor.name);
+                if (o != undefined) {
+                    isExceptionEditor = true;
+                    exceptionEditorClassName = o;
+                }
+            }
+            if (isExceptionEditor) {
+                this.readOnlyCell.add("1," + n);
+                this.add([this.propertyData[n].propertyName, exceptionEditorClassName]);
+                let con = this.addCellControl(EPointerAreaKind.CLIENT, 1, n, ECellControlAlign.RIGHT, 15, [1, 1, 1, 1], this.editorButtonCanvasItemsResource, "..");
+                con.data = "exception";
+            }
+            else {
+                if (typeof this.propertyData[n].instance == "object") {
+                    this.readOnlyCell.add("1," + n);
+                    this.add([this.propertyData[n].propertyName, this.propertyData[n].className]);
+                    let con = this.addCellControl(EPointerAreaKind.CLIENT, 1, n, ECellControlAlign.RIGHT, 15, [1, 1, 17, 1], this.editorButtonCanvasItemsResource, "..");
+                    con.data = "object";
+                    if (this.__expandProperty.has(this.propertyData[n].propertyName)) {
+                        con = this.addCellControl(EPointerAreaKind.CLIENT, 1, n, ECellControlAlign.RIGHT, 15, [1, 1, 1, 1], this.editorButtonCanvasItemsResource, "-");
+                        con.data = "object";
+                    }
+                    else {
+                        con = this.addCellControl(EPointerAreaKind.CLIENT, 1, n, ECellControlAlign.RIGHT, 15, [1, 1, 1, 1], this.editorButtonCanvasItemsResource, "+");
+                        con.data = "object";
+                    }
+                }
+                else if (typeof this.propertyData[n].instance == "boolean") {
+                    this.readOnlyCell.add("1," + n);
+                    this.add([this.propertyData[n].propertyName, this.propertyData[n].instance]);
+                    let con = this.addCellControl(EPointerAreaKind.CLIENT, 1, n, ECellControlAlign.CLIENT, 15, [1, 1, 1, 1], this.editorButtonCanvasItemsResource, this.propertyData[n].instance + "");
+                    con.data = "boolean";
+                }
+                else if (this.propertyData[n].enum.length > 0) {
+                    this.readOnlyCell.add("1," + n);
+                    this.add([this.propertyData[n].propertyName, this.propertyData[n].instance]);
+                    let con = this.addCellControl(EPointerAreaKind.CLIENT, 1, n, ECellControlAlign.CLIENT, 15, [1, 1, 1, 1], this.editorButtonCanvasItemsResource, this.propertyData[n].enum[this.propertyData[n].instance]);
+                    con.data = "enum";
+                }
+                else {
+                    if (this.propertyData[n].readOnly)
+                        this.readOnlyCell.add("1," + n);
+                    this.add([this.propertyData[n].propertyName, this.propertyData[n].instance]);
+                }
+            }
+            if (this.propertyData[n].expandName != "") {
+                let arr = this.propertyData[n].expandName.split(".");
+                if (arr.length % 2 == 1) {
+                    this.addSpecificRow(this.expandPropertyCellCanvasItemsResource1, EPointerAreaKind.CLIENT, n);
+                }
+                else {
+                    this.addSpecificRow(this.expandPropertyCellCanvasItemsResource2, EPointerAreaKind.CLIENT, n);
+                }
+            }
+        }
+    }
+}
+CPropertyEditor.classEditor = new Map();
+CPropertyEditor.ignoreProperty = new Set();
+CPropertyEditor.exceptionPropertyEditor = new Array();
+class CTabPropertyEditor extends CTab {
+    constructor(parent, name) {
+        super(parent, name);
+        this._propertyEditors = new CList();
+        this._scrollbarLength = 10;
+        this._scrollbarResource = "";
+        this._headerResource = [];
+        this._cellResource = [];
+        this._expandPropertyCellCanvasItemsResource1 = "";
+        this._expandPropertyCellCanvasItemsResource2 = "";
+        this._editorButtonCanvasItemsResource = "";
+        this._enumListBoxResource = "";
+        this._enumListItemResource = [];
+        this._propertyEditorResource = "";
+        this.onlyShowProperty = new Array();
+        this.useAddButton = false;
+        this.useArrowButton = true;
+        this.useDeleteButton = true;
+    }
+    get propertyEditors() {
+        return this._propertyEditors;
+    }
+    get scrollbarLength() {
+        return this._scrollbarLength;
+    }
+    set scrollbarLength(value) {
+        if (this._scrollbarLength != value) {
+            this._scrollbarLength = value;
+            for (let n = 0; n < this.propertyEditors.length; n++) {
+                this.propertyEditors.get(n).scrollBox.scrollbarLength = value;
+            }
+        }
+    }
+    get scrollbarResource() {
+        return this._scrollbarResource;
+    }
+    set scrollbarResource(value) {
+        if (this._scrollbarResource != value) {
+            this._scrollbarResource = value;
+            for (let n = 0; n < this.propertyEditors.length; n++) {
+                this.propertyEditors.get(n).scrollBox.scrollbarResource = value;
+            }
+        }
+    }
+    get headerResource() {
+        return this._headerResource;
+    }
+    set headerResource(value) {
+        if (this._headerResource != value) {
+            this._headerResource = value;
+            for (let n = 0; n < this.propertyEditors.length; n++) {
+                this.propertyEditors.get(n).headerResource = value;
+            }
+        }
+    }
+    get propertyEditorResource() {
+        return this._propertyEditorResource;
+    }
+    set propertyEditorResource(value) {
+        if (this._propertyEditorResource != value) {
+            this._propertyEditorResource = value;
+            if (value != "") {
+                for (let n = 0; n < this.propertyEditors.length; n++) {
+                    this.propertyEditors.get(n).resource = value;
+                }
+            }
+        }
+    }
+    get cellResource() {
+        return this._cellResource;
+    }
+    set cellResource(value) {
+        if (this._cellResource != value) {
+            this._cellResource = value;
+            for (let n = 0; n < this.propertyEditors.length; n++) {
+                this.propertyEditors.get(n).cellResource = value;
+            }
+        }
+    }
+    get expandPropertyCellCanvasItemsResource1() {
+        return this._expandPropertyCellCanvasItemsResource1;
+    }
+    set expandPropertyCellCanvasItemsResource1(value) {
+        if (this._expandPropertyCellCanvasItemsResource1 != value) {
+            this._expandPropertyCellCanvasItemsResource1 = value;
+            for (let n = 0; n < this.propertyEditors.length; n++) {
+                this.propertyEditors.get(n).expandPropertyCellCanvasItemsResource1 = value;
+            }
+        }
+    }
+    get expandPropertyCellCanvasItemsResource2() {
+        return this._expandPropertyCellCanvasItemsResource2;
+    }
+    set expandPropertyCellCanvasItemsResource2(value) {
+        if (this._expandPropertyCellCanvasItemsResource2 != value) {
+            this._expandPropertyCellCanvasItemsResource2 = value;
+            for (let n = 0; n < this.propertyEditors.length; n++) {
+                this.propertyEditors.get(n).expandPropertyCellCanvasItemsResource2 = value;
+            }
+        }
+    }
+    get editorButtonCanvasItemsResource() {
+        return this._editorButtonCanvasItemsResource;
+    }
+    set editorButtonCanvasItemsResource(value) {
+        if (this._editorButtonCanvasItemsResource != value) {
+            this._editorButtonCanvasItemsResource = value;
+            for (let n = 0; n < this.propertyEditors.length; n++) {
+                this.propertyEditors.get(n).editorButtonCanvasItemsResource = value;
+            }
+        }
+    }
+    get enumListBoxResource() {
+        return this._enumListBoxResource;
+    }
+    set enumListBoxResource(value) {
+        if (this._enumListBoxResource != value) {
+            this._enumListBoxResource = value;
+            for (let n = 0; n < this.propertyEditors.length; n++) {
+                this.propertyEditors.get(n).enumListBoxResource = value;
+            }
+        }
+    }
+    get enumListItemResource() {
+        return this._enumListItemResource;
+    }
+    set enumListItemResource(value) {
+        if (this._enumListItemResource != value) {
+            this._enumListItemResource = value;
+            for (let n = 0; n < this.propertyEditors.length; n++) {
+                this.propertyEditors.get(n).enumListItemResource = value;
+            }
+        }
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "scrollbarLength", this.scrollbarLength, 10);
+        CDataClass.putData(data, "scrollbarResource", this.scrollbarResource, "");
+        CDataClass.putData(data, "headerResource", this.headerResource, [], true);
+        CDataClass.putData(data, "cellResource", this.cellResource, [], true);
+        CDataClass.putData(data, "expandPropertyCellCanvasItemsResource1", this.expandPropertyCellCanvasItemsResource1, "");
+        CDataClass.putData(data, "expandPropertyCellCanvasItemsResource2", this.expandPropertyCellCanvasItemsResource2, "");
+        CDataClass.putData(data, "editorButtonCanvasItemsResource", this.editorButtonCanvasItemsResource, "");
+        CDataClass.putData(data, "enumListBoxResource", this.enumListBoxResource, "");
+        CDataClass.putData(data, "enumListItemResource", this.enumListItemResource, [], true);
+        CDataClass.putData(data, "propertyEditorResource", this.propertyEditorResource, "");
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.scrollbarLength = CDataClass.getData(data, "scrollbarLength", 10);
+        this.scrollbarResource = CDataClass.getData(data, "scrollbarResource", "");
+        this.headerResource = CDataClass.getData(data, "headerResource", [], true);
+        this.cellResource = CDataClass.getData(data, "cellResource", [], true);
+        this.expandPropertyCellCanvasItemsResource1 = CDataClass.getData(data, "expandPropertyCellCanvasItemsResource1", "");
+        this.expandPropertyCellCanvasItemsResource2 = CDataClass.getData(data, "expandPropertyCellCanvasItemsResource2", "");
+        this.editorButtonCanvasItemsResource = CDataClass.getData(data, "editorButtonCanvasItemsResource", "");
+        this.enumListBoxResource = CDataClass.getData(data, "enumListBoxResource", "");
+        this.enumListItemResource = CDataClass.getData(data, "enumListItemResource", [], true);
+        this.propertyEditorResource = CDataClass.getData(data, "propertyEditorResource", "");
+    }
+    doResource() {
+        super.doResource();
+        this.useAddButton = false;
+        this.useArrowButton = true;
+        this.useDeleteButton = true;
+    }
+    doDeleteTab() {
+        super.doDeleteTab();
+        this.setPropertyEditors();
+    }
+    doCreateSheet(index, tabSheet) {
+        super.doCreateSheet(index, tabSheet);
+        //if(this._propertyEditors.length <= index) this._propertyEditors.length = index + 1
+        let pe = new CPropertyEditor(tabSheet);
+        pe.editorCover = this.editorCover;
+        pe.onlyShowProperty = this.onlyShowProperty;
+        pe.resource = this.propertyEditorResource;
+        pe.position.align = EPositionAlign.CLIENT;
+        pe.scrollBox.scrollbarLength = this.scrollbarLength;
+        pe.scrollBox.scrollbarResource = this.scrollbarResource;
+        pe.headerResource = this.headerResource;
+        pe.cellResource = this.cellResource;
+        pe.expandPropertyCellCanvasItemsResource1 = this.expandPropertyCellCanvasItemsResource1;
+        pe.expandPropertyCellCanvasItemsResource2 = this.expandPropertyCellCanvasItemsResource2;
+        pe.editorButtonCanvasItemsResource = this.editorButtonCanvasItemsResource;
+        pe.enumListBoxResource = this.enumListBoxResource;
+        pe.enumListItemResource = this.enumListItemResource;
+        pe.onBeforeCellDraw = function (s, k, col, row, data, bounds) {
+            if (pe.cell(col, row) == "layers" ||
+                pe.cell(col, row) == "position" ||
+                pe.cell(col, row) == "transform" ||
+                pe.cell(col, row) == "filter" ||
+                pe.cell(col, row) == "fill" ||
+                pe.cell(col, row) == "stroke" ||
+                pe.cell(col, row) == "resource") {
+                let items = new CCanvasItems();
+                items.fromData(data.toData());
+                let txt = items.getItem("text");
+                for (let n = 0; n < txt.length; n++) {
+                    txt[n].textSet.fill.solidColor = "#ffffFF";
+                }
+                return items;
+            }
+        };
+        this.managementButtonLength = 25;
+        //this._propertyEditors.set(index, pe)
+        this.setPropertyEditors();
+        let self = this;
+        pe.onObjectEditorButtonClick = function (s, kind, col, row, cellcontrolidx, cellcontrol, x, y, width, height, e, points) {
+            self.addInstance(pe.propertyData[row].instance);
+        };
+    }
+    setPropertyEditors() {
+        this._propertyEditors.clear();
+        for (let n = 0; n < this.tabSheets.length; n++) {
+            let arr = CSystem.getChildControls(this.tabSheets.get(n));
+            this._propertyEditors.add(arr[0]);
+        }
+    }
+    addInstance(instance, name) {
+        if (name != undefined) {
+            this.addTab(name);
+        }
+        else {
+            this.addTab(instance.constructor.name);
+        }
+        this.propertyEditors.get(this.index).classInstance = instance;
+    }
+    deleteInstance(instance) {
+        for (let n = 0; n < this.propertyEditors.length; n++) {
+            if (this.propertyEditors.get(n).classInstance == instance) {
+                this.deleteTab(n);
+                break;
+            }
+        }
+    }
+}
+class CClassProperty {
+    static getProperties(classInstance) {
+        let arr = Object.keys(classInstance);
+        let rt = new Array();
+        for (let n = 0; n < arr.length; n++) {
+            let setRead;
+            if (classInstance["readOnlyProperties"] != undefined && typeof classInstance["readOnlyProperties"] == "function") {
+                setRead = classInstance["readOnlyProperties"]();
+            }
+            let setDel;
+            if (classInstance["deleteProperties"] != undefined && typeof classInstance["deleteProperties"] == "function") {
+                setDel = classInstance["deleteProperties"]();
+            }
+            let mapEnum;
+            if (classInstance["enumProperties"] != undefined && typeof classInstance["enumProperties"] == "function") {
+                mapEnum = classInstance["enumProperties"]();
+            }
+            if (!(arr[n].indexOf("__") == 0)) {
+                let pn = arr[n];
+                if (arr[n].indexOf("_") == 0) {
+                    pn = arr[n].substring(1);
+                }
+                let f = new Function("obj", "return obj." + pn);
+                let obj = f(classInstance);
+                if (!CPropertyEditor.ignoreProperty.has(classInstance.constructor.name + "." + pn) &&
+                    !CPropertyEditor.ignoreProperty.has("all." + pn) &&
+                    !(setDel != undefined && setDel.has(pn))) {
+                    let e = [];
+                    if (mapEnum != undefined) {
+                        let ee = mapEnum.get(pn);
+                        if (ee != undefined) {
+                            e = ee;
+                        }
+                    }
+                    if (typeof obj == "object") {
+                        rt.push({ instance: obj, classInstance: classInstance, className: obj.constructor.name, propertyName: pn, readOnly: setRead != undefined && setRead.has(pn), enum: e });
+                    }
+                    else if (typeof obj == "function") { }
+                    else {
+                        rt.push({ instance: obj, classInstance: classInstance, className: "", propertyName: pn, readOnly: setRead != undefined && setRead.has(pn), enum: e });
+                    }
+                }
+            }
+        }
+        if (classInstance["addProperties"] != undefined && typeof classInstance["addProperties"] == "function") {
+            let arr = classInstance["addProperties"]();
+            for (let n = 0; n < arr.length; n++) {
+                if (classInstance[arr[n].propertyName] == undefined) {
+                    if (typeof arr[n] == "object") {
+                        if (arr[n].instance == undefined) {
+                            rt.push({ instance: undefined, classInstance: classInstance, className: "", propertyName: arr[n].propertyName, readOnly: arr[n].readOnly, enum: arr[n].enum });
+                        }
+                        else {
+                            rt.push({ instance: arr[n].instance, classInstance: classInstance, className: arr[n].instance.constructor.name, propertyName: arr[n].propertyName, readOnly: arr[n].readOnly, enum: arr[n].enum });
+                        }
+                    }
+                    else if (typeof arr[n] == "function") { }
+                    else {
+                        rt.push({ instance: arr[n].instance, classInstance: classInstance, className: "", propertyName: arr[n].propertyName, readOnly: arr[n].readOnly, enum: arr[n].enum });
+                    }
+                }
+                else {
+                    rt.push({ instance: arr[n].instance, classInstance: classInstance, className: arr[n].instance.constructor.name, propertyName: arr[n].propertyName, readOnly: arr[n].readOnly, enum: arr[n].enum });
+                }
+            }
+        }
+        rt.sort(function (a, b) {
+            let rt = 0;
+            if (a.propertyName > b.propertyName)
+                rt = 1;
+            if (a.propertyName < b.propertyName)
+                rt = -1;
+            return rt;
+        });
+        return rt;
+    }
+}
+class CCustomPropertyEditor extends CWindowBlue {
+    constructor() {
+        super(...arguments);
+        this.contentInitResource = "";
+        this.property = "";
+        this.defalutWidth = 800;
+        this.defalutHeight = 400;
+    }
+    get instance() {
+        return this._instance;
+    }
+    set instance(value) {
+        if (this._instance != value) {
+            this._instance = value;
+            this.doChangeInstance();
+        }
+    }
+    doChangeInstance() {
+        if (this.onChangeInstance != undefined) {
+            this.onChangeInstance(this);
+        }
+    }
+    doApply(value) {
+        this._instance[this.property] = value;
+    }
+}
+class CCustomPropertyEditorControl extends CPanel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.contentInitResource = "";
+        this.property = "";
+        this.defalutWidth = 400;
+        this.defalutHeight = 400;
+        this.filter.filterSet.shadow = true;
+        this.filter.shadowX = 0;
+        this.filter.shadowY = 0;
+        this.filter.shadowBlur = 20;
+        this.useResize = true;
+        this.resizeAreaLength = 10;
+        this.position.padding.all = 10;
+        let i = this.layers.addLayer().items.addItem();
+        i.fill.styleKind = EStyleKind.SOLID;
+        i.fill.solidColor = "#202020";
+        i.radiusX = 5;
+        i.radiusY = 5;
+    }
+    get instance() {
+        return this._instance;
+    }
+    set instance(value) {
+        if (this._instance != value) {
+            this._instance = value;
+            this.doChangeInstance();
+        }
+    }
+    doChangeInstance() {
+        if (this.onChangeInstance != undefined) {
+            this.onChangeInstance(this);
+        }
+    }
+    doApply(value) {
+        this._instance[this.property] = value;
+    }
+}
+class CBasePropertyEditor extends CCustomPropertyEditor {
+    constructor(parent, name) {
+        super(parent, name);
+        this.frame = new CTabPropertyEditor(this.body);
+        this.frame.resource = "tab_property_editor.control";
+        this.frame.position.align = EPositionAlign.CLIENT;
+        this.frame.tabButtons.position.height = 0;
+        this.frame.editorCover = CSystem.browserCovers.get("cover");
+    }
+    doChangeInstance() {
+        this.frame.addInstance(this.instance);
+        super.doChangeInstance();
+    }
+}
+class CFillPropertyEditor extends CCustomPropertyEditor {
+    constructor(parent, name) {
+        super(parent, name);
+        this.frame = new CFillEditorFrame(this.body);
+        this.defalutWidth = 481;
+        this.defalutHeight = 500;
+        this.frame.position.align = EPositionAlign.CLIENT;
+    }
+    doChangeInstance() {
+        this.frame.fill = this.instance[this.property];
+        super.doChangeInstance();
+    }
+}
+class CFillPropertyEditorCover extends CCustomPropertyEditorControl {
+    constructor(parent, name) {
+        super(parent, name);
+        this.frame = new CFillEditorFrame(this);
+        this.defalutWidth = 481;
+        this.defalutHeight = 500;
+        this.frame.position.align = EPositionAlign.CLIENT;
+    }
+    doChangeInstance() {
+        this.frame.fill = this.instance[this.property];
+        super.doChangeInstance();
+    }
+}
+class CStrokePropertyEditor extends CCustomPropertyEditor {
+    constructor(parent, name) {
+        super(parent, name);
+        this.frame = new CStrokeEditorFrame(this.body);
+        this.defalutWidth = 481;
+        this.defalutHeight = 500;
+        this.frame.position.align = EPositionAlign.CLIENT;
+    }
+    doChangeInstance() {
+        this.frame.stroke = this.instance[this.property];
+        super.doChangeInstance();
+    }
+}
+class CStrokePropertyEditorCover extends CCustomPropertyEditorControl {
+    constructor(parent, name) {
+        super(parent, name);
+        this.frame = new CStrokeEditorFrame(this);
+        this.defalutWidth = 481;
+        this.defalutHeight = 500;
+        this.frame.position.align = EPositionAlign.CLIENT;
+    }
+    doChangeInstance() {
+        this.frame.stroke = this.instance[this.property];
+        super.doChangeInstance();
+    }
+}
+class CPathPropertyEditor extends CCustomPropertyEditor {
+    constructor(parent, name) {
+        super(parent, name);
+        this.frame = new CPathEditorFrame(this.body);
+        this.defalutWidth = 800;
+        this.defalutHeight = 550;
+        this.frame.position.align = EPositionAlign.CLIENT;
+    }
+    doChangeInstance() {
+        this.frame.pathData = this.instance[this.property];
+        if (this.frame.pathData != undefined)
+            this.frame.item.pathData.copyFrom(this.frame.pathData);
+        this.frame.lblWidth.value = this.frame.item.pathData.width + "";
+        this.frame.lblheight.value = this.frame.item.pathData.height + "";
+        this.frame.btnSize.click();
+        this.frame.refresh();
+        super.doChangeInstance();
+    }
+}
+class CPathPropertyEditorCover extends CCustomPropertyEditorControl {
+    constructor(parent, name) {
+        super(parent, name);
+        this.frame = new CPathEditorFrame(this);
+        this.defalutWidth = 800;
+        this.defalutHeight = 550;
+        this.frame.position.align = EPositionAlign.CLIENT;
+    }
+    doChangeInstance() {
+        this.frame.pathData = this.instance[this.property];
+        if (this.frame.pathData != undefined)
+            this.frame.item.pathData.copyFrom(this.frame.pathData);
+        this.frame.lblWidth.value = this.frame.item.pathData.width + "";
+        this.frame.lblheight.value = this.frame.item.pathData.height + "";
+        this.frame.btnSize.click();
+        //this.frame.item.pathData.fit(new CRect(0, 0, 400, 400))
+        this.frame.refresh();
+        super.doChangeInstance();
+    }
+}
+class CStringListPropertyEditor extends CCustomPropertyEditor {
+    constructor(parent, name) {
+        super(parent, name);
+        this.editor = new CTextAreaFrame(this.body);
+        let self = this;
+        this.editor.position.align = EPositionAlign.CLIENT;
+        this.editor.btnOk.onClick = function () {
+            self.doApply("");
+        };
+    }
+    doChangeInstance() {
+        if (typeof this.instance[this.property] == "string") {
+            this.editor.textArea.text = this.instance[this.property];
+        }
+        if (typeof this.instance[this.property] == "object") {
+            if (this.instance[this.property] instanceof CList) {
+                let lst = this.instance[this.property];
+                let s = "";
+                for (let n = 0; n < lst.length; n++) {
+                    if (n == 0) {
+                        s += lst.get(n);
+                    }
+                    else {
+                        s += "\n" + lst.get(n);
+                    }
+                }
+                this.editor.textArea.text = s;
+            }
+            if (this.instance[this.property] instanceof Array) {
+                this.editor.textArea.text = JSON.stringify(this.instance[this.property]);
+            }
+            if (this.instance[this.property] instanceof CStringSet) {
+                let lst = this.instance[this.property];
+                let s = "";
+                lst.forEach(function (v) {
+                    if (s == "") {
+                        s += v;
+                    }
+                    else {
+                        s += "\n" + v;
+                    }
+                });
+                this.editor.textArea.text = s;
+            }
+            if (this.instance[this.property] instanceof CNNMap || this.instance[this.property] instanceof CSSMap) {
+                let map = this.instance[this.property];
+                this.editor.textArea.text = JSON.stringify(map.toData(), undefined, 2);
+            }
+            if (this.instance[this.property] instanceof Set) {
+                let arr = [];
+                this.instance[this.property].forEach(function (v) {
+                    arr.push(v);
+                });
+                this.editor.textArea.text = JSON.stringify(arr);
+            }
+            if (this.instance[this.property] instanceof Map) {
+                let arr = [];
+                this.instance[this.property].forEach(function (v, k) {
+                    arr.push({ key: k, value: v });
+                });
+                this.editor.textArea.text = JSON.stringify(arr);
+            }
+        }
+        super.doChangeInstance();
+    }
+    doApply(value) {
+        if (typeof this.instance[this.property] == "string") {
+            this.instance[this.property] = this.editor.textArea.text;
+        }
+        if (typeof this.instance[this.property] == "object") {
+            if (this.instance[this.property] instanceof CList) {
+                let lst = this.instance[this.property];
+                lst.clear();
+                let arr = this.editor.textArea.text.split("\n");
+                for (let n = 0; n < arr.length; n++) {
+                    lst.add(arr[n]);
+                }
+            }
+            if (this.instance[this.property] instanceof Array) {
+                this.instance[this.property] = JSON.parse(this.editor.textArea.text);
+            }
+            if (this.instance[this.property] instanceof CStringSet) {
+                let lst = this.instance[this.property];
+                lst.clear();
+                let arr = this.editor.textArea.text.split("\n");
+                for (let n = 0; n < arr.length; n++) {
+                    lst.add(arr[n]);
+                }
+            }
+            if (this.instance[this.property] instanceof CNNMap || this.instance[this.property] instanceof CSSMap) {
+                this.instance[this.property].fromData(JSON.parse(this.editor.textArea.text));
+            }
+            if (this.instance[this.property] instanceof Set) {
+                let arr = JSON.parse(this.editor.textArea.text);
+                let set = new Set();
+                for (let n = 0; n < arr.length; n++) {
+                    set.add(arr[n]);
+                }
+                this.instance[this.property] = set;
+            }
+            if (this.instance[this.property] instanceof Map) {
+                let arr = JSON.parse(this.editor.textArea.text);
+                let map = new Map();
+                for (let n = 0; n < arr.length; n++) {
+                    map.set(arr[n].key, arr[n].value);
+                }
+                this.instance[this.property] = map;
+            }
+        }
+    }
+}
+class CStringListPropertyEditorCover extends CCustomPropertyEditorControl {
+    constructor(parent, name) {
+        super(parent, name);
+        this.editor = new CTextAreaFrame(this);
+        let self = this;
+        this.editor.position.align = EPositionAlign.CLIENT;
+        this.editor.btnOk.onClick = function () {
+            self.doApply("");
+        };
+    }
+    doChangeInstance() {
+        if (typeof this.instance[this.property] == "string") {
+            this.editor.textArea.text = this.instance[this.property];
+        }
+        if (typeof this.instance[this.property] == "object") {
+            if (this.instance[this.property] instanceof CList) {
+                let lst = this.instance[this.property];
+                let s = "";
+                for (let n = 0; n < lst.length; n++) {
+                    if (n == 0) {
+                        s += lst.get(n);
+                    }
+                    else {
+                        s += "\n" + lst.get(n);
+                    }
+                }
+                this.editor.textArea.text = s;
+            }
+            if (this.instance[this.property] instanceof Array) {
+                this.editor.textArea.text = JSON.stringify(this.instance[this.property]);
+            }
+            if (this.instance[this.property] instanceof CStringSet) {
+                let lst = this.instance[this.property];
+                let s = "";
+                lst.forEach(function (v) {
+                    if (s == "") {
+                        s += v;
+                    }
+                    else {
+                        s += "\n" + v;
+                    }
+                });
+                this.editor.textArea.text = s;
+            }
+            if (this.instance[this.property] instanceof CNNMap || this.instance[this.property] instanceof CSSMap) {
+                let map = this.instance[this.property];
+                this.editor.textArea.text = JSON.stringify(map.toData(), undefined, 2);
+            }
+            if (this.instance[this.property] instanceof Set) {
+                let arr = [];
+                this.instance[this.property].forEach(function (v) {
+                    arr.push(v);
+                });
+                this.editor.textArea.text = JSON.stringify(arr);
+            }
+            if (this.instance[this.property] instanceof Map) {
+                let arr = [];
+                this.instance[this.property].forEach(function (v, k) {
+                    arr.push({ key: k, value: v });
+                });
+                this.editor.textArea.text = JSON.stringify(arr);
+            }
+        }
+        super.doChangeInstance();
+    }
+    doApply(value) {
+        if (typeof this.instance[this.property] == "string") {
+            this.instance[this.property] = this.editor.textArea.text;
+        }
+        if (typeof this.instance[this.property] == "object") {
+            if (this.instance[this.property] instanceof CList) {
+                let lst = this.instance[this.property];
+                lst.clear();
+                let arr = this.editor.textArea.text.split("\n");
+                for (let n = 0; n < arr.length; n++) {
+                    lst.add(arr[n]);
+                }
+            }
+            if (this.instance[this.property] instanceof Array) {
+                this.instance[this.property] = JSON.parse(this.editor.textArea.text);
+            }
+            if (this.instance[this.property] instanceof CStringSet) {
+                let lst = this.instance[this.property];
+                lst.clear();
+                let arr = this.editor.textArea.text.split("\n");
+                for (let n = 0; n < arr.length; n++) {
+                    lst.add(arr[n]);
+                }
+            }
+            if (this.instance[this.property] instanceof CNNMap || this.instance[this.property] instanceof CSSMap) {
+                this.instance[this.property].fromData(JSON.parse(this.editor.textArea.text));
+            }
+            if (this.instance[this.property] instanceof Set) {
+                let arr = JSON.parse(this.editor.textArea.text);
+                let set = new Set();
+                for (let n = 0; n < arr.length; n++) {
+                    set.add(arr[n]);
+                }
+                this.instance[this.property] = set;
+            }
+            if (this.instance[this.property] instanceof Map) {
+                let arr = JSON.parse(this.editor.textArea.text);
+                let map = new Map();
+                for (let n = 0; n < arr.length; n++) {
+                    map.set(arr[n].key, arr[n].value);
+                }
+                this.instance[this.property] = map;
+            }
+        }
+    }
+}
+//CPropertyEditor.classEditor.set("CFillSet", "CFillPropertyEditor")
+CPropertyEditor.classEditor.set("CFillSet", "CFillPropertyEditorCover");
+CPropertyEditor.classEditor.set("CStrokeSet", "CStrokePropertyEditorCover");
+CPropertyEditor.classEditor.set("CCanvasLayers", "CCanvasLayersPropertyEditorCover");
+CPropertyEditor.classEditor.set("CNNMap", "CStringListPropertyEditorCover");
+CPropertyEditor.classEditor.set("CSSMap", "CStringListPropertyEditorCover");
+CPropertyEditor.classEditor.set("CNumberList", "CStringListPropertyEditorCover");
+CPropertyEditor.classEditor.set("CStringList", "CStringListPropertyEditorCover");
+CPropertyEditor.classEditor.set("Array", "CStringListPropertyEditorCover");
+CPropertyEditor.classEditor.set("ArrayString", "CStringListPropertyEditorCover");
+CPropertyEditor.classEditor.set("Set", "CStringListPropertyEditorCover");
+CPropertyEditor.classEditor.set("Map", "CStringListPropertyEditorCover");
+CPropertyEditor.classEditor.set("CPathPointList", "CPathPropertyEditorCover");
+CPropertyEditor.classEditor.set("CStringSet", "CStringListPropertyEditorCover");
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CPanel", propertyName: "text", editorClassName: "CStringListPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CCanvasItem", propertyName: "text", editorClassName: "CStringListPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CTab", propertyName: "tabs", editorClassName: "CStringListPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CCanvasItem", propertyName: "disableRoundSet", editorClassName: "CStringListPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CCanvasItem", propertyName: "disableLineSet", editorClassName: "CStringListPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CListBox", propertyName: "items", editorClassName: "CStringListPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CListBox", propertyName: "listItemResource", editorClassName: "CStringListPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CControl", propertyName: "focusedAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CControl", propertyName: "enabledAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CControl", propertyName: "visibleAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CControl", propertyName: "resourceAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CControl", propertyName: "selectAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CControl", propertyName: "checkAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CControl", propertyName: "removeAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CPointerEventControl", propertyName: "overAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CPointerEventControl", propertyName: "thisPointerDownAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CPointerEventControl", propertyName: "thisPointerUpAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CPointerEventControl", propertyName: "enterAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CPointerEventControl", propertyName: "clickAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CPointerEventControl", propertyName: "doubleClickAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CPointerEventControl", propertyName: "dragStartAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CPointerEventControl", propertyName: "dragCancelAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CPointerEventControl", propertyName: "dragCatchAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CPointerEventControl", propertyName: "keyDownAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CCover", propertyName: "showAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CCover", propertyName: "hideAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CDragIcon", propertyName: "dropAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CDragIcon", propertyName: "cancelAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CHint", propertyName: "hideAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CWindowModel", propertyName: "showAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CWindowModel", propertyName: "hideAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CWindowModel", propertyName: "activateAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CWindowModel", propertyName: "maximizeAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CWindowModel", propertyName: "minimizeAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CWindowModel", propertyName: "customAlignAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.exceptionPropertyEditor.push({ className: "CFold", propertyName: "foldAnimationTrigger", editorClassName: "CAnimatorPropertyEditorCover" });
+CPropertyEditor.ignoreProperty.add("all.useChangeEvent");
+CPropertyEditor.ignoreProperty.add("all.element");
+CPropertyEditor.ignoreProperty.add("all.controlElement");
+CPropertyEditor.ignoreProperty.add("CNotifyRect.resource");
+CPropertyEditor.ignoreProperty.add("CClock.hourAngle");
+CPropertyEditor.ignoreProperty.add("CClock.minuteAngle");
+CPropertyEditor.ignoreProperty.add("CClock.secondAngle");
+CPropertyEditor.ignoreProperty.add("CDataGrid.cellPressed");
