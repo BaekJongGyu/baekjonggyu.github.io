@@ -166,12 +166,24 @@ class CSceneAnimator extends CSceneAnimation {
     setObjects(sectionName, wt, graphValue, info) {
         if (info.control != undefined) {
             if (info.property.indexOf("script") >= 0) {
-                let fn = new Function("sectionName", "workingTime", "graphValue", "info", "control", info.script);
-                fn(sectionName, wt, graphValue, info, info.control);
+                let fn = new Function("animationControl", "sectionName", "workingTime", "graphValue", "info", "control", info.script);
+                fn(this.animationControl, sectionName, wt, graphValue, info, info.control);
             }
             else {
                 if (typeof info.startValue == "number" && typeof info.stopValue == "number") {
-                    (new Function("c", "c." + info.property + " = " + CCalc.crRange2Value(0, 1, graphValue, info.startValue, info.stopValue)))(info.control);
+                    if (info.property.indexOf("position.left") >= 0 ||
+                        info.property.indexOf("position.width") >= 0 ||
+                        info.property.indexOf("transform.translateX") >= 0) {
+                        (new Function("c", "c." + info.property + " = " + this.getValue("x", CCalc.crRange2Value(0, 1, graphValue, info.startValue, info.stopValue))))(info.control);
+                    }
+                    else if (info.property.indexOf("position.top") >= 0 ||
+                        info.property.indexOf("position.height") >= 0 ||
+                        info.property.indexOf("transform.translateY") >= 0) {
+                        (new Function("c", "c." + info.property + " = " + this.getValue("y", CCalc.crRange2Value(0, 1, graphValue, info.startValue, info.stopValue))))(info.control);
+                    }
+                    else {
+                        (new Function("c", "c." + info.property + " = " + CCalc.crRange2Value(0, 1, graphValue, info.startValue, info.stopValue)))(info.control);
+                    }
                 }
                 else if (info.startValue instanceof CPoint && info.stopValue instanceof CPoint) {
                     (new Function("c", `c.` + info.property + `.x = ` + CCalc.crRange2Value(0, 1, graphValue, info.startValue.x, info.stopValue.x) + `;` +
@@ -205,16 +217,16 @@ class CSceneAnimator extends CSceneAnimation {
                         console.log("last set");
                         info.control.opacity = info.objectData.get(info.objectData.length - 1).info.opacity;
                         if (info.positionPoints.length == 0) {
-                            info.control.position.left = info.objectData.get(info.objectData.length - 1).info.position.left;
-                            info.control.position.top = info.objectData.get(info.objectData.length - 1).info.position.top;
+                            info.control.position.left = this.getValue("x", info.objectData.get(info.objectData.length - 1).info.position.left);
+                            info.control.position.top = this.getValue("y", info.objectData.get(info.objectData.length - 1).info.position.top);
                         }
-                        info.control.position.width = info.objectData.get(info.objectData.length - 1).info.position.width;
-                        info.control.position.height = info.objectData.get(info.objectData.length - 1).info.position.height;
+                        info.control.position.width = this.getValue("x", info.objectData.get(info.objectData.length - 1).info.position.width);
+                        info.control.position.height = this.getValue("y", info.objectData.get(info.objectData.length - 1).info.position.height);
                         info.control.transform.rotateX = info.objectData.get(info.objectData.length - 1).info.transform.rotateX;
                         info.control.transform.rotateY = info.objectData.get(info.objectData.length - 1).info.transform.rotateY;
                         info.control.transform.rotateZ = info.objectData.get(info.objectData.length - 1).info.transform.rotateZ;
-                        info.control.transform.translateX = info.objectData.get(info.objectData.length - 1).info.transform.translateX;
-                        info.control.transform.translateY = info.objectData.get(info.objectData.length - 1).info.transform.translateY;
+                        info.control.transform.translateX = this.getValue("x", info.objectData.get(info.objectData.length - 1).info.transform.translateX);
+                        info.control.transform.translateY = this.getValue("y", info.objectData.get(info.objectData.length - 1).info.transform.translateY);
                         info.control.transform.translateZ = info.objectData.get(info.objectData.length - 1).info.transform.translateZ;
                         info.control.transform.scaleX = info.objectData.get(info.objectData.length - 1).info.transform.scaleX;
                         info.control.transform.scaleY = info.objectData.get(info.objectData.length - 1).info.transform.scaleY;
@@ -233,8 +245,8 @@ class CSceneAnimator extends CSceneAnimation {
                         if (info.control.filter.filterSet.shadow) {
                             info.control.filter.shadowColor = info.objectData.get(info.objectData.length - 1).info.filter.shadowColor;
                         }
-                        info.control.filter.shadowX = info.objectData.get(info.objectData.length - 1).info.filter.shadowX;
-                        info.control.filter.shadowY = info.objectData.get(info.objectData.length - 1).info.filter.shadowY;
+                        info.control.filter.shadowX = this.getValue("x", info.objectData.get(info.objectData.length - 1).info.filter.shadowX);
+                        info.control.filter.shadowY = this.getValue("y", info.objectData.get(info.objectData.length - 1).info.filter.shadowY);
                         CCanvasLayers.setLayersMiddlePathData(info.objectData.get(info.objectData.length - 1).info.layers, info.objectData.get(info.objectData.length - 1).info.layers, info.control.layers, 1);
                         info["__lastSet"] = true;
                     }
@@ -265,16 +277,16 @@ class CSceneAnimator extends CSceneAnimation {
                         if (objed != undefined) {
                             info.control.opacity = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.opacity, objed.info.opacity);
                             if (info.positionPoints.length == 0) {
-                                info.control.position.left = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.position.left, objed.info.position.left);
-                                info.control.position.top = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.position.top, objed.info.position.top);
+                                info.control.position.left = this.getValue("x", CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.position.left, objed.info.position.left));
+                                info.control.position.top = this.getValue("y", CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.position.top, objed.info.position.top));
                             }
-                            info.control.position.width = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.position.width, objed.info.position.width);
-                            info.control.position.height = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.position.height, objed.info.position.height);
+                            info.control.position.width = this.getValue("x", CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.position.width, objed.info.position.width));
+                            info.control.position.height = this.getValue("y", CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.position.height, objed.info.position.height));
                             info.control.transform.rotateX = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.rotateX, objed.info.transform.rotateX);
                             info.control.transform.rotateY = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.rotateY, objed.info.transform.rotateY);
                             info.control.transform.rotateZ = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.rotateZ, objed.info.transform.rotateZ);
-                            info.control.transform.translateX = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.translateX, objed.info.transform.translateX);
-                            info.control.transform.translateY = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.translateY, objed.info.transform.translateY);
+                            info.control.transform.translateX = this.getValue("x", CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.translateX, objed.info.transform.translateX));
+                            info.control.transform.translateY = this.getValue("y", CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.translateY, objed.info.transform.translateY));
                             info.control.transform.translateZ = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.translateZ, objed.info.transform.translateZ);
                             info.control.transform.scaleX = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.scaleX, objed.info.transform.scaleX);
                             info.control.transform.scaleY = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.transform.scaleY, objed.info.transform.scaleY);
@@ -299,8 +311,8 @@ class CSceneAnimator extends CSceneAnimation {
                                 let a = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, col1.a, col2.a);
                                 info.control.filter.shadowColor = "rgba(" + r + "," + g + "," + b + "," + a + ")";
                             }
-                            info.control.filter.shadowX = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.filter.shadowX, objed.info.filter.shadowX);
-                            info.control.filter.shadowY = CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.filter.shadowY, objed.info.filter.shadowY);
+                            info.control.filter.shadowX = this.getValue("x", CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.filter.shadowX, objed.info.filter.shadowX));
+                            info.control.filter.shadowY = this.getValue("y", CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, objst.info.filter.shadowY, objed.info.filter.shadowY));
                             CCanvasLayers.setLayersMiddlePathData(objst.info.layers, objed.info.layers, info.control.layers, CCalc.crRange2Value(objst.sectionT, objed.sectionT, graphValue, 0, 1));
                         }
                     }
@@ -308,10 +320,23 @@ class CSceneAnimator extends CSceneAnimation {
                 if (info.positionPoints.length > 0) {
                     let idx = Math.round(CCalc.crRange2Value(0, 1, graphValue, 0, info.positionPoints.length - 1));
                     let pt = info.positionPoints[idx];
-                    info.control.position.left = pt.x - (info.control.transform.rotationPointX * info.control.position.width);
-                    info.control.position.top = pt.y - (info.control.transform.rotationPointY * info.control.position.height);
+                    info.control.position.left = this.getValue("x", pt.x) - (info.control.transform.rotationPointX * info.control.position.width);
+                    info.control.position.top = this.getValue("y", pt.y) - (info.control.transform.rotationPointY * info.control.position.height);
                 }
             }
+        }
+    }
+    getValue(kind, v) {
+        if (this.animationControl != undefined) {
+            if (kind == "x") {
+                return v * (this.animationControl.position.width / this.animationControl.orgPosition.width);
+            }
+            else {
+                return v * (this.animationControl.position.height / this.animationControl.orgPosition.height);
+            }
+        }
+        else {
+            return v;
         }
     }
 }

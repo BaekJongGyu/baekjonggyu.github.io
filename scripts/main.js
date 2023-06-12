@@ -1422,21 +1422,21 @@ const CON_HOST = "http://localhost";
             desktop.resource = "desktop_dark2.control";
             //CApplication.systemIcon.set("CAppBell", "bell_button.control")
             //CApplication.systemIcon.set("CAppFinder", "directory_button.control")
-            CApplication.systemIcon.set("CAppTextEditor", "text_button.control");
+            //CApplication.systemIcon.set("CAppTextEditor", "text_button.control")
             //CApplication.systemIcon.set("CAppSearchNaver", "text_button.control")
             //CApplication.systemIcon.set("CAppLayersEditor", "shape_button.control")
             CApplication.systemIcon.set("CAppPathEditor", "shape_button.control");
             //CApplication.systemIcon.set("CAppLayersAnimationEditor", "shape_button.control")
-            CApplication.systemIcon.set("CAppLayersSceneEditor", "shape_button.control");
+            CApplication.systemIcon.set("CAppLayersSceneEditor", "scene_button.control");
             CApplication.systemIcon.set("CAppGraphEditor", "graph_button.control");
             //CApplication.systemIcon.set("CAppControlEditor", "control_button.control")
             //CApplication.systemIcon.set("CAppFrameEditor", "frame_button.control")
             //CApplication.systemIcon.set("CAppTrash", "Trash")
             //CApplication.systemIcon.set("CAppLogin", "login_button.control")
-            //CApplication.systemIcon.set("CAppSetting", "setting_button.control")
+            CApplication.systemIcon.set("CAppSetting", "gear_button.control");
             //CTaskbar.fixListLeft.add("CAppBell")
             //CTaskbar.fixListLeft.add("CAppFinder")
-            CTaskbar.fixListLeft.add("CAppTextEditor");
+            //CTaskbar.fixListLeft.add("CAppTextEditor")
             //CTaskbar.fixListLeft.add("CAppSearchNaver")
             //CTaskbar.fixListLeft.add("CAppLayersEditor")
             CTaskbar.fixListLeft.add("CAppPathEditor");
@@ -1445,7 +1445,7 @@ const CON_HOST = "http://localhost";
             CTaskbar.fixListLeft.add("CAppGraphEditor");
             //CTaskbar.fixListLeft.add("CAppControlEditor")
             //CTaskbar.fixListLeft.add("CAppFrameEditor")
-            //CTaskbar.fixListRight.add("CAppSetting")
+            CTaskbar.fixListRight.add("CAppSetting");
             //CTaskbar.fixListRight.add("CAppBell")
             //CTaskbar.fixListRight.add("CAppLogin")
             //CTaskbar.fixListRight.add("CAppTrash")   

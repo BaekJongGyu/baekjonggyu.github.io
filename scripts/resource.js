@@ -12,9 +12,13 @@ function loadSystemResource() {
         map.set("texteditor_2.layers", "https://baekjonggyu.github.io/resource/texteditor_2.layers");
         map.set("graph_editor_icon_1.layers", "https://baekjonggyu.github.io/resource/graph_editor_icon_1.layers");
         map.set("graph_editor_icon_2.layers", "https://baekjonggyu.github.io/resource/graph_editor_icon_2.layers");
+        map.set("scene_open.layers", "https://baekjonggyu.github.io/resource/scene_open.layers");
+        map.set("scene_close.layers", "https://baekjonggyu.github.io/resource/scene_close.layers");
         map.set("graph_button.control", "https://baekjonggyu.github.io/resource/graph_button.control");
         map.set("shape_button.control", "https://baekjonggyu.github.io/resource/shape_button.control");
         map.set("text_button.control", "https://baekjonggyu.github.io/resource/text_button.control");
+        map.set("scene_button.control", "https://baekjonggyu.github.io/resource/scene_button.control");
+        map.set("gear_button.control", "https://baekjonggyu.github.io/resource/gear_button.control");
         map.set("desktop_dark2.control", "https://baekjonggyu.github.io/resource/desktop_dark2.control");
         map.forEach(function (v, k) {
             fetchBody(v)
