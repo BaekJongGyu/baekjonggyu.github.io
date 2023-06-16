@@ -36,23 +36,6 @@ class CTimes extends CDataClass {
     }
 }
 class CTime extends CDataClass {
-    constructor(time, speed = 1) {
-        super();
-        this._time = 0;
-        this._speed = 1;
-        this._isPause = false;
-        this._isReverse = false;
-        this._childs = new CTimes();
-        this._timePoints = new Array();
-        this._timeSections = new Array();
-        if (time == undefined) {
-            this._time = new Date().getTime();
-        }
-        else {
-            this._time = time;
-        }
-        this.speed = speed;
-    }
     get preTime() {
         return this._preTime;
     }
@@ -107,6 +90,23 @@ class CTime extends CDataClass {
     }
     set timeSections(value) {
         this._timeSections = value;
+    }
+    constructor(time, speed = 1) {
+        super();
+        this._time = 0;
+        this._speed = 1;
+        this._isPause = false;
+        this._isReverse = false;
+        this._childs = new CTimes();
+        this._timePoints = new Array();
+        this._timeSections = new Array();
+        if (time == undefined) {
+            this._time = new Date().getTime();
+        }
+        else {
+            this._time = time;
+        }
+        this.speed = speed;
     }
     /*doToData(data: any): void {
         super.doToData(data)
@@ -285,22 +285,6 @@ CTime.isPause = false;
 CTime.times = new CTimes();
 CTime.systemTime = 0;
 class CTimePoint extends CDataClass {
-    constructor(parent, time, afterRemove) {
-        super();
-        this._afterRemove = false;
-        this._timePointCount = 0;
-        this._notifyDirection = "both";
-        this._parent = parent;
-        if (time == undefined) {
-            this._time = new Date().getTime();
-        }
-        else {
-            this._time = time;
-        }
-        if (afterRemove != undefined) {
-            this._afterRemove = afterRemove;
-        }
-    }
     get parent() {
         return this._parent;
     }
@@ -327,6 +311,22 @@ class CTimePoint extends CDataClass {
     }
     set notifyDirection(value) {
         this._notifyDirection = value;
+    }
+    constructor(parent, time, afterRemove) {
+        super();
+        this._afterRemove = false;
+        this._timePointCount = 0;
+        this._notifyDirection = "both";
+        this._parent = parent;
+        if (time == undefined) {
+            this._time = new Date().getTime();
+        }
+        else {
+            this._time = time;
+        }
+        if (afterRemove != undefined) {
+            this._afterRemove = afterRemove;
+        }
     }
     doRemove() {
         if (this._parent != undefined) {
@@ -376,6 +376,9 @@ class CTimePoint extends CDataClass {
     }
 }
 class CTimeSection extends CDataClass {
+    get parent() {
+        return this._parent;
+    }
     constructor(parent) {
         super();
         this.startTime = 0;
@@ -384,9 +387,6 @@ class CTimeSection extends CDataClass {
         if (parent != undefined) {
             parent.timeSections.push(this);
         }
-    }
-    get parent() {
-        return this._parent;
     }
     doRemove() {
         this._parent = undefined;
@@ -424,15 +424,15 @@ class CTimePointPause extends CTimePoint {
     }
 }
 class CTimePointMoveTime extends CTimePoint {
-    constructor(parent, moveTime, time, afterRemove) {
-        super(parent, time, afterRemove);
-        this._moveTime = moveTime;
-    }
     get moveTime() {
         return this._moveTime;
     }
     set moveTime(value) {
         this._moveTime = value;
+    }
+    constructor(parent, moveTime, time, afterRemove) {
+        super(parent, time, afterRemove);
+        this._moveTime = moveTime;
     }
     doTime(diffTime) {
         if (this.timePointCount == 0) {
@@ -902,12 +902,6 @@ var EPointsValueKind;
     EPointsValueKind[EPointsValueKind["NOTIFYRECT"] = 2] = "NOTIFYRECT";
 })(EPointsValueKind || (EPointsValueKind = {}));
 class CGraphAnimationValue extends CDataClass {
-    constructor(name, startValue, stopValue) {
-        super();
-        this.name = name;
-        this.startValue = startValue;
-        this.stopValue = stopValue;
-    }
     get startValueString() {
         let v = "";
         if (typeof this.startValue == "number") {
@@ -933,6 +927,12 @@ class CGraphAnimationValue extends CDataClass {
             v = "new CPoint(" + this.startValue.x + "," + this.startValue.y + ")";
         }
         return v;
+    }
+    constructor(name, startValue, stopValue) {
+        super();
+        this.name = name;
+        this.startValue = startValue;
+        this.stopValue = stopValue;
     }
     doToData(data) {
         super.doToData(data);
@@ -1174,12 +1174,6 @@ class CPointsAnimationValue extends CDataClass {
     }
 }
 class CProperty extends CDataClass {
-    constructor(object, properties) {
-        super();
-        this.properties = "";
-        this.obj = object;
-        this.properties = properties;
-    }
     get property() {
         let fn = new Function("obj", "return obj." + this.properties);
         return fn(this.obj);
@@ -1196,6 +1190,12 @@ class CProperty extends CDataClass {
         }
         let fn = new Function("obj", "v", "if(obj." + this.properties + " != undefined) obj." + this.properties + " = v");
         fn(this.obj, value);
+    }
+    constructor(object, properties) {
+        super();
+        this.properties = "";
+        this.obj = object;
+        this.properties = properties;
     }
     doToData(data) {
         super.doToData(data);
@@ -1257,17 +1257,6 @@ class CAnimatorPointsProperty extends CProperty {
     }
 }
 class CAnimator extends CGraphAnimation {
-    constructor(parent, graphNames = [], pointsNames, duration, delay, isLoop) {
-        super(graphNames, pointsNames, duration, delay, isLoop);
-        this._beforeProperties = new Array();
-        this._graphProperties = new Array();
-        this._pointsProperties = new Array();
-        this._afterProperties = new Array();
-        this.beforeScript = "//parameter : animator, params";
-        this.animationScript = "//parameter : animator, params, graphName, graphValue";
-        this.afterScript = "//parameter : animator, params";
-        this._parent = parent;
-    }
     get parent() {
         return this._parent;
     }
@@ -1297,6 +1286,17 @@ class CAnimator extends CGraphAnimation {
     }
     set afterProperties(value) {
         this._afterProperties = value;
+    }
+    constructor(parent, graphNames = [], pointsNames, duration, delay, isLoop) {
+        super(graphNames, pointsNames, duration, delay, isLoop);
+        this._beforeProperties = new Array();
+        this._graphProperties = new Array();
+        this._pointsProperties = new Array();
+        this._afterProperties = new Array();
+        this.beforeScript = "//parameter : animator, params";
+        this.animationScript = "//parameter : animator, params, graphName, graphValue";
+        this.afterScript = "//parameter : animator, params";
+        this._parent = parent;
     }
     doToData(data) {
         super.doToData(data);

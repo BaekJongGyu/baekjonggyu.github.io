@@ -322,12 +322,14 @@ class CSceneAnimator extends CSceneAnimation {
                     let pt = info.positionPoints[idx];
                     info.control.position.left = this.getValue("x", pt.x) - (info.control.transform.rotationPointX * info.control.position.width);
                     info.control.position.top = this.getValue("y", pt.y) - (info.control.transform.rotationPointY * info.control.position.height);
+                    console.log(graphValue, info.control.position.left, info.control.position.top);
                 }
             }
         }
     }
     getValue(kind, v) {
         if (this.animationControl != undefined) {
+            console.log(this.animationControl.orgPosition.width, this.animationControl.orgPosition.height);
             if (kind == "x") {
                 return v * (this.animationControl.position.width / this.animationControl.orgPosition.width);
             }
@@ -553,7 +555,7 @@ class CAnimationControlSceneEditorModel extends CPanel {
         this.fraGraph.resource = "graphEditor.frame";
         this.fraGraph.position.align = EPositionAlign.CLIENT;
         this.fraGraph.btnApply.onClick = async function () {
-            let data = await self.fraGraph.getGraphData();
+            let data = self.fraGraph.getGraphData();
             if (typeof data == "string") {
                 CSystem.showMessage("에러", data);
             }
@@ -952,26 +954,48 @@ class CAnimationControlSceneEditorModel extends CPanel {
         ani.remove();
     }
     async doSetSectionPosition() {
-        let rt = await this.getPathData();
-        if (typeof rt == "string") {
-            CSystem.showMessage("에러", rt);
-        }
-        else {
-            let sec = this.getSelectedSection();
-            if (sec == undefined) {
-                CSystem.showMessage("경고", "구간 애니메이션을 선택하세요.");
+        if (this.pathEditor.pathPointList != undefined) {
+            let rt = CAssembly.getBezierPoints(this.pathEditor.pathPointList, 1);
+            if (typeof rt == "string") {
+                CSystem.showMessage("에러", rt);
             }
             else {
-                sec.positionPath.fromData(this.pathEditor.pathPointList?.toData());
-                sec.positionPath.movePoint(-(this.controlResizer.position.left + 10), -(this.controlResizer.position.top + 20));
-                for (let n = 0; n < rt.points.length; n++) {
-                    rt.points[n].x -= this.controlResizer.position.left + 10;
-                    rt.points[n].y -= this.controlResizer.position.top + 20;
+                let sec = this.getSelectedSection();
+                if (sec == undefined) {
+                    CSystem.showMessage("경고", "구간 애니메이션을 선택하세요.");
                 }
-                sec.positionPoints = rt.points;
-                this.refreshGrid();
+                else {
+                    sec.positionPath.fromData(this.pathEditor.pathPointList?.toData());
+                    sec.positionPath.movePoint(-(this.controlResizer.position.left + 10), -(this.controlResizer.position.top + 20));
+                    for (let n = 0; n < rt.length; n++) {
+                        rt[n].x -= this.controlResizer.position.left + 10;
+                        rt[n].y -= this.controlResizer.position.top + 20;
+                        rt[n].x *= this.con.orgPosition.width / this.con.position.width;
+                        rt[n].y *= this.con.orgPosition.height / this.con.position.height;
+                    }
+                    sec.positionPoints = rt;
+                    this.refreshGrid();
+                }
             }
         }
+        /*let rt = await this.getPathData()
+        if(typeof rt == "string") {
+            CSystem.showMessage("에러", rt)
+        } else {
+            let sec = this.getSelectedSection()
+            if(sec == undefined) {
+                CSystem.showMessage("경고", "구간 애니메이션을 선택하세요.")
+            } else {
+                sec.positionPath.fromData(this.pathEditor.pathPointList?.toData())
+                sec.positionPath.movePoint(-(this.controlResizer.position.left + 10), -(this.controlResizer.position.top + 20))
+                for(let n = 0; n < rt.points.length; n++) {
+                    rt.points[n].x -= this.controlResizer.position.left + 10
+                    rt.points[n].y -= this.controlResizer.position.top + 20
+                }
+                sec.positionPoints = rt.points
+                this.refreshGrid()
+            }
+        }*/
     }
     doAddSection() {
         if (this.list.selectItems.length > 0) {
@@ -1356,10 +1380,10 @@ class CAnimationControlSceneEditorModel extends CPanel {
             l(con);
         }
     }
-    getPathData() {
-        let self = this;
-        return new Promise(function (rs) {
-            /*if(self.pathEditor.pathPointList != undefined) {
+    /*getPathData(): Promise<{points:Array<CPoint>, tagPoints:Array<{kind:string, position:number}>} | string> {
+        let self = this
+        return new Promise(function(rs) {
+            if(self.pathEditor.pathPointList != undefined) {
                 let arrpd = new Array<{pointKind: number, point:{x:number, y:number}, cPoint1:{x:number, y:number}, cPoint2:{x:number, y:number}}>()
                 for(let n = 0; n < self.pathEditor.pathPointList.length; n++) {
                     let pt = self.pathEditor.pathPointList.get(n)
@@ -1389,13 +1413,13 @@ class CAnimationControlSceneEditorModel extends CPanel {
                         }
                     })
                 }
-            }           */
-        });
-    }
-    getNearData(points) {
-        let self = this;
-        return new Promise(function (rs) {
-            /*if(self.pathEditor.pathPointList != undefined) {
+            }
+        })
+    }*/
+    /*getNearData(points: CPoint[]): Promise<{points:Array<{point:{x: number, y: number}, nearPoint:{x: number, y: number}, position: number}>} | string> {
+        let self = this
+        return new Promise(function(rs) {
+            if(self.pathEditor.pathPointList != undefined) {
                 let arrpd = new Array<{pointKind: number, point:{x:number, y:number}, cPoint1:{x:number, y:number}, cPoint2:{x:number, y:number}}>()
                 for(let n = 0; n < self.pathEditor.pathPointList.length; n++) {
                     let pt = self.pathEditor.pathPointList.get(n)
@@ -1424,9 +1448,9 @@ class CAnimationControlSceneEditorModel extends CPanel {
                         }
                     })
                 }
-            }            */
-        });
-    }
+            }
+        })
+    }*/
     showObjectPanel() {
         let sec = this.getSelectedSection();
         if (sec != undefined) {

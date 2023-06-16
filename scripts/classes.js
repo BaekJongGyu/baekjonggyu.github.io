@@ -148,28 +148,6 @@ class CPositionAlignInfo extends CNotifyChangeKindObject {
     }
 }
 class CPositionParentAlignInfo extends CNotifyChangeKindObject {
-    constructor() {
-        super();
-        this._marginX = 0;
-        this._marginY = 0;
-        this._gridColumnCount = 5;
-        this._gridRowCount = -1;
-        this._turnCenter = new CNotifyPoint(0.5, 0.5);
-        this._turnAutoSet = false;
-        this._turnAutoSetStartAngle = 0;
-        this._turnAutoSetStopAngle = 360;
-        this._turnAutoSetRadiusX = 100;
-        this._turnAutoSetRadiusY = 100;
-        this._pathData = "";
-        this._pathDataAutoSet = false;
-        this._pathDataFitMode = EFitMode.STRETCH;
-        this._pathDataStartMiddleValue = 0;
-        this._pathDataStopMiddleValue = 1;
-        let self = this;
-        this._turnCenter.onChange = function (sender, kind) {
-            self.doChange(CPositionParentAlignInfo.CON_CHANGE_TURN_CENTER);
-        };
-    }
     static get CON_CHANGE_MARGIN_X() { return "changeMarginX"; }
     static get CON_CHANGE_MARGIN_Y() { return "changeMarginY"; }
     static get CON_CHANGE_GRID_COLUMN_COUNT() { return "changeGridColumnCount"; }
@@ -317,6 +295,28 @@ class CPositionParentAlignInfo extends CNotifyChangeKindObject {
             this._pathDataStopMiddleValue = value;
             this.doChange(CPositionParentAlignInfo.CON_CHANGE_PATH_DATA_STOP_MIDDLE_VALUE);
         }
+    }
+    constructor() {
+        super();
+        this._marginX = 0;
+        this._marginY = 0;
+        this._gridColumnCount = 5;
+        this._gridRowCount = -1;
+        this._turnCenter = new CNotifyPoint(0.5, 0.5);
+        this._turnAutoSet = false;
+        this._turnAutoSetStartAngle = 0;
+        this._turnAutoSetStopAngle = 360;
+        this._turnAutoSetRadiusX = 100;
+        this._turnAutoSetRadiusY = 100;
+        this._pathData = "";
+        this._pathDataAutoSet = false;
+        this._pathDataFitMode = EFitMode.STRETCH;
+        this._pathDataStartMiddleValue = 0;
+        this._pathDataStopMiddleValue = 1;
+        let self = this;
+        this._turnCenter.onChange = function (sender, kind) {
+            self.doChange(CPositionParentAlignInfo.CON_CHANGE_TURN_CENTER);
+        };
     }
     doToData(data) {
         super.doToData(data);
@@ -662,6 +662,15 @@ class CTransform extends CNotifyChangeKindObject {
     }
 }
 class CPosition extends CNotifyChangeKindObject {
+    static get CON_CHANGE_ALIGN() { return "changeAlign"; }
+    static get CON_CHANGE_LEFT() { return "changeLeft"; }
+    static get CON_CHANGE_TOP() { return "changeTop"; }
+    static get CON_CHANGE_WIDTH() { return "changeWidth"; }
+    static get CON_CHANGE_HEIGHT() { return "changeHeight"; }
+    static get CON_CHANGE_MARGINS() { return "changeMargins"; }
+    static get CON_CHANGE_PADDING() { return "changePadding"; }
+    static get CON_CHANGE_ALIGN_INFO() { return "changeAlignInfo"; }
+    static get CON_CHANGE_PARENT_ALIGN_INFO() { return "changeParentAlignInfo"; }
     constructor() {
         super();
         this._align = EPositionAlign.NONE;
@@ -687,15 +696,6 @@ class CPosition extends CNotifyChangeKindObject {
             self.doChange(CPosition.CON_CHANGE_PARENT_ALIGN_INFO);
         };
     }
-    static get CON_CHANGE_ALIGN() { return "changeAlign"; }
-    static get CON_CHANGE_LEFT() { return "changeLeft"; }
-    static get CON_CHANGE_TOP() { return "changeTop"; }
-    static get CON_CHANGE_WIDTH() { return "changeWidth"; }
-    static get CON_CHANGE_HEIGHT() { return "changeHeight"; }
-    static get CON_CHANGE_MARGINS() { return "changeMargins"; }
-    static get CON_CHANGE_PADDING() { return "changePadding"; }
-    static get CON_CHANGE_ALIGN_INFO() { return "changeAlignInfo"; }
-    static get CON_CHANGE_PARENT_ALIGN_INFO() { return "changeParentAlignInfo"; }
     get align() {
         return this._align;
     }
@@ -1484,6 +1484,19 @@ class CFilterSet extends CNotifyChangeKindObject {
     }
 }
 class CFilter extends CNotifyChangeKindObject {
+    static get CON_CHANGE_FILTER_SET() { return "changeFilterSet"; }
+    static get CON_CHANGE_BLUR_VALUE() { return "changeBlurValue"; }
+    static get CON_CHANGE_BRIGHTNESS_VALUE() { return "changeBrightnessValue"; }
+    static get CON_CHANGE_CONSTRAST_VALUE() { return "changeConstrastValue"; }
+    static get CON_CHANGE_SHADOW_X() { return "changeShadowX"; }
+    static get CON_CHANGE_SHADOW_Y() { return "changeShadowY"; }
+    static get CON_CHANGE_SHADOW_BLUR() { return "changeShadowBlur"; }
+    static get CON_CHANGE_SHADOW_COLOR() { return "changeShadowColor"; }
+    static get CON_CHANGE_GRAYSCALE_VALUE() { return "changeGrayscaleValue"; }
+    static get CON_CHANGE_HUE_ROTATE_VALUE() { return "changeHueRotateValue"; }
+    static get CON_CHANGE_INVERT_VALUE() { return "changeInvertValue"; }
+    static get CON_CHANGE_OPACITY_VALUE() { return "changeOpacityValue"; }
+    static get CON_CHANGE_CUSTOM() { return "changeCustom"; }
     constructor(element) {
         super();
         this._filterSet = new CFilterSet();
@@ -1505,19 +1518,6 @@ class CFilter extends CNotifyChangeKindObject {
             self.doChange(CFilter.CON_CHANGE_FILTER_SET);
         };
     }
-    static get CON_CHANGE_FILTER_SET() { return "changeFilterSet"; }
-    static get CON_CHANGE_BLUR_VALUE() { return "changeBlurValue"; }
-    static get CON_CHANGE_BRIGHTNESS_VALUE() { return "changeBrightnessValue"; }
-    static get CON_CHANGE_CONSTRAST_VALUE() { return "changeConstrastValue"; }
-    static get CON_CHANGE_SHADOW_X() { return "changeShadowX"; }
-    static get CON_CHANGE_SHADOW_Y() { return "changeShadowY"; }
-    static get CON_CHANGE_SHADOW_BLUR() { return "changeShadowBlur"; }
-    static get CON_CHANGE_SHADOW_COLOR() { return "changeShadowColor"; }
-    static get CON_CHANGE_GRAYSCALE_VALUE() { return "changeGrayscaleValue"; }
-    static get CON_CHANGE_HUE_ROTATE_VALUE() { return "changeHueRotateValue"; }
-    static get CON_CHANGE_INVERT_VALUE() { return "changeInvertValue"; }
-    static get CON_CHANGE_OPACITY_VALUE() { return "changeOpacityValue"; }
-    static get CON_CHANGE_CUSTOM() { return "changeCustom"; }
     get element() {
         return this._element;
     }
@@ -1719,6 +1719,42 @@ class CFilter extends CNotifyChangeKindObject {
     }
 }
 class CTransformerPoints extends CNotifyChangeNotifyObject {
+    get leftTop() {
+        return this._leftTop;
+    }
+    get rightTop() {
+        return this._rightTop;
+    }
+    get leftBottom() {
+        return this._leftBottom;
+    }
+    get rightBottom() {
+        return this._rightBottom;
+    }
+    get leftC1() {
+        return this._leftC1;
+    }
+    get leftC2() {
+        return this._leftC2;
+    }
+    get topC1() {
+        return this._topC1;
+    }
+    get topC2() {
+        return this._topC2;
+    }
+    get rightC1() {
+        return this._rightC1;
+    }
+    get rightC2() {
+        return this._rightC2;
+    }
+    get bottomC1() {
+        return this._bottomC1;
+    }
+    get bottomC2() {
+        return this._bottomC2;
+    }
     constructor() {
         super();
         this._leftTop = new CNotifyPoint();
@@ -1770,42 +1806,6 @@ class CTransformerPoints extends CNotifyChangeNotifyObject {
         this._bottomC2.onChange = function () {
             self.doChange();
         };
-    }
-    get leftTop() {
-        return this._leftTop;
-    }
-    get rightTop() {
-        return this._rightTop;
-    }
-    get leftBottom() {
-        return this._leftBottom;
-    }
-    get rightBottom() {
-        return this._rightBottom;
-    }
-    get leftC1() {
-        return this._leftC1;
-    }
-    get leftC2() {
-        return this._leftC2;
-    }
-    get topC1() {
-        return this._topC1;
-    }
-    get topC2() {
-        return this._topC2;
-    }
-    get rightC1() {
-        return this._rightC1;
-    }
-    get rightC2() {
-        return this._rightC2;
-    }
-    get bottomC1() {
-        return this._bottomC1;
-    }
-    get bottomC2() {
-        return this._bottomC2;
     }
     isEmpty() {
         return this._leftTop.isZero() &&

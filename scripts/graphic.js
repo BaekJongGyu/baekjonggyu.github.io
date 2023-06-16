@@ -31,6 +31,8 @@ class CPoint extends CDataClass {
         this.x = pt.x;
         this.y = pt.y;
     }
+    fromStream(steam) {
+    }
     static getAngleToPoint(StartPoint, XRadius, YRadius, angle, startAngle = 0) {
         function dtor(i) {
             return i / 180 * Math.PI;
@@ -662,11 +664,6 @@ class CRect extends CDataClass {
     }
 }
 class CNotifyPoint extends CNotifyChangeKindObject {
-    constructor(x = 0, y = 0) {
-        super();
-        this._x = x;
-        this._y = y;
-    }
     static get CON_CHANGE_X() { return "x"; }
     static get CON_CHANGE_Y() { return "y"; }
     get x() {
@@ -686,6 +683,11 @@ class CNotifyPoint extends CNotifyChangeKindObject {
             this._y = value;
             this.doChange(CNotifyPoint.CON_CHANGE_Y);
         }
+    }
+    constructor(x = 0, y = 0) {
+        super();
+        this._x = x;
+        this._y = y;
     }
     doToData(data) {
         super.doToData(data);
@@ -716,6 +718,11 @@ class CNotifyPoint extends CNotifyChangeKindObject {
     }
 }
 class CNotifyRect extends CNotifyChangeKindObject {
+    static get CON_CHANGE_LEFT() { return "l"; }
+    static get CON_CHANGE_TOP() { return "t"; }
+    static get CON_CHANGE_RIGHT() { return "r"; }
+    static get CON_CHANGE_BOTTOM() { return "b"; }
+    static get CON_CHANGE_ALL() { return "a"; }
     constructor(left = 0, top = 0, right = 0, bottom = 0) {
         super();
         this._left = left;
@@ -723,11 +730,6 @@ class CNotifyRect extends CNotifyChangeKindObject {
         this._right = right;
         this._bottom = bottom;
     }
-    static get CON_CHANGE_LEFT() { return "l"; }
-    static get CON_CHANGE_TOP() { return "t"; }
-    static get CON_CHANGE_RIGHT() { return "r"; }
-    static get CON_CHANGE_BOTTOM() { return "b"; }
-    static get CON_CHANGE_ALL() { return "a"; }
     get left() {
         return this._left;
     }
@@ -899,6 +901,42 @@ class CPathPoint extends CNotifyChangeNotifyObject {
     }
 }
 class CPathTransformer extends CNotifyChangeNotifyObject {
+    get leftTop() {
+        return this._leftTop;
+    }
+    get rightTop() {
+        return this._rightTop;
+    }
+    get leftBottom() {
+        return this._leftBottom;
+    }
+    get rightBottom() {
+        return this._rightBottom;
+    }
+    get leftCurve1() {
+        return this._leftCurve1;
+    }
+    get leftCurve2() {
+        return this._leftCurve2;
+    }
+    get rightCurve1() {
+        return this._rightCurve1;
+    }
+    get rightCurve2() {
+        return this._rightCurve2;
+    }
+    get topCurve1() {
+        return this._topCurve1;
+    }
+    get topCurve2() {
+        return this._topCurve2;
+    }
+    get bottomCurve1() {
+        return this._bottomCurve1;
+    }
+    get bottomCurve2() {
+        return this._bottomCurve2;
+    }
     constructor() {
         super();
         this._leftTop = new CNotifyPoint();
@@ -950,42 +988,6 @@ class CPathTransformer extends CNotifyChangeNotifyObject {
         this.bottomCurve2.onChange = function () {
             self.doChange();
         };
-    }
-    get leftTop() {
-        return this._leftTop;
-    }
-    get rightTop() {
-        return this._rightTop;
-    }
-    get leftBottom() {
-        return this._leftBottom;
-    }
-    get rightBottom() {
-        return this._rightBottom;
-    }
-    get leftCurve1() {
-        return this._leftCurve1;
-    }
-    get leftCurve2() {
-        return this._leftCurve2;
-    }
-    get rightCurve1() {
-        return this._rightCurve1;
-    }
-    get rightCurve2() {
-        return this._rightCurve2;
-    }
-    get topCurve1() {
-        return this._topCurve1;
-    }
-    get topCurve2() {
-        return this._topCurve2;
-    }
-    get bottomCurve1() {
-        return this._bottomCurve1;
-    }
-    get bottomCurve2() {
-        return this._bottomCurve2;
     }
     getTransformData(orgBounds, pathData) {
         let rt = pathData.copyTo();
@@ -1693,6 +1695,49 @@ class CPathPointList extends CList {
             }
         }
     }
+    fromFontOpentypePathData(text) {
+        this.clear();
+        let arr = text.split("\n");
+        for (let n = 0; n < arr.length; n++) {
+            if (arr[n] != "") {
+                let pre = arr[n].substring(0, 1);
+                if (pre == "M") {
+                    let ar = arr[n].substring(1).split(",");
+                    let pt = new CPathPoint(EPathPointKind.MOVETO, parseFloat(ar[0]), parseFloat(ar[1]));
+                    this.add(pt);
+                }
+                else if (pre == "L") {
+                    let ar = arr[n].substring(1).split(",");
+                    let pt = new CPathPoint(EPathPointKind.LINETO, parseFloat(ar[0]), parseFloat(ar[1]));
+                    this.add(pt);
+                }
+                else if (pre == "C") {
+                    let ar = arr[n].split(" ");
+                    let ar1 = ar[0].substring(1).split(",");
+                    let ar2 = ar[1].split(",");
+                    let ar3 = ar[2].split(",");
+                    let pt = new CPathPoint(EPathPointKind.CURVETO3, parseFloat(ar3[0]), parseFloat(ar3[1]));
+                    pt.cPoint1.x = parseFloat(ar1[0]);
+                    pt.cPoint1.y = parseFloat(ar1[1]);
+                    pt.cPoint2.x = parseFloat(ar2[0]);
+                    pt.cPoint2.y = parseFloat(ar2[1]);
+                    this.add(pt);
+                }
+                else if (pre == "Q") {
+                    let ar = arr[n].split(" ");
+                    let ar1 = ar[0].substring(1).split(",");
+                    let ar2 = ar[1].split(",");
+                    let pt = new CPathPoint(EPathPointKind.CURVETO2, parseFloat(ar2[0]), parseFloat(ar2[1]));
+                    pt.cPoint1.x = parseFloat(ar1[0]);
+                    pt.cPoint1.y = parseFloat(ar1[1]);
+                    this.add(pt);
+                }
+                else if (pre == "Z") {
+                    this.addPointClose();
+                }
+            }
+        }
+    }
     makeRectData(hasClose = false) {
         this.clear();
         this.addPointMoveTo(CPoint.create(0, 0));
@@ -2070,6 +2115,46 @@ class CPathPointList extends CList {
         let pd = this.getSplitLine(count);
         this.copyFrom(pd);
     }
+    putStream(stream) {
+        let len = 0;
+        let arr = new Array();
+        for (let n = 0; n < this.length; n++) {
+            if (this.get(n).pointKind == EPathPointKind.MOVETO || this.get(n).pointKind == EPathPointKind.LINETO || this.get(n).pointKind == EPathPointKind.CURVETO2 || this.get(n).pointKind == EPathPointKind.CURVETO3) {
+                len++;
+                arr.push(this.get(n));
+            }
+        }
+        stream.putNumber(len);
+        for (let n = 0; n < arr.length; n++) {
+            if (arr[n].pointKind == EPathPointKind.MOVETO) {
+                stream.putString("moveto");
+            }
+            else if (arr[n].pointKind == EPathPointKind.LINETO) {
+                stream.putString("lineto");
+            }
+            else if (arr[n].pointKind == EPathPointKind.CURVETO2) {
+                stream.putString("curveto");
+            }
+            else if (arr[n].pointKind == EPathPointKind.CURVETO3) {
+                stream.putString("curveto");
+            }
+            else {
+                stream.putString("error");
+            }
+            stream.putNumber(arr[n].point.x);
+            stream.putNumber(arr[n].point.y);
+            stream.putNumber(arr[n].cPoint1.x);
+            stream.putNumber(arr[n].cPoint1.y);
+            if (arr[n].pointKind == EPathPointKind.CURVETO2) {
+                stream.putNumber(arr[n].cPoint1.x);
+                stream.putNumber(arr[n].cPoint1.y);
+            }
+            else {
+                stream.putNumber(arr[n].cPoint2.x);
+                stream.putNumber(arr[n].cPoint2.y);
+            }
+        }
+    }
 }
 class CFont extends CNotifyChangeKindObject {
     constructor() {
@@ -2157,6 +2242,9 @@ var ETextAlign;
     ETextAlign[ETextAlign["TAIL"] = 2] = "TAIL";
 })(ETextAlign || (ETextAlign = {}));
 class CCustomTextSet extends CFont {
+    static get CON_CHANGE_H_ALIGN() { return "h"; }
+    static get CON_CHANGE_V_ALIGN() { return "v"; }
+    static get CON_CHANGE_MARGINS() { return "m"; }
     constructor() {
         super();
         this._hAlign = ETextAlign.CENTER;
@@ -2167,9 +2255,6 @@ class CCustomTextSet extends CFont {
             self.doChange(CCustomTextSet.CON_CHANGE_MARGINS);
         };
     }
-    static get CON_CHANGE_H_ALIGN() { return "h"; }
-    static get CON_CHANGE_V_ALIGN() { return "v"; }
-    static get CON_CHANGE_MARGINS() { return "m"; }
     get margins() {
         return this._margins;
     }
@@ -2235,6 +2320,10 @@ class CCustomTextSet extends CFont {
     }
 }
 class CTextSet extends CCustomTextSet {
+    static get CON_CHANGE_ENABLED() { return "e"; }
+    static get CON_CHANGE_FILL() { return "fill"; }
+    static get CON_CHANGE_STROKE() { return "stroke"; }
+    static get CON_CHANGE_LANGUAGE_KEY() { return "lk"; }
     constructor() {
         super();
         this._enabled = true;
@@ -2251,10 +2340,6 @@ class CTextSet extends CCustomTextSet {
             self.doChange(CTextSet.CON_CHANGE_STROKE);
         };
     }
-    static get CON_CHANGE_ENABLED() { return "e"; }
-    static get CON_CHANGE_FILL() { return "fill"; }
-    static get CON_CHANGE_STROKE() { return "stroke"; }
-    static get CON_CHANGE_LANGUAGE_KEY() { return "lk"; }
     get fill() {
         return this._fill;
     }
@@ -2358,6 +2443,8 @@ class CTextSet extends CCustomTextSet {
     }
 }
 class CGradientPoint extends CNotifyChangeKindObject {
+    static get CON_CHANGE_OFFSET() { return "o"; }
+    static get CON_CHANGE_COLOR() { return "c"; }
     constructor(offset, color) {
         super();
         this._offset = 0;
@@ -2365,8 +2452,6 @@ class CGradientPoint extends CNotifyChangeKindObject {
         this._offset = offset;
         this._color = color;
     }
-    static get CON_CHANGE_OFFSET() { return "o"; }
-    static get CON_CHANGE_COLOR() { return "c"; }
     get offset() {
         return this._offset;
     }
@@ -2442,6 +2527,12 @@ var EGradientKind;
     EGradientKind[EGradientKind["RADIAL"] = 1] = "RADIAL";
 })(EGradientKind || (EGradientKind = {}));
 class CGradient extends CNotifyChangeKindObject {
+    static get CON_CHANGE_GRADIENT_KIND() { return "g"; }
+    static get CON_CHANGE_START_POINT() { return "sp"; }
+    static get CON_CHANGE_STOP_POINT() { return "stp"; }
+    static get CON_CHANGE_POINT_LIST() { return "pl"; }
+    static get CON_CHANGE_START_RADIUS() { return "sr"; }
+    static get CON_CHANGE_STOP_RADIUS() { return "str"; }
     constructor() {
         super();
         this._gradientKind = EGradientKind.LINEAR;
@@ -2461,12 +2552,6 @@ class CGradient extends CNotifyChangeKindObject {
             self.doChange(CGradient.CON_CHANGE_STOP_POINT);
         };
     }
-    static get CON_CHANGE_GRADIENT_KIND() { return "g"; }
-    static get CON_CHANGE_START_POINT() { return "sp"; }
-    static get CON_CHANGE_STOP_POINT() { return "stp"; }
-    static get CON_CHANGE_POINT_LIST() { return "pl"; }
-    static get CON_CHANGE_START_RADIUS() { return "sr"; }
-    static get CON_CHANGE_STOP_RADIUS() { return "str"; }
     get pointList() {
         return this._pointList;
     }
@@ -2784,6 +2869,31 @@ var EPaintKind;
     EPaintKind[EPaintKind["RANDOM"] = 3] = "RANDOM";
 })(EPaintKind || (EPaintKind = {}));
 class CCanvasItem extends CNotifyChangeKindObject {
+    static get CON_CHANGE_ALIGN() { return "a"; }
+    static get CON_CHANGE_KIND() { return "k"; }
+    static get CON_CHANGE_NAME() { return "i"; }
+    static get CON_CHANGE_POSITION() { return "p"; }
+    static get CON_CHANGE_POSITION_UNIT() { return "pu"; }
+    static get CON_CHANGE_ROTATION_ANGLE() { return "ra"; }
+    static get CON_CHANGE_ROTATION_CENTER_X() { return "rx"; }
+    static get CON_CHANGE_ROTATION_CENTER_Y() { return "ry"; }
+    static get CON_CHANGE_MARGINS() { return "m"; }
+    static get CON_CHANGE_FILL() { return "f"; }
+    static get CON_CHANGE_STROKE() { return "s"; }
+    static get CON_CHANGE_OPACITY() { return "o"; }
+    static get CON_CHANGE_VISIBLE() { return "v"; }
+    static get CON_CHANGE_PATH_DATA() { return "pd"; }
+    static get CON_CHANGE_RADIUS_X() { return "rax"; }
+    static get CON_CHANGE_RADIUS_Y() { return "ray"; }
+    static get CON_CHANGE_DISABLE_ROUND_SET() { return "dr"; }
+    static get CON_CHANGE_DISABLE_LINE_SET() { return "dl"; }
+    static get CON_CHANGE_TEXTSET() { return "tx"; }
+    static get CON_CHANGE_TEXT() { return "t"; }
+    static get CON_CHANGE_FILTER() { return "fi"; }
+    static get CON_CHANGE_SHADOW_COLOR() { return "sc"; }
+    static get CON_CHANGE_SHADOW_BLUR() { return "sb"; }
+    static get CON_CHANGE_SHADOW_OFFSET_X() { return "sx"; }
+    static get CON_CHANGE_SHADOW_OFFSET_Y() { return "sy"; }
     constructor() {
         super();
         this._align = ECanvasItemAlign.NONE;
@@ -2867,31 +2977,6 @@ class CCanvasItem extends CNotifyChangeKindObject {
             self.doChange(CCanvasItem.CON_CHANGE_MARGINS);
         };
     }
-    static get CON_CHANGE_ALIGN() { return "a"; }
-    static get CON_CHANGE_KIND() { return "k"; }
-    static get CON_CHANGE_NAME() { return "i"; }
-    static get CON_CHANGE_POSITION() { return "p"; }
-    static get CON_CHANGE_POSITION_UNIT() { return "pu"; }
-    static get CON_CHANGE_ROTATION_ANGLE() { return "ra"; }
-    static get CON_CHANGE_ROTATION_CENTER_X() { return "rx"; }
-    static get CON_CHANGE_ROTATION_CENTER_Y() { return "ry"; }
-    static get CON_CHANGE_MARGINS() { return "m"; }
-    static get CON_CHANGE_FILL() { return "f"; }
-    static get CON_CHANGE_STROKE() { return "s"; }
-    static get CON_CHANGE_OPACITY() { return "o"; }
-    static get CON_CHANGE_VISIBLE() { return "v"; }
-    static get CON_CHANGE_PATH_DATA() { return "pd"; }
-    static get CON_CHANGE_RADIUS_X() { return "rax"; }
-    static get CON_CHANGE_RADIUS_Y() { return "ray"; }
-    static get CON_CHANGE_DISABLE_ROUND_SET() { return "dr"; }
-    static get CON_CHANGE_DISABLE_LINE_SET() { return "dl"; }
-    static get CON_CHANGE_TEXTSET() { return "tx"; }
-    static get CON_CHANGE_TEXT() { return "t"; }
-    static get CON_CHANGE_FILTER() { return "fi"; }
-    static get CON_CHANGE_SHADOW_COLOR() { return "sc"; }
-    static get CON_CHANGE_SHADOW_BLUR() { return "sb"; }
-    static get CON_CHANGE_SHADOW_OFFSET_X() { return "sx"; }
-    static get CON_CHANGE_SHADOW_OFFSET_Y() { return "sy"; }
     get align() {
         return this._align;
     }
@@ -4010,54 +4095,6 @@ class CCanvasItems extends CList {
     }
 }
 class CCanvasLayer extends CNotifyChangeKindObject {
-    constructor(parent = undefined) {
-        super();
-        this._name = "";
-        this._items = new CCanvasItems();
-        this._scaleX = 1;
-        this._scaleY = 1;
-        this._transform = new CTransform();
-        this._visible = true;
-        this._offset = new CNotifyPoint(0, 0);
-        this._canvas = document.createElement("canvas");
-        this.isDraw = true;
-        this._parent = parent;
-        this._id = CSequence.getSequence("layer");
-        let self = this;
-        this._offset.onChange = function () {
-            self.doChange(CCanvasLayer.CON_CHANGE_OFFSET);
-        };
-        this._items.onChange = function () {
-            self.doChange(CCanvasLayer.CON_CHANGE_ITEMS);
-        };
-        this._canvas = document.createElement("canvas");
-        this._canvas.style.outline = "none";
-        this._canvas.style.position = "absolute";
-        this._canvas.style.margin = "0px 0px 0px 0px";
-        this._canvas.style.padding = "0px 0px 0px 0px";
-        this._canvas.style.pointerEvents = "none";
-        this._canvas.setAttribute("ondragstart", "return false");
-        this._canvas.setAttribute("onselectstart", "return false");
-        this._canvas.setAttribute("oncontextmenu", "return false");
-        let ctx = this._canvas.getContext("2d");
-        if (ctx != null) {
-            this._context = ctx;
-        }
-        if (this._parent != undefined) {
-            if (this._parent instanceof HTMLElement) {
-                this._parent.appendChild(this._canvas);
-            }
-            else {
-                if (this._parent.parent != undefined) {
-                    this._parent.parent.controlElement.appendChild(this._canvas);
-                }
-            }
-        }
-        this._transform.onChange = function (sender, kind) {
-            self.transform.setTransform(self.canvas);
-        };
-        this.transform.setTransform(this.canvas);
-    }
     static get CON_CHANGE_ITEMS() { return "i"; }
     static get CON_CHANGE_OFFSET() { return "o"; }
     static get CON_CHANGE_VISIBLE() { return "v"; }
@@ -4120,6 +4157,54 @@ class CCanvasLayer extends CNotifyChangeKindObject {
             this._visible = value;
             this.doChange(CCanvasLayer.CON_CHANGE_VISIBLE);
         }
+    }
+    constructor(parent = undefined) {
+        super();
+        this._name = "";
+        this._items = new CCanvasItems();
+        this._scaleX = 1;
+        this._scaleY = 1;
+        this._transform = new CTransform();
+        this._visible = true;
+        this._offset = new CNotifyPoint(0, 0);
+        this._canvas = document.createElement("canvas");
+        this.isDraw = true;
+        this._parent = parent;
+        this._id = CSequence.getSequence("layer");
+        let self = this;
+        this._offset.onChange = function () {
+            self.doChange(CCanvasLayer.CON_CHANGE_OFFSET);
+        };
+        this._items.onChange = function () {
+            self.doChange(CCanvasLayer.CON_CHANGE_ITEMS);
+        };
+        this._canvas = document.createElement("canvas");
+        this._canvas.style.outline = "none";
+        this._canvas.style.position = "absolute";
+        this._canvas.style.margin = "0px 0px 0px 0px";
+        this._canvas.style.padding = "0px 0px 0px 0px";
+        this._canvas.style.pointerEvents = "none";
+        this._canvas.setAttribute("ondragstart", "return false");
+        this._canvas.setAttribute("onselectstart", "return false");
+        this._canvas.setAttribute("oncontextmenu", "return false");
+        let ctx = this._canvas.getContext("2d");
+        if (ctx != null) {
+            this._context = ctx;
+        }
+        if (this._parent != undefined) {
+            if (this._parent instanceof HTMLElement) {
+                this._parent.appendChild(this._canvas);
+            }
+            else {
+                if (this._parent.parent != undefined) {
+                    this._parent.parent.controlElement.appendChild(this._canvas);
+                }
+            }
+        }
+        this._transform.onChange = function (sender, kind) {
+            self.transform.setTransform(self.canvas);
+        };
+        this.transform.setTransform(this.canvas);
     }
     doToData(data) {
         super.doToData(data);
@@ -4223,10 +4308,6 @@ class CCanvasLayer extends CNotifyChangeKindObject {
     }
 }
 class CCanvasLayers extends CList {
-    constructor(parent) {
-        super();
-        this._parent = parent;
-    }
     static get CON_CHANGE_ADD_LAYER() { return "addlayer"; }
     static get CON_CHANGE_LAYER() { return "layer"; }
     get parent() {
@@ -4246,6 +4327,10 @@ class CCanvasLayers extends CList {
         for (let n = 0; n < this.length; n++) {
             this.get(n).scale = value;
         }
+    }
+    constructor(parent) {
+        super();
+        this._parent = parent;
     }
     doChangeLayer(kind, layer) {
         if (this.useChangeEvent && this.onChangeLayer != undefined) {

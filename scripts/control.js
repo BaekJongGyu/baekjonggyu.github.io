@@ -1,95 +1,5 @@
 "use strict";
 class CControl extends CNotifyChangeKindObject {
-    constructor(parent, name) {
-        super();
-        this._hasPointerEvent = true;
-        this._stopPropagation = new CStopPropagationInfo();
-        this._tabIndex = "";
-        this._overflow = "";
-        this._opacity = 1;
-        this._enabled = true;
-        this._visible = true;
-        this._focused = false;
-        this._selected = false;
-        this._checked = false;
-        this._cursor = "auto";
-        this._initResource = "";
-        this._propertyName = "";
-        this._propertyDataKind = "";
-        this._focusedAnimatorResource = "";
-        this._enabledAnimatorResource = "";
-        this._visibleAnimatorResource = "";
-        this._resourceAnimatorResource = "";
-        this._selectAnimatorResource = "";
-        this._checkAnimatorResource = "";
-        this._removeAnimatorResource = "";
-        let self = this;
-        this._id = CSequence.getSequence("control");
-        if (name != undefined) {
-            this._name = name;
-        }
-        else {
-            this._name = CSequence.getSequence("unnamed");
-        }
-        let arr = CSystem.getControlsFromName(this.getNamPath());
-        let isDup = false;
-        if (arr.length != 0) {
-            isDup = true;
-        }
-        this._controlElement = document.createElement("control");
-        this._controlElement.setAttribute("className", this.className);
-        this._controlElement.setAttribute("control-id", this.id);
-        this._controlElement.setAttribute("control-name", this.name);
-        this._controlElement.style.outline = "none";
-        this._controlElement.style.position = "absolute";
-        this._controlElement.style.margin = "0px 0px 0px 0px";
-        this._controlElement.style.padding = "0px 0px 0px 0px";
-        this._controlElement.style.border = "none";
-        this._controlElement.style.zIndex = CSystem.getZPlus() + "";
-        this._controlElement.setAttribute("ondragstart", "return false");
-        this._controlElement.setAttribute("onselectstart", "return false");
-        this._controlElement.setAttribute("oncontextmenu", "return false");
-        this._controlElement.setAttribute("class", "scrollno");
-        this._controlElement.style.touchAction = "auto";
-        this._controlElement.style.userSelect = "text";
-        this._controlElement.style.pointerEvents = "auto";
-        this._controlElement.style.opacity = this._opacity + "";
-        this._position = new CPosition();
-        this._position.onChange = function (ps, kind) {
-            self.doChangePosition(kind);
-        };
-        this._transform = new CTransform();
-        this._transform.onChange = function (sender, kind) {
-            self.doChangeTrasform(kind);
-        };
-        this._stopPropagation.onChange = function () {
-            self.doChange(CControl.CON_CHANGE_STOP_PROPAGATION);
-        };
-        this._controlElement.addEventListener("focus", function (ev) {
-            if (self.enabled)
-                self.focused = true;
-        });
-        this._controlElement.addEventListener("blur", function (ev) {
-            if (self.enabled)
-                self.focused = false;
-        });
-        if (parent instanceof CControl) {
-            this._parent = parent;
-            this._parent.controlElement.appendChild(this._controlElement);
-        }
-        if (parent instanceof HTMLElement) {
-            this.parentElement(parent);
-        }
-        this._filter = new CFilter(this._controlElement);
-        if (isDup) {
-            this.remove();
-            throw new Error("invalid name : " + name);
-        }
-        else {
-            CSystem.controls.addControl(this);
-        }
-        this.transform.setTransform(this._controlElement);
-    }
     static get CON_CHANGE_NAME() { return "name"; }
     static get CON_CHANGE_STOP_PROPAGATION() { return "changeStopPropagation"; }
     static get CON_CHANGE_POSITION_PARENT() { return "changePositionParent"; }
@@ -395,6 +305,96 @@ class CControl extends CNotifyChangeKindObject {
     }
     get filter() {
         return this._filter;
+    }
+    constructor(parent, name) {
+        super();
+        this._hasPointerEvent = true;
+        this._stopPropagation = new CStopPropagationInfo();
+        this._tabIndex = "";
+        this._overflow = "";
+        this._opacity = 1;
+        this._enabled = true;
+        this._visible = true;
+        this._focused = false;
+        this._selected = false;
+        this._checked = false;
+        this._cursor = "auto";
+        this._initResource = "";
+        this._propertyName = "";
+        this._propertyDataKind = "";
+        this._focusedAnimatorResource = "";
+        this._enabledAnimatorResource = "";
+        this._visibleAnimatorResource = "";
+        this._resourceAnimatorResource = "";
+        this._selectAnimatorResource = "";
+        this._checkAnimatorResource = "";
+        this._removeAnimatorResource = "";
+        let self = this;
+        this._id = CSequence.getSequence("control");
+        if (name != undefined) {
+            this._name = name;
+        }
+        else {
+            this._name = CSequence.getSequence("unnamed");
+        }
+        let arr = CSystem.getControlsFromName(this.getNamPath());
+        let isDup = false;
+        if (arr.length != 0) {
+            isDup = true;
+        }
+        this._controlElement = document.createElement("control");
+        this._controlElement.setAttribute("className", this.className);
+        this._controlElement.setAttribute("control-id", this.id);
+        this._controlElement.setAttribute("control-name", this.name);
+        this._controlElement.style.outline = "none";
+        this._controlElement.style.position = "absolute";
+        this._controlElement.style.margin = "0px 0px 0px 0px";
+        this._controlElement.style.padding = "0px 0px 0px 0px";
+        this._controlElement.style.border = "none";
+        this._controlElement.style.zIndex = CSystem.getZPlus() + "";
+        this._controlElement.setAttribute("ondragstart", "return false");
+        this._controlElement.setAttribute("onselectstart", "return false");
+        this._controlElement.setAttribute("oncontextmenu", "return false");
+        this._controlElement.setAttribute("class", "scrollno");
+        this._controlElement.style.touchAction = "auto";
+        this._controlElement.style.userSelect = "text";
+        this._controlElement.style.pointerEvents = "auto";
+        this._controlElement.style.opacity = this._opacity + "";
+        this._position = new CPosition();
+        this._position.onChange = function (ps, kind) {
+            self.doChangePosition(kind);
+        };
+        this._transform = new CTransform();
+        this._transform.onChange = function (sender, kind) {
+            self.doChangeTrasform(kind);
+        };
+        this._stopPropagation.onChange = function () {
+            self.doChange(CControl.CON_CHANGE_STOP_PROPAGATION);
+        };
+        this._controlElement.addEventListener("focus", function (ev) {
+            if (self.enabled)
+                self.focused = true;
+        });
+        this._controlElement.addEventListener("blur", function (ev) {
+            if (self.enabled)
+                self.focused = false;
+        });
+        if (parent instanceof CControl) {
+            this._parent = parent;
+            this._parent.controlElement.appendChild(this._controlElement);
+        }
+        if (parent instanceof HTMLElement) {
+            this.parentElement(parent);
+        }
+        this._filter = new CFilter(this._controlElement);
+        if (isDup) {
+            this.remove();
+            throw new Error("invalid name : " + name);
+        }
+        else {
+            CSystem.controls.addControl(this);
+        }
+        this.transform.setTransform(this._controlElement);
     }
     doToData(data) {
         super.doToData(data);
@@ -1168,164 +1168,6 @@ var EControlMoveKind;
     EControlMoveKind[EControlMoveKind["RESIZE_RB"] = 9] = "RESIZE_RB";
 })(EControlMoveKind || (EControlMoveKind = {}));
 class CPointerEventControl extends CControl {
-    constructor(parent, name) {
-        super(parent, name);
-        this.__pressedThisPoints = new CList();
-        this.__pressedBubblePoints = new CList();
-        this.__thisDownPoint = new CPoint(0, 0);
-        this.__preMovePoint = new CPoint(0, 0);
-        this.__downMovePoint = new CPoint(0, 0);
-        this.__pressedThisDown = false;
-        this.__preClick = { time: CTime.now, count: 0 };
-        this.__maxCount = 0;
-        this.__moveKind = EControlMoveKind.NONE;
-        this.__moveResizeDown = {
-            offsetx: 0,
-            offsety: 0,
-            pagex: 0,
-            pagey: 0,
-            left: 0,
-            top: 0,
-            width: 0,
-            height: 0
-        };
-        this._isEnter = false;
-        this._isOver = false;
-        this._repeatClickTime = 300;
-        this._usePointerCapture = false;
-        this._useDragAndDrop = false;
-        this._useDragAndDropCancel = false;
-        this._dragCatchControlNames = new CStringSet();
-        this._dragCatchControlPropertyNames = new CStringSet();
-        this._dragIconResource = "";
-        this._hintResource = "";
-        this._hint = "";
-        this._useHint = false;
-        this._hintPosition = "auto";
-        this._hintFixOffset = new CPoint(0, 0);
-        this._useMove = false;
-        this.lockMoveX = false;
-        this.lockMoveY = false;
-        this.magneticPoints = new Array();
-        this._magneticLength = 0;
-        this._useResize = false;
-        this._moveAreaLength = -1;
-        this._resizeAreaLength = 5;
-        this._ignoreResizeKind = new Set();
-        this.resizeMinWidth = 50;
-        this.resizeMinHeight = 50;
-        this._useFingerCursor = false;
-        this._fingerCursorLength = 30;
-        this._fingerCursors = new Array();
-        this._fingerCursorResource = "";
-        this._thisPointerDownAnimatorResource = "";
-        this._thisPointerUpAnimatorResource = "";
-        this._overAnimatorResource = "";
-        this._enterAnimatorResource = "";
-        this._clickAnimatorResource = "";
-        this._doubleClickAnimatorResource = "";
-        this._dragStartAnimatorResource = "";
-        this._dragCancelAnimatorResource = "";
-        this._dragCatchAnimatorResource = "";
-        this._keyDownAnimatorResource = "";
-        this.useMoveClick = false;
-        let self = this;
-        this._stopPropagation.onChange = function () {
-            self.doChange(CControl.CON_CHANGE_STOP_PROPAGATION);
-        };
-        this._controlElement.addEventListener("keydown", function (e) {
-            if (self.enabled)
-                self.doKeyDown(e);
-            if (self._stopPropagation.keyboard)
-                e.stopPropagation();
-        });
-        this._controlElement.addEventListener("keypress", function (e) {
-            if (self.enabled)
-                self.doKeyPress(e);
-            if (self._stopPropagation.keyboard)
-                e.stopPropagation();
-        });
-        this._controlElement.addEventListener("keyup", function (e) {
-            if (self.enabled)
-                self.doKeyUp(e);
-            if (self._stopPropagation.keyboard)
-                e.stopPropagation();
-        });
-        this._controlElement.addEventListener("pointerdown", function (e) {
-            if (self.enabled) {
-                self.doPointerDown(e);
-                if (self._stopPropagation.down)
-                    e.stopPropagation();
-            }
-        });
-        this._controlElement.addEventListener("pointermove", function (e) {
-            if (self.enabled) {
-                self.doPointerMove(e);
-                if (self._stopPropagation.move)
-                    e.stopPropagation();
-            }
-        });
-        this._controlElement.addEventListener("pointerup", function (e) {
-            if (self.enabled) {
-                self.doPointerUp(e);
-                if (self._stopPropagation.up)
-                    e.stopPropagation();
-            }
-        });
-        this._controlElement.addEventListener("pointercancel", function (e) {
-            if (self.enabled) {
-                self.doPointerCancel(e);
-                if (self._stopPropagation.cancel)
-                    e.stopPropagation();
-            }
-        });
-        this._controlElement.addEventListener("pointerover", function (e) {
-            if (self.enabled) {
-                self._isOver = true;
-                self.doPointerOver(e);
-                if (self._stopPropagation.over)
-                    e.stopPropagation();
-            }
-        });
-        this._controlElement.addEventListener("pointerout", function (e) {
-            if (self.enabled) {
-                self._isOver = false;
-                self.doPointerOut(e);
-                if (self._stopPropagation.out)
-                    e.stopPropagation();
-            }
-        });
-        this._controlElement.addEventListener("pointerenter", function (e) {
-            if (self.enabled) {
-                self._isEnter = true;
-                self.doPointerEnter(e);
-                if (self._stopPropagation.enter)
-                    e.stopPropagation();
-            }
-        });
-        this._controlElement.addEventListener("pointerleave", function (e) {
-            if (self.enabled) {
-                self._isEnter = false;
-                self.doPointerLeave(e);
-                if (self._stopPropagation.leave)
-                    e.stopPropagation();
-            }
-        });
-        this._controlElement.addEventListener("wheel", function (e) {
-            if (self.enabled)
-                self.doWheel(e);
-            if (self._stopPropagation.wheel)
-                e.stopPropagation();
-        });
-        this.__pressedThisPoints.onChange = function () {
-            if (self.enabled)
-                self.doChangeThisPressedPoints();
-        };
-        this.__pressedBubblePoints.onChange = function () {
-            if (self.enabled)
-                self.doChangeBubblePressedPoints();
-        };
-    }
     static get CON_CHANGE_THIS_PRESSED_POINTS() { return "changeThisPressedPoints"; }
     static get CON_CHANGE_BUBBLE_PRESSED_POINTS() { return "changeButtlePressedPoints"; }
     static get CON_STOP_PROPAGATION_POINTER_DOWN() { return "stopPropagationPointerDown"; }
@@ -1595,6 +1437,164 @@ class CPointerEventControl extends CControl {
         if (this._fingerCursorResource != value) {
             this._fingerCursorResource = value;
         }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this.__pressedThisPoints = new CList();
+        this.__pressedBubblePoints = new CList();
+        this.__thisDownPoint = new CPoint(0, 0);
+        this.__preMovePoint = new CPoint(0, 0);
+        this.__downMovePoint = new CPoint(0, 0);
+        this.__pressedThisDown = false;
+        this.__preClick = { time: CTime.now, count: 0 };
+        this.__maxCount = 0;
+        this.__moveKind = EControlMoveKind.NONE;
+        this.__moveResizeDown = {
+            offsetx: 0,
+            offsety: 0,
+            pagex: 0,
+            pagey: 0,
+            left: 0,
+            top: 0,
+            width: 0,
+            height: 0
+        };
+        this._isEnter = false;
+        this._isOver = false;
+        this._repeatClickTime = 300;
+        this._usePointerCapture = false;
+        this._useDragAndDrop = false;
+        this._useDragAndDropCancel = false;
+        this._dragCatchControlNames = new CStringSet();
+        this._dragCatchControlPropertyNames = new CStringSet();
+        this._dragIconResource = "";
+        this._hintResource = "";
+        this._hint = "";
+        this._useHint = false;
+        this._hintPosition = "auto";
+        this._hintFixOffset = new CPoint(0, 0);
+        this._useMove = false;
+        this.lockMoveX = false;
+        this.lockMoveY = false;
+        this.magneticPoints = new Array();
+        this._magneticLength = 0;
+        this._useResize = false;
+        this._moveAreaLength = -1;
+        this._resizeAreaLength = 5;
+        this._ignoreResizeKind = new Set();
+        this.resizeMinWidth = 50;
+        this.resizeMinHeight = 50;
+        this._useFingerCursor = false;
+        this._fingerCursorLength = 30;
+        this._fingerCursors = new Array();
+        this._fingerCursorResource = "";
+        this._thisPointerDownAnimatorResource = "";
+        this._thisPointerUpAnimatorResource = "";
+        this._overAnimatorResource = "";
+        this._enterAnimatorResource = "";
+        this._clickAnimatorResource = "";
+        this._doubleClickAnimatorResource = "";
+        this._dragStartAnimatorResource = "";
+        this._dragCancelAnimatorResource = "";
+        this._dragCatchAnimatorResource = "";
+        this._keyDownAnimatorResource = "";
+        this.useMoveClick = false;
+        let self = this;
+        this._stopPropagation.onChange = function () {
+            self.doChange(CControl.CON_CHANGE_STOP_PROPAGATION);
+        };
+        this._controlElement.addEventListener("keydown", function (e) {
+            if (self.enabled)
+                self.doKeyDown(e);
+            if (self._stopPropagation.keyboard)
+                e.stopPropagation();
+        });
+        this._controlElement.addEventListener("keypress", function (e) {
+            if (self.enabled)
+                self.doKeyPress(e);
+            if (self._stopPropagation.keyboard)
+                e.stopPropagation();
+        });
+        this._controlElement.addEventListener("keyup", function (e) {
+            if (self.enabled)
+                self.doKeyUp(e);
+            if (self._stopPropagation.keyboard)
+                e.stopPropagation();
+        });
+        this._controlElement.addEventListener("pointerdown", function (e) {
+            if (self.enabled) {
+                self.doPointerDown(e);
+                if (self._stopPropagation.down)
+                    e.stopPropagation();
+            }
+        });
+        this._controlElement.addEventListener("pointermove", function (e) {
+            if (self.enabled) {
+                self.doPointerMove(e);
+                if (self._stopPropagation.move)
+                    e.stopPropagation();
+            }
+        });
+        this._controlElement.addEventListener("pointerup", function (e) {
+            if (self.enabled) {
+                self.doPointerUp(e);
+                if (self._stopPropagation.up)
+                    e.stopPropagation();
+            }
+        });
+        this._controlElement.addEventListener("pointercancel", function (e) {
+            if (self.enabled) {
+                self.doPointerCancel(e);
+                if (self._stopPropagation.cancel)
+                    e.stopPropagation();
+            }
+        });
+        this._controlElement.addEventListener("pointerover", function (e) {
+            if (self.enabled) {
+                self._isOver = true;
+                self.doPointerOver(e);
+                if (self._stopPropagation.over)
+                    e.stopPropagation();
+            }
+        });
+        this._controlElement.addEventListener("pointerout", function (e) {
+            if (self.enabled) {
+                self._isOver = false;
+                self.doPointerOut(e);
+                if (self._stopPropagation.out)
+                    e.stopPropagation();
+            }
+        });
+        this._controlElement.addEventListener("pointerenter", function (e) {
+            if (self.enabled) {
+                self._isEnter = true;
+                self.doPointerEnter(e);
+                if (self._stopPropagation.enter)
+                    e.stopPropagation();
+            }
+        });
+        this._controlElement.addEventListener("pointerleave", function (e) {
+            if (self.enabled) {
+                self._isEnter = false;
+                self.doPointerLeave(e);
+                if (self._stopPropagation.leave)
+                    e.stopPropagation();
+            }
+        });
+        this._controlElement.addEventListener("wheel", function (e) {
+            if (self.enabled)
+                self.doWheel(e);
+            if (self._stopPropagation.wheel)
+                e.stopPropagation();
+        });
+        this.__pressedThisPoints.onChange = function () {
+            if (self.enabled)
+                self.doChangeThisPressedPoints();
+        };
+        this.__pressedBubblePoints.onChange = function () {
+            if (self.enabled)
+                self.doChangeBubblePressedPoints();
+        };
     }
     doToData(data) {
         super.doToData(data);
@@ -2860,29 +2860,6 @@ class CPointerEventControl extends CControl {
     }
 }
 class CCanvasLayerControl extends CPointerEventControl {
-    constructor(parent, name) {
-        super(parent, name);
-        this._expandedLayers = new CNotifyRect(0, 0, 0, 0);
-        this._layersResource = "";
-        this._pathItemsResource = "";
-        let self = this;
-        this._layers = new CCanvasLayers(this);
-        this._layers.onChangeLayer = function (sender, kind, layer) {
-            if (kind == CCanvasLayers.CON_CHANGE_ADD_LAYER) {
-                layer.setCanvasElementPosition(-self.expandedLayers.left, -self.expandedLayers.top, self.position.width + self.expandedLayers.left + self.expandedLayers.right, self.position.height + self.expandedLayers.top + self.expandedLayers.bottom);
-            }
-        };
-        this.layers.onChange = function () {
-            let arr = CSystem.getChildControls(self);
-            for (let n = 0; n < arr.length; n++) {
-                arr[n].bringToFront();
-            }
-            self.doChangeLayerCount();
-        };
-        this._expandedLayers.onChange = function () {
-            self.setLayers();
-        };
-    }
     get layers() {
         return this._layers;
     }
@@ -2919,6 +2896,29 @@ class CCanvasLayerControl extends CPointerEventControl {
                 }
             }
         }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this._expandedLayers = new CNotifyRect(0, 0, 0, 0);
+        this._layersResource = "";
+        this._pathItemsResource = "";
+        let self = this;
+        this._layers = new CCanvasLayers(this);
+        this._layers.onChangeLayer = function (sender, kind, layer) {
+            if (kind == CCanvasLayers.CON_CHANGE_ADD_LAYER) {
+                layer.setCanvasElementPosition(-self.expandedLayers.left, -self.expandedLayers.top, self.position.width + self.expandedLayers.left + self.expandedLayers.right, self.position.height + self.expandedLayers.top + self.expandedLayers.bottom);
+            }
+        };
+        this.layers.onChange = function () {
+            let arr = CSystem.getChildControls(self);
+            for (let n = 0; n < arr.length; n++) {
+                arr[n].bringToFront();
+            }
+            self.doChangeLayerCount();
+        };
+        this._expandedLayers.onChange = function () {
+            self.setLayers();
+        };
     }
     doToData(data) {
         super.doToData(data);
@@ -2981,16 +2981,6 @@ class CCanvasLayerControl extends CPointerEventControl {
     }
 }
 class CPanel extends CCanvasLayerControl {
-    constructor(parent, name) {
-        super(parent, name);
-        this._textSet = new CTextSet();
-        this._text = "";
-        this._useAutoSize = false;
-        let self = this;
-        this.textSet.onChange = function () {
-            self.doChange(CPanel.CON_CHANGE_TEXTSET);
-        };
-    }
     static get CON_CHANGE_USE_AUTO_SIZE() { return "changeUseAutoSize"; }
     static get CON_CHANGE_TEXT() { return "changeText"; }
     static get CON_CHANGE_TEXTSET() { return "changeTextSet"; }
@@ -3025,6 +3015,16 @@ class CPanel extends CCanvasLayerControl {
             this._useAutoSize = value;
             this.doChange(CPanel.CON_CHANGE_USE_AUTO_SIZE);
         }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this._textSet = new CTextSet();
+        this._text = "";
+        this._useAutoSize = false;
+        let self = this;
+        this.textSet.onChange = function () {
+            self.doChange(CPanel.CON_CHANGE_TEXTSET);
+        };
     }
     doToData(data) {
         super.doToData(data);
@@ -3113,14 +3113,6 @@ class CPanel extends CCanvasLayerControl {
     }
 }
 class CCover extends CPanel {
-    constructor(parent, name) {
-        super(parent, name);
-        this.isClickHide = true;
-        this.isHideClear = false;
-        this._showAnimatorResource = "";
-        this._hideAnimatorResource = "";
-        this.visible = false;
-    }
     get showAnimatorResource() {
         return this._showAnimatorResource;
     }
@@ -3136,6 +3128,14 @@ class CCover extends CPanel {
         this._hideAnimatorResource = value;
         if (value != "")
             this.hideAnimationTrigger = CAnimator.animatorFromResource(this, value);
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this.isClickHide = true;
+        this.isHideClear = false;
+        this._showAnimatorResource = "";
+        this._hideAnimatorResource = "";
+        this.visible = false;
     }
     doClick(e) {
         super.doClick(e);
@@ -3613,22 +3613,6 @@ class CAnimationControlScene extends CResourceClass {
     }
 }
 class CAnimationControl extends CPanel {
-    constructor(parent, name) {
-        super(parent, name);
-        this.__isScene = false;
-        this.__objectsIndex = new Map();
-        this.__orgBounds = new CRect();
-        this._objectsCount = 0;
-        this._transformerPoints = new CTransformerPoints();
-        this._sceneData = new CAnimationControlScene();
-        this.orgTransfrom = new CTransform();
-        this.orgPosition = new CPosition();
-        this.objects = new CList();
-        let self = this;
-        this.objects.onChange = function () {
-            self.setObjectIndex();
-        };
-    }
     get transformerPoints() {
         return this._transformerPoints;
     }
@@ -3657,6 +3641,22 @@ class CAnimationControl extends CPanel {
                 this.objects.delete(this.objects.length - 1);
             }
         }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this.__isScene = false;
+        this.__objectsIndex = new Map();
+        this.__orgBounds = new CRect();
+        this._objectsCount = 0;
+        this._transformerPoints = new CTransformerPoints();
+        this._sceneData = new CAnimationControlScene();
+        this.orgTransfrom = new CTransform();
+        this.orgPosition = new CPosition();
+        this.objects = new CList();
+        let self = this;
+        this.objects.onChange = function () {
+            self.setObjectIndex();
+        };
     }
     doToData(data) {
         super.doToData(data);

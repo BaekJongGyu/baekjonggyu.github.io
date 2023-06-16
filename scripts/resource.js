@@ -45,6 +45,10 @@ async function loadLazyResource() {
     map.set("cellBlue.canvasitems", "https://baekjonggyu.github.io/resource/cellBlue.canvasitems");
     map.set("cellRed.canvasitems", "https://baekjonggyu.github.io/resource/cellRed.canvasitems");
     map.set("blackL.canvasitems", "https://baekjonggyu.github.io/resource/blackL.canvasitems");
+    map.set("cellL.canvasitems", "https://baekjonggyu.github.io/resource/cellL.canvasitems");
+    map.set("cellL2.canvasitems", "https://baekjonggyu.github.io/resource/cellL2.canvasitems");
+    map.set("blackGlass.canvasitems", "https://baekjonggyu.github.io/resource/blackGlass.canvasitems");
+    map.set("black.canvasitems", "https://baekjonggyu.github.io/resource/black.canvasitems");
     map.set("selectAreaCursor.control", "https://baekjonggyu.github.io/resource/selectAreaCursor.control");
     map.set("scrollbar24.control", "https://baekjonggyu.github.io/resource/scrollbar24.control");
     map.set("controlSelector_rotation.control", "https://baekjonggyu.github.io/resource/controlSelector_rotation.control");
@@ -69,13 +73,20 @@ async function loadLazyResource() {
     map.set("empty.control", "https://baekjonggyu.github.io/resource/empty.control");
     map.set("textboxDarkEditor.control", "https://baekjonggyu.github.io/resource/textboxDarkEditor.control");
     map.set("button_gray_gra.control", "https://baekjonggyu.github.io/resource/button_gray_gra.control");
+    map.set("handle_white.control", "https://baekjonggyu.github.io/resource/handle_white.control");
+    map.set("colorselector16.control", "https://baekjonggyu.github.io/resource/colorselector16.control");
     map.set("graphEditor.frame", "https://baekjonggyu.github.io/resource/graphEditor.frame");
     map.set("window_sky.frame", "https://baekjonggyu.github.io/resource/window_sky.frame");
+    map.set("window_sky_dialog.frame", "https://baekjonggyu.github.io/resource/window_sky_dialog.frame");
     map.set("textEditor.frame", "https://baekjonggyu.github.io/resource/textEditor.frame");
     map.set("layerPathEditor.frame", "https://baekjonggyu.github.io/resource/layerPathEditor.frame");
     map.set("chiled_window_20_dialog.frame", "https://baekjonggyu.github.io/resource/chiled_window_20_dialog.frame");
     map.set("sceneEditor.frame", "https://baekjonggyu.github.io/resource/sceneEditor.frame");
     map.set("sceneExample.frame", "https://baekjonggyu.github.io/resource/sceneExample.frame");
+    map.set("timeSpeedGraphEditor.frame", "https://baekjonggyu.github.io/resource/timeSpeedGraphEditor.frame");
+    map.set("fillEditor.frame", "https://baekjonggyu.github.io/resource/fillEditor.frame");
+    map.set("strokeEditor.frame", "https://baekjonggyu.github.io/resource/strokeEditor.frame");
+    map.set("gradientEditor.frame", "https://baekjonggyu.github.io/resource/gradientEditor.frame");
     map.forEach(function (v, k) {
         fetchBody(v)
             .then(function (json) {

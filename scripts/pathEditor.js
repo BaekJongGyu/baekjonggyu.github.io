@@ -1,5 +1,45 @@
 "use strict";
 class CPathEditorModel extends CPanel {
+    get item() {
+        return this.__item;
+    }
+    get pointResource() {
+        return this._pointResource;
+    }
+    set pointResource(value) {
+        if (this._pointResource != value) {
+            this._pointResource = value;
+            for (let n = 0; n < this.__points.length; n++) {
+                this.__points.get(n).point.resource = value;
+            }
+        }
+    }
+    get cpoint1Resource() {
+        return this._cpoint1Resource;
+    }
+    set cpoint1Resource(value) {
+        if (this._cpoint1Resource != value) {
+            this._cpoint1Resource = value;
+            for (let n = 0; n < this.__points.length; n++) {
+                let h = this.__points.get(n).cpoint1;
+                if (h != undefined)
+                    h.resource = value;
+            }
+        }
+    }
+    get cpoint2Resource() {
+        return this._cpoint2Resource;
+    }
+    set cpoint2Resource(value) {
+        if (this._cpoint2Resource != value) {
+            this._cpoint2Resource = value;
+            for (let n = 0; n < this.__points.length; n++) {
+                let h = this.__points.get(n).cpoint2;
+                if (h != undefined)
+                    h.resource = value;
+            }
+        }
+    }
     constructor(parent, name) {
         super(parent, name);
         this.__points = new CList();
@@ -194,46 +234,6 @@ class CPathEditorModel extends CPanel {
             self.item.pathData.fit(new CRect(0, 0, 400, 400));
             self.refresh();
         };
-    }
-    get item() {
-        return this.__item;
-    }
-    get pointResource() {
-        return this._pointResource;
-    }
-    set pointResource(value) {
-        if (this._pointResource != value) {
-            this._pointResource = value;
-            for (let n = 0; n < this.__points.length; n++) {
-                this.__points.get(n).point.resource = value;
-            }
-        }
-    }
-    get cpoint1Resource() {
-        return this._cpoint1Resource;
-    }
-    set cpoint1Resource(value) {
-        if (this._cpoint1Resource != value) {
-            this._cpoint1Resource = value;
-            for (let n = 0; n < this.__points.length; n++) {
-                let h = this.__points.get(n).cpoint1;
-                if (h != undefined)
-                    h.resource = value;
-            }
-        }
-    }
-    get cpoint2Resource() {
-        return this._cpoint2Resource;
-    }
-    set cpoint2Resource(value) {
-        if (this._cpoint2Resource != value) {
-            this._cpoint2Resource = value;
-            for (let n = 0; n < this.__points.length; n++) {
-                let h = this.__points.get(n).cpoint2;
-                if (h != undefined)
-                    h.resource = value;
-            }
-        }
     }
     doToData(data) {
         super.doToData(data);
@@ -672,43 +672,12 @@ class CGraphEditorModel extends CPathEditorModel {
         }*/
     }
     getGraphData() {
-        let self = this;
-        return new Promise(function (rs) {
-            /*let arrpd = new Array<{pointKind: number, point:{x:number, y:number}, cPoint1:{x:number, y:number}, cPoint2:{x:number, y:number}}>()
-            for(let n = 0; n < self.item.pathData.length; n++) {
-                let pt = self.item.pathData.get(n)
-                arrpd.push({
-                    pointKind: pt.pointKind,
-                    point:{x:pt.point.x, y:pt.point.y},
-                    cPoint1:{x:pt.cPoint1.x, y:pt.cPoint1.y},
-                    cPoint2:{x:pt.cPoint2.x, y:pt.cPoint2.y}
-                })
-            }
-
-            if(CGlobal.userInfo != undefined) {
-                let strm = new CStream()
-                strm.putString(self.edtDuration.text)
-                strm.putString(self.lblWidth.value)
-                strm.putString(self.lblheight.value)
-                strm.putString(self.edtStart.text)
-                strm.putString(self.edtStop.text)
-                strm.putString(self.edtScaleY.text)
-                strm.putString(self.edtPrecision.text)
-                strm.putString(self.edtFrame.text)
-                strm.putString(CStringUtil.strToUriBase64(JSON.stringify(arrpd)))
-                CGlobal.userInfo.sendSocketData("getGraphData", strm, function(data) {
-                    data.getString()
-                    data.getString()
-                    let result = data.getString()
-                    if(result == "success") {
-                        data.getString()
-                        rs(JSON.parse(data.getString()))
-                    } else {
-                        rs(data.getString())
-                    }
-                })
-            }*/
-        });
+        let height = parseFloat(this.lblheight.value);
+        let start = parseFloat(this.edtStart.text);
+        let stop = parseFloat(this.edtStop.text);
+        let scaleY = parseFloat(this.edtScaleY.text);
+        let precision = parseFloat(this.edtPrecision.text);
+        return CAssembly.getBezierGraphValue(this.item.pathData, 1, scaleY, start, stop, height, precision);
     }
 }
 class CPathEditorFrame extends CPathEditorModel {
@@ -1112,6 +1081,17 @@ class CPathController extends CPanel {
     }
 }
 class CPathItemTransformer extends CPathController {
+    get pathItem() {
+        return this._pathItem;
+    }
+    set pathItem(value) {
+        if (this._pathItem != value) {
+            this._pathItem = value;
+            if (value != undefined) {
+                this.doSetPathData(value);
+            }
+        }
+    }
     constructor(parent, name) {
         super(parent, name);
         this.__orgPathData = new Map();
@@ -1133,17 +1113,6 @@ class CPathItemTransformer extends CPathController {
             self.visible = false;
             self.pathItem = undefined;
         };
-    }
-    get pathItem() {
-        return this._pathItem;
-    }
-    set pathItem(value) {
-        if (this._pathItem != value) {
-            this._pathItem = value;
-            if (value != undefined) {
-                this.doSetPathData(value);
-            }
-        }
     }
     doSetPathData(pathItem) {
         let rt = pathItem.pathData.getBounds();
@@ -1581,34 +1550,6 @@ var EPathItemItemKind;
     EPathItemItemKind[EPathItemItemKind["ETC"] = 6] = "ETC";
 })(EPathItemItemKind || (EPathItemItemKind = {}));
 class CPathItem extends CNotifyChangeNotifyObject {
-    constructor() {
-        super();
-        this._name = CSequence.getSequence("item");
-        this._kind = "";
-        this._visible = true;
-        this._group = false;
-        //public bounds = new CNotifyRect()
-        this.pathData = new CPathPointList();
-        this.childs = new CPathItems();
-        this.fill = new CFillSet();
-        this.stroke = new CStrokeSet();
-        this.opacity = 1;
-        this.shadowBlur = 0;
-        this.shadowColor = "";
-        this.shadowOffsetX = 0;
-        this.shadowOffsetY = 0;
-        this.composite = "source-over";
-        this.text = "";
-        this.textSet = new CTextSet();
-        let self = this;
-        /*this.bounds.onChange = function() {
-            self.doChange()
-        }*/
-        this.childs.parent = this;
-        this.childs.onChange = function () {
-            self.doChange();
-        };
-    }
     get name() {
         return this._name;
     }
@@ -1644,6 +1585,34 @@ class CPathItem extends CNotifyChangeNotifyObject {
             this._group = value;
             this.doChange();
         }
+    }
+    constructor() {
+        super();
+        this._name = CSequence.getSequence("item");
+        this._kind = "";
+        this._visible = true;
+        this._group = false;
+        //public bounds = new CNotifyRect()
+        this.pathData = new CPathPointList();
+        this.childs = new CPathItems();
+        this.fill = new CFillSet();
+        this.stroke = new CStrokeSet();
+        this.opacity = 1;
+        this.shadowBlur = 0;
+        this.shadowColor = "";
+        this.shadowOffsetX = 0;
+        this.shadowOffsetY = 0;
+        this.composite = "source-over";
+        this.text = "";
+        this.textSet = new CTextSet();
+        let self = this;
+        /*this.bounds.onChange = function() {
+            self.doChange()
+        }*/
+        this.childs.parent = this;
+        this.childs.onChange = function () {
+            self.doChange();
+        };
     }
     doToData(data) {
         super.doToData(data);
@@ -2305,6 +2274,7 @@ class CTextPathItemProperties extends CCustomPathItemProperties {
         this.comboFont = new CComboBox(this.body);
         this.btnEachLetter = new CSelectBox(this.body);
         this.btnApply = new CButton(this.body);
+        this.btnApplyPath = new CButton(this.body);
         let self = this;
         CSystem.systemFont.forEach(function (k) {
             self.comboFont.items.add(k);
@@ -2361,6 +2331,24 @@ class CTextPathItemProperties extends CCustomPathItemProperties {
                 CSystem.showMessage("Warning", "Select item");
             }
         };
+        this.btnApplyPath.onClick = function () {
+            if (self.item != undefined && self.editor != undefined) {
+                self.item.pathData.clear();
+                //let s = await CStringUtil.getTextPathData(self.txt.text, self.comboFont.text)
+                self.item.pathData.fromFontPathData(self.txt.text);
+                let rt = self.editor.selector.getBounds();
+                rt.left += 10;
+                rt.top += 10;
+                rt.right -= 10;
+                rt.bottom -= 10;
+                self.item.pathData.fitIgnoreSize(rt);
+                //self.item.pathData.splitLine(100)
+                self.editor.doPaint();
+            }
+            else {
+                CSystem.showMessage("Warning", "Select item");
+            }
+        };
     }
     doToData(data) {
         super.doToData(data);
@@ -2368,6 +2356,7 @@ class CTextPathItemProperties extends CCustomPathItemProperties {
         CDataClass.putData(data, "comboFont", this.comboFont.toData(), {}, true);
         CDataClass.putData(data, "btnEachLetter", this.btnEachLetter.toData(), {}, true);
         CDataClass.putData(data, "btnApply", this.btnApply.toData(), {}, true);
+        CDataClass.putData(data, "btnApplyPath", this.btnApplyPath.toData(), {}, true);
     }
     doFromData(data) {
         super.doFromData(data);
@@ -2375,6 +2364,7 @@ class CTextPathItemProperties extends CCustomPathItemProperties {
         this.comboFont.fromData(CDataClass.getData(data, "comboFont", {}, true));
         this.btnEachLetter.fromData(CDataClass.getData(data, "btnEachLetter", {}, true));
         this.btnApply.fromData(CDataClass.getData(data, "btnApply", {}, true));
+        this.btnApplyPath.fromData(CDataClass.getData(data, "btnApplyPath", {}, true));
     }
 }
 class CAxisCopyTool extends CCustomPathItemProperties {

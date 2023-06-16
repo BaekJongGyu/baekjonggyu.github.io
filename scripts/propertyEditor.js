@@ -1,28 +1,5 @@
 "use strict";
 class CPropertyEditor extends CDataGrid {
-    constructor(parent, name) {
-        super(parent, name);
-        this.__expandProperty = new Set();
-        this._expandPropertyCellCanvasItemsResource1 = "";
-        this._expandPropertyCellCanvasItemsResource2 = "";
-        this.editorButtonCanvasItemsResource = "";
-        this.enumListBoxResource = "";
-        this.enumListItemResource = [];
-        this.propertyData = new Array();
-        this.onlyShowProperty = new Array();
-        this.gridInfo.useResizeColumn = true;
-        this.gridInfo.useIndicator = false;
-        this.headers.add("name");
-        this.headers.add("value");
-        this.headerText.set("0,0", "프로퍼티명");
-        this.headerText.set("1,0", "값");
-        this.editable = true;
-        this.editorShowSet.add(EEditorShowKind.CLICK);
-        this.editorShowSet.add(EEditorShowKind.F2_KEY);
-        this.gridInfo.useFitWidth = true;
-        this.readOnlyColumn.add(0);
-        this.addCellControl(EPointerAreaKind.HEADER_CLIENT, 1, 0, ECellControlAlign.RIGHT, 15, [1, 1, 1, 1], this.editorButtonCanvasItemsResource, "-");
-    }
     get classInstance() {
         return this._classInstrance;
     }
@@ -49,6 +26,29 @@ class CPropertyEditor extends CDataGrid {
             this._expandPropertyCellCanvasItemsResource2 = value;
             this.addSpecificCellCanvasItemsResource(value);
         }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this.__expandProperty = new Set();
+        this._expandPropertyCellCanvasItemsResource1 = "";
+        this._expandPropertyCellCanvasItemsResource2 = "";
+        this.editorButtonCanvasItemsResource = "";
+        this.enumListBoxResource = "";
+        this.enumListItemResource = [];
+        this.propertyData = new Array();
+        this.onlyShowProperty = new Array();
+        this.gridInfo.useResizeColumn = true;
+        this.gridInfo.useIndicator = false;
+        this.headers.add("name");
+        this.headers.add("value");
+        this.headerText.set("0,0", "프로퍼티명");
+        this.headerText.set("1,0", "값");
+        this.editable = true;
+        this.editorShowSet.add(EEditorShowKind.CLICK);
+        this.editorShowSet.add(EEditorShowKind.F2_KEY);
+        this.gridInfo.useFitWidth = true;
+        this.readOnlyColumn.add(0);
+        this.addCellControl(EPointerAreaKind.HEADER_CLIENT, 1, 0, ECellControlAlign.RIGHT, 15, [1, 1, 1, 1], this.editorButtonCanvasItemsResource, "-");
     }
     doToData(data) {
         super.doToData(data);
@@ -349,24 +349,6 @@ CPropertyEditor.classEditor = new Map();
 CPropertyEditor.ignoreProperty = new Set();
 CPropertyEditor.exceptionPropertyEditor = new Array();
 class CTabPropertyEditor extends CTab {
-    constructor(parent, name) {
-        super(parent, name);
-        this._propertyEditors = new CList();
-        this._scrollbarLength = 10;
-        this._scrollbarResource = "";
-        this._headerResource = [];
-        this._cellResource = [];
-        this._expandPropertyCellCanvasItemsResource1 = "";
-        this._expandPropertyCellCanvasItemsResource2 = "";
-        this._editorButtonCanvasItemsResource = "";
-        this._enumListBoxResource = "";
-        this._enumListItemResource = [];
-        this._propertyEditorResource = "";
-        this.onlyShowProperty = new Array();
-        this.useAddButton = false;
-        this.useArrowButton = true;
-        this.useDeleteButton = true;
-    }
     get propertyEditors() {
         return this._propertyEditors;
     }
@@ -481,6 +463,24 @@ class CTabPropertyEditor extends CTab {
                 this.propertyEditors.get(n).enumListItemResource = value;
             }
         }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this._propertyEditors = new CList();
+        this._scrollbarLength = 10;
+        this._scrollbarResource = "";
+        this._headerResource = [];
+        this._cellResource = [];
+        this._expandPropertyCellCanvasItemsResource1 = "";
+        this._expandPropertyCellCanvasItemsResource2 = "";
+        this._editorButtonCanvasItemsResource = "";
+        this._enumListBoxResource = "";
+        this._enumListItemResource = [];
+        this._propertyEditorResource = "";
+        this.onlyShowProperty = new Array();
+        this.useAddButton = false;
+        this.useArrowButton = true;
+        this.useDeleteButton = true;
     }
     doToData(data) {
         super.doToData(data);

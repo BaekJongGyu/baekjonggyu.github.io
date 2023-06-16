@@ -111,11 +111,6 @@ class CIcon extends CPanel {
     }
 }
 class CTaskbarIcon extends CIcon {
-    constructor(parent, name) {
-        super(parent, name);
-        this._seq = -1;
-        this.lockMoveY = true;
-    }
     get seq() {
         return this._seq;
     }
@@ -125,6 +120,11 @@ class CTaskbarIcon extends CIcon {
             if (this.taskbar != undefined)
                 this.taskbar.doChangeTaskbarIconSeq(this);
         }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this._seq = -1;
+        this.lockMoveY = true;
     }
     doResource() {
         super.doResource();
@@ -240,10 +240,6 @@ class CICons extends CPaper {
     }
 }
 class CApplication extends CDataClass {
-    constructor() {
-        super();
-        this._applicationId = CSequence.getSequence(this.className);
-    }
     static doBeforeExecute(app) {
     }
     static doAfterExecute(app) {
@@ -254,6 +250,10 @@ class CApplication extends CDataClass {
     }
     get applicationId() {
         return this._applicationId;
+    }
+    constructor() {
+        super();
+        this._applicationId = CSequence.getSequence(this.className);
     }
     doRemove() {
         super.doRemove();
@@ -307,6 +307,9 @@ class CCoverApplication extends CApplication {
     }
 }
 class CWindowApplication extends CApplication {
+    get mainWindow() {
+        return this._mainWindow;
+    }
     constructor() {
         super();
         this.defaultWidth = 1000;
@@ -320,9 +323,6 @@ class CWindowApplication extends CApplication {
         this._mainWindow.onHide = function () {
             self.doWindowClose();
         };
-    }
-    get mainWindow() {
-        return this._mainWindow;
     }
     doRemove() {
         this._mainWindow.remove();
@@ -343,17 +343,6 @@ class CWindowApplication extends CApplication {
     }
 }
 class CTaskbar extends CPanel {
-    constructor(parent, name) {
-        super(parent, name);
-        this._iconLength = 50;
-        this._iconMargin = 10;
-        this.iconsLeft = new CList();
-        this.iconsRight = new CList();
-        let self = this;
-        CSystem.onResourceLoad.push(function () {
-            self.init();
-        });
-    }
     get iconLength() {
         return this._iconLength;
     }
@@ -371,6 +360,17 @@ class CTaskbar extends CPanel {
             this._iconMargin = value;
             this.doChangeIconLengthMargin();
         }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this._iconLength = 50;
+        this._iconMargin = 10;
+        this.iconsLeft = new CList();
+        this.iconsRight = new CList();
+        let self = this;
+        CSystem.onResourceLoad.push(function () {
+            self.init();
+        });
     }
     doToData(data) {
         super.doToData(data);
@@ -468,6 +468,18 @@ CTaskbar.fixListLeft = new CList();
 CTaskbar.fixListRight = new CList();
 CTaskbar.systemTaskbars = new CList();
 class CDesktop extends CICons {
+    get backgroundImageSrc() {
+        return this._backgroundImageSrc;
+    }
+    set backgroundImageSrc(value) {
+        if (this._backgroundImageSrc != value) {
+            this._backgroundImageSrc = value;
+            let arr = this.layers.getCanvasItems("backgroundImage");
+            for (let n = 0; n < arr.length; n++) {
+                arr[n].imageSrc = value;
+            }
+        }
+    }
     constructor(parent, name) {
         super(parent, name);
         this.backgroundLayer = new CAnimationControl(this);
@@ -491,18 +503,6 @@ class CDesktop extends CICons {
         this.frontLayer.position.align = EPositionAlign.CLIENT;
         this.backgroundLayer.position.align = EPositionAlign.CLIENT;
         this.clock.on();
-    }
-    get backgroundImageSrc() {
-        return this._backgroundImageSrc;
-    }
-    set backgroundImageSrc(value) {
-        if (this._backgroundImageSrc != value) {
-            this._backgroundImageSrc = value;
-            let arr = this.layers.getCanvasItems("backgroundImage");
-            for (let n = 0; n < arr.length; n++) {
-                arr[n].imageSrc = value;
-            }
-        }
     }
     doResource() {
         super.doResource();

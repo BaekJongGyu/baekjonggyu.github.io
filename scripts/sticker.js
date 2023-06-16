@@ -14,6 +14,31 @@ class CStickersModel extends CWindowModel {
     }
 }
 class CStickerModel extends CWindowModel {
+    get title() {
+        return this._title;
+    }
+    set title(value) {
+        if (this._title != value) {
+            this._title = value;
+            this.caption.text = value;
+        }
+    }
+    get desc() {
+        return this._desc;
+    }
+    set desc(value) {
+        this._desc = value;
+        this.txtDesc.text = value;
+    }
+    get stickerResource() {
+        return this._stickerResource;
+    }
+    set stickerResource(value) {
+        if (this._stickerResource != value) {
+            this._stickerResource = value;
+            this.doStickerResourceSet();
+        }
+    }
     constructor(parent, name) {
         super(parent, name);
         this._title = "";
@@ -82,31 +107,6 @@ class CStickerModel extends CWindowModel {
             self.doStickerAdd();
         };
         CStickerModel.stickers.add(this);
-    }
-    get title() {
-        return this._title;
-    }
-    set title(value) {
-        if (this._title != value) {
-            this._title = value;
-            this.caption.text = value;
-        }
-    }
-    get desc() {
-        return this._desc;
-    }
-    set desc(value) {
-        this._desc = value;
-        this.txtDesc.text = value;
-    }
-    get stickerResource() {
-        return this._stickerResource;
-    }
-    set stickerResource(value) {
-        if (this._stickerResource != value) {
-            this._stickerResource = value;
-            this.doStickerResourceSet();
-        }
     }
     doToData(data) {
         super.doToData(data);

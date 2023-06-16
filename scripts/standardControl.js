@@ -147,18 +147,6 @@ class CLabel extends CPanel {
     }
 }
 class CLabelTextBox extends CLabel {
-    constructor(parent, name) {
-        super(parent, name);
-        this.textBox = new CTextBox(this);
-        let self = this;
-        this.textBox.position.align = EPositionAlign.RIGHT;
-        this.textBox.onResource = function () {
-            self.textBox.position.align = EPositionAlign.RIGHT;
-            self.textSet.hAlign = ETextAlign.HEAD;
-            self.textSet.margins.left = 5;
-        };
-        this.textBox.position.width = 100;
-    }
     get label() {
         return this.text;
     }
@@ -170,6 +158,18 @@ class CLabelTextBox extends CLabel {
     }
     set value(value) {
         this.textBox.text = value;
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this.textBox = new CTextBox(this);
+        let self = this;
+        this.textBox.position.align = EPositionAlign.RIGHT;
+        this.textBox.onResource = function () {
+            self.textBox.position.align = EPositionAlign.RIGHT;
+            self.textSet.hAlign = ETextAlign.HEAD;
+            self.textSet.margins.left = 5;
+        };
+        this.textBox.position.width = 100;
     }
     doToData(data) {
         super.doToData(data);
@@ -338,6 +338,9 @@ class CPopupItemControl extends CPanel {
     }
 }
 class CPopup extends CPickupControl {
+    get items() {
+        return this._items;
+    }
     constructor() {
         super(document.body);
         this._items = new CTreeData();
@@ -345,9 +348,6 @@ class CPopup extends CPickupControl {
         this.popupItemResource = "";
         this.popupWidth = 200;
         this.position.padding.all = 5;
-    }
-    get items() {
-        return this._items;
     }
     itemControlClear() {
         let arr = CSystem.getChildControls(this);
@@ -500,6 +500,12 @@ class CPopup extends CPickupControl {
     }
 }
 class CElementControl extends CPanel {
+    get element() {
+        return this._element;
+    }
+    get elementMargins() {
+        return this._elementMargins;
+    }
     constructor(tagName, parent, name) {
         super(parent, name);
         this._elementMargins = new CNotifyRect();
@@ -511,12 +517,6 @@ class CElementControl extends CPanel {
         this._elementMargins.onChange = function () {
             self.doSetInnerElementSize();
         };
-    }
-    get element() {
-        return this._element;
-    }
-    get elementMargins() {
-        return this._elementMargins;
     }
     doToData(data) {
         super.doToData(data);
@@ -645,15 +645,6 @@ class CElementControl extends CPanel {
     }
 }
 class CImage extends CElementControl {
-    constructor(parent, name) {
-        super("img", parent, name);
-        this._src = "";
-        this._element.style.pointerEvents = "none";
-        let self = this;
-        this._element.onload = function () {
-            self.doImageLoad();
-        };
-    }
     get src() {
         return this._src;
     }
@@ -662,6 +653,15 @@ class CImage extends CElementControl {
             this._src = value;
             this._element.src = value;
         }
+    }
+    constructor(parent, name) {
+        super("img", parent, name);
+        this._src = "";
+        this._element.style.pointerEvents = "none";
+        let self = this;
+        this._element.onload = function () {
+            self.doImageLoad();
+        };
     }
     doImageLoad() {
         if (this.onImageLoad != undefined) {
@@ -686,10 +686,6 @@ class CImage extends CElementControl {
     }
 }
 class CTextBox extends CElementControl {
-    constructor(parent, name) {
-        super("input", parent, name);
-        this._textColor = "rgba(0,0,0,1)";
-    }
     get input() {
         return this._element;
     }
@@ -726,6 +722,10 @@ class CTextBox extends CElementControl {
             }
             this.doChange(CControl.CON_CHANGE_FOCUS);
         }
+    }
+    constructor(parent, name) {
+        super("input", parent, name);
+        this._textColor = "rgba(0,0,0,1)";
     }
     doToData(data) {
         super.doToData(data);
@@ -765,94 +765,6 @@ class CTextBox extends CElementControl {
     }
 }
 class CTextArea extends CElementControl {
-    constructor(parent, name) {
-        super("textarea", parent, name);
-        this.__useScrollbar = false;
-        this._wrap = false;
-        this._textColor = "rgba(0,0,0,1)";
-        this._scrollbarResource = "";
-        this._hScrollbar = new CScrollbar(this);
-        this._vScrollbar = new CScrollbar(this);
-        this._scrollbarLength = 15;
-        this._useHScrollbar = true;
-        this._useVScrollbar = true;
-        this.useTab = true;
-        this.useEnter = true;
-        this.useCtrlA = true;
-        let self = this;
-        this._vScrollbar.scrollbarKind = EScrollBarKind.V;
-        this._hScrollbar.onResource = function () {
-            self.doSetInnerElementSize();
-        };
-        this._vScrollbar.onResource = function () {
-            self.doSetInnerElementSize();
-        };
-        this._hScrollbar.onScroll = function (s, vr) {
-            let len = self.textArea.scrollWidth - parseFloat(CStringUtil.replaceAll(self.textArea.style.width, "px", ""));
-            self.textArea.scrollLeft = len * vr;
-        };
-        this._vScrollbar.onScroll = function (s, vr) {
-            let len = self.textArea.scrollHeight - parseFloat(CStringUtil.replaceAll(self.textArea.style.height, "px", ""));
-            self.textArea.scrollTop = len * vr;
-        };
-        this._hScrollbar.onThisPointerDown = function () {
-            self.__useScrollbar = true;
-        };
-        this._hScrollbar.onThisPointerUp = function () {
-            self.__useScrollbar = false;
-        };
-        this._vScrollbar.onThisPointerDown = function () {
-            self.__useScrollbar = true;
-        };
-        this._vScrollbar.onThisPointerUp = function () {
-            self.__useScrollbar = false;
-        };
-        this.textArea.addEventListener("scroll", function (ev) {
-            if (!self.__useScrollbar) {
-                let len = self.textArea.scrollWidth - parseFloat(CStringUtil.replaceAll(self.textArea.style.width, "px", ""));
-                self.hScrollbar.valueRatio = CCalc.crRange2Value(0, len, self.textArea.scrollLeft, 0, 1);
-                len = self.textArea.scrollHeight - parseFloat(CStringUtil.replaceAll(self.textArea.style.height, "px", ""));
-                self.vScrollbar.valueRatio = CCalc.crRange2Value(0, len, self.textArea.scrollTop, 0, 1);
-            }
-        });
-        this.textArea.addEventListener("keydown", function (ev) {
-            if (ev.key.toUpperCase() == "A" && ev.ctrlKey && self.useCtrlA) {
-                self.textArea.select();
-            }
-            if (ev.code == "Tab" && self.useTab) {
-                var v = self.textArea.value, s = self.textArea.selectionStart, e = self.textArea.selectionEnd;
-                self.textArea.value = v.substring(0, s) + '\t' + v.substring(e);
-                self.textArea.selectionStart = self.textArea.selectionEnd = s + 1;
-                //return false;
-                ev.preventDefault();
-            }
-            if (ev.code == "Enter" && !ev.ctrlKey && self.useEnter) {
-                if (ev.isComposing)
-                    return;
-                var v = self.textArea.value, s = self.textArea.selectionStart, e = self.textArea.selectionEnd;
-                let sss = v.substring(0, s);
-                let ss = "";
-                for (let n = sss.length - 1; n >= 0; n--) {
-                    if (sss[n] == "\n") {
-                        break;
-                    }
-                    else {
-                        ss = sss[n] + ss;
-                    }
-                }
-                let arr = ss.split("\t");
-                let tCnt = arr.length - 1;
-                self.textArea.value = v.substring(0, s) + '\n';
-                for (let n = 0; n < tCnt; n++) {
-                    self.textArea.value = self.textArea.value + "\t";
-                }
-                self.textArea.value = self.textArea.value + v.substring(e);
-                self.textArea.selectionStart = self.textArea.selectionEnd = s + 1 + tCnt;
-                //return false;
-                ev.preventDefault();
-            }
-        });
-    }
     get textArea() {
         return this._element;
     }
@@ -945,6 +857,94 @@ class CTextArea extends CElementControl {
             this._useVScrollbar = value;
             this.doChangeScrollbarInfo();
         }
+    }
+    constructor(parent, name) {
+        super("textarea", parent, name);
+        this.__useScrollbar = false;
+        this._wrap = false;
+        this._textColor = "rgba(0,0,0,1)";
+        this._scrollbarResource = "";
+        this._hScrollbar = new CScrollbar(this);
+        this._vScrollbar = new CScrollbar(this);
+        this._scrollbarLength = 15;
+        this._useHScrollbar = true;
+        this._useVScrollbar = true;
+        this.useTab = true;
+        this.useEnter = true;
+        this.useCtrlA = true;
+        let self = this;
+        this._vScrollbar.scrollbarKind = EScrollBarKind.V;
+        this._hScrollbar.onResource = function () {
+            self.doSetInnerElementSize();
+        };
+        this._vScrollbar.onResource = function () {
+            self.doSetInnerElementSize();
+        };
+        this._hScrollbar.onScroll = function (s, vr) {
+            let len = self.textArea.scrollWidth - parseFloat(CStringUtil.replaceAll(self.textArea.style.width, "px", ""));
+            self.textArea.scrollLeft = len * vr;
+        };
+        this._vScrollbar.onScroll = function (s, vr) {
+            let len = self.textArea.scrollHeight - parseFloat(CStringUtil.replaceAll(self.textArea.style.height, "px", ""));
+            self.textArea.scrollTop = len * vr;
+        };
+        this._hScrollbar.onThisPointerDown = function () {
+            self.__useScrollbar = true;
+        };
+        this._hScrollbar.onThisPointerUp = function () {
+            self.__useScrollbar = false;
+        };
+        this._vScrollbar.onThisPointerDown = function () {
+            self.__useScrollbar = true;
+        };
+        this._vScrollbar.onThisPointerUp = function () {
+            self.__useScrollbar = false;
+        };
+        this.textArea.addEventListener("scroll", function (ev) {
+            if (!self.__useScrollbar) {
+                let len = self.textArea.scrollWidth - parseFloat(CStringUtil.replaceAll(self.textArea.style.width, "px", ""));
+                self.hScrollbar.valueRatio = CCalc.crRange2Value(0, len, self.textArea.scrollLeft, 0, 1);
+                len = self.textArea.scrollHeight - parseFloat(CStringUtil.replaceAll(self.textArea.style.height, "px", ""));
+                self.vScrollbar.valueRatio = CCalc.crRange2Value(0, len, self.textArea.scrollTop, 0, 1);
+            }
+        });
+        this.textArea.addEventListener("keydown", function (ev) {
+            if (ev.key.toUpperCase() == "A" && ev.ctrlKey && self.useCtrlA) {
+                self.textArea.select();
+            }
+            if (ev.code == "Tab" && self.useTab) {
+                var v = self.textArea.value, s = self.textArea.selectionStart, e = self.textArea.selectionEnd;
+                self.textArea.value = v.substring(0, s) + '\t' + v.substring(e);
+                self.textArea.selectionStart = self.textArea.selectionEnd = s + 1;
+                //return false;
+                ev.preventDefault();
+            }
+            if (ev.code == "Enter" && !ev.ctrlKey && self.useEnter) {
+                if (ev.isComposing)
+                    return;
+                var v = self.textArea.value, s = self.textArea.selectionStart, e = self.textArea.selectionEnd;
+                let sss = v.substring(0, s);
+                let ss = "";
+                for (let n = sss.length - 1; n >= 0; n--) {
+                    if (sss[n] == "\n") {
+                        break;
+                    }
+                    else {
+                        ss = sss[n] + ss;
+                    }
+                }
+                let arr = ss.split("\t");
+                let tCnt = arr.length - 1;
+                self.textArea.value = v.substring(0, s) + '\n';
+                for (let n = 0; n < tCnt; n++) {
+                    self.textArea.value = self.textArea.value + "\t";
+                }
+                self.textArea.value = self.textArea.value + v.substring(e);
+                self.textArea.selectionStart = self.textArea.selectionEnd = s + 1 + tCnt;
+                //return false;
+                ev.preventDefault();
+            }
+        });
     }
     doToData(data) {
         super.doToData(data);
@@ -1056,15 +1056,6 @@ var EScrollPressKind;
     EScrollPressKind[EScrollPressKind["BODY"] = 2] = "BODY";
 })(EScrollPressKind || (EScrollPressKind = {}));
 class CCustomScrollBar extends CPanel {
-    constructor(parent, name) {
-        super(parent, name);
-        this._scrollbarKind = EScrollBarKind.H;
-        this._useScrollButton = false;
-        this._min = 0;
-        this._max = 100;
-        this._value = 0;
-        this.usePointerCapture = true;
-    }
     get scrollbarKind() {
         return this._scrollbarKind;
     }
@@ -1125,6 +1116,15 @@ class CCustomScrollBar extends CPanel {
         if (v > 1)
             v = 1;
         this.value = CCalc.crRange2Value(0, 1, value, this.min, this.max);
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this._scrollbarKind = EScrollBarKind.H;
+        this._useScrollButton = false;
+        this._min = 0;
+        this._max = 100;
+        this._value = 0;
+        this.usePointerCapture = true;
     }
     getButtonLength() {
         switch (this._scrollbarKind) {
@@ -1383,61 +1383,6 @@ class CScrollbar extends CCustomScrollBar {
     }
 }
 class CScrollBox extends CPanel {
-    constructor(parent, name) {
-        super(parent, name);
-        this.__useScrollbar = false;
-        this.__autoScroll = 0;
-        this._background = new CPanel(this);
-        //protected _content: CPanel
-        this._scrollbarResource = "";
-        this._hScrollbar = new CScrollbar(this);
-        this._vScrollbar = new CScrollbar(this);
-        this._scrollbarLength = 15;
-        this._useHScrollbar = true;
-        this._useVScrollbar = true;
-        this._scrollAnimatorResource = "";
-        let self = this;
-        this._background.overflow = "scroll";
-        /*this.stopPropagation.down = true
-        this.stopPropagation.move = true
-        this.stopPropagation.up = true
-        this.stopPropagation.wheel = true*/
-        //this._background.overflow = "auto"
-        this._content = new CLayout(this._background);
-        //this._content = new CPanel(this._background)
-        //this._content.overflow = "auto"
-        this.overflow = "hidden";
-        this._vScrollbar.scrollbarKind = EScrollBarKind.V;
-        this._hScrollbar.onResource = function () {
-            self.doSetInnerSize();
-        };
-        this._vScrollbar.onResource = function () {
-            self.doSetInnerSize();
-        };
-        this._hScrollbar.onScroll = function (s, vr) {
-            let len = self.scrollWidth - self._background.position.width;
-            self.scrollLeft = len * vr;
-        };
-        this._vScrollbar.onScroll = function (s, vr) {
-            let len = self.scrollHeight - self._background.position.height;
-            self.scrollTop = len * vr;
-        };
-        this._hScrollbar.onThisPointerDown = function () {
-            self.__useScrollbar = true;
-        };
-        this._hScrollbar.onThisPointerUp = function () {
-            self.__useScrollbar = false;
-        };
-        this._vScrollbar.onThisPointerDown = function () {
-            self.__useScrollbar = true;
-        };
-        this._vScrollbar.onThisPointerUp = function () {
-            self.__useScrollbar = false;
-        };
-        this._background.controlElement.onscroll = function () {
-            self.doScroll();
-        };
-    }
     get scrollAnimatorResource() {
         return this._scrollAnimatorResource;
     }
@@ -1534,6 +1479,61 @@ class CScrollBox extends CPanel {
     }
     get contentViewHeight() {
         return this._background.position.height - this.position.padding.top - this.position.padding.bottom;
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this.__useScrollbar = false;
+        this.__autoScroll = 0;
+        this._background = new CPanel(this);
+        //protected _content: CPanel
+        this._scrollbarResource = "";
+        this._hScrollbar = new CScrollbar(this);
+        this._vScrollbar = new CScrollbar(this);
+        this._scrollbarLength = 15;
+        this._useHScrollbar = true;
+        this._useVScrollbar = true;
+        this._scrollAnimatorResource = "";
+        let self = this;
+        this._background.overflow = "scroll";
+        /*this.stopPropagation.down = true
+        this.stopPropagation.move = true
+        this.stopPropagation.up = true
+        this.stopPropagation.wheel = true*/
+        //this._background.overflow = "auto"
+        this._content = new CLayout(this._background);
+        //this._content = new CPanel(this._background)
+        //this._content.overflow = "auto"
+        this.overflow = "hidden";
+        this._vScrollbar.scrollbarKind = EScrollBarKind.V;
+        this._hScrollbar.onResource = function () {
+            self.doSetInnerSize();
+        };
+        this._vScrollbar.onResource = function () {
+            self.doSetInnerSize();
+        };
+        this._hScrollbar.onScroll = function (s, vr) {
+            let len = self.scrollWidth - self._background.position.width;
+            self.scrollLeft = len * vr;
+        };
+        this._vScrollbar.onScroll = function (s, vr) {
+            let len = self.scrollHeight - self._background.position.height;
+            self.scrollTop = len * vr;
+        };
+        this._hScrollbar.onThisPointerDown = function () {
+            self.__useScrollbar = true;
+        };
+        this._hScrollbar.onThisPointerUp = function () {
+            self.__useScrollbar = false;
+        };
+        this._vScrollbar.onThisPointerDown = function () {
+            self.__useScrollbar = true;
+        };
+        this._vScrollbar.onThisPointerUp = function () {
+            self.__useScrollbar = false;
+        };
+        this._background.controlElement.onscroll = function () {
+            self.doScroll();
+        };
     }
     doToData(data) {
         super.doToData(data);
@@ -1752,75 +1752,6 @@ class CScrollBox extends CPanel {
     }
 }
 class CUnlimitedScrollBox extends CPanel {
-    constructor(parent, name) {
-        super(parent, name);
-        this.__ignoreScroll = false;
-        this.__scrollChecker = 0;
-        this.__useScrollbar = false;
-        this.__autoScroll = 0;
-        this.__preScrollLeft = 0;
-        this.__preScrollTop = 0;
-        this._background = new CPanel(this);
-        this._scrollbarResource = "";
-        this._hScrollbar = new CScrollbar(this);
-        this._vScrollbar = new CScrollbar(this);
-        this._scrollbarLength = 15;
-        this._useHScrollbar = true;
-        this._useVScrollbar = true;
-        this._scrollMinX = -9000000000000000;
-        this._scrollMaxX = 9000000000000000;
-        this._scrollMinY = -9000000000000000;
-        this._scrollMaxY = 9000000000000000;
-        this._scrollX = 0;
-        this._scrollY = 0;
-        this.scrollStopCheckInterval = 100;
-        this.isCirculationX = false;
-        this.isCirculationY = false;
-        this._scrollAnimatorResource = "";
-        let self = this;
-        this._background.overflow = "scroll";
-        /*this._background.stopPropagation.down = true
-        this._background.stopPropagation.move = true
-        this._background.stopPropagation.up = true
-        this._background.stopPropagation.wheel = true*/
-        this.stopPropagation.down = true;
-        this.stopPropagation.move = true;
-        this.stopPropagation.up = true;
-        this.stopPropagation.wheel = true;
-        this._content = new CLayout(this._background);
-        this._content.position.width = 33554400;
-        this._content.position.height = 33554400;
-        this.contentToCenter();
-        this._vScrollbar.scrollbarKind = EScrollBarKind.V;
-        this._hScrollbar.onResource = function () {
-            self.doSetInnerSize();
-        };
-        this._vScrollbar.onResource = function () {
-            self.doSetInnerSize();
-        };
-        this._hScrollbar.onScroll = function (s, vr) {
-            self.scrollX = CCalc.crRange2Value(0, 1, vr, self._scrollMinX, self._scrollMaxX);
-        };
-        this._vScrollbar.onScroll = function (s, vr) {
-            self.scrollY = CCalc.crRange2Value(0, 1, vr, self._scrollMinY, self._scrollMaxY);
-        };
-        this._hScrollbar.onThisPointerDown = function () {
-            self.__useScrollbar = true;
-        };
-        this._hScrollbar.onThisPointerUp = function () {
-            self.__useScrollbar = false;
-        };
-        this._vScrollbar.onThisPointerDown = function () {
-            self.__useScrollbar = true;
-        };
-        this._vScrollbar.onThisPointerUp = function () {
-            self.__useScrollbar = false;
-        };
-        this._background.controlElement.onscroll = function () {
-            if (!self.__ignoreScroll)
-                self.doScroll();
-        };
-    }
     get scrollAnimatorResource() {
         return this._scrollAnimatorResource;
     }
@@ -1989,6 +1920,75 @@ class CUnlimitedScrollBox extends CPanel {
     }
     get contentViewHeight() {
         return this._background.position.height - this.position.padding.top - this.position.padding.bottom;
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this.__ignoreScroll = false;
+        this.__scrollChecker = 0;
+        this.__useScrollbar = false;
+        this.__autoScroll = 0;
+        this.__preScrollLeft = 0;
+        this.__preScrollTop = 0;
+        this._background = new CPanel(this);
+        this._scrollbarResource = "";
+        this._hScrollbar = new CScrollbar(this);
+        this._vScrollbar = new CScrollbar(this);
+        this._scrollbarLength = 15;
+        this._useHScrollbar = true;
+        this._useVScrollbar = true;
+        this._scrollMinX = -9000000000000000;
+        this._scrollMaxX = 9000000000000000;
+        this._scrollMinY = -9000000000000000;
+        this._scrollMaxY = 9000000000000000;
+        this._scrollX = 0;
+        this._scrollY = 0;
+        this.scrollStopCheckInterval = 100;
+        this.isCirculationX = false;
+        this.isCirculationY = false;
+        this._scrollAnimatorResource = "";
+        let self = this;
+        this._background.overflow = "scroll";
+        /*this._background.stopPropagation.down = true
+        this._background.stopPropagation.move = true
+        this._background.stopPropagation.up = true
+        this._background.stopPropagation.wheel = true*/
+        this.stopPropagation.down = true;
+        this.stopPropagation.move = true;
+        this.stopPropagation.up = true;
+        this.stopPropagation.wheel = true;
+        this._content = new CLayout(this._background);
+        this._content.position.width = 33554400;
+        this._content.position.height = 33554400;
+        this.contentToCenter();
+        this._vScrollbar.scrollbarKind = EScrollBarKind.V;
+        this._hScrollbar.onResource = function () {
+            self.doSetInnerSize();
+        };
+        this._vScrollbar.onResource = function () {
+            self.doSetInnerSize();
+        };
+        this._hScrollbar.onScroll = function (s, vr) {
+            self.scrollX = CCalc.crRange2Value(0, 1, vr, self._scrollMinX, self._scrollMaxX);
+        };
+        this._vScrollbar.onScroll = function (s, vr) {
+            self.scrollY = CCalc.crRange2Value(0, 1, vr, self._scrollMinY, self._scrollMaxY);
+        };
+        this._hScrollbar.onThisPointerDown = function () {
+            self.__useScrollbar = true;
+        };
+        this._hScrollbar.onThisPointerUp = function () {
+            self.__useScrollbar = false;
+        };
+        this._vScrollbar.onThisPointerDown = function () {
+            self.__useScrollbar = true;
+        };
+        this._vScrollbar.onThisPointerUp = function () {
+            self.__useScrollbar = false;
+        };
+        this._background.controlElement.onscroll = function () {
+            if (!self.__ignoreScroll)
+                self.doScroll();
+        };
     }
     contentToCenter() {
         this.__ignoreScroll = true;
@@ -2178,54 +2178,6 @@ class CUnlimitedScrollBox extends CPanel {
     }
 }
 class CCustomListControl extends CPanel {
-    constructor(parent, name) {
-        super(parent, name);
-        this._scroll = new CScrollBox(this);
-        this._itemIndex = -1;
-        this._rowHeight = 30;
-        this._itemMargin = 0;
-        this._multiSelect = false;
-        this.useKeyDown = true;
-        let self = this;
-        this._scroll.position.align = EPositionAlign.CLIENT;
-        this._scroll.useHScrollbar = false;
-        this._scroll.onScroll = function () {
-            self.doScroll();
-        };
-        this._scroll.onChangeSize = function () {
-            self.doChangeScrollBoxSize();
-        };
-        this._scroll.position.onChangeSize = function () {
-            self.doChangeScrollBoxSize();
-        };
-        this._scroll.onChangeScrollbarInfo = function () {
-            self.doSetScrollContent();
-        };
-        this.scrollBox.background.onThisPointerDown = function (s, e, pts) {
-            self.doBackgroundPointerDown(e, pts);
-        };
-        this.scrollBox.background.onThisPointerMove = function (s, e, pts) {
-            self.doBackgroundPointerMove(e, pts);
-        };
-        this.scrollBox.background.onThisPointerUp = function (s, e, pts) {
-            self.doBackgroundPointerUp(e, pts);
-        };
-        this.scrollBox.background.onThisPointerCancel = function (s, e, pts) {
-            self.doBackgroundPointerCancel(e, pts);
-        };
-        this.scrollBox.background.onThisPointerOver = function (s, e, pts) {
-            self.doBackgroundPointerOver(e, pts);
-        };
-        this.scrollBox.background.onThisPointerOut = function (s, e, pts) {
-            self.doBackgroundPointerOut(e, pts);
-        };
-        this.scrollBox.background.onThisPointerEnter = function (s, e, pts) {
-            self.doBackgroundPointerEnter(e, pts);
-        };
-        this.scrollBox.background.onThisPointerLeave = function (s, e, pts) {
-            self.doBackgroundPointerLeave(e, pts);
-        };
-    }
     get scrollBox() {
         return this._scroll;
     }
@@ -2296,6 +2248,54 @@ class CCustomListControl extends CPanel {
     }
     get scrollHeight() {
         return this.scrollBox.scrollHeight;
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this._scroll = new CScrollBox(this);
+        this._itemIndex = -1;
+        this._rowHeight = 30;
+        this._itemMargin = 0;
+        this._multiSelect = false;
+        this.useKeyDown = true;
+        let self = this;
+        this._scroll.position.align = EPositionAlign.CLIENT;
+        this._scroll.useHScrollbar = false;
+        this._scroll.onScroll = function () {
+            self.doScroll();
+        };
+        this._scroll.onChangeSize = function () {
+            self.doChangeScrollBoxSize();
+        };
+        this._scroll.position.onChangeSize = function () {
+            self.doChangeScrollBoxSize();
+        };
+        this._scroll.onChangeScrollbarInfo = function () {
+            self.doSetScrollContent();
+        };
+        this.scrollBox.background.onThisPointerDown = function (s, e, pts) {
+            self.doBackgroundPointerDown(e, pts);
+        };
+        this.scrollBox.background.onThisPointerMove = function (s, e, pts) {
+            self.doBackgroundPointerMove(e, pts);
+        };
+        this.scrollBox.background.onThisPointerUp = function (s, e, pts) {
+            self.doBackgroundPointerUp(e, pts);
+        };
+        this.scrollBox.background.onThisPointerCancel = function (s, e, pts) {
+            self.doBackgroundPointerCancel(e, pts);
+        };
+        this.scrollBox.background.onThisPointerOver = function (s, e, pts) {
+            self.doBackgroundPointerOver(e, pts);
+        };
+        this.scrollBox.background.onThisPointerOut = function (s, e, pts) {
+            self.doBackgroundPointerOut(e, pts);
+        };
+        this.scrollBox.background.onThisPointerEnter = function (s, e, pts) {
+            self.doBackgroundPointerEnter(e, pts);
+        };
+        this.scrollBox.background.onThisPointerLeave = function (s, e, pts) {
+            self.doBackgroundPointerLeave(e, pts);
+        };
     }
     getLength() {
         return 0;
@@ -2487,30 +2487,6 @@ class CCustomListControl extends CPanel {
     }
 }
 class CCustomCanvasListBox extends CCustomListControl {
-    constructor(parent, name) {
-        super(parent, name);
-        this.__preItemClick = { time: 0, index: -1 };
-        this.__downIdx = -1;
-        this.__overIdx = -1;
-        this.__offset = new CNotifyPoint(0, 0);
-        this.__listItemData = new Array();
-        this._listItemResource = new Array();
-        this._isDraw = true;
-        this._selecteItems = new Set();
-        this._checkItems = new Set();
-        this._useCheckBox = false;
-        this._checkBoxArea = new CRect(0, 0, 20, 20);
-        let self = this;
-        this.__itemsLayer = this.scrollBox.layers.addLayer();
-        CSystem.elementBrintToFront(this.__itemsLayer.canvas);
-        let ctx = this.__itemsLayer.canvas.getContext("2d");
-        if (ctx != null) {
-            this._itemsContext = ctx;
-        }
-        this.__itemsLayer.onDraw = function () {
-            self.doItemsDraw();
-        };
-    }
     get checkItems() {
         return this._checkItems;
     }
@@ -2564,6 +2540,30 @@ class CCustomCanvasListBox extends CCustomListControl {
             if (this.isDraw)
                 this.__itemsLayer.draw();
         }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this.__preItemClick = { time: 0, index: -1 };
+        this.__downIdx = -1;
+        this.__overIdx = -1;
+        this.__offset = new CNotifyPoint(0, 0);
+        this.__listItemData = new Array();
+        this._listItemResource = new Array();
+        this._isDraw = true;
+        this._selecteItems = new Set();
+        this._checkItems = new Set();
+        this._useCheckBox = false;
+        this._checkBoxArea = new CRect(0, 0, 20, 20);
+        let self = this;
+        this.__itemsLayer = this.scrollBox.layers.addLayer();
+        CSystem.elementBrintToFront(this.__itemsLayer.canvas);
+        let ctx = this.__itemsLayer.canvas.getContext("2d");
+        if (ctx != null) {
+            this._itemsContext = ctx;
+        }
+        this.__itemsLayer.onDraw = function () {
+            self.doItemsDraw();
+        };
     }
     doToData(data) {
         super.doToData(data);
@@ -2801,17 +2801,6 @@ class CCustomCanvasListBox extends CCustomListControl {
     }
 }
 class CCustomListBox extends CCustomCanvasListBox {
-    constructor(parent, name) {
-        super(parent, name);
-        this._items = new CList();
-        this.objects = new Array();
-        let self = this;
-        this.items.onChange = function () {
-            self.doSetScrollContent();
-            if (self.isDraw)
-                self.__itemsLayer.draw();
-        };
-    }
     get items() {
         return this._items;
     }
@@ -2822,6 +2811,17 @@ class CCustomListBox extends CCustomCanvasListBox {
             rt.push(self._items.get(v));
         });
         return rt;
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this._items = new CList();
+        this.objects = new Array();
+        let self = this;
+        this.items.onChange = function () {
+            self.doSetScrollContent();
+            if (self.isDraw)
+                self.__itemsLayer.draw();
+        };
     }
     getLength() {
         return this._items.length;
@@ -2941,19 +2941,6 @@ class CObjectListBox extends CCustomListBox {
     }
 }
 class CCustomTreeListBox extends CCustomCanvasListBox {
-    constructor(parent, name) {
-        super(parent, name);
-        this.__items = new Array();
-        this._items = new CTreeData();
-        this._stateArea = new CRect(0, 0, 20, 20);
-        this._levelLength = 20;
-        let self = this;
-        this._items.onChange = function () {
-            self.__items = self.items.getExpandedItems();
-            self.doSetScrollContent();
-            self.itemsDraw();
-        };
-    }
     get items() {
         return this._items;
     }
@@ -2975,6 +2962,19 @@ class CCustomTreeListBox extends CCustomCanvasListBox {
         if (value) {
             this.itemsDraw();
         }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this.__items = new Array();
+        this._items = new CTreeData();
+        this._stateArea = new CRect(0, 0, 20, 20);
+        this._levelLength = 20;
+        let self = this;
+        this._items.onChange = function () {
+            self.__items = self.items.getExpandedItems();
+            self.doSetScrollContent();
+            self.itemsDraw();
+        };
     }
     getLength() {
         return this.__items.length;
@@ -3163,6 +3163,14 @@ class CObjectTreeListBox extends CCustomTreeListBox {
     }
 }
 class CListViewItem extends CButton {
+    get index() {
+        let idx = this.listView.yToIndex(this.position.top).index;
+        if (idx < 0)
+            idx = 0;
+        if (idx > this.listView.listItems.length - 1)
+            idx = this.listView.listItems.length - 1;
+        return idx;
+    }
     constructor(parent, name) {
         super(parent, name);
         this.orderControl = new CPanel(this);
@@ -3239,14 +3247,6 @@ class CListViewItem extends CButton {
             self.opacity = 1;
         };
     }
-    get index() {
-        let idx = this.listView.yToIndex(this.position.top).index;
-        if (idx < 0)
-            idx = 0;
-        if (idx > this.listView.listItems.length - 1)
-            idx = this.listView.listItems.length - 1;
-        return idx;
-    }
     doToData(data) {
         super.doToData(data);
         CDataClass.putData(data, "orderControl", this.orderControl.toData(), {}, true);
@@ -3257,18 +3257,6 @@ class CListViewItem extends CButton {
     }
 }
 class CCustomListView extends CCustomListControl {
-    constructor(parent, name) {
-        super(parent, name);
-        this._listItems = new CList();
-        this._selectItems = new Set();
-        this.listItemResource = "";
-        let self = this;
-        this.scrollBox.content.onChangeSize = function () {
-            for (let n = 0; n < self.listItems.length; n++) {
-                self.setItemPosition(n, self.listItems.get(n));
-            }
-        };
-    }
     get selectedItems() {
         let arr = new Array();
         this._selectItems.forEach(function (v) {
@@ -3284,6 +3272,18 @@ class CCustomListView extends CCustomListControl {
     }
     get listItems() {
         return this._listItems;
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this._listItems = new CList();
+        this._selectItems = new Set();
+        this.listItemResource = "";
+        let self = this;
+        this.scrollBox.content.onChangeSize = function () {
+            for (let n = 0; n < self.listItems.length; n++) {
+                self.setItemPosition(n, self.listItems.get(n));
+            }
+        };
     }
     getLength() {
         return this._listItems.length;
@@ -3489,21 +3489,6 @@ class CCustomPickupButton extends CButton {
     }
 }
 class CComboBox extends CButton {
-    constructor(parent, name) {
-        super(parent, name);
-        this._itemIndex = -1;
-        this._list = new CListBox();
-        this._selectText = "";
-        this._listBoxResource = "";
-        this._listItemResource = [];
-        this._listScrollbarResource = "";
-        let self = this;
-        this.listBox.onItemClick = function () {
-            self.doPointerOut(new PointerEvent(""));
-            self.itemIndex = self.listBox.itemIndex;
-            self.listBox.parent.hide();
-        };
-    }
     get itemIndex() {
         return this._itemIndex;
     }
@@ -3557,6 +3542,21 @@ class CComboBox extends CButton {
     get items() {
         return this._list.items;
     }
+    constructor(parent, name) {
+        super(parent, name);
+        this._itemIndex = -1;
+        this._list = new CListBox();
+        this._selectText = "";
+        this._listBoxResource = "";
+        this._listItemResource = [];
+        this._listScrollbarResource = "";
+        let self = this;
+        this.listBox.onItemClick = function () {
+            self.doPointerOut(new PointerEvent(""));
+            self.itemIndex = self.listBox.itemIndex;
+            self.listBox.parent.hide();
+        };
+    }
     doToData(data) {
         super.doToData(data);
         CDataClass.putData(data, "selectText", this.selectText, "");
@@ -3609,16 +3609,6 @@ class CComboBox extends CButton {
     }
 }
 class CLanguageComboBox extends CComboBox {
-    constructor(parent, name) {
-        super(parent, name);
-        this.__languageCodes = [];
-        this.__languageLocalNames = [];
-        this._languageNames = new CList();
-        let self = this;
-        this._languageNames.onChange = function () {
-            self.doChangeLanguageNames();
-        };
-    }
     get languageCodes() {
         let arr = new Array();
         for (let n = 0; n < this.__languageCodes.length; n++) {
@@ -3653,6 +3643,16 @@ class CLanguageComboBox extends CComboBox {
             }
         }
         this.itemIndex = idx;
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this.__languageCodes = [];
+        this.__languageLocalNames = [];
+        this._languageNames = new CList();
+        let self = this;
+        this._languageNames.onChange = function () {
+            self.doChangeLanguageNames();
+        };
     }
     doChangeLanguageNames() {
         this.__languageCodes = [];
@@ -3730,43 +3730,6 @@ class CSplitter extends CPanel {
     }
 }
 class CCustomUnlimitedScrollBoxControl extends CPanel {
-    constructor(parent, name) {
-        super(parent, name);
-        this.scrollBox = new CUnlimitedScrollBox(this);
-        let self = this;
-        this.scrollBox.position.align = EPositionAlign.CLIENT;
-        this.scrollBox.onSetInnerSize = function () {
-            self.doSetInnerSize();
-        };
-        this.scrollBox.onChangeScrollValue = function () {
-            self.doScrollBoxUpdate();
-            self.doScroll(self.scrollBox.scrollX, self.scrollBox.scrollY);
-        };
-        this.scrollBox.background.onThisPointerDown = function (s, e, pts) {
-            self.doBackgoundPointerDown(e, pts);
-        };
-        this.scrollBox.background.onThisPointerMove = function (s, e, pts) {
-            self.doBackgoundPointerMove(e, pts);
-        };
-        this.scrollBox.background.onThisPointerUp = function (s, e, pts) {
-            self.doBackgoundPointerUp(e, pts);
-        };
-        this.scrollBox.background.onThisPointerCancel = function (s, e, pts) {
-            self.doBackgoundPointerCancel(e, pts);
-        };
-        this.scrollBox.background.onThisPointerOver = function (s, e, pts) {
-            self.doBackgoundPointerOver(e, pts);
-        };
-        this.scrollBox.background.onThisPointerOut = function (s, e, pts) {
-            self.doBackgoundPointerOut(e, pts);
-        };
-        this.scrollBox.background.onThisPointerEnter = function (s, e, pts) {
-            self.doBackgoundPointerEnter(e, pts);
-        };
-        this.scrollBox.background.onThisPointerLeave = function (s, e, pts) {
-            self.doBackgoundPointerLeave(e, pts);
-        };
-    }
     get scrollMinX() {
         return this.scrollBox.scrollMinX;
     }
@@ -3805,6 +3768,43 @@ class CCustomUnlimitedScrollBoxControl extends CPanel {
     }
     get backgroundArea() {
         return new CRect(this.scrollBox.background.position.left, this.scrollBox.background.position.top, this.scrollBox.background.position.right, this.scrollBox.background.position.bottom);
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this.scrollBox = new CUnlimitedScrollBox(this);
+        let self = this;
+        this.scrollBox.position.align = EPositionAlign.CLIENT;
+        this.scrollBox.onSetInnerSize = function () {
+            self.doSetInnerSize();
+        };
+        this.scrollBox.onChangeScrollValue = function () {
+            self.doScrollBoxUpdate();
+            self.doScroll(self.scrollBox.scrollX, self.scrollBox.scrollY);
+        };
+        this.scrollBox.background.onThisPointerDown = function (s, e, pts) {
+            self.doBackgoundPointerDown(e, pts);
+        };
+        this.scrollBox.background.onThisPointerMove = function (s, e, pts) {
+            self.doBackgoundPointerMove(e, pts);
+        };
+        this.scrollBox.background.onThisPointerUp = function (s, e, pts) {
+            self.doBackgoundPointerUp(e, pts);
+        };
+        this.scrollBox.background.onThisPointerCancel = function (s, e, pts) {
+            self.doBackgoundPointerCancel(e, pts);
+        };
+        this.scrollBox.background.onThisPointerOver = function (s, e, pts) {
+            self.doBackgoundPointerOver(e, pts);
+        };
+        this.scrollBox.background.onThisPointerOut = function (s, e, pts) {
+            self.doBackgoundPointerOut(e, pts);
+        };
+        this.scrollBox.background.onThisPointerEnter = function (s, e, pts) {
+            self.doBackgoundPointerEnter(e, pts);
+        };
+        this.scrollBox.background.onThisPointerLeave = function (s, e, pts) {
+            self.doBackgoundPointerLeave(e, pts);
+        };
     }
     doSetInnerSize() {
         this.doScrollBoxUpdate();
@@ -3917,60 +3917,6 @@ class CCellSelectInfoList extends CList {
     }
 }
 class CGridInfo extends CNotifyChangeKindObject {
-    constructor() {
-        super();
-        //header
-        this._useHeader = true;
-        this._headerCount = 1;
-        this._headerRowHeight = 20;
-        this.mergeHeaderCell = new CCellSelectInfoList();
-        //indicator
-        this._useIndicator = true;
-        this._indicatorWidth = 50;
-        //fix
-        this.fixLeft = new CNumberList();
-        this.fixTop = new CNumberList();
-        this.fixRight = new CNumberList();
-        this.fixBottom = new CNumberList();
-        //body
-        this._defaultColumnWidth = 100;
-        this._defaultRowHeight = 20;
-        this._cellMargin = 0;
-        this.diffColumnSize = new CNNMap();
-        this.diffRowSize = new CNNMap();
-        this.mergeCell = new CCellSelectInfoList();
-        this._useFitWidth = false;
-        this._columnCount = 10;
-        this._rowCount = 0;
-        this.useResizeColumn = false;
-        this.useResizeRow = false;
-        this.resizeGripLength = 5;
-        let self = this;
-        this.mergeHeaderCell.onChange = function () {
-            self.doChange(CGridInfo.CON_CHANGE_MERGE_HEADER_CELL);
-        };
-        this.fixLeft.onChange = function () {
-            self.doChange(CGridInfo.CON_CHANGE_FIX_COUNT);
-        };
-        this.fixTop.onChange = function () {
-            self.doChange(CGridInfo.CON_CHANGE_FIX_COUNT);
-        };
-        this.fixRight.onChange = function () {
-            self.doChange(CGridInfo.CON_CHANGE_FIX_COUNT);
-        };
-        this.fixBottom.onChange = function () {
-            self.doChange(CGridInfo.CON_CHANGE_FIX_COUNT);
-        };
-        this.diffColumnSize.onChange = function () {
-            self.doChange(CGridInfo.CON_CHANGE_DIFF_COLUMN_SIZE);
-        };
-        this.diffRowSize.onChange = function () {
-            self.doChange(CGridInfo.CON_CHANGE_DIFF_ROW_SIZE);
-        };
-        this.mergeCell.onChange = function () {
-            self.doChange(CGridInfo.CON_CHANGE_MERGE_CELL);
-        };
-    }
     static get CON_CHANGE_USE_HEADER() { return "useHeader"; }
     static get CON_CHANGE_HEADER_COUNT() { return "headerCount"; }
     static get CON_CHANGE_HEADER_ROW_HEIGHT() { return "headerRowHeight"; }
@@ -4086,6 +4032,60 @@ class CGridInfo extends CNotifyChangeKindObject {
             this.doChange(CGridInfo.CON_CHANGE_COLUMN_COUNT);
         }
     }
+    constructor() {
+        super();
+        //header
+        this._useHeader = true;
+        this._headerCount = 1;
+        this._headerRowHeight = 20;
+        this.mergeHeaderCell = new CCellSelectInfoList();
+        //indicator
+        this._useIndicator = true;
+        this._indicatorWidth = 50;
+        //fix
+        this.fixLeft = new CNumberList();
+        this.fixTop = new CNumberList();
+        this.fixRight = new CNumberList();
+        this.fixBottom = new CNumberList();
+        //body
+        this._defaultColumnWidth = 100;
+        this._defaultRowHeight = 20;
+        this._cellMargin = 0;
+        this.diffColumnSize = new CNNMap();
+        this.diffRowSize = new CNNMap();
+        this.mergeCell = new CCellSelectInfoList();
+        this._useFitWidth = false;
+        this._columnCount = 10;
+        this._rowCount = 0;
+        this.useResizeColumn = false;
+        this.useResizeRow = false;
+        this.resizeGripLength = 5;
+        let self = this;
+        this.mergeHeaderCell.onChange = function () {
+            self.doChange(CGridInfo.CON_CHANGE_MERGE_HEADER_CELL);
+        };
+        this.fixLeft.onChange = function () {
+            self.doChange(CGridInfo.CON_CHANGE_FIX_COUNT);
+        };
+        this.fixTop.onChange = function () {
+            self.doChange(CGridInfo.CON_CHANGE_FIX_COUNT);
+        };
+        this.fixRight.onChange = function () {
+            self.doChange(CGridInfo.CON_CHANGE_FIX_COUNT);
+        };
+        this.fixBottom.onChange = function () {
+            self.doChange(CGridInfo.CON_CHANGE_FIX_COUNT);
+        };
+        this.diffColumnSize.onChange = function () {
+            self.doChange(CGridInfo.CON_CHANGE_DIFF_COLUMN_SIZE);
+        };
+        this.diffRowSize.onChange = function () {
+            self.doChange(CGridInfo.CON_CHANGE_DIFF_ROW_SIZE);
+        };
+        this.mergeCell.onChange = function () {
+            self.doChange(CGridInfo.CON_CHANGE_MERGE_CELL);
+        };
+    }
     doToData(data) {
         super.doToData(data);
         CDataClass.putData(data, "useHeader", this.useHeader, true);
@@ -4154,6 +4154,18 @@ var EPointerAreaKind;
     EPointerAreaKind[EPointerAreaKind["CLIENT"] = 16] = "CLIENT";
 })(EPointerAreaKind || (EPointerAreaKind = {}));
 class CCustomGrid extends CCustomUnlimitedScrollBoxControl {
+    get scrollbarResource() {
+        return this.scrollBox.scrollbarResource;
+    }
+    set scrollbarResource(value) {
+        this.scrollBox.scrollbarResource = value;
+    }
+    get scrollbarLength() {
+        return this.scrollBox.scrollbarLength;
+    }
+    set scrollbarLength(value) {
+        this.scrollBox.scrollbarLength = value;
+    }
     constructor(parent, name) {
         super(parent, name);
         this.__cellInfo = { kind: EPointerAreaKind.NONE, col: -1, row: -1, x: -1, y: -1 };
@@ -4168,18 +4180,6 @@ class CCustomGrid extends CCustomUnlimitedScrollBoxControl {
             self.doChangeGridInfo(kind);
         };
         this.doScrollBoxUpdate();
-    }
-    get scrollbarResource() {
-        return this.scrollBox.scrollbarResource;
-    }
-    set scrollbarResource(value) {
-        this.scrollBox.scrollbarResource = value;
-    }
-    get scrollbarLength() {
-        return this.scrollBox.scrollbarLength;
-    }
-    set scrollbarLength(value) {
-        this.scrollBox.scrollbarLength = value;
     }
     doToData(data) {
         super.doToData(data);
@@ -5838,25 +5838,6 @@ var ECellControlAlign;
     ECellControlAlign[ECellControlAlign["RIGHT"] = 2] = "RIGHT";
 })(ECellControlAlign || (ECellControlAlign = {}));
 class CCellControl extends CNotifyChangeKindObject {
-    constructor() {
-        super();
-        this._canvasItemsData = new CCanvasItems();
-        this._align = ECellControlAlign.RIGHT;
-        //protected _checked = false
-        this._width = 30;
-        this._margins = new CNotifyRect();
-        this._controlCanvasItemsResource = "";
-        this._name = "";
-        this._text = "";
-        this._isOver = false;
-        this.col = -1;
-        this.row = -1;
-        this.bounds = new CRect();
-        let self = this;
-        this.margins.onChange = function () {
-            self.doChange("margins");
-        };
-    }
     get canvasItemsData() {
         return this._canvasItemsData;
     }
@@ -5912,117 +5893,27 @@ class CCellControl extends CNotifyChangeKindObject {
             this.doChange("isOver");
         }
     }
-}
-class CCustumCanvasGrid extends CCustomGrid {
-    constructor(parent, name) {
-        super(parent, name);
-        this.isDraw = true;
-        this.__cellTopLeftFixData = new Array();
-        this.__cellTopData = new Array();
-        this.__cellTopRightFixData = new Array();
-        this.__cellBottomLeftFixData = new Array();
-        this.__cellBottomData = new Array();
-        this.__cellBottomRightFixData = new Array();
-        this.__cellLeftFixData = new Array();
-        this.__cellRightFixData = new Array();
-        this.__cellData = new Array();
-        this.__headerLeftFixData = new Array();
-        this.__headerData = new Array();
-        this.__headerRightFixData = new Array();
-        this.__indicatorTopFixData = new Array();
-        this.__indicatorData = new Array();
-        this.__indicatorBottomFixData = new Array();
-        this.__headerButtonData = new CCanvasItems();
-        this._cellTopLeftFixResource = new ArrayString();
-        this._cellTopResource = new ArrayString();
-        this._cellTopRightFixResource = new ArrayString();
-        this._cellBottomLeftFixResource = new ArrayString();
-        this._cellBottomResource = new ArrayString();
-        this._cellBottomRightFixResource = new ArrayString();
-        this._cellLeftFixResource = new ArrayString();
-        this._cellRightFixResource = new ArrayString();
-        this._cellResource = new ArrayString();
-        this._headerLeftFixResource = new ArrayString();
-        this._headerResource = new ArrayString();
-        this._headerRightFixResource = new ArrayString();
-        this._headerButtonResource = "";
-        this._indicatorTopFixResource = new ArrayString();
-        this._indicatorResource = new ArrayString();
-        this._indicatorBottomFixResource = new ArrayString();
-        this._selectItems = new CStringSet();
-        this._multiSelect = false;
-        this._rowSelect = true;
-        this.specificCellCanvasItemsResources = new CMap();
-        this.specificCell = new CMap();
-        this.specificColumn = new CMap();
-        this.specificRow = new CMap();
-        this.cellControls = new CMap();
-        this.columnControl = new CMap();
+    constructor() {
+        super();
+        this._canvasItemsData = new CCanvasItems();
+        this._align = ECellControlAlign.RIGHT;
+        //protected _checked = false
+        this._width = 30;
+        this._margins = new CNotifyRect();
+        this._controlCanvasItemsResource = "";
+        this._name = "";
+        this._text = "";
+        this._isOver = false;
+        this.col = -1;
+        this.row = -1;
+        this.bounds = new CRect();
         let self = this;
-        this.__itemsLayer = this.scrollBox.layers.addLayer();
-        CSystem.elementBrintToFront(this.__itemsLayer.canvas);
-        this.__itemsLayer.onDraw = function (sender, ctx) {
-            self.doItemLayerDraw(ctx);
-            self.scrollBox.doScroll();
-        };
-        this._selectItems.onChange = function () {
-            self.itemLayerDraw();
-        };
-        this.cellControls.onChange = function (s, k, key, value) {
-            if (value != undefined) {
-                let cr = k.split(",");
-                value.onChange = function () {
-                    for (let n = 0; n < value.length; n++) {
-                        value.get(n).onChange = function () {
-                            self.doChangeCellControl(parseInt(cr[0]), parseInt(cr[1]), parseInt(cr[2]), value.get(n));
-                            self.itemLayerDraw();
-                        };
-                    }
-                    self.itemLayerDraw();
-                };
-                for (let n = 0; n < value.length; n++) {
-                    value.get(n).onChange = function () {
-                        self.doChangeCellControl(parseInt(cr[0]), parseInt(cr[1]), parseInt(cr[2]), value.get(n));
-                        self.itemLayerDraw();
-                    };
-                }
-            }
-            self.itemLayerDraw();
-        };
-        this.columnControl.onChange = function (s, k, key, value) {
-            if (value != undefined) {
-                let cr = k.split(",");
-                value.onChange = function () {
-                    for (let n = 0; n < value.length; n++) {
-                        value.get(n).onChange = function () {
-                            self.doChangeCellControl(parseInt(cr[0]), parseInt(cr[1]), parseInt(cr[2]), value.get(n));
-                            self.itemLayerDraw();
-                        };
-                    }
-                    self.itemLayerDraw();
-                };
-                for (let n = 0; n < value.length; n++) {
-                    value.get(n).onChange = function () {
-                        self.doChangeCellControl(parseInt(cr[0]), parseInt(cr[1]), parseInt(cr[2]), value.get(n));
-                        self.itemLayerDraw();
-                    };
-                }
-            }
-            self.itemLayerDraw();
-        };
-        this.specificCellCanvasItemsResources.onChange = function (s, k, key, value) {
-            self.itemLayerDraw();
-        };
-        this.specificCell.onChange = function () {
-            self.itemLayerDraw();
-        };
-        this.specificColumn.onChange = function () {
-            self.itemLayerDraw();
-        };
-        this.specificRow.onChange = function () {
-            self.itemLayerDraw();
+        this.margins.onChange = function () {
+            self.doChange("margins");
         };
     }
+}
+class CCustumCanvasGrid extends CCustomGrid {
     get cellTopLeftFixResource() {
         return this._cellTopLeftFixResource;
     }
@@ -6278,6 +6169,115 @@ class CCustumCanvasGrid extends CCustomGrid {
     }
     get selectItems() {
         return this._selectItems;
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this.isDraw = true;
+        this.__cellTopLeftFixData = new Array();
+        this.__cellTopData = new Array();
+        this.__cellTopRightFixData = new Array();
+        this.__cellBottomLeftFixData = new Array();
+        this.__cellBottomData = new Array();
+        this.__cellBottomRightFixData = new Array();
+        this.__cellLeftFixData = new Array();
+        this.__cellRightFixData = new Array();
+        this.__cellData = new Array();
+        this.__headerLeftFixData = new Array();
+        this.__headerData = new Array();
+        this.__headerRightFixData = new Array();
+        this.__indicatorTopFixData = new Array();
+        this.__indicatorData = new Array();
+        this.__indicatorBottomFixData = new Array();
+        this.__headerButtonData = new CCanvasItems();
+        this._cellTopLeftFixResource = new ArrayString();
+        this._cellTopResource = new ArrayString();
+        this._cellTopRightFixResource = new ArrayString();
+        this._cellBottomLeftFixResource = new ArrayString();
+        this._cellBottomResource = new ArrayString();
+        this._cellBottomRightFixResource = new ArrayString();
+        this._cellLeftFixResource = new ArrayString();
+        this._cellRightFixResource = new ArrayString();
+        this._cellResource = new ArrayString();
+        this._headerLeftFixResource = new ArrayString();
+        this._headerResource = new ArrayString();
+        this._headerRightFixResource = new ArrayString();
+        this._headerButtonResource = "";
+        this._indicatorTopFixResource = new ArrayString();
+        this._indicatorResource = new ArrayString();
+        this._indicatorBottomFixResource = new ArrayString();
+        this._selectItems = new CStringSet();
+        this._multiSelect = false;
+        this._rowSelect = true;
+        this.specificCellCanvasItemsResources = new CMap();
+        this.specificCell = new CMap();
+        this.specificColumn = new CMap();
+        this.specificRow = new CMap();
+        this.cellControls = new CMap();
+        this.columnControl = new CMap();
+        let self = this;
+        this.__itemsLayer = this.scrollBox.layers.addLayer();
+        CSystem.elementBrintToFront(this.__itemsLayer.canvas);
+        this.__itemsLayer.onDraw = function (sender, ctx) {
+            self.doItemLayerDraw(ctx);
+            self.scrollBox.doScroll();
+        };
+        this._selectItems.onChange = function () {
+            self.itemLayerDraw();
+        };
+        this.cellControls.onChange = function (s, k, key, value) {
+            if (value != undefined) {
+                let cr = k.split(",");
+                value.onChange = function () {
+                    for (let n = 0; n < value.length; n++) {
+                        value.get(n).onChange = function () {
+                            self.doChangeCellControl(parseInt(cr[0]), parseInt(cr[1]), parseInt(cr[2]), value.get(n));
+                            self.itemLayerDraw();
+                        };
+                    }
+                    self.itemLayerDraw();
+                };
+                for (let n = 0; n < value.length; n++) {
+                    value.get(n).onChange = function () {
+                        self.doChangeCellControl(parseInt(cr[0]), parseInt(cr[1]), parseInt(cr[2]), value.get(n));
+                        self.itemLayerDraw();
+                    };
+                }
+            }
+            self.itemLayerDraw();
+        };
+        this.columnControl.onChange = function (s, k, key, value) {
+            if (value != undefined) {
+                let cr = k.split(",");
+                value.onChange = function () {
+                    for (let n = 0; n < value.length; n++) {
+                        value.get(n).onChange = function () {
+                            self.doChangeCellControl(parseInt(cr[0]), parseInt(cr[1]), parseInt(cr[2]), value.get(n));
+                            self.itemLayerDraw();
+                        };
+                    }
+                    self.itemLayerDraw();
+                };
+                for (let n = 0; n < value.length; n++) {
+                    value.get(n).onChange = function () {
+                        self.doChangeCellControl(parseInt(cr[0]), parseInt(cr[1]), parseInt(cr[2]), value.get(n));
+                        self.itemLayerDraw();
+                    };
+                }
+            }
+            self.itemLayerDraw();
+        };
+        this.specificCellCanvasItemsResources.onChange = function (s, k, key, value) {
+            self.itemLayerDraw();
+        };
+        this.specificCell.onChange = function () {
+            self.itemLayerDraw();
+        };
+        this.specificColumn.onChange = function () {
+            self.itemLayerDraw();
+        };
+        this.specificRow.onChange = function () {
+            self.itemLayerDraw();
+        };
     }
     doToData(data) {
         super.doToData(data);
@@ -6950,47 +6950,6 @@ var EEditorShowKind;
     EEditorShowKind[EEditorShowKind["F2_KEY"] = 2] = "F2_KEY";
 })(EEditorShowKind || (EEditorShowKind = {}));
 class CCustomDataGrid extends CCustumCanvasGrid {
-    constructor(parent, name) {
-        super(parent, name);
-        this._topFixHeaders = new CStringList();
-        this._topFixHeight = 20;
-        this._bottomFixHeaders = new CStringList();
-        this._bottomFixHeight = 20;
-        this._leftFixHeaders = new CStringList();
-        this._leftFixWidth = 100;
-        this._rightFixHeaders = new CStringList();
-        this._rightFixWidth = 100;
-        this._headerText = new CSSMap();
-        this._topIndicatorText = new CStringList();
-        this._indicatorText = new CStringList();
-        this._bottomIndicatorText = new CStringList();
-        this._leftHeaderText = new CStringList();
-        this._rightHeaderText = new CStringList();
-        this._column = -1;
-        this._row = -1;
-        this.readOnlyCell = new Set();
-        this.readOnlyColumn = new Set();
-        this.readOnlyRow = new Set();
-        this.useEditorEnter = false;
-        this.editorShowSet = new Set();
-        let self = this;
-        this.gridInfo.cellMargin = 1;
-        this.gridInfo.columnCount = 0;
-        this.gridInfo.rowCount = 0;
-        this.gridInfo.headerRowHeight = 25;
-        this._topFixHeaders.onChange = function () {
-            self.doTopFixCreateData();
-        };
-        this._bottomFixHeaders.onChange = function () {
-            self.doBottomFixCreateData();
-        };
-        this._leftFixHeaders.onChange = function () {
-            self.doLeftFixCreateData();
-        };
-        this._rightFixHeaders.onChange = function () {
-            self.doRightFixCreateData();
-        };
-    }
     get headerText() {
         return this._headerText;
     }
@@ -7096,6 +7055,47 @@ class CCustomDataGrid extends CCustumCanvasGrid {
         if (this._row != value) {
             this._row = value;
         }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this._topFixHeaders = new CStringList();
+        this._topFixHeight = 20;
+        this._bottomFixHeaders = new CStringList();
+        this._bottomFixHeight = 20;
+        this._leftFixHeaders = new CStringList();
+        this._leftFixWidth = 100;
+        this._rightFixHeaders = new CStringList();
+        this._rightFixWidth = 100;
+        this._headerText = new CSSMap();
+        this._topIndicatorText = new CStringList();
+        this._indicatorText = new CStringList();
+        this._bottomIndicatorText = new CStringList();
+        this._leftHeaderText = new CStringList();
+        this._rightHeaderText = new CStringList();
+        this._column = -1;
+        this._row = -1;
+        this.readOnlyCell = new Set();
+        this.readOnlyColumn = new Set();
+        this.readOnlyRow = new Set();
+        this.useEditorEnter = false;
+        this.editorShowSet = new Set();
+        let self = this;
+        this.gridInfo.cellMargin = 1;
+        this.gridInfo.columnCount = 0;
+        this.gridInfo.rowCount = 0;
+        this.gridInfo.headerRowHeight = 25;
+        this._topFixHeaders.onChange = function () {
+            self.doTopFixCreateData();
+        };
+        this._bottomFixHeaders.onChange = function () {
+            self.doBottomFixCreateData();
+        };
+        this._leftFixHeaders.onChange = function () {
+            self.doLeftFixCreateData();
+        };
+        this._rightFixHeaders.onChange = function () {
+            self.doRightFixCreateData();
+        };
     }
     isEditableCell(col, row) {
         if (!this.editable)
@@ -7535,19 +7535,6 @@ class CCustomDataGrid extends CCustumCanvasGrid {
     setCell(column, row, value) { }
 }
 class CDataGrid extends CCustomDataGrid {
-    constructor(parent, name) {
-        super(parent, name);
-        this._headers = new CStringList();
-        this._indexColumns = new CStringList();
-        let self = this;
-        this.hasFocus = true;
-        this._headers.onChange = function () {
-            self.doCreateData();
-        };
-        this._indexColumns.onChange = function () {
-            self.doCreateData();
-        };
-    }
     get datas() {
         let arr = new Array();
         if (this.__data != undefined) {
@@ -7630,6 +7617,19 @@ class CDataGrid extends CCustomDataGrid {
         else {
             return 0;
         }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this._headers = new CStringList();
+        this._indexColumns = new CStringList();
+        let self = this;
+        this.hasFocus = true;
+        this._headers.onChange = function () {
+            self.doCreateData();
+        };
+        this._indexColumns.onChange = function () {
+            self.doCreateData();
+        };
     }
     doToData(data) {
         super.doToData(data);
@@ -7935,94 +7935,6 @@ var ETabButtonKind;
     ETabButtonKind[ETabButtonKind["AUTO_SIZE"] = 1] = "AUTO_SIZE";
 })(ETabButtonKind || (ETabButtonKind = {}));
 class CTabButton extends CPanel {
-    constructor(parent, name) {
-        super(parent, name);
-        this.__scrollInterval = 0;
-        this.__buttons = new Array();
-        this._scrollBox = new CScrollBox(this);
-        this._leftButton = new CButton(this);
-        this._deleteButton = new CButton(this);
-        this._addButton = new CButton(this);
-        this._rightButton = new CButton(this);
-        this._tabs = new CStringList();
-        this._index = -1;
-        this._tabButtonResource = "";
-        this._leftButtonResource = "";
-        this._rightButtonResource = "";
-        this._addButtonResource = "";
-        this._deleteButtonResource = "";
-        this._kind = ETabButtonKind.ALIGN;
-        this._managementButtonLength = 30;
-        this._tabButtonMargin = 0;
-        this._useArrowButton = false;
-        this._useAddButton = false;
-        this._useDeleteButton = false;
-        this._leftButtonText = "";
-        this._rightButtonText = "";
-        this._addButtonText = "";
-        this._deleteButtonText = "";
-        this.defaultTabName = "Tab";
-        let self = this;
-        this._scrollBox.position.align = EPositionAlign.CLIENT;
-        this._scrollBox.onChangeSize = function () {
-            self.doSetButtions();
-        };
-        this._scrollBox.useHScrollbar = false;
-        this._scrollBox.useVScrollbar = false;
-        this._rightButton.position.align = EPositionAlign.RIGHT;
-        this._rightButton.onResource = function () {
-            self._rightButton.position.align = EPositionAlign.RIGHT;
-            self._rightButton.usePointerCapture = true;
-            self._rightButton.text = self._rightButtonText;
-        };
-        this._rightButton.onThisPointerDown = function () {
-            if (self.__scrollInterval == 0) {
-                self.__scrollInterval = setInterval(function () {
-                    self.doTabButtonContentScroll(10);
-                }, 16);
-            }
-        };
-        this._rightButton.onThisPointerUp = function () {
-            clearInterval(self.__scrollInterval);
-            self.__scrollInterval = 0;
-        };
-        this._addButton.position.align = EPositionAlign.RIGHT;
-        this._addButton.onClick = function () {
-            self.doAddTab(CSequence.getSequence(self.defaultTabName));
-        };
-        this._addButton.onResource = function () {
-            self._addButton.position.align = EPositionAlign.RIGHT;
-            self._addButton.text = self._addButtonText;
-        };
-        this._deleteButton.position.align = EPositionAlign.RIGHT;
-        this._deleteButton.onClick = function () {
-            self.doDeleteTab();
-        };
-        this._deleteButton.onResource = function () {
-            self._deleteButton.position.align = EPositionAlign.RIGHT;
-            self._deleteButton.text = self._deleteButtonText;
-        };
-        this._leftButton.position.align = EPositionAlign.LEFT;
-        this._leftButton.onResource = function () {
-            self._leftButton.position.align = EPositionAlign.LEFT;
-            self._leftButton.usePointerCapture = true;
-            self._leftButton.text = self._leftButtonText;
-        };
-        this._leftButton.onThisPointerDown = function () {
-            if (self.__scrollInterval == 0) {
-                self.__scrollInterval = setInterval(function () {
-                    self.doTabButtonContentScroll(-10);
-                }, 16);
-            }
-        };
-        this._leftButton.onThisPointerUp = function () {
-            clearInterval(self.__scrollInterval);
-            self.__scrollInterval = 0;
-        };
-        this._tabs.onChange = function () {
-            self.doChangeTabs();
-        };
-    }
     get tabs() {
         return this._tabs;
     }
@@ -8189,6 +8101,94 @@ class CTabButton extends CPanel {
             this._deleteButtonText = value;
             this._deleteButton.text = value;
         }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this.__scrollInterval = 0;
+        this.__buttons = new Array();
+        this._scrollBox = new CScrollBox(this);
+        this._leftButton = new CButton(this);
+        this._deleteButton = new CButton(this);
+        this._addButton = new CButton(this);
+        this._rightButton = new CButton(this);
+        this._tabs = new CStringList();
+        this._index = -1;
+        this._tabButtonResource = "";
+        this._leftButtonResource = "";
+        this._rightButtonResource = "";
+        this._addButtonResource = "";
+        this._deleteButtonResource = "";
+        this._kind = ETabButtonKind.ALIGN;
+        this._managementButtonLength = 30;
+        this._tabButtonMargin = 0;
+        this._useArrowButton = false;
+        this._useAddButton = false;
+        this._useDeleteButton = false;
+        this._leftButtonText = "";
+        this._rightButtonText = "";
+        this._addButtonText = "";
+        this._deleteButtonText = "";
+        this.defaultTabName = "Tab";
+        let self = this;
+        this._scrollBox.position.align = EPositionAlign.CLIENT;
+        this._scrollBox.onChangeSize = function () {
+            self.doSetButtions();
+        };
+        this._scrollBox.useHScrollbar = false;
+        this._scrollBox.useVScrollbar = false;
+        this._rightButton.position.align = EPositionAlign.RIGHT;
+        this._rightButton.onResource = function () {
+            self._rightButton.position.align = EPositionAlign.RIGHT;
+            self._rightButton.usePointerCapture = true;
+            self._rightButton.text = self._rightButtonText;
+        };
+        this._rightButton.onThisPointerDown = function () {
+            if (self.__scrollInterval == 0) {
+                self.__scrollInterval = setInterval(function () {
+                    self.doTabButtonContentScroll(10);
+                }, 16);
+            }
+        };
+        this._rightButton.onThisPointerUp = function () {
+            clearInterval(self.__scrollInterval);
+            self.__scrollInterval = 0;
+        };
+        this._addButton.position.align = EPositionAlign.RIGHT;
+        this._addButton.onClick = function () {
+            self.doAddTab(CSequence.getSequence(self.defaultTabName));
+        };
+        this._addButton.onResource = function () {
+            self._addButton.position.align = EPositionAlign.RIGHT;
+            self._addButton.text = self._addButtonText;
+        };
+        this._deleteButton.position.align = EPositionAlign.RIGHT;
+        this._deleteButton.onClick = function () {
+            self.doDeleteTab();
+        };
+        this._deleteButton.onResource = function () {
+            self._deleteButton.position.align = EPositionAlign.RIGHT;
+            self._deleteButton.text = self._deleteButtonText;
+        };
+        this._leftButton.position.align = EPositionAlign.LEFT;
+        this._leftButton.onResource = function () {
+            self._leftButton.position.align = EPositionAlign.LEFT;
+            self._leftButton.usePointerCapture = true;
+            self._leftButton.text = self._leftButtonText;
+        };
+        this._leftButton.onThisPointerDown = function () {
+            if (self.__scrollInterval == 0) {
+                self.__scrollInterval = setInterval(function () {
+                    self.doTabButtonContentScroll(-10);
+                }, 16);
+            }
+        };
+        this._leftButton.onThisPointerUp = function () {
+            clearInterval(self.__scrollInterval);
+            self.__scrollInterval = 0;
+        };
+        this._tabs.onChange = function () {
+            self.doChangeTabs();
+        };
     }
     doToData(data) {
         super.doToData(data);
@@ -8390,46 +8390,6 @@ class CTabButton extends CPanel {
     }
 }
 class CTab extends CPanel {
-    constructor(parent, name) {
-        super(parent, name);
-        this._tab = new CTabButton(this);
-        this._tabSheets = new CList();
-        this._tabButtonResource = "";
-        this._tabSheetResource = "";
-        this._body = new CPanel(this);
-        this._tabHeight = 30;
-        let self = this;
-        this._tab.position.align = EPositionAlign.TOP;
-        this._tab.position.height = this._tabHeight;
-        this._tab.onResource = function () {
-            self._tab.position.align = EPositionAlign.TOP;
-            self._tab.position.height = self._tabHeight;
-        };
-        this._tab.onChangeIndex = function () {
-            self.doChangeIndex();
-        };
-        this._tab.onAddTab = function (s, idx) {
-            self.doAddTab(idx);
-        };
-        this._tab.onBeforeDeleteTab = function (s, idx) {
-            self.doBeforeDeleteTab(idx);
-        };
-        this._tab.onDeleteTab = function () {
-            self.doDeleteTab();
-        };
-        this._tab.onTabButtonClick = function (s, i) {
-            self.doTabButtonClick(i);
-        };
-        this._tab.onChangeTabs = function () {
-            self.doChangeTabs();
-        };
-        this._body.position.align = EPositionAlign.CLIENT;
-        this._body.onResource = function () {
-            self._body.position.align = EPositionAlign.CLIENT;
-        };
-        this._body.propertyName = "body";
-        this._body.propertyDataKind = "reserveControl,_body";
-    }
     get body() {
         return this._body;
     }
@@ -8579,6 +8539,46 @@ class CTab extends CPanel {
     }
     set deleteButtonText(value) {
         this.tabButtons.deleteButtonText = value;
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this._tab = new CTabButton(this);
+        this._tabSheets = new CList();
+        this._tabButtonResource = "";
+        this._tabSheetResource = "";
+        this._body = new CPanel(this);
+        this._tabHeight = 30;
+        let self = this;
+        this._tab.position.align = EPositionAlign.TOP;
+        this._tab.position.height = this._tabHeight;
+        this._tab.onResource = function () {
+            self._tab.position.align = EPositionAlign.TOP;
+            self._tab.position.height = self._tabHeight;
+        };
+        this._tab.onChangeIndex = function () {
+            self.doChangeIndex();
+        };
+        this._tab.onAddTab = function (s, idx) {
+            self.doAddTab(idx);
+        };
+        this._tab.onBeforeDeleteTab = function (s, idx) {
+            self.doBeforeDeleteTab(idx);
+        };
+        this._tab.onDeleteTab = function () {
+            self.doDeleteTab();
+        };
+        this._tab.onTabButtonClick = function (s, i) {
+            self.doTabButtonClick(i);
+        };
+        this._tab.onChangeTabs = function () {
+            self.doChangeTabs();
+        };
+        this._body.position.align = EPositionAlign.CLIENT;
+        this._body.onResource = function () {
+            self._body.position.align = EPositionAlign.CLIENT;
+        };
+        this._body.propertyName = "body";
+        this._body.propertyDataKind = "reserveControl,_body";
     }
     doToData(data) {
         super.doToData(data);
@@ -8755,6 +8755,48 @@ class CCalendarDaySheet extends CPanel {
     }
 }
 class CCalendarPickup extends CPanel {
+    get listYear() {
+        return this._listYear;
+    }
+    get listMonth() {
+        return this._listMonth;
+    }
+    get listYearResource() {
+        return this._listYear.resource;
+    }
+    set listYearResource(value) {
+        this._listYear.resource = value;
+    }
+    get listYearListItemResource() {
+        return this._listYear.listItemResource;
+    }
+    set listYearListItemResource(value) {
+        this._listYear.listItemResource = value;
+    }
+    get listMonthResource() {
+        return this._listMonth.resource;
+    }
+    set listMonthResource(value) {
+        this._listMonth.resource = value;
+    }
+    get listMonthListItemResource() {
+        return this._listMonth.listItemResource;
+    }
+    set listMonthListItemResource(value) {
+        this._listMonth.listItemResource = value;
+    }
+    get labelYearResource() {
+        return this._labelYear.resource;
+    }
+    set labelYearResource(value) {
+        this._labelYear.resource = value;
+    }
+    get labelMonthResource() {
+        return this._labelMonth.resource;
+    }
+    set labelMonthResource(value) {
+        this._labelMonth.resource = value;
+    }
     constructor(parent, name) {
         super(parent, name);
         this.pickupYearFrom = 1900;
@@ -8812,48 +8854,6 @@ class CCalendarPickup extends CPanel {
             this._listMonth.items.add(n + "");
         }
     }
-    get listYear() {
-        return this._listYear;
-    }
-    get listMonth() {
-        return this._listMonth;
-    }
-    get listYearResource() {
-        return this._listYear.resource;
-    }
-    set listYearResource(value) {
-        this._listYear.resource = value;
-    }
-    get listYearListItemResource() {
-        return this._listYear.listItemResource;
-    }
-    set listYearListItemResource(value) {
-        this._listYear.listItemResource = value;
-    }
-    get listMonthResource() {
-        return this._listMonth.resource;
-    }
-    set listMonthResource(value) {
-        this._listMonth.resource = value;
-    }
-    get listMonthListItemResource() {
-        return this._listMonth.listItemResource;
-    }
-    set listMonthListItemResource(value) {
-        this._listMonth.listItemResource = value;
-    }
-    get labelYearResource() {
-        return this._labelYear.resource;
-    }
-    set labelYearResource(value) {
-        this._labelYear.resource = value;
-    }
-    get labelMonthResource() {
-        return this._labelMonth.resource;
-    }
-    set labelMonthResource(value) {
-        this._labelMonth.resource = value;
-    }
     setList(year, month) {
         for (let n = 0; n < this._listYear.length; n++) {
             if (parseInt(this._listYear.items.get(n)) == year) {
@@ -8872,6 +8872,149 @@ class CCalendarPickup extends CPanel {
     }
 }
 class CCalendar extends CPanel {
+    get calendarHeader() {
+        return this._calendarHeader;
+    }
+    get calendarDayOfWeek() {
+        return this._calendarDayOfWeek;
+    }
+    get calendarBody() {
+        return this._calendarBody;
+    }
+    get buttonPrevious() {
+        return this._buttonPrevious;
+    }
+    get buttonNext() {
+        return this._buttonNext;
+    }
+    get buttonNow() {
+        return this._buttonNow;
+    }
+    get buttonPick() {
+        return this._buttonPick;
+    }
+    get dayOfWeekSheets() {
+        return this._dayOfWeekSheets;
+    }
+    get daySheets() {
+        return this._daySheets;
+    }
+    get calendarHeaderResource() {
+        return this._calendarHeader.resource;
+    }
+    set calendarHeaderResource(value) {
+        this._calendarHeader.resource = value;
+    }
+    get calendarDayOfWeekResource() {
+        return this._calendarDayOfWeek.resource;
+    }
+    set calendarDayOfWeekResource(value) {
+        this._calendarDayOfWeek.resource = value;
+    }
+    get calendarBodyResource() {
+        return this._calendarBody.resource;
+    }
+    set calendarBodyResource(value) {
+        this._calendarBody.resource = value;
+    }
+    get buttonPreviousResource() {
+        return this._buttonPrevious.resource;
+    }
+    set buttonPreviousResource(value) {
+        this._buttonPrevious.resource = value;
+    }
+    get buttonNextResource() {
+        return this._buttonNext.resource;
+    }
+    set buttonNextResource(value) {
+        this._buttonNext.resource = value;
+    }
+    get buttonNowResource() {
+        return this._buttonNow.resource;
+    }
+    set buttonNowResource(value) {
+        this._buttonNow.resource = value;
+    }
+    get buttonPickResource() {
+        return this._buttonPick.resource;
+    }
+    set buttonPickResource(value) {
+        this._buttonPick.resource = value;
+    }
+    get dayOfWeekSheetResource() {
+        return this._dayOfWeekSheetResource;
+    }
+    set dayOfWeekSheetResource(value) {
+        if (this._dayOfWeekSheetResource != value) {
+            this._dayOfWeekSheetResource = value;
+            for (let n = 0; n < this._dayOfWeekSheets.length; n++) {
+                this._dayOfWeekSheets[n].resource = value;
+            }
+            this.doSetDayOfWeek();
+        }
+    }
+    get daySheetResource() {
+        return this._daySheetResource;
+    }
+    set daySheetResource(value) {
+        if (this._daySheetResource != value) {
+            this._daySheetResource = value;
+            for (let n = 0; n < this._daySheets.length; n++) {
+                for (let i = 0; i < this._daySheets[n].length; i++) {
+                    this._daySheets[n][i].resource = value;
+                }
+            }
+            this.doSetDate();
+        }
+    }
+    get date() {
+        return this._date;
+    }
+    set date(value) {
+        if (value.getTime() != this._date.getTime()) {
+            this._date = value;
+            this.doChangeDate();
+        }
+    }
+    get dayOfWeekText() {
+        return this._dayOfWeekText;
+    }
+    set dayOfWeekText(value) {
+        if (this._dayOfWeekText != value) {
+            this._dayOfWeekText = value;
+            this.doSetDayOfWeek();
+        }
+    }
+    get year() {
+        return this._date.getFullYear();
+    }
+    get month() {
+        return this._date.getMonth() + 1;
+    }
+    get day() {
+        return this._date.getDate();
+    }
+    get dayOfWeek() {
+        return this._date.getDay();
+    }
+    get yearString() {
+        return this.year + "";
+    }
+    get monthString() {
+        return CStringUtil.lpad(this.month + "", "0", 2);
+    }
+    get dayString() {
+        return CStringUtil.lpad(this.day + "", "0", 2);
+    }
+    get dayOfWeekString() {
+        if (this._dayOfWeekText.length > this.dayOfWeek) {
+            return this._dayOfWeekText[this.dayOfWeek];
+        }
+        else {
+            let arr = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+            return arr[this.dayOfWeek];
+        }
+    }
     constructor(parent, name) {
         super(parent, name);
         this._calendarHeader = new CPanel(this);
@@ -9034,149 +9177,6 @@ class CCalendar extends CPanel {
         this._date = new Date();
         this.doChangeDate();
     }
-    get calendarHeader() {
-        return this._calendarHeader;
-    }
-    get calendarDayOfWeek() {
-        return this._calendarDayOfWeek;
-    }
-    get calendarBody() {
-        return this._calendarBody;
-    }
-    get buttonPrevious() {
-        return this._buttonPrevious;
-    }
-    get buttonNext() {
-        return this._buttonNext;
-    }
-    get buttonNow() {
-        return this._buttonNow;
-    }
-    get buttonPick() {
-        return this._buttonPick;
-    }
-    get dayOfWeekSheets() {
-        return this._dayOfWeekSheets;
-    }
-    get daySheets() {
-        return this._daySheets;
-    }
-    get calendarHeaderResource() {
-        return this._calendarHeader.resource;
-    }
-    set calendarHeaderResource(value) {
-        this._calendarHeader.resource = value;
-    }
-    get calendarDayOfWeekResource() {
-        return this._calendarDayOfWeek.resource;
-    }
-    set calendarDayOfWeekResource(value) {
-        this._calendarDayOfWeek.resource = value;
-    }
-    get calendarBodyResource() {
-        return this._calendarBody.resource;
-    }
-    set calendarBodyResource(value) {
-        this._calendarBody.resource = value;
-    }
-    get buttonPreviousResource() {
-        return this._buttonPrevious.resource;
-    }
-    set buttonPreviousResource(value) {
-        this._buttonPrevious.resource = value;
-    }
-    get buttonNextResource() {
-        return this._buttonNext.resource;
-    }
-    set buttonNextResource(value) {
-        this._buttonNext.resource = value;
-    }
-    get buttonNowResource() {
-        return this._buttonNow.resource;
-    }
-    set buttonNowResource(value) {
-        this._buttonNow.resource = value;
-    }
-    get buttonPickResource() {
-        return this._buttonPick.resource;
-    }
-    set buttonPickResource(value) {
-        this._buttonPick.resource = value;
-    }
-    get dayOfWeekSheetResource() {
-        return this._dayOfWeekSheetResource;
-    }
-    set dayOfWeekSheetResource(value) {
-        if (this._dayOfWeekSheetResource != value) {
-            this._dayOfWeekSheetResource = value;
-            for (let n = 0; n < this._dayOfWeekSheets.length; n++) {
-                this._dayOfWeekSheets[n].resource = value;
-            }
-            this.doSetDayOfWeek();
-        }
-    }
-    get daySheetResource() {
-        return this._daySheetResource;
-    }
-    set daySheetResource(value) {
-        if (this._daySheetResource != value) {
-            this._daySheetResource = value;
-            for (let n = 0; n < this._daySheets.length; n++) {
-                for (let i = 0; i < this._daySheets[n].length; i++) {
-                    this._daySheets[n][i].resource = value;
-                }
-            }
-            this.doSetDate();
-        }
-    }
-    get date() {
-        return this._date;
-    }
-    set date(value) {
-        if (value.getTime() != this._date.getTime()) {
-            this._date = value;
-            this.doChangeDate();
-        }
-    }
-    get dayOfWeekText() {
-        return this._dayOfWeekText;
-    }
-    set dayOfWeekText(value) {
-        if (this._dayOfWeekText != value) {
-            this._dayOfWeekText = value;
-            this.doSetDayOfWeek();
-        }
-    }
-    get year() {
-        return this._date.getFullYear();
-    }
-    get month() {
-        return this._date.getMonth() + 1;
-    }
-    get day() {
-        return this._date.getDate();
-    }
-    get dayOfWeek() {
-        return this._date.getDay();
-    }
-    get yearString() {
-        return this.year + "";
-    }
-    get monthString() {
-        return CStringUtil.lpad(this.month + "", "0", 2);
-    }
-    get dayString() {
-        return CStringUtil.lpad(this.day + "", "0", 2);
-    }
-    get dayOfWeekString() {
-        if (this._dayOfWeekText.length > this.dayOfWeek) {
-            return this._dayOfWeekText[this.dayOfWeek];
-        }
-        else {
-            let arr = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-            return arr[this.dayOfWeek];
-        }
-    }
     doToData(data) {
         super.doToData(data);
         CDataClass.putData(data, "daySheetResource", this.daySheetResource, "");
@@ -9291,6 +9291,114 @@ class CCalendar extends CPanel {
     }
 }
 class CClock extends CPanel {
+    get hourAngle() {
+        return this._hourAngle;
+    }
+    get minuteAngle() {
+        return this._minuteAngle;
+    }
+    get secondAngle() {
+        return this._secondAngle;
+    }
+    get date() {
+        return this._date;
+    }
+    set date(value) {
+        if (this._date.getTime() != value.getTime()) {
+            this._date = value;
+            this.doChangeDate();
+        }
+    }
+    get hourHandle() {
+        return this._hourHandle;
+    }
+    get minuteHandle() {
+        return this._minuteHandle;
+    }
+    get secondHandle() {
+        return this._secondHandle;
+    }
+    get useEdit() {
+        return this._useEdit;
+    }
+    set useEdit(value) {
+        if (this._useEdit != value) {
+            this._useEdit = value;
+            this.doChangeEdit(value);
+        }
+    }
+    get amPmText() {
+        return this._amPmText;
+    }
+    set amPmText(value) {
+        this._amPmText = value;
+        this.doSetTime();
+    }
+    get addHour() {
+        return this._addHour;
+    }
+    set addHour(value) {
+        this._addHour = value;
+        this.doSetTime();
+    }
+    get addMinute() {
+        return this._addMinute;
+    }
+    set addMinute(value) {
+        this._addMinute = value;
+        this.doSetTime();
+    }
+    get addSecond() {
+        return this._addSecond;
+    }
+    set addSecond(value) {
+        this._addSecond = value;
+        this.doSetTime();
+    }
+    get hourCanvasItemName() {
+        return this._hourCanvasItemName;
+    }
+    set hourCanvasItemName(value) {
+        this._hourCanvasItemName = value;
+        this.doSetTime();
+    }
+    get minuteCanvasItemName() {
+        return this._minuteCanvasItemName;
+    }
+    set minuteCanvasItemName(value) {
+        this._minuteCanvasItemName = value;
+        this.doSetTime();
+    }
+    get secondCanvasItemName() {
+        return this._secondCanvasItemName;
+    }
+    set secondCanvasItemName(value) {
+        this._secondCanvasItemName = value;
+        this.doSetTime();
+    }
+    get labelCanvasItemName() {
+        return this._labelCanvasItemName;
+    }
+    set labelCanvasItemName(value) {
+        this._labelCanvasItemName = value;
+        this.doSetTime();
+    }
+    get amPmCanvasItemName() {
+        return this._amPmCanvasItemName;
+    }
+    set amPmCanvasItemName(value) {
+        this._amPmCanvasItemName = value;
+        this.doSetTime();
+    }
+    get handleResource() {
+        return this._handleResource;
+    }
+    set handleResource(value) {
+        this._handleResource = value;
+        this._hourHandle.resource = value;
+        this._minuteHandle.resource = value;
+        this._secondHandle.resource = value;
+    }
     constructor(parent, name) {
         super(parent, name);
         this.__editIsAm = false;
@@ -9402,114 +9510,6 @@ class CClock extends CPanel {
         this._secondHandle.onPointerUp = function () {
             self.setHandle();
         };
-    }
-    get hourAngle() {
-        return this._hourAngle;
-    }
-    get minuteAngle() {
-        return this._minuteAngle;
-    }
-    get secondAngle() {
-        return this._secondAngle;
-    }
-    get date() {
-        return this._date;
-    }
-    set date(value) {
-        if (this._date.getTime() != value.getTime()) {
-            this._date = value;
-            this.doChangeDate();
-        }
-    }
-    get hourHandle() {
-        return this._hourHandle;
-    }
-    get minuteHandle() {
-        return this._minuteHandle;
-    }
-    get secondHandle() {
-        return this._secondHandle;
-    }
-    get useEdit() {
-        return this._useEdit;
-    }
-    set useEdit(value) {
-        if (this._useEdit != value) {
-            this._useEdit = value;
-            this.doChangeEdit(value);
-        }
-    }
-    get amPmText() {
-        return this._amPmText;
-    }
-    set amPmText(value) {
-        this._amPmText = value;
-        this.doSetTime();
-    }
-    get addHour() {
-        return this._addHour;
-    }
-    set addHour(value) {
-        this._addHour = value;
-        this.doSetTime();
-    }
-    get addMinute() {
-        return this._addMinute;
-    }
-    set addMinute(value) {
-        this._addMinute = value;
-        this.doSetTime();
-    }
-    get addSecond() {
-        return this._addSecond;
-    }
-    set addSecond(value) {
-        this._addSecond = value;
-        this.doSetTime();
-    }
-    get hourCanvasItemName() {
-        return this._hourCanvasItemName;
-    }
-    set hourCanvasItemName(value) {
-        this._hourCanvasItemName = value;
-        this.doSetTime();
-    }
-    get minuteCanvasItemName() {
-        return this._minuteCanvasItemName;
-    }
-    set minuteCanvasItemName(value) {
-        this._minuteCanvasItemName = value;
-        this.doSetTime();
-    }
-    get secondCanvasItemName() {
-        return this._secondCanvasItemName;
-    }
-    set secondCanvasItemName(value) {
-        this._secondCanvasItemName = value;
-        this.doSetTime();
-    }
-    get labelCanvasItemName() {
-        return this._labelCanvasItemName;
-    }
-    set labelCanvasItemName(value) {
-        this._labelCanvasItemName = value;
-        this.doSetTime();
-    }
-    get amPmCanvasItemName() {
-        return this._amPmCanvasItemName;
-    }
-    set amPmCanvasItemName(value) {
-        this._amPmCanvasItemName = value;
-        this.doSetTime();
-    }
-    get handleResource() {
-        return this._handleResource;
-    }
-    set handleResource(value) {
-        this._handleResource = value;
-        this._hourHandle.resource = value;
-        this._minuteHandle.resource = value;
-        this._secondHandle.resource = value;
     }
     setHandle() {
         let hs = this.position.width / 10;
@@ -9663,6 +9663,15 @@ class CClock extends CPanel {
 class CFrameModel extends CPanel {
 }
 class CWindowModel extends CFrameModel {
+    get title() {
+        return this.caption.text;
+    }
+    set title(value) {
+        this.caption.text = value;
+    }
+    get state() {
+        return this.__state;
+    }
     constructor(parent, name) {
         super(parent, name);
         this.__orgPadding = new CRect();
@@ -9844,15 +9853,6 @@ class CWindowModel extends CFrameModel {
                 self.alignCover.hideCover();
             }
         };
-    }
-    get title() {
-        return this.caption.text;
-    }
-    set title(value) {
-        this.caption.text = value;
-    }
-    get state() {
-        return this.__state;
     }
     setActivate() {
         if (CWindowModel.activateWindow != undefined) {
@@ -10283,21 +10283,6 @@ class CCamera extends CNotifyChangeNotifyObject {
     }
 }
 class CWorkSpaceBoard extends CPanel {
-    constructor(parent, name) {
-        super(parent, name);
-        this._camera = new CCamera();
-        this._workSpaceList = new CList();
-        this.animationDuration = 0;
-        this.animationGraphName = "";
-        let self = this;
-        this.transform.translateZ = 0.25;
-        this._workSpaceList.onChange = function () {
-            self.doChangeWorkSpaceList();
-        };
-        this._camera.onChangeCameraPosition = function () {
-            self.doChangeCamera();
-        };
-    }
     get camera() {
         return this._camera;
     }
@@ -10312,6 +10297,21 @@ class CWorkSpaceBoard extends CPanel {
             this._selectedWorkSpace = value;
             this.doChangeSelectedWorkSpace();
         }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this._camera = new CCamera();
+        this._workSpaceList = new CList();
+        this.animationDuration = 0;
+        this.animationGraphName = "";
+        let self = this;
+        this.transform.translateZ = 0.25;
+        this._workSpaceList.onChange = function () {
+            self.doChangeWorkSpaceList();
+        };
+        this._camera.onChangeCameraPosition = function () {
+            self.doChangeCamera();
+        };
     }
     setWorkSpaceSize() {
         for (let n = 0; n < this._workSpaceList.length; n++) {

@@ -1753,10 +1753,6 @@ class CSet extends CNotifyChangeKindObject {
     }
 }
 class CNotifyQueue extends CNotifyChangeKindObject {
-    constructor(limitConut = -1) {
-        super();
-        this._queue = new CQueue(limitConut);
-    }
     static get CON_CHANGE_PUSH() { return "p"; }
     static get CON_CHANGE_POP() { return "po"; }
     static get CON_CHANGE_CLEAR() { return "c"; }
@@ -1772,6 +1768,10 @@ class CNotifyQueue extends CNotifyChangeKindObject {
     }
     get count() {
         return this._queue.count;
+    }
+    constructor(limitConut = -1) {
+        super();
+        this._queue = new CQueue(limitConut);
     }
     doRemove() {
         this._queue.clear();
@@ -1822,12 +1822,6 @@ class CStringSet extends CSet {
     }
 }
 class CVariable extends CNotifyChangeNotifyObject {
-    constructor(value) {
-        super();
-        if (value != undefined) {
-            this._data = value;
-        }
-    }
     get type() {
         return typeof this._data;
     }
@@ -1870,6 +1864,12 @@ class CVariable extends CNotifyChangeNotifyObject {
     get value() {
         return this._data;
     }
+    constructor(value) {
+        super();
+        if (value != undefined) {
+            this._data = value;
+        }
+    }
     doRemove() {
         this._data = undefined;
         super.doRemove();
@@ -1885,6 +1885,9 @@ class CVariable extends CNotifyChangeNotifyObject {
     }
 }
 class CRowData extends CNotifyChangeObject {
+    get length() {
+        return this._data.length;
+    }
     constructor(columnValues) {
         super();
         this._data = new Array();
@@ -1899,9 +1902,6 @@ class CRowData extends CNotifyChangeObject {
                 this._data.push(v);
             }
         }
-    }
-    get length() {
-        return this._data.length;
     }
     doToData(data) {
         for (let n = 0; n < this._data.length; n++) {
@@ -1948,6 +1948,24 @@ class CRowData extends CNotifyChangeObject {
     }
 }
 class CGridData extends CNotifyChangeObject {
+    static get CON_CHANGE_ADD() { return "a"; }
+    static get CON_CHANGE_INSERT() { return "i"; }
+    static get CON_CHANGE_DELETE() { return "d"; }
+    static get CON_CHANGE_CLEAR() { return "c"; }
+    static get CON_CHANGE_SET() { return "s"; }
+    static get CON_CHANGE_DATA() { return "da"; }
+    get columnCount() {
+        return this._columnCount;
+    }
+    get data() {
+        return this._data;
+    }
+    get indexes() {
+        return this._indexes;
+    }
+    get length() {
+        return this._data.length;
+    }
     constructor(columnCount, indexColumnIndexes, uniqueColumnIndexes) {
         super();
         this.__useIndex = false;
@@ -1987,24 +2005,6 @@ class CGridData extends CNotifyChangeObject {
                 self.doChange(CGridData.CON_CHANGE_SET);
             }
         };
-    }
-    static get CON_CHANGE_ADD() { return "a"; }
-    static get CON_CHANGE_INSERT() { return "i"; }
-    static get CON_CHANGE_DELETE() { return "d"; }
-    static get CON_CHANGE_CLEAR() { return "c"; }
-    static get CON_CHANGE_SET() { return "s"; }
-    static get CON_CHANGE_DATA() { return "da"; }
-    get columnCount() {
-        return this._columnCount;
-    }
-    get data() {
-        return this._data;
-    }
-    get indexes() {
-        return this._indexes;
-    }
-    get length() {
-        return this._data.length;
     }
     doToData(data) {
         super.doToData(data);
@@ -2298,6 +2298,15 @@ class CGridData extends CNotifyChangeObject {
     }
 }
 class CTableData extends CGridData {
+    get columnNames() {
+        return this._columnNames;
+    }
+    get indexColumnNames() {
+        return this._indexColumnNames;
+    }
+    get uniqueColumnNames() {
+        return this._uniqueColumnNames;
+    }
     constructor(columnNames, indexColumnNames, uniqueColumnNames) {
         function getColumnIndex(name) {
             let rt = -1;
@@ -2336,15 +2345,6 @@ class CTableData extends CGridData {
         }
         this._indexColumnNames = indexColumnNames;
         this._uniqueColumnNames = uniqueColumnNames;
-    }
-    get columnNames() {
-        return this._columnNames;
-    }
-    get indexColumnNames() {
-        return this._indexColumnNames;
-    }
-    get uniqueColumnNames() {
-        return this._uniqueColumnNames;
     }
     doToData(data) {
         super.doToData(data);
@@ -2719,20 +2719,6 @@ var ETreeItemState;
     ETreeItemState[ETreeItemState["EXPAND"] = 1] = "EXPAND";
 })(ETreeItemState || (ETreeItemState = {}));
 class CTreeItem extends CNotifyChangeObject {
-    constructor(value) {
-        super();
-        this._value = new CVariable();
-        this._items = new CTreeData();
-        this._state = ETreeItemState.COLLAPSE;
-        let self = this;
-        this._value = new CVariable(value);
-        this._value.onChange = function () {
-            self.doChange(CTreeItem.CON_CHANGE_VALUE, undefined);
-        };
-        this._items.onChange = function (data, kind, item) {
-            self.doChange(CTreeItem.CON_CHANGE_ITEMS, self.items);
-        };
-    }
     static get CON_CHANGE_STATE() { return "changeState"; }
     static get CON_CHANGE_VALUE() { return "changeValue"; }
     static get CON_CHANGE_ITEMS() { return "changeItems"; }
@@ -2750,6 +2736,20 @@ class CTreeItem extends CNotifyChangeObject {
             this._state = value;
             this.doChange(CTreeItem.CON_CHANGE_STATE, undefined);
         }
+    }
+    constructor(value) {
+        super();
+        this._value = new CVariable();
+        this._items = new CTreeData();
+        this._state = ETreeItemState.COLLAPSE;
+        let self = this;
+        this._value = new CVariable(value);
+        this._value.onChange = function () {
+            self.doChange(CTreeItem.CON_CHANGE_VALUE, undefined);
+        };
+        this._items.onChange = function (data, kind, item) {
+            self.doChange(CTreeItem.CON_CHANGE_ITEMS, self.items);
+        };
     }
     doRemove() {
         this._value.remove();

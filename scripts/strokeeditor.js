@@ -1,5 +1,66 @@
 "use strict";
 class CGradientEditorModel extends CPanel {
+    get gradient() {
+        return this._gradient;
+    }
+    set gradient(value) {
+        this._gradient = value;
+        this.doSetGradient();
+    }
+    get buttonResource() {
+        return this.buttonAddColor.resource;
+    }
+    set buttonResource(value) {
+        this.buttonAddColor.resource = value;
+        this.buttonDeleteColor.resource = value;
+    }
+    get selectGroupBoxResource() {
+        return this.buttonLinear.resource;
+    }
+    set selectGroupBoxResource(value) {
+        this.buttonLinear.resource = value;
+        this.buttonRadial.resource = value;
+    }
+    get scrollbarResource() {
+        return this.scrollStartRadius.resource;
+    }
+    set scrollbarResource(value) {
+        this.scrollStartRadius.resource = value;
+        this.scrollStopRadius.resource = value;
+    }
+    get gradientBarResource() {
+        return this.gradientBar.resource;
+    }
+    set gradientBarResource(value) {
+        this.gradientBar.resource = value;
+    }
+    get gradientAngleBoxResource() {
+        return this.gradientAngleBox.resource;
+    }
+    set gradientAngleBoxResource(value) {
+        this.gradientAngleBox.resource = value;
+    }
+    get gradientAngleHandleResource() {
+        return this.gradientAngleBox.handleResource;
+    }
+    set gradientAngleHandleResource(value) {
+        this.gradientAngleBox.handleResource = value;
+    }
+    get gradientBarHandleResource() {
+        return this.gradientBar.handleResource;
+    }
+    set gradientBarHandleResource(value) {
+        this.gradientBar.handleResource = value;
+    }
+    get handleLength() {
+        return this._handleLength;
+    }
+    set handleLength(value) {
+        if (this._handleLength != value) {
+            this._handleLength = value;
+            this.doSetHandle();
+        }
+    }
     constructor(parent, name) {
         super(parent, name);
         this._gradient = new CGradient();
@@ -93,67 +154,6 @@ class CGradientEditorModel extends CPanel {
             self.doSetGradientBar();
         };
         this.doSetHandle();
-    }
-    get gradient() {
-        return this._gradient;
-    }
-    set gradient(value) {
-        this._gradient = value;
-        this.doSetGradient();
-    }
-    get buttonResource() {
-        return this.buttonAddColor.resource;
-    }
-    set buttonResource(value) {
-        this.buttonAddColor.resource = value;
-        this.buttonDeleteColor.resource = value;
-    }
-    get selectGroupBoxResource() {
-        return this.buttonLinear.resource;
-    }
-    set selectGroupBoxResource(value) {
-        this.buttonLinear.resource = value;
-        this.buttonRadial.resource = value;
-    }
-    get scrollbarResource() {
-        return this.scrollStartRadius.resource;
-    }
-    set scrollbarResource(value) {
-        this.scrollStartRadius.resource = value;
-        this.scrollStopRadius.resource = value;
-    }
-    get gradientBarResource() {
-        return this.gradientBar.resource;
-    }
-    set gradientBarResource(value) {
-        this.gradientBar.resource = value;
-    }
-    get gradientAngleBoxResource() {
-        return this.gradientAngleBox.resource;
-    }
-    set gradientAngleBoxResource(value) {
-        this.gradientAngleBox.resource = value;
-    }
-    get gradientAngleHandleResource() {
-        return this.gradientAngleBox.handleResource;
-    }
-    set gradientAngleHandleResource(value) {
-        this.gradientAngleBox.handleResource = value;
-    }
-    get gradientBarHandleResource() {
-        return this.gradientBar.handleResource;
-    }
-    set gradientBarHandleResource(value) {
-        this.gradientBar.handleResource = value;
-    }
-    get handleLength() {
-        return this._handleLength;
-    }
-    set handleLength(value) {
-        if (this._handleLength != value) {
-            this._handleLength = value;
-            this.doSetHandle();
-        }
     }
     doToData(data) {
         super.doToData(data);
@@ -864,15 +864,6 @@ class CGradientEditor extends CGradientEditorModel {
     }
 }
 class CFillEditorModel extends CTab {
-    constructor(parent, name) {
-        super(parent, name);
-        this._fill = new CFillSet();
-        this._gradientEditorResource = "";
-        this.addTab("None");
-        this.addTab("Solid Color");
-        this.addTab("Gradient");
-        this.tabButtons.doSetButtions();
-    }
     get gradientEditor() {
         return this._gradientEditor;
     }
@@ -898,6 +889,15 @@ class CFillEditorModel extends CTab {
             this._fill = value;
             this.doChangeFill();
         }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this._fill = new CFillSet();
+        this._gradientEditorResource = "";
+        this.addTab("None");
+        this.addTab("Solid Color");
+        this.addTab("Gradient");
+        this.tabButtons.doSetButtions();
     }
     doCreateSheet(index, tabSheet) {
         let self = this;
@@ -1069,51 +1069,6 @@ class CFillEditorFrame extends CFillEditorModel {
     }
 }
 class CStrokeEditorModel extends CTab {
-    constructor(parent, name) {
-        super(parent, name);
-        this._stroke = new CStrokeSet();
-        this._gradientEditorResource = "";
-        this._bottomLayout = new CPanel(this);
-        this._labelWidth = new CLabelTextBox(this._bottomLayout);
-        this._labelDash = new CLabelTextBox(this._bottomLayout);
-        this._buttonApplyWidth = new CButton(this._labelWidth.textBox);
-        this._buttonApplyDash = new CButton(this._labelDash.textBox);
-        this._comboLineCap = new CComboBox(this._bottomLayout);
-        this._comboLineJoin = new CComboBox(this._bottomLayout);
-        this.addTab("None");
-        this.addTab("Solid Color");
-        this.addTab("Gradient");
-        this.tabButtons.doSetButtions();
-        let self = this;
-        this.labelWidth.textBox.onKeyDown = function (s, e) {
-            if (e.key == "Enter") {
-                self.stroke.lineWidth = parseFloat(self.labelWidth.value);
-            }
-        };
-        this.buttonApplyWidth.onClick = function () {
-            self.stroke.lineWidth = parseFloat(self.labelWidth.value);
-        };
-        this.labelDash.textBox.onKeyDown = function (s, e) {
-            if (e.key == "Enter") {
-                self.stroke.lineDash = self.labelDash.value;
-            }
-        };
-        this.buttonApplyDash.onClick = function () {
-            self.stroke.lineDash = self.labelDash.value;
-        };
-        this._comboLineCap.items.add("LineCap : BUTT");
-        this._comboLineCap.items.add("LineCap : ROUND");
-        this._comboLineCap.items.add("LineCap : SQUARE");
-        this._comboLineJoin.items.add("LineJoin : BUTT");
-        this._comboLineJoin.items.add("LineJoin : ROUND");
-        this._comboLineJoin.items.add("LineJoin : SQUARE");
-        this._comboLineCap.onChangeItem = function () {
-            self.stroke.lineCap = self.comboLineCap.itemIndex;
-        };
-        this._comboLineJoin.onChangeItem = function () {
-            self.stroke.lineJoin = self.comboLineJoin.itemIndex;
-        };
-    }
     get bottomLayout() {
         return this._bottomLayout;
     }
@@ -1160,6 +1115,51 @@ class CStrokeEditorModel extends CTab {
             this._stroke = value;
             this.doChangeStroke();
         }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this._stroke = new CStrokeSet();
+        this._gradientEditorResource = "";
+        this._bottomLayout = new CPanel(this);
+        this._labelWidth = new CLabelTextBox(this._bottomLayout);
+        this._labelDash = new CLabelTextBox(this._bottomLayout);
+        this._buttonApplyWidth = new CButton(this._labelWidth.textBox);
+        this._buttonApplyDash = new CButton(this._labelDash.textBox);
+        this._comboLineCap = new CComboBox(this._bottomLayout);
+        this._comboLineJoin = new CComboBox(this._bottomLayout);
+        this.addTab("None");
+        this.addTab("Solid Color");
+        this.addTab("Gradient");
+        this.tabButtons.doSetButtions();
+        let self = this;
+        this.labelWidth.textBox.onKeyDown = function (s, e) {
+            if (e.key == "Enter") {
+                self.stroke.lineWidth = parseFloat(self.labelWidth.value);
+            }
+        };
+        this.buttonApplyWidth.onClick = function () {
+            self.stroke.lineWidth = parseFloat(self.labelWidth.value);
+        };
+        this.labelDash.textBox.onKeyDown = function (s, e) {
+            if (e.key == "Enter") {
+                self.stroke.lineDash = self.labelDash.value;
+            }
+        };
+        this.buttonApplyDash.onClick = function () {
+            self.stroke.lineDash = self.labelDash.value;
+        };
+        this._comboLineCap.items.add("LineCap : BUTT");
+        this._comboLineCap.items.add("LineCap : ROUND");
+        this._comboLineCap.items.add("LineCap : SQUARE");
+        this._comboLineJoin.items.add("LineJoin : BUTT");
+        this._comboLineJoin.items.add("LineJoin : ROUND");
+        this._comboLineJoin.items.add("LineJoin : SQUARE");
+        this._comboLineCap.onChangeItem = function () {
+            self.stroke.lineCap = self.comboLineCap.itemIndex;
+        };
+        this._comboLineJoin.onChangeItem = function () {
+            self.stroke.lineJoin = self.comboLineJoin.itemIndex;
+        };
     }
     doToData(data) {
         super.doToData(data);

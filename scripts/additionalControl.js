@@ -1,9 +1,5 @@
 "use strict";
 class CIFrame extends CElementControl {
-    constructor(parent, name) {
-        super("iframe", parent, name);
-        this._src = "";
-    }
     get src() {
         return this._src;
     }
@@ -12,6 +8,10 @@ class CIFrame extends CElementControl {
             this._src = value;
             this.element.src = value;
         }
+    }
+    constructor(parent, name) {
+        super("iframe", parent, name);
+        this._src = "";
     }
     doToData(data) {
         super.doToData(data);
@@ -39,15 +39,6 @@ class CIFrame extends CElementControl {
     }
 }
 class CMultiSlideBox extends CPanel {
-    constructor(parent, name) {
-        super(parent, name);
-        this._slideHandles = new CList();
-        this._handleResource = "";
-        let self = this;
-        this._slideHandles.onChange = function () {
-            self.doChangeHandles();
-        };
-    }
     get slideHandles() {
         return this._slideHandles;
     }
@@ -63,6 +54,15 @@ class CMultiSlideBox extends CPanel {
                 this._slideHandles.get(n).text = t;
             }
         }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this._slideHandles = new CList();
+        this._handleResource = "";
+        let self = this;
+        this._slideHandles.onChange = function () {
+            self.doChangeHandles();
+        };
     }
     doToData(data) {
         super.doToData(data);
@@ -170,6 +170,12 @@ var ESlideDirection;
     ESlideDirection[ESlideDirection["Y"] = 1] = "Y";
 })(ESlideDirection || (ESlideDirection = {}));
 class CSlideControlBox extends CUnlimitedScrollBox {
+    get controls() {
+        return this._controls;
+    }
+    get controlContent() {
+        return this._controlContent;
+    }
     constructor(parent, name) {
         super(parent, name);
         this.__interval = 0;
@@ -185,12 +191,6 @@ class CSlideControlBox extends CUnlimitedScrollBox {
         this.useVScrollbar = false;
         this._controlContent.transform.translateZ = 0.25;
         this.setControlPosition(this._controlContent);
-    }
-    get controls() {
-        return this._controls;
-    }
-    get controlContent() {
-        return this._controlContent;
     }
     getLeft() {
         return this.background.controlElement.scrollLeft;
@@ -712,11 +712,6 @@ class CHueColorBox extends CPanel {
     }
 }
 class CColorBox extends CPanel {
-    constructor(parent, name) {
-        super(parent, name);
-        this._color = "rgba(255,255,255,1)";
-        this.layer = this.layers.addLayer();
-    }
     get color() {
         return this._color;
     }
@@ -731,6 +726,11 @@ class CColorBox extends CPanel {
     }
     set resource(value) {
         this._resource = "";
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this._color = "rgba(255,255,255,1)";
+        this.layer = this.layers.addLayer();
     }
     doToData(data) {
         super.doToData(data);
@@ -771,38 +771,6 @@ class CColorBox extends CPanel {
     }
 }
 class CColorSelectorModel extends CPanel {
-    constructor(parent, name) {
-        super(parent, name);
-        this.__changer = "";
-        this._color = "rgba(255,255,255,1)";
-        this.hueBox = new CHueColorBox(this);
-        this.textBox = new CTextBox(this);
-        this.colorBox = new CColorBox(this);
-        this.opacityControl = new CScrollbar(this);
-        let self = this;
-        this.opacityControl.onChangeValue = function () {
-            self.__changer = "opacityControl";
-            let col = new CColor(self.color);
-            col.a = self.opacityControl.valueRatio;
-            self.color = col.toColor();
-            self.__changer = "";
-        };
-        this.colorBox.onChangeColor = function () {
-            self.__changer = "hueBox";
-            self.color = self.colorBox.color;
-            self.__changer = "";
-        };
-        this.textBox.onKeyDown = function (s, e) {
-            if (e.key == "Enter") {
-                self.color = self.textBox.text;
-            }
-        };
-        this.hueBox.onChangeColor = function () {
-            self.__changer = "hueBox";
-            self.color = self.hueBox.color;
-            self.__changer = "";
-        };
-    }
     get color() {
         return this._color;
     }
@@ -847,6 +815,38 @@ class CColorSelectorModel extends CPanel {
     }
     set colorBoxHeight(value) {
         this.colorBox.position.height = value;
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this.__changer = "";
+        this._color = "rgba(255,255,255,1)";
+        this.hueBox = new CHueColorBox(this);
+        this.textBox = new CTextBox(this);
+        this.colorBox = new CColorBox(this);
+        this.opacityControl = new CScrollbar(this);
+        let self = this;
+        this.opacityControl.onChangeValue = function () {
+            self.__changer = "opacityControl";
+            let col = new CColor(self.color);
+            col.a = self.opacityControl.valueRatio;
+            self.color = col.toColor();
+            self.__changer = "";
+        };
+        this.colorBox.onChangeColor = function () {
+            self.__changer = "hueBox";
+            self.color = self.colorBox.color;
+            self.__changer = "";
+        };
+        this.textBox.onKeyDown = function (s, e) {
+            if (e.key == "Enter") {
+                self.color = self.textBox.text;
+            }
+        };
+        this.hueBox.onChangeColor = function () {
+            self.__changer = "hueBox";
+            self.color = self.hueBox.color;
+            self.__changer = "";
+        };
     }
     doToData(data) {
         super.doToData(data);
@@ -898,13 +898,6 @@ class CColorSelector extends CColorSelectorModel {
     }
 }
 class CSelectArea extends CPanel {
-    constructor(parent, name) {
-        super(parent, name);
-        this.__prePoint = new CPoint();
-        this._selectAreaResource = "";
-        this._useSelectArea = true;
-        this.selectArea = new CPanel(this);
-    }
     get selectAreaResource() {
         return this._selectAreaResource;
     }
@@ -923,6 +916,13 @@ class CSelectArea extends CPanel {
         if (this._useSelectArea != value) {
             this._useSelectArea = value;
         }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this.__prePoint = new CPoint();
+        this._selectAreaResource = "";
+        this._useSelectArea = true;
+        this.selectArea = new CPanel(this);
     }
     doToData(data) {
         super.doToData(data);
@@ -1049,10 +1049,6 @@ class CControlPositionEditor extends CPanel {
     }
 }
 class CControlSelector extends CPanel {
-    constructor(parent, name) {
-        super(parent, name);
-        this.pop = new CPickupControl();
-    }
     get control() {
         return this._control;
     }
@@ -1067,6 +1063,10 @@ class CControlSelector extends CPanel {
     }
     get downPoint() {
         return this.__downMovePoint;
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this.pop = new CPickupControl();
     }
     doChangeSize() {
         //this.moveAreaLength = this.position.height - 20
@@ -1268,6 +1268,15 @@ class CTextSetControl extends CPanel {
 class CFilterControl extends CPanel {
 }
 class CFold extends CPanel {
+    get folded() {
+        return this._folded;
+    }
+    set folded(value) {
+        if (this._folded != value) {
+            this._folded = value;
+            this.doChangeFolded();
+        }
+    }
     constructor(parent, name) {
         super(parent, name);
         this.__orgHeight = 0;
@@ -1282,15 +1291,6 @@ class CFold extends CPanel {
         this.caption.onClick = function () {
             self.folded = !self.folded;
         };
-    }
-    get folded() {
-        return this._folded;
-    }
-    set folded(value) {
-        if (this._folded != value) {
-            this._folded = value;
-            this.doChangeFolded();
-        }
     }
     doToData(data) {
         super.doToData(data);
@@ -1338,22 +1338,6 @@ class CFold extends CPanel {
     }
 }
 class CPathPointSelectorModel extends CClass {
-    constructor(pointResource, cpoint1Resource, cpoint2Resource) {
-        super();
-        this.point = new CPanel();
-        this.isUpdate = true;
-        this.alignPixel = 0;
-        this.pointResource = "";
-        this.cpoint1Resource = "";
-        this.cpoint2Resource = "";
-        this.pointResource = pointResource;
-        this.cpoint1Resource = cpoint1Resource;
-        this.cpoint2Resource = cpoint2Resource;
-        this.point.resource = this.pointResource;
-        this.point.position.width = 10;
-        this.point.position.height = 10;
-        this.point.useMove = true;
-    }
     get pathPoint() {
         return this._pathPoint;
     }
@@ -1460,6 +1444,22 @@ class CPathPointSelectorModel extends CClass {
             this.point.parent = value;
         }
     }
+    constructor(pointResource, cpoint1Resource, cpoint2Resource) {
+        super();
+        this.point = new CPanel();
+        this.isUpdate = true;
+        this.alignPixel = 0;
+        this.pointResource = "";
+        this.cpoint1Resource = "";
+        this.cpoint2Resource = "";
+        this.pointResource = pointResource;
+        this.cpoint1Resource = cpoint1Resource;
+        this.cpoint2Resource = cpoint2Resource;
+        this.point.resource = this.pointResource;
+        this.point.position.width = 10;
+        this.point.position.height = 10;
+        this.point.useMove = true;
+    }
 }
 class CPathPointControlArea extends CControlSelector {
     constructor() {
@@ -1554,20 +1554,6 @@ class CGuideLine extends CResourceClass {
     }
 }
 class CPathEditorControl extends CSelectArea {
-    constructor(parent, name) {
-        super(parent, name);
-        this.__points = new CList();
-        this._mode = "None";
-        this._pointResource = "";
-        this._cpoint1Resource = "";
-        this._cpoint2Resource = "";
-        this.pathPointControlArea = new CPathPointControlArea(this);
-        let self = this;
-        this.pathPointControlArea.onDelete = function () {
-            self.pathPointControlArea.visible = false;
-            self.refresh();
-        };
-    }
     get mode() {
         return this._mode;
     }
@@ -1608,6 +1594,20 @@ class CPathEditorControl extends CSelectArea {
     }
     get points() {
         return this.__points;
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this.__points = new CList();
+        this._mode = "None";
+        this._pointResource = "";
+        this._cpoint1Resource = "";
+        this._cpoint2Resource = "";
+        this.pathPointControlArea = new CPathPointControlArea(this);
+        let self = this;
+        this.pathPointControlArea.onDelete = function () {
+            self.pathPointControlArea.visible = false;
+            self.refresh();
+        };
     }
     doToData(data) {
         super.doToData(data);
