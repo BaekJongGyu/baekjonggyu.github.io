@@ -280,6 +280,14 @@ class CTime extends CDataClass {
     static pause() {
         CTime.isPause = !CTime.isPause;
     }
+    static execAfterTimework(fn) {
+        let iv = setInterval(function () {
+            if (CTime.times.length == 0) {
+                clearInterval(iv);
+                fn();
+            }
+        }, 50);
+    }
 }
 CTime.isPause = false;
 CTime.times = new CTimes();

@@ -757,12 +757,10 @@ class CAnimationControlSceneEditorModel extends CPanel {
         this.transformer.onFreeTransformHandleTrack = function () {
             self.doTransform();
         };
-        this.objectsTool.showCenter(200, 400, "오브젝트 정보", "hide");
-        //this.positionTool.showCenter(400, 300, "위치 애니메이션 정보", "hide")
-        //this.positionTool.editor.animationControlSceneEditorModel = this
-        this.propertyTool.showCenter(300, 300, "속성 정보", "hide");
-        this.timeAnimationTool.showCenter(850, 300, "구간 애니메이션 정보", "hide");
-        this.timelineScriptTool.showCenter(850, 300, "구간 애니메이션 스크립트", "hide");
+        this.objectsTool.showCenter(200, 400, "Object info", "hide");
+        this.propertyTool.showCenter(300, 300, "Properties", "hide");
+        this.timeAnimationTool.showCenter(850, 300, "Section animation info", "hide");
+        this.timelineScriptTool.showCenter(850, 300, "Section animation script", "hide");
         this.properties.tabButtons.visible = false;
         this.btnNone.onClick = function () {
             self.pathEditor.mode = "None";
@@ -1542,10 +1540,15 @@ CSystem.onResourceLoad.push(function () {
     fetchBody("https://baekjonggyu.github.io/resource/ex.scene")
         .then(function (json) {
         CSystem.resources.set("ex.scene", JSON.parse(json));
-        let ex = new CSceneExample();
-        ex.desktop = CSystem.desktopList.get(0);
-        ex.execute();
-        ex.mainWindow.position.left = 50;
-        ex.mainWindow.position.top = 50;
+        CTime.execAfterTimework(function () {
+            let tm = new CTimeChecker();
+            tm.startChecker();
+            let ex = new CSceneExample();
+            ex.desktop = CSystem.desktopList.get(0);
+            ex.execute();
+            ex.mainWindow.position.left = 50;
+            ex.mainWindow.position.top = 50;
+            console.log("신예제생성", tm.stopChecker());
+        });
     });
 });

@@ -2779,6 +2779,7 @@ class CLayerPathEditorModel extends CPanel {
         this.scrollOpacity = new CScrollbar(this.lCBottom2);
         this.btnImage = new CButton(this.lCBottom2);
         this.btnImageFit = new CButton(this.lCBottom2);
+        this.btnImageSend = new CButton(this.lCBottom2);
         this.btnShowImage = new CSelectBox(this.lCBottom2);
         this.lRight = new CPanel(this);
         this.scrollProperties = new CScrollBox(this.lRight);
@@ -2989,6 +2990,10 @@ class CLayerPathEditorModel extends CPanel {
             self.pathAreaResizer.position.height = self.img.position.height + 50;
             self.pathAreaResizer.bringToFront();
         };
+        this.btnImageSend.onClick = function () {
+            self.pathAreaResizer.bringToFront();
+            self.shapeTool.bringToFront();
+        };
         this.btnItemUp.onClick = function () {
             self.doItemUp();
         };
@@ -3153,6 +3158,7 @@ class CLayerPathEditorModel extends CPanel {
         CDataClass.putData(data, "scrollOpacity", this.scrollOpacity.toData(), {}, true);
         CDataClass.putData(data, "btnImage", this.btnImage.toData(), {}, true);
         CDataClass.putData(data, "btnImageFit", this.btnImageFit.toData(), {}, true);
+        CDataClass.putData(data, "btnImageSend", this.btnImageSend.toData(), {}, true);
         CDataClass.putData(data, "btnShowImage", this.btnShowImage.toData(), {}, true);
     }
     doFromData(data) {
@@ -3228,6 +3234,7 @@ class CLayerPathEditorModel extends CPanel {
         this.scrollOpacity.fromData(CDataClass.getData(data, "scrollOpacity", {}, true));
         this.btnImage.fromData(CDataClass.getData(data, "btnImage", {}, true));
         this.btnImageFit.fromData(CDataClass.getData(data, "btnImageFit", {}, true));
+        this.btnImageSend.fromData(CDataClass.getData(data, "btnImageSend", {}, true));
         this.btnShowImage.fromData(CDataClass.getData(data, "btnShowImage", {}, true));
     }
     doResource() {

@@ -87,10 +87,21 @@ async function loadLazyResource() {
     map.set("fillEditor.frame", "https://baekjonggyu.github.io/resource/fillEditor.frame");
     map.set("strokeEditor.frame", "https://baekjonggyu.github.io/resource/strokeEditor.frame");
     map.set("gradientEditor.frame", "https://baekjonggyu.github.io/resource/gradientEditor.frame");
+    map.set("sticker_moon_하얀달만.frame", "https://baekjonggyu.github.io/resource/sticker_moon_하얀달만.frame");
+    map.set("sticker_base.frame", "https://baekjonggyu.github.io/resource/sticker_base.frame");
     map.forEach(function (v, k) {
         fetchBody(v)
             .then(function (json) {
             CSystem.resources.set(k, JSON.parse(json));
+            map.delete(k);
+            if (map.size == 0) {
+                doLoadLazyResource();
+            }
         });
     });
+}
+function doLoadLazyResource() {
+    for (let n = 0; n < CSystem.onResourceLazyLoad.length; n++) {
+        CSystem.onResourceLazyLoad[n]();
+    }
 }

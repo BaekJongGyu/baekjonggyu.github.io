@@ -1350,6 +1350,7 @@ CSystem.requestDraw = new CSet();
 CSystem.isDraw = true;
 CSystem.onAnimationFrame = new Array();
 CSystem.onResourceLoad = new Array();
+CSystem.onResourceLazyLoad = new Array();
 CSystem.onPointerDown = new Array();
 CSystem.onPointerMove = new Array();
 CSystem.onPointerUp = new Array();
@@ -1417,40 +1418,40 @@ const CON_HOST = "http://localhost";
                 v.position.height = window.innerHeight;
             });
         };
-        CSystem.onResourceLoad.push(function () {
-            let desktop = CSystem.newDesktop();
-            desktop.resource = "desktop_dark2.control";
-            //CApplication.systemIcon.set("CAppBell", "bell_button.control")
-            //CApplication.systemIcon.set("CAppFinder", "directory_button.control")
-            //CApplication.systemIcon.set("CAppTextEditor", "text_button.control")
-            //CApplication.systemIcon.set("CAppSearchNaver", "text_button.control")
-            //CApplication.systemIcon.set("CAppLayersEditor", "shape_button.control")
-            CApplication.systemIcon.set("CAppPathEditor", "shape_button.control");
-            //CApplication.systemIcon.set("CAppLayersAnimationEditor", "shape_button.control")
-            CApplication.systemIcon.set("CAppLayersSceneEditor", "scene_button.control");
-            CApplication.systemIcon.set("CAppGraphEditor", "graph_button.control");
-            //CApplication.systemIcon.set("CAppControlEditor", "control_button.control")
-            //CApplication.systemIcon.set("CAppFrameEditor", "frame_button.control")
-            //CApplication.systemIcon.set("CAppTrash", "Trash")
-            //CApplication.systemIcon.set("CAppLogin", "login_button.control")
-            CApplication.systemIcon.set("CAppSetting", "gear_button.control");
-            //CTaskbar.fixListLeft.add("CAppBell")
-            //CTaskbar.fixListLeft.add("CAppFinder")
-            //CTaskbar.fixListLeft.add("CAppTextEditor")
-            //CTaskbar.fixListLeft.add("CAppSearchNaver")
-            //CTaskbar.fixListLeft.add("CAppLayersEditor")
-            CTaskbar.fixListLeft.add("CAppPathEditor");
-            //CTaskbar.fixListLeft.add("CAppLayersAnimationEditor")
-            CTaskbar.fixListLeft.add("CAppLayersSceneEditor");
-            CTaskbar.fixListLeft.add("CAppGraphEditor");
-            //CTaskbar.fixListLeft.add("CAppControlEditor")
-            //CTaskbar.fixListLeft.add("CAppFrameEditor")
-            CTaskbar.fixListRight.add("CAppSetting");
-            //CTaskbar.fixListRight.add("CAppBell")
-            //CTaskbar.fixListRight.add("CAppLogin")
-            //CTaskbar.fixListRight.add("CAppTrash")   
-            CSystem.setDesktopSize(CSystem.desktopAlignKind);
-        });
+        //CSystem.onResourceLoad.push(function() {
+        //let desktop = CSystem.newDesktop()        
+        //desktop.resource = "desktop_dark2.control"
+        //CApplication.systemIcon.set("CAppBell", "bell_button.control")
+        //CApplication.systemIcon.set("CAppFinder", "directory_button.control")
+        //CApplication.systemIcon.set("CAppTextEditor", "text_button.control")
+        //CApplication.systemIcon.set("CAppSearchNaver", "text_button.control")
+        //CApplication.systemIcon.set("CAppLayersEditor", "shape_button.control")
+        //CApplication.systemIcon.set("CAppPathEditor", "shape_button.control")
+        //CApplication.systemIcon.set("CAppLayersAnimationEditor", "shape_button.control")
+        //CApplication.systemIcon.set("CAppLayersSceneEditor", "scene_button.control")
+        //CApplication.systemIcon.set("CAppGraphEditor", "graph_button.control")
+        //CApplication.systemIcon.set("CAppControlEditor", "control_button.control")
+        //CApplication.systemIcon.set("CAppFrameEditor", "frame_button.control")
+        //CApplication.systemIcon.set("CAppTrash", "Trash")
+        //CApplication.systemIcon.set("CAppLogin", "login_button.control")
+        //CApplication.systemIcon.set("CAppSetting", "gear_button.control")
+        //CTaskbar.fixListLeft.add("CAppBell")
+        //CTaskbar.fixListLeft.add("CAppFinder")
+        //CTaskbar.fixListLeft.add("CAppTextEditor")
+        //CTaskbar.fixListLeft.add("CAppSearchNaver")
+        //CTaskbar.fixListLeft.add("CAppLayersEditor")
+        //CTaskbar.fixListLeft.add("CAppPathEditor")
+        //CTaskbar.fixListLeft.add("CAppLayersAnimationEditor")
+        //CTaskbar.fixListLeft.add("CAppLayersSceneEditor")
+        //CTaskbar.fixListLeft.add("CAppGraphEditor")
+        //CTaskbar.fixListLeft.add("CAppControlEditor")
+        //CTaskbar.fixListLeft.add("CAppFrameEditor")
+        //CTaskbar.fixListRight.add("CAppSetting")
+        //CTaskbar.fixListRight.add("CAppBell")
+        //CTaskbar.fixListRight.add("CAppLogin")
+        //CTaskbar.fixListRight.add("CAppTrash")   
+        //CSystem.setDesktopSize(CSystem.desktopAlignKind)
+        //})
         //let tm = new CTimeChecker()
         //tm.startChecker()
         /*fetchBody("/api/file/v1/fontlist").then(function(msg) {

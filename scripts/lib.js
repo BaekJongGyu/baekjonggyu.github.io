@@ -1432,6 +1432,7 @@ class CDataClass extends CClass {
 class CResourceClass extends CDataClass {
     constructor() {
         super(...arguments);
+        this.__resource = "";
         this._resource = "";
     }
     get resource() {
@@ -1443,6 +1444,7 @@ class CResourceClass extends CDataClass {
         if (this._resource != value) {
             this._resource = value;
             if (value != "") {
+                this.__resource = value;
                 if (CSystem.resourcesLoad) {
                     this.doResource();
                 }
@@ -1451,6 +1453,9 @@ class CResourceClass extends CDataClass {
                 }
             }
         }
+    }
+    get lastResourceName() {
+        return this.__resource;
     }
     doToData(data) {
         super.doToData(data);

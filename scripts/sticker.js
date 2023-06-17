@@ -156,6 +156,11 @@ class CStickerModel extends CWindowModel {
         this.isStickerSet = true;
     }
     doStickerAdd() {
+        let st = new CStickerModel(CSystem.desktopList.get(0).applicationLayer);
+        console.log(this.lastResourceName);
+        st.resource = this.lastResourceName;
+        st.position.left = this.position.left + this.position.width;
+        st.position.top = this.position.top;
         /**TITLE, STICKER_DESC, STICKER_LEFT, STICKER_TOP, STICKER_WIDTH, STICKER_HEIGHT */
         /*if(CGlobal.userInfo != undefined && CGlobal.userInfo.ws != undefined && this.isStickerSet) {
             if(this.parent != undefined) {
