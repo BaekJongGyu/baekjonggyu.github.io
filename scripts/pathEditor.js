@@ -92,8 +92,10 @@ class CPathEditorModel extends CPanel {
         this.__item.stroke.lineWidth = 1;
         this.__item.pathFitMode = EFitMode.ORIGINAL;
         this.btnSave.onClick = function () {
+            self.saveFile();
         };
         this.btnOpen.onClick = function () {
+            self.loadFile();
         };
         this.btnSize.onClick = function () {
             self.path.position.width = parseInt(self.lblWidth.value);
@@ -436,7 +438,7 @@ class CPathEditorModel extends CPanel {
             };
         }
     }
-    async loadFile(filename) {
+    async loadFile() {
         /*let o = await this.openFinder.fetchBodyApi(CON_HOST + "/api/file/v1/fileload?filename=" + filename)
         if(o.result == "success") {
             if(o.data != undefined) {
@@ -451,7 +453,7 @@ class CPathEditorModel extends CPanel {
         }
         return o*/
     }
-    async saveFile(filename) {
+    async saveFile() {
         /*let oo = {width:parseInt(this.lblWidth.value), height:parseInt(this.lblheight.value)}
         oo["path"] = this.item.pathData.toData()
         if(CGlobal.userInfo != undefined) {
@@ -517,62 +519,6 @@ class CGraphEditorModel extends CPathEditorModel {
                 self.setStartStopValue();
             }
         };
-        this.btnReg.onClick = function () {
-            /*let arrpd = new Array<{pointKind: number, point:{x:number, y:number}, cPoint1:{x:number, y:number}, cPoint2:{x:number, y:number}}>()
-            for(let n = 0; n < self.item.pathData.length; n++) {
-                let pt = self.item.pathData.get(n)
-                arrpd.push({
-                    pointKind: pt.pointKind,
-                    point:{x:pt.point.x, y:pt.point.y},
-                    cPoint1:{x:pt.cPoint1.x, y:pt.cPoint1.y},
-                    cPoint2:{x:pt.cPoint2.x, y:pt.cPoint2.y}
-                })
-            }
-
-            if(CGlobal.userInfo != undefined) {
-                let strm = new CStream()
-                strm.putString(self.edtDuration.text)
-                strm.putString(self.lblWidth.value)
-                strm.putString(self.lblheight.value)
-                strm.putString(self.edtStart.text)
-                strm.putString(self.edtStop.text)
-                strm.putString(self.edtScaleY.text)
-                strm.putString(self.edtPrecision.text)
-                strm.putString(self.edtFrame.text)
-                strm.putString(CStringUtil.strToUriBase64(JSON.stringify(arrpd)))
-                CGlobal.userInfo.sendSocketData("getGraphData", strm, function(data) {
-                    data.getString()
-                    data.getString()
-                    let result = data.getString()
-                    if(result == "success") {
-                        data.getString()
-                        let frm = new CTextEditor(CSystem.desktopList.get(0).applicationLayer)
-                        frm.show(100, 100, 600, 400, "Graph data", "remove")
-                        frm.editor.textArea.text = data.getString()
-                    }
-                })
-            }*/
-            /*
-            CSystem.prompt("Add Graph", ["Resource name"], self.cover, async function(arr) {
-                let o = await postData(CON_HOST + "/resource/api/v1/graphdataadd", {
-                    duration:self.edtDuration.text,
-                    width:self.lblWidth.value,
-                    scaley:self.edtScaleY.text,
-                    start:self.edtStart.text,
-                    stop:self.edtStop.text,
-                    height:self.lblheight.value,
-                    precision:self.edtPrecision.text,
-                    frame:self.edtFrame.text,
-                    resourcename:arr[0],
-                    pathdata:CStringUtil.strToUriBase64(JSON.stringify(arrpd))
-                })
-                if(o.result == "success") {
-                    alert("Success")
-                } else {
-                    alert(o.message)
-                }
-            }, undefined, 350)*/
-        };
     }
     doToData(data) {
         super.doToData(data);
@@ -627,49 +573,44 @@ class CGraphEditorModel extends CPathEditorModel {
         this.stopValueHandle.position.top = this.pathGraphic.position.height - (parseInt(this.edtStop.text) + 15);
         this.setStartStopValue();
     }
-    async loadFile(filename) {
-        /*let o = await this.openFinder.fetchBodyApi(CON_HOST + "/api/file/v1/fileload?filename=" + filename)
-        if(o.result == "success") {
-            if(o.data != undefined) {
-                let oo = JSON.parse(o.data)
-                if(this.pathData != undefined) this.pathData.fromData(oo.path)
-                this.item.pathData.fromData(oo.path)
-                this.lblWidth.value = oo.width + ""
-                this.lblheight.value = oo.height + ""
-                this.btnSize.click()
-                this.edtScaleY.text = oo.scaleY
-                this.edtPrecision.text = oo.precision
-                this.edtDuration.text = oo.duration
-                this.edtFrame.text = oo.frame
-                this.edtStart.text = oo.startY
-                this.edtStop.text = oo.stopY
-                this.setHandle()
-                this.refresh()
-            }
-        }
-        return o*/
+    async loadFile() {
+        let self = this;
+        CSystem.loadFromFile(function (f) {
+            f.text().then(function (fs) {
+                let oo = JSON.parse(fs);
+                if (self.pathData != undefined)
+                    self.pathData.fromData(oo.path);
+                self.item.pathData.fromData(oo.path);
+                self.lblWidth.value = oo.width + "";
+                self.lblheight.value = oo.height + "";
+                self.btnSize.click();
+                self.edtScaleY.text = oo.scaleY;
+                self.edtPrecision.text = oo.precision;
+                self.edtDuration.text = oo.duration;
+                self.edtFrame.text = oo.frame;
+                self.edtStart.text = oo.startY;
+                self.edtStop.text = oo.stopY;
+                self.setHandle();
+                self.refresh();
+            });
+        });
     }
-    async saveFile(filename) {
-        /*let oo = {
-            width:parseInt(this.lblWidth.value),
-            height:parseInt(this.lblheight.value),
-            scaleY:this.edtScaleY.text,
-            precision:this.edtPrecision.text,
-            duration:this.edtDuration.text,
-            frame:this.edtFrame.text,
-            startY:this.edtStart.text,
-            stopY:this.edtStop.text
-        }
-        oo["path"] = this.item.pathData.toData()
-        if(CGlobal.userInfo != undefined) {
-            let strm = new CStream()
-            strm.putString(filename)
-            strm.putString(JSON.stringify(oo))
-            let self = this
-            CGlobal.userInfo.sendSocketData("savetextfile", strm, function(data) {
-                self.saveCover.hideCover()
-            })
-        }*/
+    async saveFile() {
+        let self = this;
+        CSystem.prompt("Graph save", ["File name"], CSystem.browserCovers.get("cover"), function (arr) {
+            let oo = {
+                width: parseInt(self.lblWidth.value),
+                height: parseInt(self.lblheight.value),
+                scaleY: self.edtScaleY.text,
+                precision: self.edtPrecision.text,
+                duration: self.edtDuration.text,
+                frame: self.edtFrame.text,
+                startY: self.edtStart.text,
+                stopY: self.edtStop.text
+            };
+            oo["path"] = self.item.pathData.toData();
+            CSystem.saveAsFile(JSON.stringify(oo), arr[0] + ".graphpath");
+        });
     }
     getGraphData() {
         let height = parseFloat(this.lblheight.value);
@@ -3963,7 +3904,6 @@ class CLayerPathEditorModel extends CPanel {
         let con = new CAnimationControl();
         con.position.width = parseFloat(this.edtWidth.text);
         con.position.height = parseFloat(this.edtHeight.text);
-        con.propertyName = "animationControl";
         con.objectsCount = this.pathItems.length;
         let pi = new CPathItems();
         pi.copyFrom(this.pathItems);
@@ -3982,6 +3922,7 @@ class CLayerPathEditorModel extends CPanel {
         }
         let self = this;
         CSystem.prompt("Control save", ["File name"], CSystem.browserCovers.get("cover"), function (arr) {
+            con.propertyName = arr[0];
             CSystem.saveAsFile(JSON.stringify(con.toData()), arr[0] + ".control");
             con.remove();
         });

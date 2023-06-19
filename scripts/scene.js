@@ -485,6 +485,8 @@ class CAnimationControlSceneEditorModel extends CPanel {
         this.lCBottom = new CPanel(this.lClient);
         this.objectsTool = new CWindowChildTool(this);
         this.lLTop = new CPanel(this.objectsTool.body);
+        this.btnAddObject = new CButton(this.lLTop);
+        this.btnDeleteObject = new CButton(this.lLTop);
         this.btnAddProperty = new CButton(this.lLTop);
         this.list = new CObjectTreeListBox(this.objectsTool.body);
         this.controlResizer = new CPanel(this.lClient);
@@ -666,6 +668,28 @@ class CAnimationControlSceneEditorModel extends CPanel {
         this.btnAddProperty.onClick = function () {
             self.doAddSection();
         };
+        this.btnAddObject.onClick = function () {
+            CSystem.prompt("Add object", ["Object name"], CSystem.browserCovers.get("cover"), function (arr) {
+                CSystem.loadFromFile(function (f) {
+                    f.text().then(function (fs) {
+                        let data = JSON.parse(fs);
+                        self.con.objectsCount++;
+                        self.con.objects.get(self.con.objectsCount - 1).fromData(data);
+                        self.con.objects.get(self.con.objectsCount - 1).propertyName = arr[0];
+                        self.con.setObjectIndex();
+                        self.refresh();
+                    });
+                });
+            });
+        };
+        this.btnDeleteObject.onClick = function () {
+            if (self.list.selectItems.length > 0) {
+                let sel = self.list.selectItems[0];
+                self.con.deleteObject(sel.value.asObject["control"]);
+                self.con.setObjectIndex();
+                self.refresh();
+            }
+        };
         this.btnPropertyUp.onClick = function () {
             self.doPropertyUp();
         };
@@ -801,6 +825,8 @@ class CAnimationControlSceneEditorModel extends CPanel {
         CDataClass.putData(data, "lLTop", this.lLTop.toData(), {}, true);
         CDataClass.putData(data, "lClient", this.lClient.toData(), {}, true);
         CDataClass.putData(data, "lBTop", this.lBTop.toData(), {}, true);
+        CDataClass.putData(data, "btnAddObject", this.btnAddObject.toData(), {}, true);
+        CDataClass.putData(data, "btnDeleteObject", this.btnDeleteObject.toData(), {}, true);
         CDataClass.putData(data, "btnAddProperty", this.btnAddProperty.toData(), {}, true);
         CDataClass.putData(data, "list", this.list.toData(), {}, true);
         CDataClass.putData(data, "controlResizer", this.controlResizer.toData(), {}, true);
@@ -865,6 +891,8 @@ class CAnimationControlSceneEditorModel extends CPanel {
         this.lClient.fromData(CDataClass.getData(data, "lClient", {}, true));
         this.lBTop.fromData(CDataClass.getData(data, "lBTop", {}, true));
         this.list.fromData(CDataClass.getData(data, "list", {}, true));
+        this.btnAddObject.fromData(CDataClass.getData(data, "btnAddObject", {}, true));
+        this.btnDeleteObject.fromData(CDataClass.getData(data, "btnDeleteObject", {}, true));
         this.btnAddProperty.fromData(CDataClass.getData(data, "btnAddProperty", {}, true));
         this.controlResizer.fromData(CDataClass.getData(data, "controlResizer", {}, true));
         this.lBTopTime.fromData(CDataClass.getData(data, "lBTopTime", {}, true));
@@ -998,12 +1026,12 @@ class CAnimationControlSceneEditorModel extends CPanel {
     doAddSection() {
         if (this.list.selectItems.length > 0) {
             let self = this;
-            CSystem.prompt("애니메이션 구간 설정", ["프로퍼티명", "시작타임(ms)", "애니메이션 시간", "그래프명", "시작값", "종료값", "반복여부"], CSystem.browserCovers.get("cover"), function (arr) {
+            CSystem.prompt("Add section animation", ["Property name", "StartTime(ms)", "Duration", "Graph", "StartValue", "StopValue", "Loop"], CSystem.browserCovers.get("cover"), function (arr) {
                 let as = new CAnimationControlSceneSection();
                 as.control = self.list.selectItems[0].value.asObject["control"];
                 as.controlName = self.list.selectItems[0].value.asObject["text"];
                 if (arr[0] == "") {
-                    as.property = "없음";
+                    as.property = "Unknown";
                 }
                 else {
                     as.property = arr[0];
@@ -1540,15 +1568,32 @@ CSystem.onResourceLoad.push(function () {
     fetchBody("https://baekjonggyu.github.io/resource/ex.scene")
         .then(function (json) {
         CSystem.resources.set("ex.scene", JSON.parse(json));
-        CTime.execAfterTimework(function () {
-            let tm = new CTimeChecker();
-            tm.startChecker();
-            let ex = new CSceneExample();
-            ex.desktop = CSystem.desktopList.get(0);
-            ex.execute();
-            ex.mainWindow.position.left = 50;
-            ex.mainWindow.position.top = 50;
-            console.log("신예제생성", tm.stopChecker());
-        });
+        //CTime.execAfterTimework(function() {
+        let tm = new CTimeChecker();
+        tm.startChecker();
+        let ex = new CSceneExample();
+        ex.desktop = CSystem.desktopList.get(0);
+        ex.execute();
+        ex.mainWindow.position.left = 50;
+        ex.mainWindow.position.top = 50;
+        //})        
+    });
+    fetchBody("https://baekjonggyu.github.io/resource/night.scene")
+        .then(function (json) {
+        CSystem.resources.set("night.scene", JSON.parse(json));
+        //CTime.execAfterTimework(function() {
+        let tm = new CTimeChecker();
+        tm.startChecker();
+        let ex = new CSceneExample();
+        ex.desktop = CSystem.desktopList.get(0);
+        ex.execute();
+        let rc = CSystem.resources.get("night.scene");
+        ex.editor.con.fromData(rc.control);
+        ex.editor.con.sceneData.duration = 30000;
+        ex.mainWindow.position.left = 100;
+        ex.mainWindow.position.top = 100;
+        ex.mainWindow.position.width = 1016;
+        ex.mainWindow.position.height = 628;
+        //})        
     });
 });

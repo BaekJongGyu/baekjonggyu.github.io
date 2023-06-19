@@ -3762,6 +3762,7 @@ class CAnimationControl extends CPanel {
     }
     setObjectIndex() {
         this.__objectsIndex.clear();
+        this.__objectsIndex.set(this.propertyName, this);
         for (let n = 0; n < this.objects.length; n++) {
             this.__objectsIndex.set(this.objects.get(n).propertyName, this.objects.get(n));
         }
@@ -3773,11 +3774,16 @@ class CAnimationControl extends CPanel {
     }
     getSceneAnimation() {
         let ani = new CSceneAnimator();
-        let d = 0;
-        for (let n = 0; n < this.sceneData.sections.length; n++) {
-            d = CCalc.max(d, this.sceneData.sections.get(n).startTime + this.sceneData.sections.get(n).duration);
+        if (this.sceneData.duration == 1000) {
+            let d = 0;
+            for (let n = 0; n < this.sceneData.sections.length; n++) {
+                d = CCalc.max(d, this.sceneData.sections.get(n).startTime + this.sceneData.sections.get(n).duration);
+            }
+            ani.duration = d;
         }
-        ani.duration = d;
+        else {
+            ani.duration = this.sceneData.duration;
+        }
         ani.animationControl = this;
         //ani.timeSpeedGraphData = this.graphData
         //ani.startTimeSpeed = this.timeSpeedStart
@@ -3787,5 +3793,15 @@ class CAnimationControl extends CPanel {
     setOriginalData() {
         if (this.orgData != undefined)
             this.fromData(this.orgData);
+    }
+    deleteObject(object) {
+        for (let n = 0; n < this.objects.length; n++) {
+            if (this.objects.get(n) == object) {
+                this.objects.get(n).remove();
+                this.objects.delete(n);
+                this.objectsCount--;
+                break;
+            }
+        }
     }
 }

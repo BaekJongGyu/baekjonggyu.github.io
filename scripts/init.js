@@ -17,6 +17,7 @@ async function loadDesktop() {
         CSystem.setDesktopSize(CSystem.desktopAlignKind);
     });
     CSystem.onResourceLazyLoad.push(function () {
+        //CTime.execAfterTimework(function() {
         let sticker = new CStickerModel(CSystem.desktopList.get(0).applicationLayer);
         sticker.resource = "sticker_moon_하얀달만.frame";
         sticker.title = "(C) 2020. (bellground) all rights reserved.";
@@ -25,6 +26,8 @@ async function loadDesktop() {
         sticker.position.top = 50;
         sticker.position.width = 400;
         sticker.position.height = 150;
+        //})
+        //CTime.execAfterTimework(function() {
         let sticker2 = new CStickerModel(CSystem.desktopList.get(0).applicationLayer);
         sticker2.resource = "sticker_base.frame";
         sticker2.title = "Notice";
@@ -33,5 +36,6 @@ async function loadDesktop() {
         sticker2.position.top = 250;
         sticker2.position.width = 400;
         sticker2.position.height = 150;
+        //})
     });
 }

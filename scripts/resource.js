@@ -75,6 +75,7 @@ async function loadLazyResource() {
     map.set("button_gray_gra.control", "https://baekjonggyu.github.io/resource/button_gray_gra.control");
     map.set("handle_white.control", "https://baekjonggyu.github.io/resource/handle_white.control");
     map.set("colorselector16.control", "https://baekjonggyu.github.io/resource/colorselector16.control");
+    map.set("control_position_editor.control", "https://baekjonggyu.github.io/resource/control_position_editor.control");
     map.set("graphEditor.frame", "https://baekjonggyu.github.io/resource/graphEditor.frame");
     map.set("window_sky.frame", "https://baekjonggyu.github.io/resource/window_sky.frame");
     map.set("window_sky_dialog.frame", "https://baekjonggyu.github.io/resource/window_sky_dialog.frame");
