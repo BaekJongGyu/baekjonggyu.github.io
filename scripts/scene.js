@@ -478,6 +478,7 @@ class CAnimationControlSceneEditorModel extends CPanel {
         this.lblHeight = new CPanel(this.toolbar);
         this.edtHeight = new CTextBox(this.toolbar);
         this.btnSize = new CButton(this.toolbar);
+        this.btnExport = new CButton(this.toolbar);
         this.lClient = new CPanel(this);
         this.lCBottom = new CPanel(this.lClient);
         this.objectsTool = new CWindowChildTool(this);
@@ -562,6 +563,7 @@ class CAnimationControlSceneEditorModel extends CPanel {
                 let sec = self.getSelectedSection();
                 if (sec != undefined) {
                     sec.graphData = data;
+                    sec.graphPath.fromData(self.fraGraph.item.pathData.toData());
                 }
             }
         };
@@ -655,6 +657,33 @@ class CAnimationControlSceneEditorModel extends CPanel {
             let h = parseInt(self.edtHeight.text) + 30;
             self.controlResizer.position.width = w;
             self.controlResizer.position.height = h;
+        };
+        this.btnExport.onClick = function () {
+            fetchBody("https://baekjonggyu.github.io/scripts/scene.min.js").then(function (s) {
+                CSystem.saveAsFile(s, "scene.min.js");
+            });
+            let o = {
+                control: self.con.toData(),
+                duration: self.edtDuration.text
+            };
+            let script = "CSystem.resources.set('scene1', JSON.parse(`" + JSON.stringify(o) + "`))";
+            CSystem.saveAsFile(script, "sceneData.js");
+            script = `
+const element = document.getElementById('your_element');
+const rect = element.getBoundingClientRect();
+let con = new CAnimationControl(element)
+let rc = CSystem.resources.get("scene1")
+con.fromData(rc.control)
+con.sceneData.duration = rc.duration
+con.position.left = rect.left
+con.position.top = rect.top
+con.position.width = rect.width
+con.position.height = rect.height
+con.scene()`;
+            CSystem.saveAsFile(script, "example.txt");
+            let txt = "1. Add scene.min.js, sceneData.js script to header area";
+            txt += "\n2. Run the script in the script.txt file";
+            CSystem.saveAsFile(txt, "Read me.txt");
         };
         this.controlResizer.onChangeSize = function () {
             self.edtWidth.text = self.controlResizer.position.width - 20 + "";
@@ -819,6 +848,7 @@ class CAnimationControlSceneEditorModel extends CPanel {
         CDataClass.putData(data, "lblHeight", this.lblHeight.toData(), {}, true);
         CDataClass.putData(data, "edtHeight", this.edtHeight.toData(), {}, true);
         CDataClass.putData(data, "btnSize", this.btnSize.toData(), {}, true);
+        CDataClass.putData(data, "btnExport", this.btnExport.toData(), {}, true);
         CDataClass.putData(data, "lLTop", this.lLTop.toData(), {}, true);
         CDataClass.putData(data, "lClient", this.lClient.toData(), {}, true);
         CDataClass.putData(data, "lBTop", this.lBTop.toData(), {}, true);
@@ -884,6 +914,7 @@ class CAnimationControlSceneEditorModel extends CPanel {
         this.lblHeight.fromData(CDataClass.getData(data, "lblHeight", {}, true));
         this.edtHeight.fromData(CDataClass.getData(data, "edtHeight", {}, true));
         this.btnSize.fromData(CDataClass.getData(data, "btnSize", {}, true));
+        this.btnExport.fromData(CDataClass.getData(data, "btnExport", {}, true));
         this.lLTop.fromData(CDataClass.getData(data, "lLTop", {}, true));
         this.lClient.fromData(CDataClass.getData(data, "lClient", {}, true));
         this.lBTop.fromData(CDataClass.getData(data, "lBTop", {}, true));
@@ -1081,13 +1112,12 @@ class CAnimationControlSceneEditorModel extends CPanel {
         }
     }
     async doGraphEditorShow(isTag = false) {
-        this.frmGraph.showCenter(860, 550, "그래프 편집기", "hide");
+        this.frmGraph.showCenter(860, 550, "Graph editor", "hide");
         this.fraGraph.tagItem.pathData.clear();
         let sec = this.getSelectedSection();
         if (sec != undefined) {
-            if (this.fraGraph.pathData != undefined) {
-                this.fraGraph.pathData.fromData(sec.graphPath.toData());
-            }
+            this.fraGraph.item.pathData.fromData(sec.graphPath.toData());
+            this.fraGraph.refresh();
             if (isTag) {
                 for (let n = 0; n < sec.timeTag.length; n++) {
                     let x = CCalc.crRange2Value(sec.startTime, sec.startTime + sec.duration, sec.timeTag[n].duration, 0, this.fraGraph.pathGraphic.position.width);

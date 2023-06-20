@@ -3468,8 +3468,7 @@ class CLayerPathEditorModel extends CPanel {
             this.doHideSelector();
     }
     doItemAdd() {
-        let it = this.pathItems.addItem();
-        it.kind = "Empty";
+        this.doPathItemAdd(EPathItemItemKind.EMPTY, 0, 0);
         this.refresh();
     }
     doItemDelete() {
@@ -3581,7 +3580,10 @@ class CLayerPathEditorModel extends CPanel {
             return pic;
         }
         if (itemKind == EPathItemItemKind.EMPTY) {
-            newItem();
+            let pic = newItem();
+            pic.pathData.makeRoundRectData(0, 0, this.pathEditor.position.width, this.pathEditor.position.height, 0, 0, new CStringSet(), new CStringSet(), false);
+            pic.fill.styleKind = EStyleKind.EMPTY;
+            pic.stroke.styleKind = EStyleKind.EMPTY;
             this.refresh(true);
             this.doPaint();
         }

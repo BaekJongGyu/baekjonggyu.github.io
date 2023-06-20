@@ -3704,7 +3704,8 @@ class CAnimationControl extends CPanel {
         let self = this;
         if (!this.__isScene) {
             //this.fromData(this.orgData)
-            let ani = new CSceneAnimator();
+            this.doSetStart();
+            let ani = this.getSceneAnimation();
             ani.animationControl = this;
             ani.duration = this.sceneData.duration;
             ani.onFinish = function () {
