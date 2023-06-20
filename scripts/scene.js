@@ -214,7 +214,6 @@ class CSceneAnimator extends CSceneAnimation {
                 }
                 if (info.objectData.length > 0) {
                     if (info.objectData.get(info.objectData.length - 1).sectionT < graphValue && info["__lastSet"] == undefined) {
-                        console.log("last set");
                         info.control.opacity = info.objectData.get(info.objectData.length - 1).info.opacity;
                         if (info.positionPoints.length == 0) {
                             info.control.position.left = this.getValue("x", info.objectData.get(info.objectData.length - 1).info.position.left);
@@ -322,14 +321,12 @@ class CSceneAnimator extends CSceneAnimation {
                     let pt = info.positionPoints[idx];
                     info.control.position.left = this.getValue("x", pt.x) - (info.control.transform.rotationPointX * info.control.position.width);
                     info.control.position.top = this.getValue("y", pt.y) - (info.control.transform.rotationPointY * info.control.position.height);
-                    console.log(graphValue, info.control.position.left, info.control.position.top);
                 }
             }
         }
     }
     getValue(kind, v) {
         if (this.animationControl != undefined) {
-            console.log(this.animationControl.orgPosition.width, this.animationControl.orgPosition.height);
             if (kind == "x") {
                 return v * (this.animationControl.position.width / this.animationControl.orgPosition.width);
             }
@@ -1518,10 +1515,6 @@ class CSceneExampleFrame extends CPanel {
         this.btnPlay.onClick = function () {
             self.doPlay();
         };
-        let rc = CSystem.resources.get("ex.scene");
-        this.con.fromData(rc.control);
-        this.con.position.align = EPositionAlign.CLIENT;
-        this.startPosition();
     }
     doToData(data) {
         super.doToData(data);
@@ -1568,32 +1561,34 @@ CSystem.onResourceLoad.push(function () {
     fetchBody("https://baekjonggyu.github.io/resource/ex.scene")
         .then(function (json) {
         CSystem.resources.set("ex.scene", JSON.parse(json));
-        //CTime.execAfterTimework(function() {
         let tm = new CTimeChecker();
         tm.startChecker();
         let ex = new CSceneExample();
         ex.desktop = CSystem.desktopList.get(0);
         ex.execute();
+        let rc = CSystem.resources.get("ex.scene");
+        ex.editor.con.fromData(rc.control);
+        ex.editor.con.position.align = EPositionAlign.CLIENT;
+        ex.editor.startPosition();
         ex.mainWindow.position.left = 50;
         ex.mainWindow.position.top = 50;
-        //})        
     });
-    fetchBody("https://baekjonggyu.github.io/resource/night.scene")
-        .then(function (json) {
-        CSystem.resources.set("night.scene", JSON.parse(json));
-        //CTime.execAfterTimework(function() {
-        let tm = new CTimeChecker();
-        tm.startChecker();
-        let ex = new CSceneExample();
-        ex.desktop = CSystem.desktopList.get(0);
-        ex.execute();
-        let rc = CSystem.resources.get("night.scene");
-        ex.editor.con.fromData(rc.control);
-        ex.editor.con.sceneData.duration = 30000;
-        ex.mainWindow.position.left = 100;
-        ex.mainWindow.position.top = 100;
-        ex.mainWindow.position.width = 1016;
-        ex.mainWindow.position.height = 628;
-        //})        
-    });
+    setTimeout(() => {
+        fetchBody("https://baekjonggyu.github.io/resource/night.scene")
+            .then(function (json) {
+            CSystem.resources.set("night.scene", JSON.parse(json));
+            let tm = new CTimeChecker();
+            tm.startChecker();
+            let ex = new CSceneExample();
+            ex.desktop = CSystem.desktopList.get(0);
+            ex.execute();
+            let rc = CSystem.resources.get("night.scene");
+            ex.editor.con.fromData(rc.control);
+            ex.editor.con.sceneData.duration = 30000;
+            ex.mainWindow.position.left = 100;
+            ex.mainWindow.position.top = 100;
+            ex.mainWindow.position.width = 1016;
+            ex.mainWindow.position.height = 628;
+        });
+    }, 100);
 });
