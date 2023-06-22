@@ -20,6 +20,7 @@ function loadSystemResource() {
         map.set("scene_button.control", "https://baekjonggyu.github.io/resource/scene_button.control");
         map.set("gear_button.control", "https://baekjonggyu.github.io/resource/gear_button.control");
         map.set("desktop_dark2.control", "https://baekjonggyu.github.io/resource/desktop_dark2.control");
+        map.set("heart.control", "https://baekjonggyu.github.io/resource/heart.control");
         map.forEach(function (v, k) {
             fetchBody(v)
                 .then(function (json) {

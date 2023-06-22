@@ -11,10 +11,12 @@ async function loadDesktop() {
         CApplication.systemIcon.set("CAppLayersSceneEditor", "scene_button.control");
         CApplication.systemIcon.set("CAppGraphEditor", "graph_button.control");
         CApplication.systemIcon.set("CAppSetting", "gear_button.control");
+        CApplication.systemIcon.set("CAppDonation", "heart.control");
         CTaskbar.fixListLeft.add("CAppPathEditor");
         CTaskbar.fixListLeft.add("CAppLayersSceneEditor");
         CTaskbar.fixListLeft.add("CAppGraphEditor");
         CTaskbar.fixListRight.add("CAppSetting");
+        CTaskbar.fixListRight.add("CAppDonation");
         CSystem.setDesktopSize(CSystem.desktopAlignKind);
         isDesktop = true;
     });
