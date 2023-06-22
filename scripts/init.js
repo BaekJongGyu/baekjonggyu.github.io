@@ -25,7 +25,7 @@ async function loadDesktop() {
             if (isDesktop) {
                 let sticker = new CStickerModel(CSystem.desktopList.get(0).applicationLayer);
                 sticker.resource = "sticker_moon_하얀달만.frame";
-                sticker.title = "(C) 2020. (bellground) all rights reserved.";
+                sticker.title = "(C) 2023. (bellground) all rights reserved.";
                 sticker.txtDesc.text = "bellground.com@gmail.com";
                 sticker.position.left = 600;
                 sticker.position.top = 50;
@@ -34,7 +34,7 @@ async function loadDesktop() {
                 let sticker2 = new CStickerModel(CSystem.desktopList.get(0).applicationLayer);
                 sticker2.resource = "sticker_base.frame";
                 sticker2.title = "Notice";
-                sticker2.txtDesc.text = "";
+                sticker2.txtDesc.text = "Test";
                 sticker2.position.left = 600;
                 sticker2.position.top = 250;
                 sticker2.position.width = 400;
