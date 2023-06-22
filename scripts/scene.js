@@ -1588,15 +1588,15 @@ class CSceneExample extends CWindowApplication {
     }
 }
 CSystem.onResourceLoad.push(function () {
-    fetchBody("https://baekjonggyu.github.io/resource/ex.scene")
+    fetchBody("https://baekjonggyu.github.io/resource/night2.scene")
         .then(function (json) {
-        CSystem.resources.set("ex.scene", JSON.parse(json));
+        CSystem.resources.set("night2.scene", JSON.parse(json));
         let tm = new CTimeChecker();
         tm.startChecker();
         let ex = new CSceneExample();
         ex.desktop = CSystem.desktopList.get(0);
         ex.execute();
-        let rc = CSystem.resources.get("ex.scene");
+        let rc = CSystem.resources.get("night2.scene");
         ex.editor.con.fromData(rc.control);
         ex.editor.con.position.align = EPositionAlign.CLIENT;
         ex.editor.startPosition();
