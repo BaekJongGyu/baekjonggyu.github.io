@@ -77,6 +77,7 @@ async function loadLazyResource() {
     map.set("handle_white.control", "https://baekjonggyu.github.io/resource/handle_white.control");
     map.set("colorselector16.control", "https://baekjonggyu.github.io/resource/colorselector16.control");
     map.set("control_position_editor.control", "https://baekjonggyu.github.io/resource/control_position_editor.control");
+    map.set("button_donate.control", "https://baekjonggyu.github.io/resource/button_donate.control");
     map.set("graphEditor.frame", "https://baekjonggyu.github.io/resource/graphEditor.frame");
     map.set("window_sky.frame", "https://baekjonggyu.github.io/resource/window_sky.frame");
     map.set("window_sky_dialog.frame", "https://baekjonggyu.github.io/resource/window_sky_dialog.frame");
@@ -91,6 +92,7 @@ async function loadLazyResource() {
     map.set("gradientEditor.frame", "https://baekjonggyu.github.io/resource/gradientEditor.frame");
     map.set("sticker_moon_하얀달만.frame", "https://baekjonggyu.github.io/resource/sticker_moon_하얀달만.frame");
     map.set("sticker_base.frame", "https://baekjonggyu.github.io/resource/sticker_base.frame");
+    map.set("donation.frame", "https://baekjonggyu.github.io/resource/donation.frame");
     map.forEach(function (v, k) {
         fetchBody(v)
             .then(function (json) {
