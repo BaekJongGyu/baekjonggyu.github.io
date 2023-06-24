@@ -41,8 +41,8 @@ class CPropertyEditor extends CDataGrid {
         this.gridInfo.useIndicator = false;
         this.headers.add("name");
         this.headers.add("value");
-        this.headerText.set("0,0", "프로퍼티명");
-        this.headerText.set("1,0", "값");
+        this.headerText.set("0,0", "Property");
+        this.headerText.set("1,0", "Value");
         this.editable = true;
         this.editorShowSet.add(EEditorShowKind.CLICK);
         this.editorShowSet.add(EEditorShowKind.F2_KEY);
@@ -69,8 +69,8 @@ class CPropertyEditor extends CDataGrid {
         this.headers.clear();
         this.headers.add("name");
         this.headers.add("value");
-        this.headerText.set("0,0", "프로퍼티명");
-        this.headerText.set("1,0", "값");
+        this.headerText.set("0,0", "Property");
+        this.headerText.set("1,0", "Value");
         this.editable = true;
         this.editorShowSet.add(EEditorShowKind.CLICK);
         this.editorShowSet.add(EEditorShowKind.F2_KEY);

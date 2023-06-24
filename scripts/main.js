@@ -85,6 +85,15 @@ class CIcon extends CPanel {
         this.usePointerCapture = true;
         this.useMoveClick = true;
     }
+    doFromData(data) {
+        super.doFromData(data);
+        this.useMove = true;
+        this.moveAreaLength = -1;
+        this.useResize = false;
+        this.resizeAreaLength = 0;
+        this.usePointerCapture = true;
+        this.useMoveClick = true;
+    }
     doThisPointerDown(e, points) {
         if (!this.selected) {
             if (this.parent != undefined && this.parent instanceof CICons) {

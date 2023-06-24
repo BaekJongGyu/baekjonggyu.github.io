@@ -419,18 +419,26 @@ class CObjectPanel extends CPanel {
                     con.position.top += (this.editor.controlResizer.position.top + 20);
                 }
                 let ed = this.editor;
-                con.onClick = function () {
-                    ed.properties.clear();
-                    ed.properties.addInstance(con);
-                    let cx = con["centerX"] + ed.controlResizer.position.left + 10;
-                    let cy = con["centerY"] + ed.controlResizer.position.top + 20;
-                    con.position.left = cx - (con.transform.rotationPointX * con.position.width);
-                    con.position.top = cy - (con.transform.rotationPointY * con.position.height);
-                };
                 let self = this;
-                con.onDoubleClick = function () {
-                    self.setSection();
-                };
+                if (section.positionPoints.length > 0) {
+                    con.onClick = function () {
+                        ed.properties.clear();
+                        ed.properties.addInstance(con);
+                        let cx = con["centerX"] + ed.controlResizer.position.left + 10;
+                        let cy = con["centerY"] + ed.controlResizer.position.top + 20;
+                        con.position.left = cx - (con.transform.rotationPointX * con.position.width);
+                        con.position.top = cy - (con.transform.rotationPointY * con.position.height);
+                    };
+                    con.click();
+                }
+                else {
+                    con.onClick = function () {
+                        ed.properties.clear();
+                        ed.properties.addInstance(con);
+                    };
+                    con.useMove = true;
+                    con.useMoveClick = true;
+                }
             }
         }
     }
@@ -682,7 +690,7 @@ con.position.height = rect.height
 con.scene()`;
             CSystem.saveAsFile(script, "example.txt");
             let txt = "1. Add scene.min.js, sceneData.js script to header area";
-            txt += "\n2. Run the script in the script.txt file";
+            txt += "\n2. Run the script in the example.txt file";
             CSystem.saveAsFile(txt, "Read me.txt");
         };
         this.controlResizer.onChangeSize = function () {
@@ -985,11 +993,11 @@ con.scene()`;
     doAnimationSpeedGraphEdit() {
         let self = this;
         let frm = new CTimeSpeedGraphEditor(CSystem.desktopList.get(0).applicationLayer);
-        frm.showCenter(860, 550, "시간 속도 편집기", "remove");
+        frm.showCenter(860, 550, "Time speed editor", "remove");
         frm.editor.btnApply.onClick = async function () {
             let data = await frm.editor.getGraphData();
             if (typeof data == "string") {
-                CSystem.showMessage("에러", data);
+                CSystem.showMessage("Error", data);
             }
             else {
                 self.con.sceneData.speedGraphData = data;
@@ -1011,12 +1019,12 @@ con.scene()`;
         if (this.pathEditor.pathPointList != undefined) {
             let rt = CAssembly.getBezierPoints(this.pathEditor.pathPointList, 1);
             if (typeof rt == "string") {
-                CSystem.showMessage("에러", rt);
+                CSystem.showMessage("Error", rt);
             }
             else {
                 let sec = this.getSelectedSection();
                 if (sec == undefined) {
-                    CSystem.showMessage("경고", "구간 애니메이션을 선택하세요.");
+                    CSystem.showMessage("Warning", "Select section");
                 }
                 else {
                     sec.positionPath.fromData(this.pathEditor.pathPointList?.toData());
@@ -1032,24 +1040,6 @@ con.scene()`;
                 }
             }
         }
-        /*let rt = await this.getPathData()
-        if(typeof rt == "string") {
-            CSystem.showMessage("에러", rt)
-        } else {
-            let sec = this.getSelectedSection()
-            if(sec == undefined) {
-                CSystem.showMessage("경고", "구간 애니메이션을 선택하세요.")
-            } else {
-                sec.positionPath.fromData(this.pathEditor.pathPointList?.toData())
-                sec.positionPath.movePoint(-(this.controlResizer.position.left + 10), -(this.controlResizer.position.top + 20))
-                for(let n = 0; n < rt.points.length; n++) {
-                    rt.points[n].x -= this.controlResizer.position.left + 10
-                    rt.points[n].y -= this.controlResizer.position.top + 20
-                }
-                sec.positionPoints = rt.points
-                this.refreshGrid()
-            }
-        }*/
     }
     doAddSection() {
         if (this.list.selectItems.length > 0) {
@@ -1153,14 +1143,27 @@ con.scene()`;
     doChangeTimeLineItem(col, row) {
         let sec = this.getSelectedSection();
         if (sec != undefined) {
-            this.pathEditor.visible = true;
-            this.pathEditor.bringToFront();
-            this.pathEditor.pathPointList = this.pathEditor.layers.get(0).items.get(1).pathData;
-            this.pathEditor.pathPointList.clear();
-            this.pathEditor.pathPointList.fromData(sec.positionPath.toData());
-            this.pathEditor.pathPointList.movePoint(this.controlResizer.position.left + 10, this.controlResizer.position.top + 20);
-            this.pathEditor.refresh();
-            this.showObjectPanel();
+            if (sec.positionPoints.length > 0) {
+                this.pathEditor.visible = true;
+                this.pathEditor.bringToFront();
+                this.pathEditor.pathPointList = this.pathEditor.layers.get(0).items.get(1).pathData;
+                this.pathEditor.pathPointList.clear();
+                this.pathEditor.pathPointList.fromData(sec.positionPath.toData());
+                this.pathEditor.pathPointList.movePoint(this.controlResizer.position.left + 10, this.controlResizer.position.top + 20);
+                this.pathEditor.refresh();
+            }
+            else {
+                this.pathEditor.visible = false;
+            }
+            if (sec.objectData.length > 0) {
+                this.showObjectPanel();
+            }
+            else {
+                if (this.objectPanel != undefined) {
+                    this.objectPanel.remove();
+                }
+                this.objectPanel = undefined;
+            }
             this.txtTimelineScript.text = sec.script;
         }
     }
@@ -1230,7 +1233,7 @@ con.scene()`;
         if (sec != undefined) {
             let s = sec;
             let self = this;
-            CSystem.prompt("타임태그 추가", ["태그명", "색상", "시간"], CSystem.browserCovers.get("cover"), function (arr) {
+            CSystem.prompt("Add tag", ["Tab name", "Color", "duration"], CSystem.browserCovers.get("cover"), function (arr) {
                 s.timeTag.push({ tagName: arr[0], tagColor: arr[1], duration: parseInt(arr[2]) });
             }, ["tag", "rgba(255,255,0,1)", self.edtTime.text]);
         }
@@ -1259,25 +1262,31 @@ con.scene()`;
                 let self = this;
                 self.properties.clear();
                 self.properties.addInstance(con);
-                con.onClick = function () {
-                    self.properties.clear();
-                    self.properties.addInstance(con);
-                    if (con != undefined) {
-                        let cx = con["centerX"] + self.controlResizer.position.left + 10;
-                        let cy = con["centerY"] + self.controlResizer.position.top + 20;
-                        con.position.left = cx - (con.transform.rotationPointX * con.position.width);
-                        con.position.top = cy - (con.transform.rotationPointY * con.position.height);
-                    }
-                };
-                con.onDoubleClick = function () {
-                    if (self.objectPanel != undefined) {
-                        self.objectPanel.setSection();
-                    }
-                };
+                if (sec.positionPoints.length > 0) {
+                    con.onClick = function () {
+                        self.properties.clear();
+                        self.properties.addInstance(con);
+                        if (con != undefined) {
+                            let cx = con["centerX"] + self.controlResizer.position.left + 10;
+                            let cy = con["centerY"] + self.controlResizer.position.top + 20;
+                            con.position.left = cx - (con.transform.rotationPointX * con.position.width);
+                            con.position.top = cy - (con.transform.rotationPointY * con.position.height);
+                        }
+                    };
+                    con.click();
+                }
+                else {
+                    con.onClick = function () {
+                        self.properties.clear();
+                        self.properties.addInstance(con);
+                    };
+                    con.useMove = true;
+                    con.useMoveClick = true;
+                }
             }
         }
         else {
-            alert("에러");
+            alert("Invalid duration");
         }
     }
     doObjectCopy() {
@@ -1374,20 +1383,20 @@ con.scene()`;
         this.timeline.clear();
         for (let n = 0; n < this.con.sceneData.sections.length; n++) {
             let sd = this.con.sceneData.sections.get(n);
-            let sda = "없음";
+            let sda = "N";
             let gd = this.con.sceneData.sections.get(n).graphData;
             let gt = "";
             if (typeof gd == "string") {
                 gt = gd;
             }
             else {
-                gt = gd.length + "";
+                gt = "Y";
             }
             let lp = "N";
             if (this.con.sceneData.sections.get(n).isLoop)
                 lp = "Y";
             if (sd.positionPoints.length > 0)
-                sda = "있음(" + sd.positionPoints.length + ")";
+                sda = "Y";
             this.timeline.add([
                 this.con.sceneData.sections.get(n).controlName + "(" + this.con.sceneData.sections.get(n).objectData.length + ")",
                 this.con.sceneData.sections.get(n).property,
@@ -1433,77 +1442,6 @@ con.scene()`;
             l(con);
         }
     }
-    /*getPathData(): Promise<{points:Array<CPoint>, tagPoints:Array<{kind:string, position:number}>} | string> {
-        let self = this
-        return new Promise(function(rs) {
-            if(self.pathEditor.pathPointList != undefined) {
-                let arrpd = new Array<{pointKind: number, point:{x:number, y:number}, cPoint1:{x:number, y:number}, cPoint2:{x:number, y:number}}>()
-                for(let n = 0; n < self.pathEditor.pathPointList.length; n++) {
-                    let pt = self.pathEditor.pathPointList.get(n)
-                    arrpd.push({
-                        pointKind: pt.pointKind,
-                        point:{x:pt.point.x, y:pt.point.y},
-                        cPoint1:{x:pt.cPoint1.x, y:pt.cPoint1.y},
-                        cPoint2:{x:pt.cPoint2.x, y:pt.cPoint2.y}
-                    })
-                }
-
-                if(CGlobal.userInfo != undefined) {
-                    let strm = new CStream()
-                    strm.putString("10")
-                    strm.putString(CStringUtil.strToUriBase64(JSON.stringify(arrpd)))
-                    let arr = new Array<{x: number, y: number}>()
-                    strm.putString(JSON.stringify(arr))
-                    CGlobal.userInfo.sendSocketData("getPathData", strm, function(data) {
-                        data.getString()
-                        data.getString()
-                        let result = data.getString()
-                        if(result == "success") {
-                            data.getString()
-                            rs({points:JSON.parse(data.getString()), tagPoints:JSON.parse(data.getString())})
-                        } else {
-                            rs(data.getString())
-                        }
-                    })
-                }
-            }
-        })
-    }*/
-    /*getNearData(points: CPoint[]): Promise<{points:Array<{point:{x: number, y: number}, nearPoint:{x: number, y: number}, position: number}>} | string> {
-        let self = this
-        return new Promise(function(rs) {
-            if(self.pathEditor.pathPointList != undefined) {
-                let arrpd = new Array<{pointKind: number, point:{x:number, y:number}, cPoint1:{x:number, y:number}, cPoint2:{x:number, y:number}}>()
-                for(let n = 0; n < self.pathEditor.pathPointList.length; n++) {
-                    let pt = self.pathEditor.pathPointList.get(n)
-                    arrpd.push({
-                        pointKind: pt.pointKind,
-                        point:{x:pt.point.x, y:pt.point.y},
-                        cPoint1:{x:pt.cPoint1.x, y:pt.cPoint1.y},
-                        cPoint2:{x:pt.cPoint2.x, y:pt.cPoint2.y}
-                    })
-                }
-
-                if(CGlobal.userInfo != undefined) {
-                    let strm = new CStream()
-                    strm.putString("10")
-                    strm.putString(CStringUtil.strToUriBase64(JSON.stringify(arrpd)))
-                    strm.putString(JSON.stringify(points))
-                    CGlobal.userInfo.sendSocketData("getNearPoint", strm, function(data) {
-                        data.getString()
-                        data.getString()
-                        let result = data.getString()
-                        if(result == "success") {
-                            data.getString()
-                            rs({points:JSON.parse(data.getString())})
-                        } else {
-                            rs(data.getString())
-                        }
-                    })
-                }
-            }
-        })
-    }*/
     showObjectPanel() {
         let sec = this.getSelectedSection();
         if (sec != undefined) {

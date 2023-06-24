@@ -19,6 +19,10 @@ async function loadDesktop() {
         CTaskbar.fixListRight.add("CAppDonation");
         CSystem.setDesktopSize(CSystem.desktopAlignKind);
         isDesktop = true;
+        let manual = new CIcon(desktop.iconLayer);
+        manual.resource = "button_manual.control";
+        manual.position.left = 50;
+        manual.position.top = 50;
     });
     CSystem.onResourceLazyLoad.push(function () {
         let iv = setInterval(function () {
