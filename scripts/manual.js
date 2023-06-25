@@ -16,7 +16,7 @@ class CManualItem {
 class CManual extends CWindowApplication {
     constructor() {
         super();
-        this.defaultWidth = 700;
+        this.defaultWidth = 860;
         this.defaultHeight = 500;
         this.appName = "Manual";
         let self = this;
