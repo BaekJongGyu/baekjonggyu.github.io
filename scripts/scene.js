@@ -1538,8 +1538,8 @@ CSystem.onResourceLoad.push(function () {
         ex.editor.con.fromData(rc.control);
         ex.editor.con.position.align = EPositionAlign.CLIENT;
         ex.editor.startPosition();
-        ex.mainWindow.position.left = 50;
-        ex.mainWindow.position.top = 50;
+        ex.mainWindow.position.left = 1062;
+        ex.mainWindow.position.top = 30;
     });
     setTimeout(() => {
         fetchBody("https://baekjonggyu.github.io/resource/night.scene")
@@ -1553,8 +1553,8 @@ CSystem.onResourceLoad.push(function () {
             let rc = CSystem.resources.get("night.scene");
             ex.editor.con.fromData(rc.control);
             ex.editor.con.sceneData.duration = 30000;
-            ex.mainWindow.position.left = 100;
-            ex.mainWindow.position.top = 100;
+            ex.mainWindow.position.left = 25;
+            ex.mainWindow.position.top = 211;
             ex.mainWindow.position.width = 1016;
             ex.mainWindow.position.height = 628;
         });

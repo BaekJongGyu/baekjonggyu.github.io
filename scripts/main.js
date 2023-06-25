@@ -67,7 +67,6 @@ class CPaper extends CSelectArea {
 class CIcon extends CPanel {
     constructor(parent, name) {
         super(parent, name);
-        this.applicationUrl = "";
         this.linkClassName = "";
         this.useMove = true;
         this.moveAreaLength = -1;
@@ -117,6 +116,14 @@ class CIcon extends CPanel {
                 }
             }
         }
+    }
+    doClick(e) {
+        super.doClick(e);
+        let f = new Function("return new " + this.linkClassName + "()");
+        let app = f();
+        app.desktop = CSystem.desktopList.get(0);
+        app.data = this.data;
+        app.execute();
     }
 }
 class CTaskbarIcon extends CIcon {
@@ -442,13 +449,13 @@ class CTaskbar extends CPanel {
                 icon.resource = "empty_icon_button.control";
                 icon.text = icon.linkClassName;
             }
-            icon.onClick = function () {
-                let f = new Function("return new " + icon.linkClassName + "()");
-                let app = f();
-                app.desktop = self.desktop;
-                app.data = icon.data;
-                app.execute();
-            };
+            /*icon.onClick = function() {
+                let f = new Function("return new " + icon.linkClassName + "()")
+                let app = f()
+                app.desktop = self.desktop
+                app.data = icon.data
+                app.execute()
+            }*/
         }
         for (let n = 0; n < CTaskbar.fixListLeft.length; n++) {
             let ti = new CTaskbarIcon(this);

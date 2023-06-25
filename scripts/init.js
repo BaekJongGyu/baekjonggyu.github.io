@@ -23,6 +23,7 @@ async function loadDesktop() {
         manual.resource = "button_manual.control";
         manual.position.left = 50;
         manual.position.top = 50;
+        manual.linkClassName = "CManual";
     });
     CSystem.onResourceLazyLoad.push(function () {
         let iv = setInterval(function () {
@@ -31,16 +32,16 @@ async function loadDesktop() {
                 sticker.resource = "sticker_moon_하얀달만.frame";
                 sticker.title = "(C) 2023. (bellground) all rights reserved.";
                 sticker.txtDesc.text = "bellground.com@gmail.com";
-                sticker.position.left = 600;
-                sticker.position.top = 50;
+                sticker.position.left = 211;
+                sticker.position.top = 30;
                 sticker.position.width = 400;
                 sticker.position.height = 150;
                 let sticker2 = new CStickerModel(CSystem.desktopList.get(0).applicationLayer);
                 sticker2.resource = "sticker_base.frame";
                 sticker2.title = "Notice";
                 sticker2.txtDesc.text = "Test";
-                sticker2.position.left = 600;
-                sticker2.position.top = 250;
+                sticker2.position.left = 640;
+                sticker2.position.top = 30;
                 sticker2.position.width = 400;
                 sticker2.position.height = 150;
                 clearInterval(iv);

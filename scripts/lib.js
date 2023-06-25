@@ -1439,8 +1439,7 @@ class CResourceClass extends CDataClass {
         return this._resource;
     }
     set resource(value) {
-        if (value != "")
-            console.log(value);
+        //if(value != "") console.log(value)
         if (this._resource != value) {
             this._resource = value;
             if (value != "") {
