@@ -53,6 +53,7 @@ async function loadLazyResource() {
     map.set("cellL2.canvasitems", "https://baekjonggyu.github.io/resource/cellL2.canvasitems");
     map.set("blackGlass.canvasitems", "https://baekjonggyu.github.io/resource/blackGlass.canvasitems");
     map.set("black.canvasitems", "https://baekjonggyu.github.io/resource/black.canvasitems");
+    map.set("treeitem_blue.canvasitems", "https://baekjonggyu.github.io/resource/treeitem_blue.canvasitems");
     map.set("selectAreaCursor.control", "https://baekjonggyu.github.io/resource/selectAreaCursor.control");
     map.set("scrollbar24.control", "https://baekjonggyu.github.io/resource/scrollbar24.control");
     map.set("controlSelector_rotation.control", "https://baekjonggyu.github.io/resource/controlSelector_rotation.control");
@@ -81,6 +82,8 @@ async function loadLazyResource() {
     map.set("colorselector16.control", "https://baekjonggyu.github.io/resource/colorselector16.control");
     map.set("control_position_editor.control", "https://baekjonggyu.github.io/resource/control_position_editor.control");
     map.set("button_donate.control", "https://baekjonggyu.github.io/resource/button_donate.control");
+    map.set("treelist_blue.control", "https://baekjonggyu.github.io/resource/treelist_blue.control");
+    map.set("scrollbar_opacity_white.control", "https://baekjonggyu.github.io/resource/scrollbar_opacity_white.control");
     map.set("graphEditor.frame", "https://baekjonggyu.github.io/resource/graphEditor.frame");
     map.set("window_sky.frame", "https://baekjonggyu.github.io/resource/window_sky.frame");
     map.set("window_sky_dialog.frame", "https://baekjonggyu.github.io/resource/window_sky_dialog.frame");
