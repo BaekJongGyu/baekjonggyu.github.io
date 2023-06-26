@@ -1023,7 +1023,7 @@ con.scene()`;
     }
     async doSetSectionPosition() {
         if (this.pathEditor.pathPointList != undefined) {
-            let rt = CAssembly.getBezierPoints(this.pathEditor.pathPointList, 1);
+            let rt = CAssembly.getBezierPoints(this.pathEditor.pathPointList, 10);
             if (typeof rt == "string") {
                 CSystem.showMessage("Error", rt);
             }
