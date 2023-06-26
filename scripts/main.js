@@ -985,7 +985,7 @@ class CSystem {
             btn.position.align = EPositionAlign.RIGHT;
             btn.position.width = 50;
             btn.position.margins.all = 5;
-            btn.text = "확인";
+            btn.text = "Ok";
             btn.onClick = function () {
                 if (cover != undefined)
                     cover.hideCover();
@@ -997,7 +997,7 @@ class CSystem {
             btn.position.align = EPositionAlign.LEFT;
             btn.position.width = 50;
             btn.position.margins.all = 5;
-            btn.text = "취소";
+            btn.text = "Cancel";
             btn.onClick = function () {
                 if (cover != undefined)
                     cover.hideCover();
@@ -1095,7 +1095,7 @@ class CSystem {
         btn.position.align = EPositionAlign.RIGHT;
         btn.position.width = 50;
         btn.position.margins.all = 5;
-        btn.text = "확인";
+        btn.text = "Ok";
         btn.onClick = function () {
             let ar = new Array();
             for (let n = 0; n < arr.length; n++) {
@@ -1110,7 +1110,7 @@ class CSystem {
         btn.position.align = EPositionAlign.LEFT;
         btn.position.width = 50;
         btn.position.margins.all = 5;
-        btn.text = "취소";
+        btn.text = "Cancel";
         btn.onClick = function () {
             if (cover != undefined)
                 cover.hideCover();

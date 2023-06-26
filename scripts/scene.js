@@ -521,6 +521,7 @@ class CAnimationControlSceneEditorModel extends CPanel {
         this.btnDeleteProperty = new CButton(this.lBTop);
         this.btnGraphEdit = new CButton(this.lBTop);
         this.btnPositionEdit = new CButton(this.lBTop);
+        this.btnObjectsEdit = new CButton(this.lBTop);
         this.btnApply = new CButton(this.lBTop);
         this.btnAnimationSpeedGraph = new CButton(this.lBTop);
         this.btnStart = new CButton(this.lBTop);
@@ -752,6 +753,9 @@ con.scene()`;
         this.btnPositionEdit.onClick = function () {
             self.doPositionEdit();
         };
+        this.btnObjectsEdit.onClick = function () {
+            self.doObjectsEdit();
+        };
         this.btnTagAdd.onClick = function () {
             self.doAddTag();
         };
@@ -885,6 +889,7 @@ con.scene()`;
         CDataClass.putData(data, "lCBottom", this.lCBottom.toData(), {}, true);
         CDataClass.putData(data, "btnGraphEdit", this.btnGraphEdit.toData(), {}, true);
         CDataClass.putData(data, "btnPositionEdit", this.btnPositionEdit.toData(), {}, true);
+        CDataClass.putData(data, "btnObjectsEdit", this.btnObjectsEdit.toData(), {}, true);
         CDataClass.putData(data, "lBTop2", this.lBTop2.toData(), {}, true);
         CDataClass.putData(data, "lblTag", this.lblTag.toData(), {}, true);
         CDataClass.putData(data, "btnTagAdd", this.btnTagAdd.toData(), {}, true);
@@ -951,6 +956,7 @@ con.scene()`;
         this.lCBottom.fromData(CDataClass.getData(data, "lCBottom", {}, true));
         this.btnGraphEdit.fromData(CDataClass.getData(data, "btnGraphEdit", {}, true));
         this.btnPositionEdit.fromData(CDataClass.getData(data, "btnPositionEdit", {}, true));
+        this.btnObjectsEdit.fromData(CDataClass.getData(data, "btnObjectsEdit", {}, true));
         this.lBTop2.fromData(CDataClass.getData(data, "lBTop2", {}, true));
         this.lblTag.fromData(CDataClass.getData(data, "lblTag", {}, true));
         this.btnTagAdd.fromData(CDataClass.getData(data, "btnTagAdd", {}, true));
@@ -1138,6 +1144,15 @@ con.scene()`;
                 }
             }
             this.pathEditor.refresh();
+        }
+    }
+    doObjectsEdit() {
+        if (this.objectPanel != undefined) {
+            this.objectPanel.remove();
+            this.objectPanel = undefined;
+        }
+        else {
+            this.showObjectPanel();
         }
     }
     doChangeTimeLineItem(col, row) {
