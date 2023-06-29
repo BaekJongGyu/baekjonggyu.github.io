@@ -381,12 +381,14 @@ class CObjectPanel extends CPanel {
         let self = this;
         this.btnApply.resource = "button_orange_gra.control";
         this.btnApply.position.align = EPositionAlign.RIGHTBOTTOM;
-        this.btnApply.position.height = 25;
+        this.btnApply.position.height = 35;
         this.btnApply.position.margins.bottom = 21;
+        this.btnApply.position.width = 60;
         this.btnApply.text = "Objects\nApply";
         this.btnClose.resource = "button_gray_gra.control";
         this.btnClose.position.align = EPositionAlign.RIGHTBOTTOM;
         this.btnClose.position.height = 20;
+        this.btnClose.position.width = 60;
         this.btnClose.text = "Close";
         this.btnClose.onClick = function () {
             self.remove();
@@ -406,7 +408,7 @@ class CObjectPanel extends CPanel {
             }
             self.setSection();
         };
-        this.onClick = function () {
+        this.btnApply.onClick = function () {
             self.setSection();
         };
     }
