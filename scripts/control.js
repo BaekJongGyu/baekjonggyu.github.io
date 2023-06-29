@@ -2971,6 +2971,25 @@ class CCanvasLayerControl extends CPointerEventControl {
     getCanvasItems(canvasItemName) {
         return this.layers.getCanvasItems(canvasItemName);
     }
+    drawImage(canvas) {
+        console.log(canvas.width, canvas.height);
+        let ctx = canvas.getContext("2d");
+        function controlDraw(control, x, y) {
+            if (ctx != null) {
+                for (let n = 0; n < control.layers.length; n++) {
+                    ctx.drawImage(control.layers.get(n).canvas, x, y);
+                    console.log("draw", control.layers.get(n).canvas.width, control.layers.get(n).canvas.height);
+                }
+                let arr = CSystem.getChildControls(control);
+                for (let n = 0; n < arr.length; n++) {
+                    if (arr[n] instanceof CCanvasLayerControl) {
+                        controlDraw(arr[n], 0, 0);
+                    }
+                }
+            }
+        }
+        controlDraw(this, 0, 0);
+    }
     static createControl(parent, name = "", left = 0, top = 0, width = 50, height = 50) {
         let c = new CCanvasLayerControl(parent, name);
         c.position.left = left;

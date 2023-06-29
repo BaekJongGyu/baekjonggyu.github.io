@@ -3581,7 +3581,9 @@ class CLayerPathEditorModel extends CPanel {
         }
         if (itemKind == EPathItemItemKind.EMPTY) {
             let pic = newItem();
-            pic.pathData.makeRoundRectData(0, 0, this.pathEditor.position.width, this.pathEditor.position.height, 0, 0, new CStringSet(), new CStringSet(), false);
+            pic.pathData.addPointMoveTo(new CPoint(0, 0));
+            pic.pathData.addPointMoveTo(new CPoint(this.pathEditor.position.width, this.pathEditor.position.height));
+            //pic.pathData.makeRoundRectData(0, 0, this.pathEditor.position.width , this.pathEditor.position.height, 0, 0, new CStringSet(), new CStringSet(), false)
             pic.fill.styleKind = EStyleKind.EMPTY;
             pic.stroke.styleKind = EStyleKind.EMPTY;
             this.refresh(true);

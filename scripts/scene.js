@@ -166,8 +166,8 @@ class CSceneAnimator extends CSceneAnimation {
     setObjects(sectionName, wt, graphValue, info) {
         if (info.control != undefined) {
             if (info.property.indexOf("script") >= 0) {
-                let fn = new Function("animationControl", "sectionName", "workingTime", "graphValue", "info", "control", info.script);
-                fn(this.animationControl, sectionName, wt, graphValue, info, info.control);
+                let fn = new Function("animator", "animationControl", "sectionName", "workingTime", "graphValue", "info", "control", info.script);
+                fn(this, this.animationControl, sectionName, wt, graphValue, info, info.control);
             }
             else {
                 if (typeof info.startValue == "number" && typeof info.stopValue == "number") {
@@ -1477,13 +1477,96 @@ class CAnimationControlSceneEditor extends CAnimationControlSceneEditorModel {
         this.resource = "sceneEditor.frame";
     }
 }
+class CVideoFrame extends CAnimationControlSceneEditorModel {
+    get videoSrc() {
+        return this._videoSrc;
+    }
+    set videoSrc(value) {
+        if (this._videoSrc != value) {
+            this._videoSrc = value;
+            this.doChangeVideoSrc();
+        }
+    }
+    constructor(parent, name) {
+        super(parent, name);
+        this.canvas = document.createElement("canvas");
+        this.context = this.canvas.getContext("2d");
+        this._videoSrc = "";
+        let self = this;
+        let tool = new CPanel(this);
+        tool.position.align = EPositionAlign.TOP;
+        tool.position.height = 25;
+        let item = tool.layers.addLayer().items.addItem();
+        item.fill.styleKind = EStyleKind.SOLID;
+        item.fill.solidColor = "#101010";
+        let txt = new CTextBox(tool);
+        txt.resource = "textbox24.control";
+        txt.position.align = EPositionAlign.LEFT;
+        txt.onKeyDown = function (s, e) {
+            if (e.key == "Enter") {
+                self.videoSrc = txt.text;
+            }
+        };
+        txt.text = "/scripts/exvideo.mp4";
+        let button = new CButton(tool);
+        button.resource = "button_gray_gra.control";
+        button.position.align = EPositionAlign.RIGHT;
+        button.useAutoSize = true;
+        button.text = "Record";
+        button.onClick = async function () {
+        };
+        this.video = new CVideoControl(this.controlResizer);
+        this.video.position.align = EPositionAlign.CLIENT;
+        this.video.hasPointerEvent = false;
+        this.video.sendToBack();
+        this.video.onTimeUpdate = function (s, t) {
+            self.video.jumpTime(3, 0);
+        };
+    }
+    doSetTime(duration) {
+        super.doSetTime(duration);
+        this.video.currentTime = duration / 1000;
+    }
+    doScene() {
+        super.doScene();
+        this.video.play();
+    }
+    doChangeVideoSrc() {
+        let self = this;
+        this.video.onLoadedMetaData = function () {
+            self.edtTimeTo.text = Math.floor(self.video.duration * 1000) + "";
+            self.btnTimeApply.click();
+        };
+        this.video.src = this._videoSrc;
+    }
+}
+class CEmptyCanvasForm extends CWindowApplication {
+    constructor() {
+        super();
+        this.defaultWidth = 600;
+        this.defaultHeight = 400;
+        this.appName = "Canvas";
+        this.canvasControl = new CEmptyCanvasControl(this.mainWindow.body);
+        this.canvasControl.position.align = EPositionAlign.CLIENT;
+    }
+}
 class CAppLayersSceneEditor extends CWindowApplication {
     constructor() {
         super();
         this.defaultWidth = 616;
         this.defaultHeight = 539;
         this.appName = "Animation control scene editor";
-        this.editor = new CAnimationControlSceneEditor(this.mainWindow.body);
+        this.editor = new CAnimationControlSceneEditorModel(this.mainWindow.body);
+        this.editor.position.align = EPositionAlign.CLIENT;
+    }
+}
+class CSubtitleEditor extends CWindowApplication {
+    constructor() {
+        super();
+        this.defaultWidth = 616;
+        this.defaultHeight = 539;
+        this.appName = "Animation control scene editor";
+        this.editor = new CVideoFrame(this.mainWindow.body);
         this.editor.position.align = EPositionAlign.CLIENT;
     }
 }

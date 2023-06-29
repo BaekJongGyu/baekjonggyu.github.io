@@ -1222,20 +1222,12 @@ class CSystem {
         el.click();
     }
     static saveAsFile(text, filename) {
-        // 텍스트 데이터를 Blob 객체로 변환
         const blob = new Blob([text], { type: 'text/plain' });
-        // 다운로드 링크 생성
         const downloadLink = document.createElement('a');
         downloadLink.href = URL.createObjectURL(blob);
         downloadLink.download = filename;
-        // 클릭하여 다운로드 시작
         downloadLink.click();
         URL.revokeObjectURL(downloadLink.href);
-        /*let hiddenElement = document.createElement('a');
-        hiddenElement.href = 'data:attachment/text,' + encodeURI(text);
-        hiddenElement.target = '_blank';
-        hiddenElement.download = filename;
-        hiddenElement.click();*/
     }
     static saveBlobAsFile(blob, filename) {
         var url = URL.createObjectURL(blob);
@@ -1254,6 +1246,7 @@ class CSystem {
             if (input.files != null) {
                 fn(input.files[0]);
             }
+            input.remove();
         };
     }
     static loadFromFiles(fn) {
@@ -1265,6 +1258,7 @@ class CSystem {
             if (input.files != null) {
                 fn(input.files);
             }
+            input.remove();
         };
     }
     static async loadSystemResource() {

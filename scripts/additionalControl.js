@@ -38,6 +38,229 @@ class CIFrame extends CElementControl {
         this.element.style.pointerEvents = "auto";
     }
 }
+class CVideoControl extends CElementControl {
+    get preTime() {
+        return this._preTime;
+    }
+    get src() {
+        return this._src;
+    }
+    set src(value) {
+        if (this._src != value) {
+            this._src = value;
+            this.element.src = value;
+        }
+    }
+    get videoWidth() {
+        return this._element.videoWidth;
+    }
+    get videoHeight() {
+        return this._element.videoHeight;
+    }
+    get duration() {
+        return this._element.duration;
+    }
+    get currentTime() {
+        return this.element.currentTime;
+    }
+    set currentTime(value) {
+        this.element.currentTime = value;
+    }
+    get paused() {
+        return this.element.paused;
+    }
+    get ended() {
+        return this.element.ended;
+    }
+    get seeking() {
+        return this.element.seeking;
+    }
+    get volume() {
+        return this.element.volume;
+    }
+    set volume(value) {
+        this.element.volume = value;
+    }
+    constructor(parent, name) {
+        super("video", parent, name);
+        this._src = "";
+        this.deleteSections = new Array();
+        let self = this;
+        this.element.addEventListener("timeupdate", function (e) {
+            self.doTimeUpdate(self.currentTime);
+            self._preTime = self.currentTime;
+        });
+        this.element.addEventListener("play", function (e) {
+            self.doPlay();
+        });
+        this.element.addEventListener("playing", function (e) {
+            self.doPlaying();
+        });
+        this.element.addEventListener("seeked", function (e) {
+            self.doSeek();
+        });
+        this.element.addEventListener("ended", function (e) {
+            self.doEnded();
+        });
+        this.element.addEventListener("volumechange", function (e) {
+            self.doVolumnChange();
+        });
+        this.element.addEventListener("error", function (e) {
+            self.doError();
+        });
+        this.element.addEventListener("loadedmetadata", function (e) {
+            self.doLoadedMetaData();
+        });
+        this.element.addEventListener("loadeddata", function (e) {
+            self.doLoadedData();
+        });
+        this.element.addEventListener("pause", function (e) {
+            self.doPause();
+        });
+    }
+    doToData(data) {
+        super.doToData(data);
+        CDataClass.putData(data, "src", this.src, "");
+    }
+    doFromData(data) {
+        super.doFromData(data);
+        this.src = CDataClass.getData(data, "src", "");
+    }
+    doInitInnerElement() {
+        super.doInitInnerElement();
+        this.element.setAttribute("className", this.className);
+        this.element.style.outline = "none";
+        this.element.style.position = "absolute";
+        this.element.style.margin = "0px 0px 0px 0px";
+        this.element.style.padding = "0px 0px 0px 0px";
+        this.element.style.border = "none";
+        this.element.style.zIndex = CSystem.getZPlus() + "";
+        this.element.setAttribute("ondragstart", "return false");
+        this.element.setAttribute("onselectstart", "return false");
+        this.element.setAttribute("oncontextmenu", "return false");
+        this.element.style.touchAction = "auto";
+        this.element.style.userSelect = "text";
+        this.element.style.pointerEvents = "auto";
+    }
+    doTimeUpdate(time) {
+        if (this.deleteSections.length > 0) {
+            for (let n = 0; n < this.deleteSections.length; n++) {
+                if (this.deleteSections[n].startTime >= this.currentTime && this.deleteSections[n].stopTime <= this.currentTime) {
+                    this.currentTime = this.deleteSections[n].stopTime + 0.01;
+                    break;
+                }
+            }
+        }
+        if (this.onTimeUpdate != undefined) {
+            this.onTimeUpdate(this, time);
+        }
+    }
+    doPlay() {
+        if (this.onPlay != undefined) {
+            this.onPlay(this);
+        }
+    }
+    doPlaying() {
+        if (this.onPlaying != undefined) {
+            this.onPlaying(this);
+        }
+    }
+    doEnded() {
+        if (this.onEnded != undefined) {
+            this.onEnded(this);
+        }
+    }
+    doVolumnChange() {
+        if (this.onVolumnChange != undefined) {
+            this.onVolumnChange(this);
+        }
+    }
+    doError() {
+        if (this.onError != undefined) {
+            this.onError(this);
+        }
+    }
+    doLoadedMetaData() {
+        if (this.onLoadedMetaData != undefined) {
+            this.onLoadedMetaData(this);
+        }
+    }
+    doLoadedData() {
+        if (this.onLoadedData != undefined) {
+            this.onLoadedData(this);
+        }
+    }
+    doSeek() {
+        if (this.onSeek != undefined) {
+            this.onSeek(this, this.currentTime);
+        }
+    }
+    doPause() {
+        if (this.onPause != undefined) {
+            this.onPause(this);
+        }
+    }
+    pause() {
+        this.element.pause();
+    }
+    play() {
+        this.element.play();
+    }
+    currentTimeSync(time) {
+        let self = this;
+        return new Promise(function (rs) {
+            function seek() {
+                self.element.removeEventListener("seeked", seek);
+                rs();
+            }
+            self.element.addEventListener("seeked", seek);
+            self.currentTime = time;
+        });
+    }
+    jumpTime(time, jumpTime) {
+        if (this.preTime != undefined) {
+            if (this.preTime < time && this.currentTime >= time) {
+                this.currentTime = jumpTime;
+            }
+        }
+    }
+}
+class CAnimationVideoControl extends CPanel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.videos = new Map();
+        this.control = new CAnimationControl(this);
+        this.deleteSections = new Array();
+        this.control.position.align = EPositionAlign.CLIENT;
+    }
+    addVideo(url, bounds) {
+        let v = new CVideoControl(this);
+        if (bounds != undefined) {
+            v.position.left = bounds.left;
+            v.position.top = bounds.top;
+            v.position.width = bounds.width;
+            v.position.height = bounds.height;
+        }
+        else {
+            v.position.align = EPositionAlign.CLIENT;
+        }
+        v.sendToBack();
+        this.videos.set(url, v);
+    }
+    animationFromData(data) {
+        this.control.fromData(data);
+        this.control.position.align = EPositionAlign.CLIENT;
+    }
+}
+class CEmptyCanvasControl extends CPanel {
+    constructor(parent, name) {
+        super(parent, name);
+        this.canvas = this.layers.addLayer().canvas;
+        let ctx = this.canvas.getContext("2d");
+        if (ctx != null)
+            this.context = ctx;
+    }
+}
 class CMultiSlideBox extends CPanel {
     get slideHandles() {
         return this._slideHandles;
