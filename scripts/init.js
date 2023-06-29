@@ -46,8 +46,8 @@ async function loadDesktop() {
                 sticker2.position.height = 150;
                 /*let app = new CSubtitleEditor()
                 app.desktop = CSystem.desktopList.get(0)
-                app.execute()
-                clearInterval(iv)*/
+                app.execute()*/
+                clearInterval(iv);
             }
         }, 100);
     });
