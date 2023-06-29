@@ -78,6 +78,7 @@ async function loadLazyResource() {
     map.set("empty.control", "https://baekjonggyu.github.io/resource/empty.control");
     map.set("textboxDarkEditor.control", "https://baekjonggyu.github.io/resource/textboxDarkEditor.control");
     map.set("button_gray_gra.control", "https://baekjonggyu.github.io/resource/button_gray_gra.control");
+    map.set("button_orange_gra.control", "https://baekjonggyu.github.io/resource/button_orange_gra.control");
     map.set("handle_white.control", "https://baekjonggyu.github.io/resource/handle_white.control");
     map.set("colorselector16.control", "https://baekjonggyu.github.io/resource/colorselector16.control");
     map.set("control_position_editor.control", "https://baekjonggyu.github.io/resource/control_position_editor.control");

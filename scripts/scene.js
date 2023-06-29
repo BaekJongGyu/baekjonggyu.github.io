@@ -376,11 +376,17 @@ class CTimeSpeedGraphEditor extends CWindowTool {
 class CObjectPanel extends CPanel {
     constructor(parent, name) {
         super(parent, name);
+        this.btnApply = new CButton(this);
         this.btnClose = new CButton(this);
         let self = this;
+        this.btnApply.resource = "button_orange_gra.control";
+        this.btnApply.position.align = EPositionAlign.RIGHTBOTTOM;
+        this.btnApply.position.height = 25;
+        this.btnApply.position.margins.bottom = 21;
+        this.btnApply.text = "Objects\nApply";
         this.btnClose.resource = "button_gray_gra.control";
-        this.btnClose.position.align = EPositionAlign.BOTTOM;
-        this.btnClose.position.height = 30;
+        this.btnClose.position.align = EPositionAlign.RIGHTBOTTOM;
+        this.btnClose.position.height = 20;
         this.btnClose.text = "Close";
         this.btnClose.onClick = function () {
             self.remove();
@@ -1477,7 +1483,7 @@ class CAnimationControlSceneEditor extends CAnimationControlSceneEditorModel {
         this.resource = "sceneEditor.frame";
     }
 }
-class CVideoFrame extends CAnimationControlSceneEditorModel {
+class CVideoFrame extends CAnimationControlSceneEditor {
     get videoSrc() {
         return this._videoSrc;
     }
@@ -1556,7 +1562,7 @@ class CAppLayersSceneEditor extends CWindowApplication {
         this.defaultWidth = 616;
         this.defaultHeight = 539;
         this.appName = "Animation control scene editor";
-        this.editor = new CAnimationControlSceneEditorModel(this.mainWindow.body);
+        this.editor = new CAnimationControlSceneEditor(this.mainWindow.body);
         this.editor.position.align = EPositionAlign.CLIENT;
     }
 }
